@@ -79,6 +79,8 @@ extends Resource
 @export var companion_idle_regen: float = 0.02
 ## Sin pelea, da vueltas alrededor del jugador a esta distancia (no se queda parado).
 @export var companion_idle_orbit: float = 3.0
+## Mejora "Ojo para las vasijas": distancia (desde el jugador) a la que el compañero las ve.
+@export var companion_vase_range: float = 9.0
 ## Entre golpe y golpe se mueve de costado alrededor del enemigo (parte de su velocidad).
 @export var companion_strafe: float = 0.6
 ## El Maestro (IA) tira el Bastonazo si en la línea hay al menos esta cantidad de enemigos...

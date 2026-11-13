@@ -12,7 +12,10 @@ func before_each() -> void:
 func test_each_character_has_its_pool() -> void:
 	for id: StringName in [&"tali", &"croco", &"agucci"]:
 		assert_eq(Balance.upgrades.available_for(id, []).size(), 6, "%s: 6 mejoras" % id)
-	assert_eq(Balance.upgrades.available_for(&"maestro", []).size(), 18, "Dúo: 18 Sendas")
+	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
+	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
+			"Dúo: 18 Sendas")
+	assert_eq(duo.size(), 19, "Más Ojo para las vasijas")
 
 
 func test_offer_gives_three_distinct_and_skips_owned() -> void:

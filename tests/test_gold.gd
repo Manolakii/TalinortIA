@@ -92,6 +92,8 @@ func test_each_player_gets_their_own_gold() -> void:
 
 
 func test_vase_breaks_with_a_hit_and_drops_gold() -> void:
+	var chance: float = Balance.economy.vase_drop_chance
+	Balance.economy.vase_drop_chance = 1.0
 	var vase := Vase.new()
 	vase.position = Vector3(0, 0, -1.2)
 	add_child(vase)
@@ -99,8 +101,21 @@ func test_vase_breaks_with_a_hit_and_drops_gold() -> void:
 	var info: DamageInfo = _player.kit.make_hit(10.0)
 	Combat.deliver(info, CombatQuery.in_sector(get_tree(), DamageInfo.Team.ENEMIES, Vector3.ZERO,
 			Vector3.FORWARD, 2.0, 90.0))
+	Balance.economy.vase_drop_chance = chance
 	assert_true(vase._broken, "Se rompe de un golpe")
 	assert_between(_coin_total(), 2, 6)
+
+
+func test_vases_do_not_always_have_gold() -> void:
+	var with_gold: int = 0
+	for i: int in 40:
+		var vase := Vase.new()
+		add_child(vase)
+		var before: int = _coins().size()
+		vase.smash()
+		if _coins().size() > before:
+			with_gold += 1
+	assert_between(with_gold, 8, 32, "Alrededor de la mitad tiene oro")
 
 
 func test_aim_ignores_vases() -> void:

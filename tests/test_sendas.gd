@@ -18,7 +18,7 @@ func before_each() -> void:
 func after_each() -> void:
 	if is_instance_valid(_kit) and is_instance_valid(_kit.companion):
 		_kit.companion.free()
-	for node: Node in get_tree().get_nodes_in_group(&"duo_zone_test"):
+	for node: Node in get_tree().get_nodes_in_group(&"breakables"):
 		node.free()
 
 
@@ -153,6 +153,24 @@ func test_stewie_grows_with_upgrades() -> void:
 	_take("senda_maestro_basic_guia", 2)
 	_take("senda_maestro_ability_guia")
 	assert_eq(_kit.stewie_form(), 2, "Sabia con 6")
+
+
+func test_companion_breaks_vases_with_the_upgrade() -> void:
+	_kit.companion.set_downed(false, 0.0)
+	_kit.companion.global_position = Vector3(1.5, 0, 0)
+	var vase := Vase.new()
+	vase.position = Vector3(5.0, 0, 0)
+	add_child(vase)
+	await wait_physics_frames(1)
+	for i: int in 180:
+		_player._physics_process(DT)
+		_kit.companion._physics_process(DT)
+	assert_true(vase.is_targetable(), "Sin la mejora, la deja")
+	_take("duo_rompe_vasijas")
+	for i: int in 240:
+		_player._physics_process(DT)
+		_kit.companion._physics_process(DT)
+	assert_false(vase.is_targetable(), "Con la mejora, va y la rompe")
 
 
 func _pump_seconds(seconds: float) -> void:

@@ -444,6 +444,9 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 			else:
 				_strafe_around(body, to_target, delta)
 		return
+	# 5) Mejora "Ojo para las vasijas": sin pelea cerca, va a romper las que ve.
+	if _companion_hunt_vase(body, delta):
+		return
 	_idle_orbit(body, delta)
 
 
@@ -1176,3 +1179,55 @@ func on_blocked_by_invulnerability(info: DamageInfo) -> void:
 
 func _fortress_active() -> bool:
 	return Time.get_ticks_msec() < _fortress_until
+
+
+# --- Mejora: Ojo para las vasijas ---
+
+const VASE_LINES: Array[Array] = [
+	["Esa vasija tiene algo adentro. Lo presiento.", "El bastón también sirve para esto.",
+			"Paciencia, alumno: primero la vasija."],
+	["¡Esa vasija me mira raro!", "¡Vasija! ¡VASIJA!", "Dejá, yo la rompo."],
+]
+
+var _vase_target: Vase
+
+
+## Si tiene la mejora y no hay enemigos cerca del jugador, va hasta la vasija más cercana
+## y la rompe. Devuelve true si se ocupó de eso este frame.
+func _companion_hunt_vase(body: DuoCompanion, delta: float) -> bool:
+	if not has_upgrade(&"duo_rompe_vasijas"):
+		return false
+	if CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES, player.global_position,
+			kd.companion_vase_range) != null:
+		return false
+	if _vase_target == null or not is_instance_valid(_vase_target) or not _vase_target.is_targetable() \
+			or _vase_target.global_position.distance_to(player.global_position) > kd.companion_vase_range + 2.0:
+		_vase_target = _nearest_vase()
+		if _vase_target == null:
+			return false
+		say(VASE_LINES[body.identity].pick_random(), Color(0.95, 0.9, 0.8), 0.6)
+	var to_vase: Vector3 = _vase_target.global_position - body.global_position
+	to_vase.y = 0.0
+	var reach: float = (kd.staff_range if body.identity == Body.MAESTRO else kd.headbutt_range) * 0.8
+	if to_vase.length() > reach:
+		body.steer(to_vase.normalized(), body.move_speed, delta)
+	else:
+		body.facing = to_vase.normalized()
+		body.stop(delta)
+		if body.attack_timer <= 0.0:
+			_companion_basic(body)
+	return true
+
+
+func _nearest_vase() -> Vase:
+	var best: Vase = null
+	var best_distance: float = kd.companion_vase_range
+	for node: Node in player.get_tree().get_nodes_in_group(&"breakables"):
+		var vase := node as Vase
+		if vase == null or not vase.is_targetable():
+			continue
+		var d: float = vase.global_position.distance_to(player.global_position)
+		if d < best_distance:
+			best_distance = d
+			best = vase
+	return best

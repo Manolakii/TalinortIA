@@ -14,6 +14,8 @@ extends Resource
 @export var common_gold: Array[Vector2i] = [Vector2i(2, 4), Vector2i(4, 7), Vector2i(7, 11)]
 @export var elite_gold: Array[int] = [20, 35, 55]
 @export var scenario_gold: Array[int] = [30, 50, 75]
+## Probabilidad de que una vasija tenga oro (se tira por cada jugador; pedido del grupo).
+@export var vase_drop_chance: float = 0.5
 @export var vase_gold: Array[Vector2i] = [Vector2i(2, 6), Vector2i(4, 10), Vector2i(6, 15)]
 @export var chest_gold: Array[Vector2i] = [Vector2i(50, 80), Vector2i(80, 130), Vector2i(130, 200)]
 @export var boss_gold: Array[int] = [60, 110, 0]

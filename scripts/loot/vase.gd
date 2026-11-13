@@ -68,7 +68,8 @@ func smash() -> void:
 	_broken = true
 	collision_layer = 0
 	_hurtbox.queue_free()
-	Loot.drop_for_all(get_parent(), global_position, Balance.economy.vase_gold)
+	Loot.drop_for_all(get_parent(), global_position, Balance.economy.vase_gold,
+			Balance.economy.vase_drop_chance)
 	Fx.ring_burst(get_parent(), global_position, 0.9, CLAY.lightened(0.2), 0.2)
 	# Pedazos que saltan.
 	for i: int in 5:

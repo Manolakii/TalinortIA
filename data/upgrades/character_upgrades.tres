@@ -239,6 +239,19 @@ senda_path = &""
 
 [sub_resource type="Resource" id="u_18"]
 script = ExtResource("2")
+id = &"duo_rompe_vasijas"
+character = &"maestro"
+display_name = "Ojo para las vasijas"
+description = "Sin pelea cerca, el compañero va solo a romper las vasijas que ve"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_19"]
+script = ExtResource("2")
 id = &"senda_stewie_basic_caparazon"
 character = &"maestro"
 display_name = "Stewie: Caparazonazo"
@@ -250,7 +263,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_19"]
+[sub_resource type="Resource" id="u_20"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_embestida"
 character = &"maestro"
@@ -263,7 +276,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_20"]
+[sub_resource type="Resource" id="u_21"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_espiritu"
 character = &"maestro"
@@ -276,7 +289,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_21"]
+[sub_resource type="Resource" id="u_22"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_caparazon"
 character = &"maestro"
@@ -289,7 +302,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_22"]
+[sub_resource type="Resource" id="u_23"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_embestida"
 character = &"maestro"
@@ -302,7 +315,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_23"]
+[sub_resource type="Resource" id="u_24"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_espiritu"
 character = &"maestro"
@@ -315,7 +328,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_24"]
+[sub_resource type="Resource" id="u_25"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_caparazon"
 character = &"maestro"
@@ -328,7 +341,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_25"]
+[sub_resource type="Resource" id="u_26"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_embestida"
 character = &"maestro"
@@ -341,7 +354,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_26"]
+[sub_resource type="Resource" id="u_27"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_espiritu"
 character = &"maestro"
@@ -354,7 +367,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_27"]
+[sub_resource type="Resource" id="u_28"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_guia"
 character = &"maestro"
@@ -367,7 +380,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_28"]
+[sub_resource type="Resource" id="u_29"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_combate"
 character = &"maestro"
@@ -380,7 +393,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_29"]
+[sub_resource type="Resource" id="u_30"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_niebla"
 character = &"maestro"
@@ -393,7 +406,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"niebla"
 
-[sub_resource type="Resource" id="u_30"]
+[sub_resource type="Resource" id="u_31"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_guia"
 character = &"maestro"
@@ -406,7 +419,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_31"]
+[sub_resource type="Resource" id="u_32"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_combate"
 character = &"maestro"
@@ -419,7 +432,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_32"]
+[sub_resource type="Resource" id="u_33"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_niebla"
 character = &"maestro"
@@ -432,7 +445,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"niebla"
 
-[sub_resource type="Resource" id="u_33"]
+[sub_resource type="Resource" id="u_34"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_guia"
 character = &"maestro"
@@ -445,7 +458,7 @@ senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_34"]
+[sub_resource type="Resource" id="u_35"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_combate"
 character = &"maestro"
@@ -458,7 +471,7 @@ senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_35"]
+[sub_resource type="Resource" id="u_36"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_niebla"
 character = &"maestro"
@@ -473,4 +486,4 @@ senda_path = &"niebla"
 
 [resource]
 script = ExtResource("1")
-upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35")])
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36")])
