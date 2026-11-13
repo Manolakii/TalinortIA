@@ -11,6 +11,12 @@ const SLOW: StringName = &"slow"
 const HASTE: StringName = &"haste"
 ## Acelerado por el Chamán de la Sombra.
 const SHADOW_HASTE: StringName = &"shadow_haste"
+## Golpe Guía del Maestro: recibe más daño de Stewie y los aliados.
+const MARKED: StringName = &"marked"
+## Dentro de la Niebla de los Valles: sus ataques fallan más.
+const FOGGED: StringName = &"fogged"
+## Oculto en la nube de la Garrocha de Niebla: los enemigos no lo ven.
+const HIDDEN: StringName = &"hidden"
 
 signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)

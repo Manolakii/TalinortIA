@@ -183,6 +183,11 @@ func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
 	pass
 
 
+## Multiplicador para que los enemigos lo elijan (menos de 1 = atrae más).
+func target_priority() -> float:
+	return 1.0
+
+
 func move_speed_multiplier() -> float:
 	return 1.0
 

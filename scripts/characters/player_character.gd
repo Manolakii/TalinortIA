@@ -171,12 +171,12 @@ func get_move_input() -> Vector2:
 
 ## Para los enemigos: ¿lo pueden elegir como objetivo?
 func can_be_targeted_by_enemies() -> bool:
-	return is_targetable() and not hidden_from_enemies
+	return is_targetable() and not hidden_from_enemies and not status.has(StatusEffects.HIDDEN)
 
 
 ## Multiplicador de distancia para elegir objetivo (los señuelos usan menos de 1: atraen más).
 func target_priority() -> float:
-	return 1.0
+	return kit.target_priority() if kit != null else 1.0
 
 
 # --- Esquiva y acciones (las usan los kits) ---
@@ -277,6 +277,10 @@ func has_buffered(action: PlayerInput.Action) -> bool:
 # --- Combate ---
 
 func _try_avoid(info: DamageInfo) -> String:
+	# Niebla de los Valles: los enemigos adentro fallan más.
+	var attacker := info.attacker as Combatant if is_instance_valid(info.attacker) else null
+	if attacker != null and attacker.status.has(StatusEffects.FOGGED) and Combat.roll(0.3):
+		return "¡Se perdió en la niebla!"
 	return kit.try_avoid(info)
 
 

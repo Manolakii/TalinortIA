@@ -44,6 +44,8 @@ var _player_target: Node3D
 var _bond_line: MeshInstance3D
 var _extras: Node3D
 var _bonded: bool = false
+var _bite_count: int = 0
+var _bubbles: ProjectilePool
 var _ai_target: Node3D
 var _ai_target_time: float = 0.0
 var _strafe_time: float = 0.0
@@ -81,6 +83,22 @@ func _spawn_companion() -> void:
 	player.get_parent().add_child(companion)
 	companion.global_position = player.global_position + Vector3(1.6, 0.0, 0.8)
 	_dress_companion()
+
+
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	# Cada Senda que se toma cuenta como mejora del dúo (3 y 6: Joven y Sabia).
+	var old_form: int = stewie_form()
+	stewie_upgrades = RunState.get_upgrades(player.slot.index).size()
+	if stewie_form() != old_form:
+		say("¡Stewie creció! Forma %s" % FORM_NAMES[stewie_form()], Color(0.85, 0.95, 0.85))
+	# Si Stewie es el compañero, su cuerpo también crece (con la misma proporción de vida).
+	if companion != null and is_instance_valid(companion) and companion.identity == Body.STEWIE:
+		var hp: HealthComponent = companion.health
+		var ratio: float = hp.current / hp.max_health if hp.max_health > 0.0 else 1.0
+		hp.max_health = _max_health_of(Body.STEWIE)
+		if not hp.is_dead:
+			hp.current = clampf(hp.max_health * ratio, 0.0, hp.max_health)
+		hp.changed.emit(hp.current, hp.max_health)
 
 
 func stewie_form() -> int:
@@ -136,10 +154,18 @@ func _handle_input() -> void:
 		player.end_action()
 		basic_recovery = false
 		if controlled == Body.MAESTRO:
-			_charging = true
-			_charge = 0.0
+			if senda(&"maestro", &"ability") == &"":
+				_charging = true
+				_charge = 0.0
+			else:
+				_ability_cd[Body.MAESTRO].use()
+				_maestro_senda_ability(player, player.aim_direction)
 		else:
-			_refuge()
+			if senda(&"stewie", &"ability") == &"":
+				_refuge()
+			else:
+				_ability_cd[Body.STEWIE].use()
+				_stewie_senda_ability(player)
 		_mirror(Slot.ABILITY)
 	elif input.is_held(PlayerInput.Action.ATTACK) and player.can_act():
 		_controlled_basic()
@@ -203,8 +229,17 @@ func _hit(source: Node3D, base: float) -> DamageInfo:
 	return info
 
 
-## Forma Ancestral: Stewie gigante pega más.
+var _blessing_until: int = 0
+var _fortress_until: int = 0
+
+
+## Forma Ancestral: Stewie gigante pega más. Bendición: +20% por 6 s.
 func _source_bonus(source: Node3D) -> float:
+	var bonus: float = 1.2 if Time.get_ticks_msec() < _blessing_until else 1.0
+	return bonus * _ancestral_bonus(source)
+
+
+func _ancestral_bonus(source: Node3D) -> float:
 	var stewie_is_source: bool = (source == player and controlled == Body.STEWIE) \
 			or (source == companion and companion.identity == Body.STEWIE)
 	if _relay_effect == &"ancestral" and stewie_is_source:
@@ -228,9 +263,15 @@ func _strike(source: Node3D, direction: Vector3, reach: float, angle: float, dam
 	Fx.slash(_world(), source.global_position, direction, reach, angle, player.slot.color, 0.1)
 	if Combat.deliver(info, targets) > 0 and source is Combatant:
 		(source as Combatant).freeze(info.hitstop)
+	if _is_maestro(source):
+		_apply_maestro_basic_senda(targets)
 
 
 func _maestro_staff(source: Node3D, direction: Vector3, index: int) -> void:
+	if index >= 3:
+		# Bastón Danzante: golpes giratorios alrededor.
+		_spin_hit(source, 2.3, kd.staff_damage[0] * senda_power(&"maestro", &"basic"))
+		return
 	var heavy: bool = index == 2
 	_strike(source, direction, kd.staff_range, kd.staff_angle_deg, kd.staff_damage[index],
 			4.0 if heavy else 1.5, kd.staff_wave_length if heavy else 0.0)
@@ -239,8 +280,23 @@ func _maestro_staff(source: Node3D, direction: Vector3, index: int) -> void:
 
 
 func _stewie_headbutt(source: Node3D, direction: Vector3) -> void:
-	_strike(source, direction, kd.headbutt_range, kd.headbutt_angle_deg, kd.headbutt_damage,
-			kd.headbutt_knockback)
+	var path: StringName = senda(&"stewie", &"basic")
+	var power: float = senda_power(&"stewie", &"basic")
+	match path:
+		&"caparazon":
+			# Caparazonazo: lento, pega más y empuja fuerte.
+			_strike(source, direction, kd.headbutt_range * 1.2, 120.0, kd.headbutt_damage * 1.4 * power, 7.0)
+		&"embestida":
+			# Mordiscos: rápidos; el tercero es crítico.
+			_bite_count += 1
+			var crit: bool = _bite_count % 3 == 0
+			_strike(source, direction, kd.headbutt_range, kd.headbutt_angle_deg,
+					kd.headbutt_damage * power * (player.crit_multiplier() if crit else 1.0), 1.0)
+		&"espiritu":
+			_fire_bubble(source, direction, power)
+		_:
+			_strike(source, direction, kd.headbutt_range, kd.headbutt_angle_deg, kd.headbutt_damage,
+					kd.headbutt_knockback)
 
 
 # --- Cuerpo controlado ---
@@ -251,11 +307,11 @@ func _controlled_basic() -> void:
 	basic_recovery = false
 	if controlled == Body.MAESTRO:
 		var index: int = _combo_index
-		_combo_index = (index + 1) % 3
-		player.start_action(kd.staff_step_durations[index] / attack_speed(), 0.5)
+		_combo_index = (index + 1) % staff_combo_length()
+		player.start_action(kd.staff_step_durations[mini(index, 2)] / attack_speed(), 0.5)
 		schedule(0.12, _controlled_staff_hit.bind(index))
 	else:
-		player.start_action(kd.headbutt_interval / attack_speed(), 0.6)
+		player.start_action(headbutt_interval() / attack_speed(), 0.6)
 		schedule(0.12, _controlled_headbutt_hit)
 	_mirror(Slot.BASIC)
 
@@ -322,8 +378,11 @@ func do_dodge() -> void:
 		var tween: Tween = player.create_tween()
 		tween.tween_property(player.visual, "position:y", 1.2, kd.pole_duration * 0.5)
 		tween.tween_property(player.visual, "position:y", 0.0, kd.pole_duration * 0.5)
+		schedule(kd.pole_duration, _pole_landing.bind(player))
 	else:
+		var start: Vector3 = player.global_position
 		player.start_dodge(direction, kd.roll_distance, kd.roll_duration)
+		schedule(kd.roll_duration, _roll_end.bind(player, start))
 	_mirror(Slot.DODGE, direction)
 
 
@@ -603,7 +662,7 @@ func _companion_basic(body: DuoCompanion, direction: Vector3 = Vector3.ZERO) -> 
 		for i: int in 3:
 			schedule(0.12 + i * kd.staff_step_durations[0], _companion_staff_hit.bind(body, facing, i))
 	else:
-		body.attack_timer = kd.headbutt_interval * kd.companion_attack_pace
+		body.attack_timer = headbutt_interval() * kd.companion_attack_pace
 		body.busy = 0.3
 		schedule(0.12, _companion_headbutt_hit.bind(body, facing))
 
@@ -881,3 +940,239 @@ func hud_abilities() -> Array[Dictionary]:
 	return [cooldown_slot("Bastonazo" if is_maestro else "Refugio", _ability_cd[controlled]),
 			cooldown_slot("Garrocha" if is_maestro else "Rodar", dodge_cooldown),
 			cooldown_slot("Cambio", switch_cooldown)]
+
+
+# --- Sendas ---
+
+## La Senda que tiene un hueco ("caparazon", "guia"...), o &"" si está en Base.
+func senda(body: StringName, slot_name: StringName) -> StringName:
+	for upgrade_id: Variant in RunState.get_upgrades(player.slot.index):
+		var text: String = String(upgrade_id)
+		var prefix: String = "senda_%s_%s_" % [body, slot_name]
+		if text.begins_with(prefix):
+			return StringName(text.substr(prefix.length()))
+	return &""
+
+
+func senda_level(body: StringName, slot_name: StringName) -> int:
+	var path: StringName = senda(body, slot_name)
+	if path == &"":
+		return 0
+	return RunState.upgrade_count(player.slot.index, StringName("senda_%s_%s_%s" % [body, slot_name, path]))
+
+
+## Nivel 2 = 50% más fuerte.
+func senda_power(body: StringName, slot_name: StringName) -> float:
+	return 1.5 if senda_level(body, slot_name) >= 2 else 1.0
+
+
+func headbutt_interval() -> float:
+	match senda(&"stewie", &"basic"):
+		&"caparazon":
+			return kd.headbutt_interval * 1.4
+		&"embestida":
+			return kd.headbutt_interval * 0.5
+	return kd.headbutt_interval
+
+
+func staff_combo_length() -> int:
+	return 5 if senda(&"maestro", &"basic") == &"combate" else 3
+
+
+func _is_maestro(source: Node3D) -> bool:
+	return (source == player and controlled == Body.MAESTRO) \
+			or (source == companion and companion != null and companion.identity == Body.MAESTRO)
+
+
+## Golpe Guía marca; Bastón Nublado ralentiza.
+func _apply_maestro_basic_senda(targets: Array[Hurtbox]) -> void:
+	var path: StringName = senda(&"maestro", &"basic")
+	for hurtbox: Hurtbox in targets:
+		var enemy := hurtbox.receiver as Combatant
+		if enemy == null:
+			continue
+		if path == &"guia":
+			enemy.status.apply(StatusEffects.MARKED, 4.0 * senda_power(&"maestro", &"basic"))
+		elif path == &"niebla":
+			enemy.status.apply(StatusEffects.SLOW, 1.5 * senda_power(&"maestro", &"basic"))
+
+
+func _spin_hit(source: Node3D, spin_radius: float, damage: float) -> void:
+	var info: DamageInfo = _hit(source, damage)
+	info.knockback = 3.0
+	Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
+			source.global_position, spin_radius))
+	Fx.ring_burst(_world(), source.global_position, spin_radius, player.slot.color, 0.2)
+
+
+## Burbuja: escupe agua; daña enemigos y cura al aliado que atraviesa.
+func _fire_bubble(source: Node3D, direction: Vector3, power: float) -> void:
+	if _bubbles == null:
+		_bubbles = ProjectilePool.new()
+		_bubbles.top_level = true
+		add_child(_bubbles)
+		var mesh := SphereMesh.new()
+		mesh.radius = 0.22
+		mesh.height = 0.44
+		_bubbles.setup(mesh, Fx.flat_material(DuoZone.HEAL_COLOR, 1.5), 8)
+	var info: DamageInfo = _hit(source, kd.headbutt_damage * power)
+	info.is_melee = false
+	var from: Vector3 = source.global_position + Vector3.UP * 0.6
+	_bubbles.fire(from, direction, 16.0, 7.0, 0.3, info, DamageInfo.Team.ENEMIES)
+	# Cura a los aliados que estén en el camino.
+	for node: Node in player.get_tree().get_nodes_in_group(&"enemy_targets"):
+		var ally := node as Combatant
+		if ally == null or ally == source or not ally.is_targetable():
+			continue
+		var closest: Vector3 = Geometry3D.get_closest_point_to_segment(ally.global_position, from,
+				from + direction * 7.0)
+		if Vector2(closest.x - ally.global_position.x, closest.z - ally.global_position.z).length() < 1.0:
+			ally.health.heal(5.0 * power)
+
+
+func _stewie_senda_ability(source: Node3D) -> void:
+	var power: float = senda_power(&"stewie", &"ability")
+	match senda(&"stewie", &"ability"):
+		&"caparazon":
+			# Fortaleza: Refugio que provoca a los cercanos y devuelve 30% del daño.
+			_refuge()
+			_fortress_until = Time.get_ticks_msec() + int(kd.refuge_duration * 1000.0)
+			say("¡Fortaleza!", Color(0.85, 0.95, 0.85))
+		&"embestida":
+			# Caparazón Bala: rebota entre hasta 5 enemigos.
+			var hit: Array[Node] = []
+			var from: Vector3 = source.global_position
+			for i: int in 5:
+				var next: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES, from, 7.0)
+				if next == null or hit.has(next.receiver):
+					var candidates: Array[Hurtbox] = CombatQuery.in_circle(player.get_tree(),
+							DamageInfo.Team.ENEMIES, from, 7.0).filter(func(h: Hurtbox) -> bool:
+								return not hit.has(h.receiver))
+					if candidates.is_empty():
+						break
+					next = candidates[0]
+				hit.append(next.receiver)
+				schedule(0.08 * i, _shell_hit.bind(source, next, 30.0 * power))
+				from = next.global_position
+			say("¡Caparazón Bala!", Color(0.85, 0.95, 0.85))
+		&"espiritu":
+			var spring := DuoZone.new()
+			_world().add_child(spring)
+			spring.global_position = Vector3(source.global_position.x, 0.0, source.global_position.z)
+			spring.setup(DuoZone.Kind.HEAL, 3.0, 5.0, 6.0 * power)
+			say("¡Manantial!", DuoZone.HEAL_COLOR)
+
+
+func _shell_hit(source: Node3D, target: Hurtbox, damage: float) -> void:
+	if not is_instance_valid(target) or not target.is_targetable():
+		return
+	var info: DamageInfo = _hit(source if is_instance_valid(source) else player, damage)
+	info.knockback = 5.0
+	target.take_hit(info)
+	Fx.ring_burst(_world(), target.global_position, 1.0, player.slot.color, 0.15)
+
+
+func _maestro_senda_ability(source: Node3D, direction: Vector3) -> void:
+	var power: float = senda_power(&"maestro", &"ability")
+	match senda(&"maestro", &"ability"):
+		&"guia":
+			# Bendición: escudo y +20% de daño por 6 s a Stewie y al aliado más cercano.
+			var blessed: Array[Combatant] = []
+			if companion != null and companion.is_targetable():
+				blessed.append(companion)
+			var ally: Combatant = _nearest_ally(source.global_position, 8.0)
+			if ally != null:
+				blessed.append(ally)
+			for target: Combatant in blessed:
+				target.health.add_shield(30.0 * power)
+				Fx.ring_burst(_world(), target.global_position, 1.4, Color(1.0, 0.95, 0.8), 0.3)
+			_blessing_until = Time.get_ticks_msec() + 6000
+			say("¡Bendición!", Color(1.0, 0.95, 0.8))
+		&"combate":
+			# Torbellino: gira el bastón 2 s pegándole a todo alrededor.
+			if source == player:
+				player.start_action(2.0, 0.6)
+			for i: int in 8:
+				schedule(0.25 * i, _spin_hit.bind(source, 2.5, 12.0 * power))
+			say("¡Torbellino!", Color.WHITE)
+		&"niebla":
+			var fog := DuoZone.new()
+			_world().add_child(fog)
+			var at: Vector3 = source.global_position + direction * 4.0
+			fog.global_position = Vector3(at.x, 0.0, at.z)
+			fog.setup(DuoZone.Kind.FOG, 4.0 * (1.0 + (power - 1.0) * 0.5), 5.0)
+			say("¡Niebla de los Valles!", DuoZone.FOG_COLOR)
+
+
+## Al caer de la Garrocha: según la Senda, golpe en área, escudo o nube.
+func _pole_landing(source: Node3D) -> void:
+	var power: float = senda_power(&"maestro", &"dodge")
+	match senda(&"maestro", &"dodge"):
+		&"combate":
+			_spin_hit(source, 2.5, 30.0 * power)
+		&"guia":
+			for target: Combatant in [companion as Combatant, _nearest_ally(source.global_position, 3.0)]:
+				if target != null and is_instance_valid(target) and target.is_targetable() \
+						and target.global_position.distance_to(source.global_position) <= 3.0:
+					target.health.add_shield(25.0 * power)
+		&"niebla":
+			var cloud := DuoZone.new()
+			_world().add_child(cloud)
+			cloud.global_position = Vector3(source.global_position.x, 0.0, source.global_position.z)
+			cloud.setup(DuoZone.Kind.CLOUD, 3.0, 4.0 * power)
+
+
+## Al terminar de rodar: según la Senda, empuja, corta o deja una estela que cura.
+func _roll_end(source: Node3D, start: Vector3) -> void:
+	var power: float = senda_power(&"stewie", &"dodge")
+	var path: StringName = senda(&"stewie", &"dodge")
+	var end: Vector3 = source.global_position
+	if path == &"caparazon" or path == &"embestida":
+		var info: DamageInfo = _hit(source, 20.0 * power if path == &"embestida" else 0.0)
+		info.knockback = 8.0 if path == &"caparazon" else 3.0
+		Combat.deliver(info, CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
+				start, end, 1.6))
+	elif path == &"espiritu":
+		var trail := HasteTrail.new()
+		_world().add_child(trail)
+		trail.setup(null, start, end, 1.8, 2.5, 1.5, DuoZone.HEAL_COLOR)
+		var spring := DuoZone.new()
+		_world().add_child(spring)
+		spring.global_position = (start + end) * 0.5
+		spring.setup(DuoZone.Kind.HEAL, 1.6, 2.5, 3.0 * power)
+
+
+func _nearest_ally(from: Vector3, max_distance: float) -> Combatant:
+	var best: Combatant = null
+	var best_distance: float = max_distance
+	for node: Node in player.get_tree().get_nodes_in_group(&"players"):
+		var ally := node as Combatant
+		if ally == null or ally == player or not ally.is_targetable():
+			continue
+		var d: float = ally.global_position.distance_to(from)
+		if d < best_distance:
+			best_distance = d
+			best = ally
+	return best
+
+
+## Fortaleza: mientras dura el Refugio, atrae a los enemigos.
+func target_priority() -> float:
+	return 0.25 if _fortress_active() else 1.0
+
+
+## Fortaleza: devuelve 30% (45% en nivel 2) de los golpes que bloquea el Refugio.
+func on_blocked_by_invulnerability(info: DamageInfo) -> void:
+	if not _fortress_active() or info.attacker_team != DamageInfo.Team.ENEMIES:
+		return
+	var attacker := info.attacker as Combatant if is_instance_valid(info.attacker) else null
+	if attacker == null or not attacker.is_targetable():
+		return
+	var reflected: DamageInfo = make_hit(info.amount * 0.3 * senda_power(&"stewie", &"ability"))
+	reflected.is_crit = false
+	reflected.tags.append(&"reflect")
+	attacker.receive_hit(reflected)
+
+
+func _fortress_active() -> bool:
+	return Time.get_ticks_msec() < _fortress_until

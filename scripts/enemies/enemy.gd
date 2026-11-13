@@ -199,6 +199,8 @@ func speed_multiplier() -> float:
 		multiplier *= Balance.elite.fast_speed_multiplier
 	if status.has(StatusEffects.SHADOW_HASTE):
 		multiplier *= 1.0 + Balance.get_enemy(&"chaman_sombra").aura_speed_bonus
+	if status.has(StatusEffects.SLOW):
+		multiplier *= 0.8
 	return multiplier
 
 
@@ -320,8 +322,11 @@ func is_targetable() -> bool:
 	return super.is_targetable() and not is_controlled and not awake
 
 
-## Blindado: recibe menos de frente.
+## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.
 func _modify_incoming(info: DamageInfo) -> void:
+	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
+			and not info.has_tag(&"guide"):
+		info.amount *= 1.15
 	if not affixes.has(&"armored") or info.attacker_team != DamageInfo.Team.PLAYERS:
 		return
 	var from := Vector3(info.origin.x - global_position.x, 0.0, info.origin.z - global_position.z)
