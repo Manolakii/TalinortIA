@@ -152,3 +152,35 @@ func test_cage_opens_holding_interact() -> void:
 	for i: int in int(1.6 / DT):
 		cage._physics_process(DT)
 	assert_true(cage.is_free)
+
+
+func test_treasure_is_a_bonus_room_too() -> void:
+	RunState.advance_to(RoomKind.Type.COMBAT, 3, RoomKind.Reward.GOLD)
+	assert_eq(RunState.room_reward, RoomKind.Reward.GOLD)
+	RunState.advance_to(RoomKind.Type.TREASURE, 3)
+	assert_eq(RunState.room_index, 1, "El tesoro escondido no cuenta como sala")
+
+
+func test_doors_offer_two_different_rewards() -> void:
+	var weights: Array[int] = [0, 50, 30, 20]
+	for i: int in 30:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = i
+		var picked: Array[int] = preload("res://scripts/run/stage_run.gd").pick_distinct(weights, 2, rng)
+		assert_eq(picked.size(), 2)
+		assert_ne(picked[0], picked[1])
+		assert_false(picked.has(RoomKind.Reward.NONE), "Nunca una puerta sin premio")
+
+
+func test_cracked_rock_breaks_after_some_hits() -> void:
+	var rock := CrackedRock.new()
+	rock.hits_needed = 3
+	add_child_autofree(rock)
+	watch_signals(rock)
+	for i: int in 2:
+		rock.receive_hit(_player.kit.make_hit(10.0))
+	assert_false(rock.is_broken())
+	rock.receive_hit(_player.kit.make_hit(10.0))
+	assert_true(rock.is_broken())
+	assert_signal_emitted(rock, "broken")
+	assert_null(CombatQuery.nearest(get_tree(), DamageInfo.Team.ENEMIES, Vector3.ZERO), "El apuntado no la busca")

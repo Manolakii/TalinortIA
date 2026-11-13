@@ -10,10 +10,20 @@ extends Resource
 ## Plantillas de sala: escenas con rocas y lugares para vasijas, cofres y eventos.
 @export var templates: Array[PackedScene] = []
 
-@export_group("Puertas")
-## Peso de cada tipo de sala al elegir las dos puertas, en el orden de RoomKind.Type
-## (Combate, Combate + mejora, Élite, Tesoro, Mimics, Colonia de presos). La Cabaña no sale así.
-@export var door_weights: Array[int] = [40, 20, 15, 10, 8, 7]
+@export_group("Puertas y premios")
+## Qué hay detrás de una puerta (sorpresa), en el orden de RoomKind.Type: Combate, Élite,
+## Tesoro (0: es escondido), Mimics, Colonia de presos. La Cabaña no sale así.
+@export var room_weights: Array[int] = [60, 20, 0, 10, 10]
+## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Curación.
+@export var reward_weights: Array[int] = [0, 50, 30, 20]
+## Premio de Oro: para cada jugador.
+@export var gold_reward: Vector2i = Vector2i(25, 35)
+## Premio de Curación: parte de la vida máxima que cura a cada uno (y levanta a los caídos).
+@export var heal_reward: float = 0.4
+## Chance de que una sala tenga una roca agrietada con un pasaje al Tesoro escondido.
+@export var hidden_treasure_chance: float = 0.35
+## Golpes para romper la roca agrietada.
+@export var cracked_rock_hits: int = 3
 
 @export_group("Oleadas")
 @export var combat_waves: Array[RoomWaves] = []

@@ -15,6 +15,8 @@ var scenario: int = 0
 var room_index: int = 0
 ## Tipo de la sala actual (RoomKind.Type).
 var room_type: int = 0
+## Premio de la sala actual (RoomKind.Reward): el que mostraba la puerta.
+var room_reward: int = 1
 ## Salas jugadas en total (para que cada sala tenga su propia semilla).
 var rooms_played: int = 0
 ## Cabaña del General Pipo: en qué sala aparece el acertijo (-1 = sin elegir) y si ya se visitó.
@@ -42,6 +44,7 @@ func start_run(new_seed: int = 0) -> void:
 	scenario = 0
 	room_index = 0
 	room_type = 0
+	room_reward = 1
 	rooms_played = 0
 	riddle_room = -1
 	pipo_visited = false
@@ -127,15 +130,16 @@ func stage_room_number(rooms_per_scenario: int) -> int:
 
 
 func is_last_room_of_scenario(rooms_per_scenario: int) -> bool:
-	return room_type != RoomKind.Type.PIPO_CABIN and room_index >= rooms_per_scenario - 1
+	return not RoomKind.is_bonus(room_type) and room_index >= rooms_per_scenario - 1
 
 
-## Pasa a la sala elegida. La Cabaña de Pipo es una sala extra: no cuenta.
-func advance_to(next_type: int, rooms_per_scenario: int) -> void:
+## Pasa a la sala elegida. El Tesoro escondido y la Cabaña de Pipo son salas extra: no cuentan.
+func advance_to(next_type: int, rooms_per_scenario: int, reward: int = RoomKind.Reward.NONE) -> void:
 	rooms_played += 1
+	room_reward = reward
 	if next_type == RoomKind.Type.PIPO_CABIN:
 		pipo_visited = true
-	else:
+	if not RoomKind.is_bonus(next_type):
 		room_index += 1
 		if room_index >= rooms_per_scenario:
 			room_index = 0

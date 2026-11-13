@@ -1,17 +1,25 @@
 class_name RoomKind
 extends RefCounted
-## Tipos de sala del recorrido (GDD, Tipos de sala) y sus nombres para puertas y HUD.
+## Tipos de sala (GDD, Tipos de sala) y premios de las puertas.
+## Las puertas muestran el PREMIO (mejora, oro o curación) y lo que hay adentro es sorpresa
+## (pedido del grupo). Tesoro y Cabaña de Pipo son salas extra escondidas.
 
-enum Type { COMBAT, COMBAT_UPGRADE, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN }
+enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN }
+enum Reward { NONE, UPGRADE, GOLD, HEAL }
 
 const NAMES: Dictionary = {
 	Type.COMBAT: "Combate",
-	Type.COMBAT_UPGRADE: "Combate + mejora",
 	Type.ELITE: "Élite",
-	Type.TREASURE: "Tesoro",
+	Type.TREASURE: "Tesoro escondido",
 	Type.MIMICS: "Evento: cofres sospechosos",
 	Type.PRISONERS: "Evento: colonia de presos",
 	Type.PIPO_CABIN: "Cabaña del General Pipo",
+}
+const REWARD_NAMES: Dictionary = {
+	Reward.NONE: "",
+	Reward.UPGRADE: "Mejora",
+	Reward.GOLD: "Oro",
+	Reward.HEAL: "Curación",
 }
 
 
@@ -19,10 +27,19 @@ static func display_name(type: int) -> String:
 	return NAMES.get(type, "Sala")
 
 
+static func reward_name(reward: int) -> String:
+	return REWARD_NAMES.get(reward, "")
+
+
 static func has_combat(type: int) -> bool:
-	return type in [Type.COMBAT, Type.COMBAT_UPGRADE, Type.ELITE, Type.PRISONERS]
+	return type in [Type.COMBAT, Type.ELITE, Type.PRISONERS]
 
 
-## Mejora de personaje asegurada al terminar (GDD: algunas de combate y siempre las de élite).
+## Salas extra: no cuentan como sala del escenario.
+static func is_bonus(type: int) -> bool:
+	return type in [Type.TREASURE, Type.PIPO_CABIN]
+
+
+## Mejora asegurada además del premio de la puerta (GDD: siempre en las de élite).
 static func gives_upgrade(type: int) -> bool:
-	return type in [Type.COMBAT_UPGRADE, Type.ELITE]
+	return type == Type.ELITE

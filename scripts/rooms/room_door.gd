@@ -1,9 +1,10 @@
 class_name RoomDoor
 extends Node3D
-## Puerta al final de la sala (GDD: dos puertas con el ícono de lo que hay detrás, como en Hades).
-## Sale del piso al terminar la sala. Cualquier jugador se acerca y aprieta Interactuar (E / X).
+## Puerta al final de la sala. Las normales muestran el PREMIO (mejora, oro o curación) y lo
+## que hay adentro es sorpresa. Las escondidas (Tesoro, Cabaña de Pipo) muestran la sala.
+## Sale del piso. Cualquier jugador se acerca y aprieta Interactuar (E / X).
 
-signal chosen(room_type: int)
+signal chosen(door: RoomDoor)
 
 const STONE: Material = preload("res://assets/materials/rock_material.tres")
 const STEEL := Color(0.82, 0.84, 0.88)
@@ -11,22 +12,42 @@ const GOLD := Color(1.0, 0.78, 0.2)
 const WOOD := Color(0.42, 0.26, 0.14)
 const USE_RADIUS := 2.4
 
-var room_type: int = RoomKind.Type.COMBAT
+## Sala fija (puertas escondidas) o -1 si es sorpresa.
+var room_type: int = -1
+var reward: int = RoomKind.Reward.NONE
 var _icon: Node3D
 var _prompt: Label3D
 var _used: bool = false
 var _ready_to_use: bool = false
 
 
+## Puerta de premio: lo de adentro es sorpresa.
+func setup_reward(which: int, label_extra: String = "") -> void:
+	reward = which
+	_build(RoomKind.reward_name(which) + label_extra)
+	match which:
+		RoomKind.Reward.UPGRADE:
+			_rhombus(Vector3.ZERO)
+		RoomKind.Reward.GOLD:
+			_coins()
+		RoomKind.Reward.HEAL:
+			_heal_cross()
+
+
+## Puerta a una sala fija (las escondidas).
 func setup(type: int, label_extra: String = "") -> void:
 	room_type = type
+	_build(RoomKind.display_name(type) + label_extra)
+	_build_icon(type)
+
+
+func _build(text: String) -> void:
 	_build_frame()
 	_icon = Node3D.new()
 	_icon.position = Vector3(0, 4.2, 0.4)
 	_icon.scale = Vector3.ONE * 1.8
 	add_child(_icon)
-	_build_icon(type)
-	var title := _label(RoomKind.display_name(type) + label_extra, 64, Color.WHITE)
+	var title := _label(text, 64, Color.WHITE)
 	title.pixel_size = 0.01
 	title.outline_size = 18
 	title.position = Vector3(0, 0.4, 1.5)
@@ -53,7 +74,7 @@ func _physics_process(delta: float) -> void:
 	if near != null and near.slot.input.just_pressed(PlayerInput.Action.INTERACT):
 		_used = true
 		_prompt.visible = false
-		chosen.emit(room_type)
+		chosen.emit(self)
 
 
 func _nearest_player() -> PlayerCharacter:
@@ -99,9 +120,6 @@ func _build_icon(type: int) -> void:
 	match type:
 		RoomKind.Type.COMBAT:
 			_swords(Vector3.ZERO)
-		RoomKind.Type.COMBAT_UPGRADE:
-			_swords(Vector3(-0.35, 0, 0))
-			_rhombus(Vector3(0.55, 0.1, 0))
 		RoomKind.Type.ELITE:
 			_crown()
 		RoomKind.Type.TREASURE:
@@ -125,6 +143,26 @@ func _swords(offset: Vector3) -> void:
 		var guard := _box(Vector3(0.36, 0.08, 0.08), offset + Vector3(sin(-angle) * 0.35, -cos(angle) * 0.35, 0.02), _icon)
 		guard.rotation.z = angle
 		guard.material_override = Fx.flat_material(WOOD)
+
+
+func _coins() -> void:
+	for i: int in 3:
+		var coin := MeshInstance3D.new()
+		var disc := CylinderMesh.new()
+		disc.top_radius = 0.3
+		disc.bottom_radius = 0.3
+		disc.height = 0.08
+		coin.mesh = disc
+		coin.position = Vector3(0.1 * (i - 1), i * 0.1 - 0.1, 0)
+		coin.material_override = Fx.flat_material(GOLD, 1.6)
+		_icon.add_child(coin)
+
+
+func _heal_cross() -> void:
+	var aqua := Color(0.35, 0.95, 0.85)
+	for size: Vector3 in [Vector3(0.25, 0.8, 0.12), Vector3(0.8, 0.25, 0.12)]:
+		var bar := _box(size, Vector3.ZERO, _icon)
+		bar.material_override = Fx.flat_material(aqua, 1.6)
 
 
 func _rhombus(offset: Vector3) -> void:

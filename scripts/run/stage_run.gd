@@ -1,8 +1,9 @@
 extends "res://scripts/rooms/test_room.gd"
 ## Recorrido de un stage (GDD, Estructura de la partida): escenarios X-1 a X-3 con 3 salas
-## cada uno. Cada sala sale de una plantilla al azar (con la semilla de la partida) y se
-## puebla según su tipo. Al terminarla: premios (mejora 1 de 3, y al cerrar el escenario oro
-## y objeto 1 de 3) y dos puertas con el ícono de lo que hay detrás.
+## cada uno. Cada sala sale de una plantilla al azar (con la semilla de la partida).
+## Al terminarla se cobra el premio que mostraba la puerta (mejora, oro o curación); al cerrar
+## el escenario, oro y objeto 1 de 3. Después salen dos puertas con su premio, y lo que hay
+## adentro es sorpresa (combate, élite o evento). El Tesoro y la Cabaña de Pipo son escondidos.
 ##
 ## Los jugadores, la cámara y el HUD quedan; lo de la sala vive en `_room_root` y se cambia
 ## entero al cruzar una puerta.
@@ -11,7 +12,7 @@ const DOOR_Z := -12.5
 const DOOR_X := 7.0
 ## Qué hay que hacer en cada tipo de sala (cartel en pantalla al entrar).
 const HINTS: Dictionary = {
-	RoomKind.Type.TREASURE: "Un cofre y vasijas. Acercate al cofre y apretá E / X.",
+	RoomKind.Type.TREASURE: "¡Encontraron un tesoro escondido! Abrí el cofre con E / X.",
 	RoomKind.Type.MIMICS: "Uno de estos cofres muerde. Se puede abrir uno solo: mirá bien antes.",
 	RoomKind.Type.PRISONERS: "¡Liberá a los presos antes de que se los lleven! Mantené E / X al lado de cada jaula.",
 	RoomKind.Type.PIPO_CABIN: "Shhh... alguien vive acá. Acercate a la cabaña.",
@@ -34,6 +35,8 @@ var _failed: bool = false
 var _transitioning: bool = false
 var _doors_shown: bool = false
 var _riddle_solved: bool = false
+var _secret_found: bool = false
+var _cracked_rock: CrackedRock
 
 
 func _ready() -> void:
@@ -74,10 +77,13 @@ func _physics_process(delta: float) -> void:
 ## Título para el HUD: "1-2 · Ruinas de Ciudad Derrumbe · Sala 2 de 3 · Élite".
 func room_title() -> String:
 	var scenario_name: String = config.scenario_names[mini(RunState.scenario, config.scenario_names.size() - 1)]
-	if room_type == RoomKind.Type.PIPO_CABIN:
+	if RoomKind.is_bonus(room_type):
 		return "%s · %s" % [scenario_name, RoomKind.display_name(room_type)]
-	return "%s · Sala %d de %d · %s" % [scenario_name, RunState.room_index + 1, config.rooms_per_scenario,
-			RoomKind.display_name(room_type)]
+	var text: String = "%s · Sala %d de %d · %s" % [scenario_name, RunState.room_index + 1,
+			config.rooms_per_scenario, RoomKind.display_name(room_type)]
+	if RunState.room_reward != RoomKind.Reward.NONE:
+		text += " · Premio: %s" % RoomKind.reward_name(RunState.room_reward)
+	return text
 
 
 # --- Armar la sala ---
@@ -87,6 +93,8 @@ func build_room(type: int) -> void:
 	_done = false
 	_doors_shown = false
 	_riddle_solved = false
+	_secret_found = false
+	_cracked_rock = null
 	_event = null
 	_chest = null
 	director = null
@@ -100,9 +108,16 @@ func build_room(type: int) -> void:
 	template = config.templates[rng.randi_range(0, config.templates.size() - 1)].instantiate()
 	_room_root.add_child(template)
 	_place_players()
-	_spawn_vases(rng, type == RoomKind.Type.TREASURE)
+	var spots: Array[Vector3] = template.vase_spots()
+	if _can_hide_treasure(type) and rng.randf() < config.hidden_treasure_chance:
+		_cracked_rock = CrackedRock.new()
+		_cracked_rock.hits_needed = config.cracked_rock_hits
+		_cracked_rock.position = spots.pop_at(rng.randi_range(0, spots.size() - 1))
+		_room_root.add_child(_cracked_rock)
+		_cracked_rock.broken.connect(_on_secret_found)
+	_spawn_vases(rng, spots, type == RoomKind.Type.TREASURE)
 	match type:
-		RoomKind.Type.COMBAT, RoomKind.Type.COMBAT_UPGRADE:
+		RoomKind.Type.COMBAT:
 			_start_director(config.combat_waves[rng.randi_range(0, config.combat_waves.size() - 1)])
 		RoomKind.Type.ELITE:
 			_start_director(config.elite_waves[rng.randi_range(0, config.elite_waves.size() - 1)])
@@ -161,8 +176,7 @@ func _place_players() -> void:
 	_camera.snap_to_targets()
 
 
-func _spawn_vases(rng: RandomNumberGenerator, all_spots: bool) -> void:
-	var spots: Array[Vector3] = template.vase_spots()
+func _spawn_vases(rng: RandomNumberGenerator, spots: Array[Vector3], all_spots: bool) -> void:
 	var count: int = spots.size() if all_spots else rng.randi_range(config.vases_min, config.vases_max)
 	for i: int in mini(count, spots.size()):
 		var vase := Vase.new()
@@ -199,8 +213,19 @@ func _room_done(event_upgrade: bool = false, bonus_item: bool = false) -> void:
 	_done = true
 	Events.room_cleared.emit()
 	await get_tree().create_timer(0.8).timeout
-	if RoomKind.gives_upgrade(room_type) or event_upgrade:
-		await _pick(RewardPicker.Kind.UPGRADE)
+	# El premio de la puerta.
+	match RunState.room_reward if not RoomKind.is_bonus(room_type) else RoomKind.Reward.NONE:
+		RoomKind.Reward.UPGRADE:
+			await _pick(RewardPicker.Kind.UPGRADE)
+		RoomKind.Reward.GOLD:
+			await _give_gold_reward()
+		RoomKind.Reward.HEAL:
+			_give_heal_reward()
+	# Extra por el riesgo: élite (GDD: mejora asegurada) y cofre de evento.
+	if RoomKind.gives_upgrade(room_type):
+		await _pick(RewardPicker.Kind.UPGRADE, "¡Élite derrotado! Una mejora más")
+	if event_upgrade:
+		await _pick(RewardPicker.Kind.UPGRADE, "¡Cofre de evento! Elegí una mejora")
 	if bonus_item:
 		await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
 	if _riddle_here():
@@ -213,8 +238,52 @@ func _room_done(event_upgrade: bool = false, bonus_item: bool = false) -> void:
 	_show_doors()
 
 
+func _give_gold_reward() -> void:
+	var center: Vector3 = _players_center()
+	Events.floating_text_requested.emit(center + Vector3.UP * 4.0, "¡Bolsa de oro!", Color(1.0, 0.82, 0.3))
+	Loot.drop_for_all(_room_root, center + Vector3(0, 0, -2.0), [config.gold_reward])
+	await get_tree().create_timer(0.6).timeout
+	Events.room_cleared.emit()  # que vuelen solas
+	await get_tree().create_timer(0.8).timeout
+
+
+## Cura a todos una parte de la vida máxima y levanta a los caídos.
+func _give_heal_reward() -> void:
+	for player: PlayerCharacter in players:
+		if not is_instance_valid(player) or player.is_out():
+			continue
+		if player.is_downed():
+			player.complete_revive()
+		player.health.heal(player.health.max_health * config.heal_reward)
+		Fx.ring_burst(self, player.global_position, 1.6, HealMushroom.CAP_COLOR, 0.4)
+		Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.4, "¡A curarse!",
+				HealMushroom.CAP_COLOR)
+
+
+## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
+func _can_hide_treasure(type: int) -> bool:
+	if RoomKind.is_bonus(type):
+		return false
+	var last_of_stage: bool = RunState.scenario >= config.scenario_names.size() - 1 \
+			and RunState.room_index >= config.rooms_per_scenario - 1
+	return not last_of_stage
+
+
+func _on_secret_found() -> void:
+	_secret_found = true
+	if _doors_shown:
+		_add_room_door(RoomKind.Type.TREASURE, _secret_door_spot())
+	else:
+		show_banner("¡Un pasaje escondido! Se abre cuando terminen la sala.", 4.0)
+
+
+func _secret_door_spot() -> Vector3:
+	var at: Vector3 = _cracked_rock.global_position if is_instance_valid(_cracked_rock) else Vector3(0, 0, -6)
+	return Vector3(at.x, 0, at.z)
+
+
 func _riddle_here() -> bool:
-	return not RunState.pipo_visited and room_type != RoomKind.Type.PIPO_CABIN \
+	return not RunState.pipo_visited and not RoomKind.is_bonus(room_type) \
 			and RunState.stage_room_number(config.rooms_per_scenario) == RunState.riddle_room
 
 
@@ -260,52 +329,82 @@ func _on_riddle_solved() -> void:
 	_riddle_solved = true
 	show_banner("Se abrió un sendero escondido... ¿una tercera puerta?", -1.0)
 	if _doors_shown:
-		_add_door(RoomKind.Type.PIPO_CABIN, Vector3(0, 0, DOOR_Z))
+		_add_room_door(RoomKind.Type.PIPO_CABIN, Vector3(0, 0, DOOR_Z))
 
 
 func _show_doors() -> void:
 	_doors_shown = true
-	var types: Array[int] = roll_door_types(RunState.room_rng(&"doors"))
-	var next_scenario: bool = RunState.is_last_room_of_scenario(config.rooms_per_scenario)
+	var rewards: Array[int] = pick_distinct(config.reward_weights, 2, RunState.room_rng(&"doors"))
 	var extra: String = ""
-	if next_scenario:
+	if RunState.room_index >= config.rooms_per_scenario - 1:
 		extra = "\n" + config.scenario_names[RunState.scenario + 1].get_slice(" · ", 0)
-	_add_door(types[0], Vector3(-DOOR_X, 0, DOOR_Z), extra)
-	_add_door(types[1], Vector3(DOOR_X, 0, DOOR_Z), extra)
+	_add_reward_door(rewards[0], Vector3(-DOOR_X, 0, DOOR_Z), extra)
+	_add_reward_door(rewards[1], Vector3(DOOR_X, 0, DOOR_Z), extra)
 	if _riddle_solved:
-		_add_door(RoomKind.Type.PIPO_CABIN, Vector3(0, 0, DOOR_Z))
+		_add_room_door(RoomKind.Type.PIPO_CABIN, Vector3(0, 0, DOOR_Z))
+	if _secret_found:
+		_add_room_door(RoomKind.Type.TREASURE, _secret_door_spot())
 	show_banner("¡Se abrieron las puertas! Vayan para arriba y elijan una con E / X.", -1.0)
 
 
-## Dos tipos de sala distintos, según los pesos del stage.
-func roll_door_types(rng: RandomNumberGenerator) -> Array[int]:
+## `count` índices distintos según los pesos (los de peso 0 no salen).
+static func pick_distinct(weights: Array[int], count: int, rng: RandomNumberGenerator) -> Array[int]:
 	var result: Array[int] = []
-	while result.size() < 2:
+	while result.size() < count:
 		var total: int = 0
-		for i: int in config.door_weights.size():
+		for i: int in weights.size():
 			if not result.has(i):
-				total += config.door_weights[i]
-		var roll: int = rng.randi_range(1, maxi(total, 1))
-		for i: int in config.door_weights.size():
+				total += weights[i]
+		if total <= 0:
+			break
+		var roll: int = rng.randi_range(1, total)
+		for i: int in weights.size():
 			if result.has(i):
 				continue
-			roll -= config.door_weights[i]
+			roll -= weights[i]
 			if roll <= 0:
 				result.append(i)
 				break
 	return result
 
 
-func _add_door(type: int, at: Vector3, extra: String = "") -> void:
+## Lo que hay detrás de una puerta de premio: sorpresa. No repite el mismo evento seguido,
+## y la primera sala de cada escenario nunca es élite.
+func roll_room_type(rng: RandomNumberGenerator) -> int:
+	var weights: Array[int] = config.room_weights.duplicate()
+	if room_type in [RoomKind.Type.MIMICS, RoomKind.Type.PRISONERS]:
+		weights[room_type] = 0
+	if RunState.room_index >= config.rooms_per_scenario - 1 and not RoomKind.is_bonus(room_type):
+		weights[RoomKind.Type.ELITE] = 0
+	return pick_distinct(weights, 1, rng)[0]
+
+
+func _add_reward_door(reward: int, at: Vector3, extra: String = "") -> void:
 	var door := RoomDoor.new()
 	door.position = at
 	_room_root.add_child(door)
-	door.setup(type, extra)
-	door.chosen.connect(go_to)
+	door.setup_reward(reward, extra)
+	door.chosen.connect(go_through)
+
+
+func _add_room_door(type: int, at: Vector3) -> void:
+	var door := RoomDoor.new()
+	door.position = at
+	_room_root.add_child(door)
+	door.setup(type)
+	door.chosen.connect(go_through)
+
+
+## Cruza la puerta: si es de premio, lo de adentro sale al azar.
+func go_through(door: RoomDoor) -> void:
+	if door.room_type >= 0:
+		go_to(door.room_type)
+	else:
+		go_to(roll_room_type(RunState.room_rng(&"next_room")), door.reward)
 
 
 ## Cruza a la sala elegida, con un fundido.
-func go_to(type: int) -> void:
+func go_to(type: int, reward: int = RoomKind.Reward.NONE) -> void:
 	if _transitioning:
 		return
 	_transitioning = true
@@ -313,7 +412,7 @@ func go_to(type: int) -> void:
 	tween.tween_property(_fade, "color:a", 1.0, 0.35)
 	await tween.finished
 	_collect_leftover_coins()
-	RunState.advance_to(type, config.rooms_per_scenario)
+	RunState.advance_to(type, config.rooms_per_scenario, reward)
 	build_room(type)
 	var back: Tween = create_tween()
 	back.tween_property(_fade, "color:a", 0.0, 0.35)
