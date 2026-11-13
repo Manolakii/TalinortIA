@@ -53,7 +53,8 @@ La biblia completa (lore, los 6 kits y el GDD) sigue en el doc compartido. Si ca
 | Golpe común (mantener = continuo) | Clic izquierdo | RT / R2 |
 | Habilidad fuerte | Clic derecho | LT / L2 |
 | Esquiva | Espacio | A / Cruz |
-| Definitiva | Q | RB / R1 |
+| Definitiva (el Maestro: Cambio) | Q | RB / R1 |
+| Relevo Total (solo Maestro y Stewie, barra llena) | R | Y / Triángulo + RB / R1 |
 | Pausa | Esc | Start |
 | Volver a la pantalla de unión (en pausa) | Retroceso | B / Círculo |
 | Calidad baja / media / alta | F1 / F2 / F3 | — |

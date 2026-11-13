@@ -275,6 +275,7 @@ func _update_rail(delta: float) -> void:
 		var info: DamageInfo = make_hit(kd.rail_dps * kd.rail_tick)
 		info.is_melee = false
 		info.hitstop = 0.0
+		info.tags.append(&"tick")
 		var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(),
 				DamageInfo.Team.ENEMIES, from, from + _rail_direction * kd.rail_length, kd.rail_width)
 		if Combat.deliver(info, targets) > 0:

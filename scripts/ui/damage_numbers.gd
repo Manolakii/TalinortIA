@@ -11,10 +11,20 @@ const COLOR_ENEMY_HIT := Color(1.0, 1.0, 1.0)
 const COLOR_CRIT := Color(1.0, 0.88, 0.7)
 const COLOR_PLAYER_HIT := Color(1.0, 0.55, 0.55)
 const COLOR_AVOIDED := Color(0.75, 0.9, 1.0)
+## Golpes seguidos al mismo objetivo: se escalonan hacia arriba.
+const STACK_WINDOW := 0.35
+const STACK_STEP := 0.45
+const STACK_MAX := 4
+## El daño continuo (golpes con la etiqueta &"tick") se suma y se muestra cada tanto.
+const TICK_FLUSH := 0.3
 
 var _pool: Array[Label3D] = []
 var _tweens: Array[Tween] = []
+## id del objetivo -> [último momento, cuántos seguidos]
+var _recent: Dictionary = {}
 var _next: int = 0
+## id del objetivo -> {"target", "amount", "time", "color"}
+var _ticks: Dictionary = {}
 
 
 func _ready() -> void:
@@ -49,7 +59,7 @@ func show_text(world_position: Vector3, text: String, color: Color, scale_factor
 	label.text = text
 	label.modulate = color
 	label.outline_modulate.a = 0.9
-	label.global_position = world_position + Vector3(randf_range(-0.35, 0.35), 0.0, 0.0)
+	label.global_position = world_position + Vector3(randf_range(-0.55, 0.55), 0.0, 0.0)
 	label.scale = Vector3.ONE * scale_factor * 1.5
 	label.visible = true
 	tween = create_tween()
@@ -64,10 +74,14 @@ func show_text(world_position: Vector3, text: String, color: Color, scale_factor
 
 
 func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
+	if info.has_tag(&"tick"):
+		_accumulate_tick(info, target)
+		return
 	var amount: int = roundi(info.final_amount)
 	if amount <= 0:
 		return
-	var above: Vector3 = target.global_position + Vector3.UP * _height_of(target)
+	var above: Vector3 = target.global_position + Vector3.UP * (_height_of(target) \
+			+ _stack_offset(target))
 	if info.attacker_team == DamageInfo.Team.ENEMIES:
 		show_text(above, str(amount), COLOR_PLAYER_HIT, 1.0)
 	elif info.is_crit:
@@ -80,8 +94,43 @@ func _on_hit_avoided(target: Node3D, text: String) -> void:
 	show_text(target.global_position + Vector3.UP * _height_of(target), text, COLOR_AVOIDED, 0.9)
 
 
+## Si un mismo objetivo recibe varios golpes seguidos, cada número sale un poco más arriba
+## (con 4 jugadores se apilaban y no se leían).
+func _stack_offset(target: Node3D) -> float:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var id: int = target.get_instance_id()
+	var entry: Array = _recent.get(id, [0.0, 0])
+	var count: int = entry[1] + 1 if now - float(entry[0]) < STACK_WINDOW else 0
+	_recent[id] = [now, count % STACK_MAX]
+	if _recent.size() > 64:
+		_recent.clear()
+	return (count % STACK_MAX) * STACK_STEP
+
+
 func _height_of(target: Node3D) -> float:
 	var combatant := target as Combatant
 	if combatant != null and combatant.hurtbox != null:
 		return combatant.hurtbox.height + 0.3
 	return 2.0
+
+
+func _accumulate_tick(info: DamageInfo, target: Node3D) -> void:
+	var id: int = target.get_instance_id()
+	if not _ticks.has(id):
+		var color: Color = COLOR_PLAYER_HIT if info.attacker_team == DamageInfo.Team.ENEMIES 				else COLOR_ENEMY_HIT
+		_ticks[id] = {"target": target, "amount": 0.0, "time": 0.0, "color": color}
+	_ticks[id]["amount"] += info.final_amount
+
+
+func _process(delta: float) -> void:
+	for id: int in _ticks.keys():
+		var entry: Dictionary = _ticks[id]
+		entry["time"] += delta
+		if entry["time"] < TICK_FLUSH:
+			continue
+		var target: Node3D = entry["target"] if is_instance_valid(entry["target"]) else null
+		var amount: int = roundi(entry["amount"])
+		if target != null and amount > 0:
+			show_text(target.global_position + Vector3.UP * _height_of(target), str(amount),
+					entry["color"], 1.0)
+		_ticks.erase(id)

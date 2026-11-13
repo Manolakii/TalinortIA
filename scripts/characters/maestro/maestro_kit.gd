@@ -345,8 +345,11 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 
 ## Ataca a lo mismo que el jugador: lo último que golpeó, si sigue vivo y cerca.
 func _companion_target() -> Node3D:
+	if not is_instance_valid(_player_target):
+		_player_target = null
+		return null
 	var target := _player_target as Combatant
-	if target == null or not is_instance_valid(target) or not target.is_targetable():
+	if target == null or not target.is_targetable():
 		return null
 	if target.global_position.distance_to(player.global_position) > kd.companion_target_range:
 		return null

@@ -497,15 +497,17 @@ func _update_embrace(delta: float) -> void:
 	_embrace_tick -= delta
 	if _embrace_tick <= 0.0:
 		_embrace_tick += kd.embrace_duration / 4.0
-		var dealt: float = _deal_and_sum(targets, kd.embrace_damage / 4.0)
+		var dealt: float = _deal_and_sum(targets, kd.embrace_damage / 4.0, &"tick")
 		player.health.heal(dealt * kd.possession_skill_heal)
 
 
-func _deal_and_sum(targets: Array[Hurtbox], base: float) -> float:
+func _deal_and_sum(targets: Array[Hurtbox], base: float, tag: StringName = &"") -> float:
 	var total: float = 0.0
 	for hurtbox: Hurtbox in targets:
 		var info: DamageInfo = make_hit(base)
 		info.hitstop = 0.03
+		if tag != &"":
+			info.tags.append(tag)
 		if hurtbox.take_hit(info):
 			total += info.final_amount
 	return total
