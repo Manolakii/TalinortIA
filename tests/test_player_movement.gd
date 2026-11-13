@@ -12,7 +12,9 @@ func before_each() -> void:
 	# Un slot suelto (fuera de PlayerManager) para controlar el input a mano.
 	_slot = PlayerSlot.new(0, false, 99)
 	_slot.color = Color.BLUE
-	_slot.character = Balance.get_character(&"croco")
+	# Personaje sin kit: prueba la esquiva genérica.
+	_slot.character = Balance.get_character(&"croco").duplicate()
+	_slot.character.kit_script = null
 	_player = PLAYER_SCENE.instantiate()
 	_player.setup(_slot)
 	add_child_autofree(_player)

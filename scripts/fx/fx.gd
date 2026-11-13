@@ -59,6 +59,41 @@ static func slash(parent: Node, position: Vector3, direction: Vector3, radius: f
 	tween.tween_callback(mesh_instance.queue_free)
 
 
+## Rayo recto que se desvanece (Tiro por Contrato).
+static func beam(parent: Node, from: Vector3, direction: Vector3, length: float, width: float,
+		color: Color, duration: float = 0.18) -> void:
+	var node: MeshInstance3D = make_beam_mesh(color, width)
+	parent.add_child(node)
+	place_beam(node, from, direction, length)
+	var material := node.material_override as StandardMaterial3D
+	var tween: Tween = node.create_tween()
+	tween.tween_property(material, "albedo_color:a", 0.0, duration)
+	tween.tween_callback(node.queue_free)
+
+
+## Malla de rayo reutilizable: una caja estirada, sin luz y con brillo.
+static func make_beam_mesh(color: Color, width: float) -> MeshInstance3D:
+	var node := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3(width, width * 0.4, 1.0)
+	node.mesh = box
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.albedo_color = color
+	node.material_override = material
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return node
+
+
+## Ubica una malla de rayo entre `from` y `from + direction * length`.
+static func place_beam(node: MeshInstance3D, from: Vector3, direction: Vector3, length: float) -> void:
+	var flat := Vector3(direction.x, 0.0, direction.z).normalized()
+	node.global_position = from + flat * length * 0.5
+	node.rotation = Vector3(0.0, atan2(-flat.x, -flat.z), 0.0)
+	node.scale = Vector3(1.0, 1.0, length)
+
+
 ## Material simple sin luz, para efectos.
 static func flat_material(color: Color, emission: float = 0.0) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

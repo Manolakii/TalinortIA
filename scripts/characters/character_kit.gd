@@ -169,6 +169,13 @@ func make_hit(base_damage: float, source: Node3D = null) -> DamageInfo:
 	return info
 
 
+## Texto flotante sobre el personaje.
+func say(text: String, color: Color = Color.WHITE, size: float = 1.0) -> void:
+	var damage_numbers: Node = player.get_tree().get_first_node_in_group(&"damage_numbers")
+	if damage_numbers != null:
+		damage_numbers.show_text(player.global_position + Vector3.UP * 3.4, text, color, size)
+
+
 ## Líneas para el HUD de prueba.
 func debug_lines() -> Array[String]:
 	return ["Definitiva %d%%" % roundi(ult_charge), "Esquiva %d/%d" % [dodge_cooldown.charges, dodge_cooldown.max_charges]]

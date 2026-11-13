@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="CrocoKitData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/croco_kit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+near_max_distance = 4.5
+mid_max_distance = 10.0
+target_cone_deg = 25.0
+target_max_distance = 26.0
+mode_switch_bonus = 0.3
+bullet_radius = 0.2
+shotgun_pellets = 7
+shotgun_damage = 10.0
+shotgun_interval = 1.0
+shotgun_spread_deg = 32.0
+shotgun_range = 7.0
+shotgun_speed = 32.0
+shotgun_knockback = 5.0
+pistol_damage = 16.0
+pistol_interval = 0.3125
+pistol_range = 15.0
+pistol_speed = 38.0
+rifle_damage = 22.0
+rifle_burst = 3
+rifle_burst_gap = 0.08
+rifle_interval = 1.0
+rifle_range = 26.0
+rifle_speed = 48.0
+contract_cooldown = 10.0
+contract_full_charge = 1.5
+contract_max_hold = 3.0
+contract_min_damage = 60.0
+contract_max_damage = 180.0
+contract_length = 26.0
+contract_width = 0.9
+contract_kill_refund = 0.4
+contract_stack_bonus = 0.002
+dodge_distance = 4.2
+dodge_duration = 0.3
+dodge_charges = 2
+dodge_recharge = 4.0
+decoy_duration = 1.5
+decoy_priority = 0.35
+trail_duration = 2.0
+trail_width = 1.6
+haste_duration = 1.5
+rail_dps = 120.0
+rail_duration = 4.0
+rail_tick = 0.1
+rail_length = 24.0
+rail_width = 1.2
+rail_turn_speed_deg = 50.0
+rail_move_multiplier = 0.25
+overheat_duration = 3.0
