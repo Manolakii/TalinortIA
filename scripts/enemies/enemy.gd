@@ -8,6 +8,13 @@ const OUTLINE_SHADER: Shader = preload("res://assets/shaders/outline.gdshader")
 @export var enemy_id: StringName = &"talinorteano_cegado"
 
 const ENEMY_BULLET_COLOR := Color(0.85, 0.55, 1.0)
+## Afijos de élite (GDD, Élites).
+const AFFIXES: Array[StringName] = [&"armored", &"fast", &"shadowy", &"explosive"]
+const AFFIX_NAMES: Dictionary = {
+	&"armored": "Blindado", &"fast": "Veloz", &"shadowy": "Sombrío", &"explosive": "Explosivo",
+}
+## Dorado = oro y recompensa (GDD, colores reservados): siempre con brillo y forma de rombo.
+const BOUNTY_COLOR := Color(1.0, 0.78, 0.2)
 
 var data: EnemyData
 ## Multiplicadores de vida y daño. Negativo = se calculan solos según la dificultad
@@ -30,6 +37,8 @@ var fear_origin: Vector3 = Vector3.ZERO
 
 var _body_material: StandardMaterial3D
 var _move_velocity: Vector3 = Vector3.ZERO
+var _puddle_timer: float = 0.0
+var _bounty_marker: MeshInstance3D
 
 
 func _ready() -> void:
@@ -42,6 +51,8 @@ func _ready() -> void:
 		health_multiplier = Scaling.current_health_multiplier()
 	if damage_multiplier < 0.0:
 		damage_multiplier = Scaling.current_damage_multiplier()
+	if is_elite:
+		health_multiplier *= Balance.elite.health_multiplier
 	_build_body()
 	setup_combatant(DamageInfo.Team.ENEMIES, data.max_health * health_multiplier,
 			data.body_radius, data.body_height, visual)
@@ -51,6 +62,8 @@ func _ready() -> void:
 	add_child(telegraph)
 	died.connect(_on_died)
 	status.effect_started.connect(_on_status_started)
+	if is_elite:
+		_build_elite_marks()
 	_play_spawn()
 
 
@@ -63,6 +76,10 @@ func _physics_process(delta: float) -> void:
 		_flee_awake(delta)
 	else:
 		_think(delta)
+	if affixes.has(&"shadowy"):
+		_drop_puddles(delta)
+	if _bounty_marker != null:
+		_bounty_marker.rotate_y(delta * 2.5)
 	visual.rotation.y = atan2(-facing.x, -facing.z)
 	_update_stun_pose(delta)
 
@@ -70,6 +87,90 @@ func _physics_process(delta: float) -> void:
 ## IA de cada enemigo.
 func _think(_delta: float) -> void:
 	pass
+
+
+# --- Élites ---
+
+## Convierte a este enemigo en élite. Hay que llamarlo antes de agregarlo al árbol.
+func make_elite(affix_count: int, rng: RandomNumberGenerator = null) -> void:
+	is_elite = true
+	var pool: Array[StringName] = AFFIXES.duplicate()
+	affixes.clear()
+	for i: int in mini(affix_count, pool.size()):
+		var index: int = rng.randi_range(0, pool.size() - 1) if rng != null \
+				else randi_range(0, pool.size() - 1)
+		affixes.append(pool[index])
+		pool.remove_at(index)
+
+
+## Marca a este élite con la Recompensa del Croco.
+func set_bounty() -> void:
+	has_bounty = true
+	if is_node_ready():
+		_build_bounty_marker()
+
+
+func _build_elite_marks() -> void:
+	var names: Array[String] = []
+	for affix: StringName in affixes:
+		names.append(AFFIX_NAMES[affix])
+	var label := Label3D.new()
+	label.text = " · ".join(names)
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.no_depth_test = true
+	label.fixed_size = true
+	label.pixel_size = 0.0009
+	label.font_size = 30
+	label.outline_size = 10
+	label.outline_modulate = Color(0.05, 0.05, 0.08, 0.9)
+	label.position.y = data.body_height * Balance.elite.scale + 0.5
+	add_child(label)
+	# Brillo de borde: se distingue de los comunes.
+	_body_material.rim_enabled = true
+	_body_material.rim = 0.8
+	_body_material.rim_tint = 0.2
+	if has_bounty:
+		_build_bounty_marker()
+
+
+func _build_bounty_marker() -> void:
+	if _bounty_marker != null:
+		return
+	_bounty_marker = MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3.ONE * 0.4
+	_bounty_marker.mesh = box
+	_bounty_marker.rotation = Vector3(PI * 0.25, 0.0, PI * 0.25)
+	_bounty_marker.position.y = data.body_height * body_scale() + 1.0
+	_bounty_marker.material_override = Fx.flat_material(BOUNTY_COLOR, 2.5)
+	_bounty_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_bounty_marker)
+
+
+func _drop_puddles(delta: float) -> void:
+	_puddle_timer -= delta
+	if _puddle_timer > 0.0 or _move_velocity.length() < 0.5:
+		return
+	_puddle_timer = Balance.elite.puddle_interval
+	var puddle := ShadowZone.new()
+	puddle.radius = Balance.elite.puddle_radius
+	puddle.slow_time = 0.3
+	puddle.lifetime = Balance.elite.puddle_duration
+	get_parent().add_child(puddle)
+	puddle.global_position = Vector3(global_position.x, 0.0, global_position.z)
+
+
+## Paga la Recompensa si lo mató el Croco.
+func _pay_bounty(info: DamageInfo) -> void:
+	if not has_bounty or not is_instance_valid(info.attacker):
+		return
+	var killer := info.attacker as PlayerCharacter
+	if killer == null or not (killer.kit is CrocoKit):
+		return
+	var gold: int = Balance.economy.croco_bounty_gold
+	RunState.add_gold(killer.slot.index, gold)
+	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0,
+			"+%d oro" % gold, BOUNTY_COLOR)
 
 
 # --- Ayudas para la IA ---
@@ -281,7 +382,17 @@ func _play_spawn() -> void:
 			.set_ease(Tween.EASE_OUT)
 
 
-func _on_died(_info: DamageInfo) -> void:
+func _on_died(info: DamageInfo) -> void:
+	_pay_bounty(info)
+	if affixes.has(&"explosive"):
+		var blast := EliteExplosion.new()
+		get_parent().add_child(blast)
+		blast.global_position = Vector3(global_position.x, 0.0, global_position.z)
+		blast.setup(Balance.elite.explosion_radius, Balance.elite.explosion_delay,
+				Balance.elite.explosion_damage * damage_multiplier)
+	if _bounty_marker != null:
+		_bounty_marker.queue_free()
+		_bounty_marker = null
 	telegraph.hide_telegraph()
 	collision_layer = 0
 	remove_from_group(&"enemies")
