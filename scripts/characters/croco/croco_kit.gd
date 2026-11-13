@@ -111,6 +111,18 @@ func mode_for_distance(distance: float) -> Mode:
 	return Mode.RIFLE
 
 
+## Como mode_for_distance, pero con margen: para pasar a un modo más lejano hay que
+## alejarse un poco más allá del límite, y para volver, acercarse un poco más acá.
+func mode_with_hysteresis(distance: float) -> Mode:
+	var farther: Mode = mode_for_distance(distance - kd.mode_hysteresis)
+	if farther > mode:
+		return farther
+	var closer: Mode = mode_for_distance(distance + kd.mode_hysteresis)
+	if closer < mode:
+		return closer
+	return mode
+
+
 func _update_mode() -> void:
 	var wanted: Mode = mode
 	if _overheat > 0.0:
@@ -118,7 +130,7 @@ func _update_mode() -> void:
 	else:
 		var target: Hurtbox = aimed_enemy()
 		if target != null:
-			wanted = mode_for_distance(Vector3(player.global_position.x, 0.0,
+			wanted = mode_with_hysteresis(Vector3(player.global_position.x, 0.0,
 					player.global_position.z).distance_to(target.flat_position()))
 	if wanted != mode:
 		mode = wanted

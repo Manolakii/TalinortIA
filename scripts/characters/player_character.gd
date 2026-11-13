@@ -190,7 +190,10 @@ func can_act() -> bool:
 func dodge_step(delta: float) -> bool:
 	move_raw(_dodge_direction * _dodge_speed, delta)
 	_dodge_time -= delta
-	return _dodge_time > 0.0
+	if _dodge_time <= 0.0:
+		_stop_dash_momentum()
+		return false
+	return true
 
 
 func action_step(delta: float) -> bool:
@@ -200,12 +203,22 @@ func action_step(delta: float) -> bool:
 		apply_movement(get_move_input(), delta, _action_move_multiplier)
 	_action_time -= delta
 	if _action_time <= 0.0:
+		if action_velocity != null:
+			_stop_dash_momentum()
 		action_velocity = null
 		return false
 	return true
 
 
+## Al terminar un movimiento rápido (esquiva, dash, salto), la velocidad queda como mucho
+## en la de caminar. Si no, el personaje seguía patinando varios metros (bug del Paso de Sombra).
+func _stop_dash_momentum() -> void:
+	_move_velocity = _move_velocity.limit_length(data.move_speed)
+
+
 func end_action() -> void:
+	if action_velocity != null:
+		_stop_dash_momentum()
 	_action_time = 0.0
 	action_velocity = null
 

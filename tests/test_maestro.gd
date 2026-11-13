@@ -123,3 +123,40 @@ func test_paths_ready_for_upgrades() -> void:
 	assert_eq(_kit.stewie_max_health(), 110.0, "Con 3 mejoras: Joven")
 	_kit.stewie_upgrades = 6
 	assert_eq(_kit.stewie_max_health(), 140.0, "Con 6: Sabia")
+
+
+func test_ai_companion_takes_less_damage() -> void:
+	_kit.companion.global_position = Vector3(20, 0, 0)  # sin Vínculo
+	_pump(1)
+	var hit := DamageInfo.new()
+	hit.amount = 10.0
+	hit.attacker_team = DamageInfo.Team.ENEMIES
+	_kit.companion.receive_hit(hit)
+	assert_almost_eq(80.0 - _kit.companion.health.current, 6.0, 0.01, "40% menos mientras es IA")
+
+
+func test_enemies_prefer_the_player_over_the_companion() -> void:
+	_pump(1)
+	var enemy := enemy_at(Vector3(0.75, 0, -3), 1000.0)
+	_kit.companion.global_position = Vector3(1.5, 0, 0)
+	_player.global_position = Vector3(0, 0, 0)
+	assert_eq(enemy.nearest_target(), _player, "A igual distancia, van por el jugador")
+
+
+func test_companion_retreats_when_low_and_recovers() -> void:
+	_pump(1)
+	_kit.companion.health.current = 20.0  # 25%
+	_pump(2)
+	assert_true(_kit.companion.retreating, "Con poca vida se repliega")
+	_pump(int(10.0 / DT))
+	assert_gt(_kit.companion.health.current, 20.0, "Sin enemigos cerca, se recupera")
+
+
+func test_stewie_ai_shells_up_inside_a_warning() -> void:
+	_pump(1)
+	var enemy := enemy_at(_kit.companion.global_position + Vector3(0, 0, -1.2), 1000.0)
+	enemy.facing = Vector3.BACK
+	enemy._start_windup()
+	assert_true(enemy.threatens(_kit.companion.global_position))
+	_pump(1)
+	assert_true(_kit.companion.invulnerable_shell, "Stewie se mete en el caparazón")

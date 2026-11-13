@@ -58,7 +58,21 @@ extends Resource
 @export var teleport_distance: float = 18.0
 @export var follow_distance: float = 2.5
 ## La IA ataca a lo último que golpeó el jugador, si está a esta distancia del jugador.
-@export var companion_target_range: float = 10.0
+@export var companion_target_range: float = 6.0
+
+@export_group("Compañero (IA)")
+## Mientras lo maneja la IA, recibe esta parte del daño (0,6 = 40% menos).
+@export var companion_damage_taken: float = 0.6
+## Más de 1: los enemigos prefieren a los jugadores antes que al compañero.
+@export var companion_target_priority: float = 1.6
+## Con menos de esta vida se repliega al lado del jugador y deja de pelear...
+@export var companion_retreat_health: float = 0.4
+## ...hasta recuperar esta.
+@export var companion_recover_health: float = 0.7
+## Mientras se repliega sin enemigos cerca, recupera esta parte de su vida máxima por segundo.
+@export var companion_regen: float = 0.03
+## "Sin enemigos cerca" = ninguno a esta distancia.
+@export var companion_safe_radius: float = 4.0
 @export var fallen_revive_time: float = 15.0
 @export var fallen_revive_health: float = 0.5
 @export var switch_cooldown: float = 6.0

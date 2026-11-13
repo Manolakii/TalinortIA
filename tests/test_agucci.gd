@@ -140,3 +140,17 @@ func test_shadow_bite_costs_life_and_resets_on_kill() -> void:
 	assert_lt(_player.health.current, 90.0, "Cuesta 5% de la vida actual")
 	_pump(15)
 	assert_true(_kit.bite_cooldown.is_ready(), "Mató: se reinicia al instante")
+
+
+func test_shadow_dash_does_not_slide_after_arriving() -> void:
+	enemy_at(Vector3(0, 0, -8), 1000.0)
+	press(PlayerInput.Action.ABILITY)
+	_pump(1)
+	release(PlayerInput.Action.ABILITY)
+	_pump(20)
+	press(PlayerInput.Action.ABILITY)
+	_pump(1)
+	release(PlayerInput.Action.ABILITY)
+	_pump(20)
+	assert_lte(_player._move_velocity.length(), _player.data.move_speed + 0.01,
+			"Al llegar, frena: no sigue patinando con la velocidad del viaje")

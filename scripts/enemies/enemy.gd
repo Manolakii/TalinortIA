@@ -130,6 +130,11 @@ func _after_hit(info: DamageInfo) -> void:
 		tween.tween_property(visual, "position:y", 0.0, 0.22).set_ease(Tween.EASE_IN)
 
 
+## ¿Está por pegarle a este punto? (lo usa la IA del compañero para esquivar avisos)
+func threatens(_point: Vector3) -> bool:
+	return false
+
+
 # --- Agarrado y lanzado (Revoleo) ---
 
 func set_controlled(value: bool) -> void:

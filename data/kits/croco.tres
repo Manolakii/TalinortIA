@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1")
 near_max_distance = 4.5
-mid_max_distance = 10.0
+mid_max_distance = 14.0
+mode_hysteresis = 1.5
 target_cone_deg = 25.0
 target_max_distance = 26.0
 mode_switch_bonus = 0.3
@@ -19,7 +20,7 @@ shotgun_speed = 32.0
 shotgun_knockback = 5.0
 pistol_damage = 16.0
 pistol_interval = 0.3125
-pistol_range = 15.0
+pistol_range = 18.0
 pistol_speed = 38.0
 rifle_damage = 22.0
 rifle_burst = 3

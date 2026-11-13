@@ -26,7 +26,7 @@ func _pump(frames: int) -> void:
 func test_mode_follows_distance() -> void:
 	assert_eq(_kit.mode_for_distance(3.0), CrocoKit.Mode.SHOTGUN)
 	assert_eq(_kit.mode_for_distance(7.0), CrocoKit.Mode.PISTOL)
-	assert_eq(_kit.mode_for_distance(15.0), CrocoKit.Mode.RIFLE)
+	assert_eq(_kit.mode_for_distance(16.0), CrocoKit.Mode.RIFLE)
 
 
 func test_switching_mode_gives_bonus_to_first_shot() -> void:
@@ -51,7 +51,7 @@ func test_pistol_damage_and_rate() -> void:
 
 
 func test_rifle_burst() -> void:
-	var enemy := enemy_at(Vector3(0, 0, -15), 1000.0)
+	var enemy := enemy_at(Vector3(0, 0, -18), 1000.0)
 	_pump(1)
 	_kit.switch_bonus_ready = false
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
@@ -126,3 +126,19 @@ func test_rail_damage_and_overheat() -> void:
 	assert_almost_eq(5000.0 - enemy.health.current, 480.0, 25.0, "120 por segundo durante 4 s")
 	assert_eq(_kit.mode, CrocoKit.Mode.PISTOL, "Recalentada: solo pistola")
 	assert_gt(_kit._overheat, 2.0)
+
+
+func test_mode_has_margin_at_the_edges() -> void:
+	_kit.mode = CrocoKit.Mode.PISTOL
+	assert_eq(_kit.mode_with_hysteresis(14.5), CrocoKit.Mode.PISTOL, "Apenas pasado el límite: sigue")
+	assert_eq(_kit.mode_with_hysteresis(16.0), CrocoKit.Mode.RIFLE, "Bien pasado: rifle")
+	_kit.mode = CrocoKit.Mode.RIFLE
+	assert_eq(_kit.mode_with_hysteresis(13.5), CrocoKit.Mode.RIFLE, "Volviendo, tampoco cambia enseguida")
+	assert_eq(_kit.mode_with_hysteresis(12.0), CrocoKit.Mode.PISTOL)
+	_kit.mode = CrocoKit.Mode.PISTOL
+	assert_eq(_kit.mode_with_hysteresis(4.0), CrocoKit.Mode.PISTOL)
+	assert_eq(_kit.mode_with_hysteresis(2.5), CrocoKit.Mode.SHOTGUN)
+
+
+func test_pistol_covers_a_wide_band() -> void:
+	assert_eq(_kit.mode_for_distance(12.0), CrocoKit.Mode.PISTOL, "La pistola llega hasta 14 m")

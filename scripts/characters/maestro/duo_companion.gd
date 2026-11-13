@@ -17,6 +17,12 @@ var attack_timer: float = 0.0
 var downed: bool = false
 var downed_time: float = 0.0
 var invulnerable_shell: bool = false
+## Se repliega al lado del jugador (poca vida).
+var retreating: bool = false
+var priority: float = 1.0
+
+var _dash_velocity: Vector3 = Vector3.ZERO
+var _dash_time: float = 0.0
 
 var _move_velocity: Vector3 = Vector3.ZERO
 var _body: MeshInstance3D
@@ -48,6 +54,9 @@ func become(new_identity: int, height: float, radius: float, color: Color, speed
 		max_health: float, current_health: float) -> void:
 	identity = new_identity
 	move_speed = speed
+	invulnerable_shell = false
+	retreating = false
+	_dash_time = 0.0
 	var capsule := CapsuleMesh.new()
 	capsule.height = maxf(height, radius * 2.0)
 	capsule.radius = radius
@@ -101,6 +110,13 @@ func _physics_process(delta: float) -> void:
 		return
 	busy = maxf(busy - delta, 0.0)
 	attack_timer -= delta
+	if _dash_time > 0.0:
+		_dash_time -= delta
+		move_with_knockback(_dash_velocity)
+		if _dash_time <= 0.0:
+			_move_velocity = Vector3.ZERO
+		visual.rotation.y = atan2(-facing.x, -facing.z)
+		return
 	if kit != null and not status.has(StatusEffects.STUN):
 		kit.companion_think(self, delta)
 	else:
@@ -125,7 +141,15 @@ func can_be_targeted_by_enemies() -> bool:
 
 
 func target_priority() -> float:
-	return 1.0
+	return priority
+
+
+## Esquiva rápida (garrocha o rodar), invulnerable durante el recorrido.
+func dash(direction: Vector3, distance: float, duration: float) -> void:
+	_dash_velocity = direction.normalized() * distance / maxf(duration, 0.01)
+	_dash_time = duration
+	health.make_invulnerable(duration)
+	facing = direction.normalized()
 
 
 func is_targetable() -> bool:

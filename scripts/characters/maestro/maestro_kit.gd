@@ -170,11 +170,12 @@ func _update_bond() -> void:
 	if companion == null:
 		return
 	var bonded: bool = is_bonded()
-	if bonded != _bonded:
-		_bonded = bonded
-		var resist: float = 1.0 - (kd.bond_bonus if bonded else 0.0)
-		player.health.damage_taken_multiplier = resist
-		companion.health.damage_taken_multiplier = resist
+	_bonded = bonded
+	var resist: float = 1.0 - (kd.bond_bonus if bonded else 0.0)
+	player.health.damage_taken_multiplier = resist
+	# El que maneja la IA, además, aguanta más (si no, se metía a pelear y moría enseguida).
+	companion.health.damage_taken_multiplier = resist * kd.companion_damage_taken
+	companion.priority = kd.companion_target_priority
 	_bond_line.visible = bonded
 	if bonded:
 		var from: Vector3 = player.global_position + Vector3.UP * 0.6
@@ -321,9 +322,24 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 	if distance > kd.leash_distance:
 		body.steer(to_player.normalized(), speed, delta)
 		return
+	# 1) Si está adentro de un aviso naranja, lo esquiva.
+	var threat: Enemy = _threat_to(body)
+	if threat != null and _companion_evade(body, threat):
+		return
 	if body.busy > 0.0:
 		body.stop(delta)
 		return
+	# 2) Con poca vida se repliega al lado del jugador y deja de pelear.
+	var ratio: float = body.health.ratio()
+	if body.retreating and ratio >= kd.companion_recover_health:
+		body.retreating = false
+	elif not body.retreating and ratio < kd.companion_retreat_health:
+		body.retreating = true
+		say("¡%s se repliega!" % BODY_NAMES[body.identity], Color(0.85, 0.9, 1.0), 0.8)
+	if body.retreating:
+		_companion_retreat(body, to_player, distance, delta)
+		return
+	# 3) Si no, ataca a lo mismo que el jugador.
 	var target: Node3D = _companion_target()
 	if target != null:
 		var to_target: Vector3 = target.global_position - body.global_position
@@ -341,6 +357,68 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		body.steer(to_player.normalized(), speed * clampf(distance / 4.0, 0.4, 1.0), delta)
 	else:
 		body.stop(delta)
+
+
+func _threat_to(body: DuoCompanion) -> Enemy:
+	for node: Node in player.get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Enemy
+		if enemy != null and enemy.threatens(body.global_position):
+			return enemy
+	return null
+
+
+## Stewie se mete en el caparazón (o rueda); el Maestro salta con la garrocha.
+## Usa los cooldowns y cargas de ese cuerpo. Devuelve false si no tenía con qué.
+func _companion_evade(body: DuoCompanion, threat: Enemy) -> bool:
+	var away: Vector3 = body.global_position - threat.global_position
+	away.y = 0.0
+	away = away.normalized() if away.length_squared() > 0.01 else Vector3.BACK
+	var to_player: Vector3 = player.global_position - body.global_position
+	to_player.y = 0.0
+	if to_player.length_squared() > 0.01:
+		away = (away + to_player.normalized() * 0.5).normalized()
+	if body.identity == Body.STEWIE and _ability_cd[Body.STEWIE].is_ready():
+		_ability_cd[Body.STEWIE].use()
+		body.invulnerable_shell = true
+		body.busy = kd.refuge_duration
+		schedule(kd.refuge_duration, _end_companion_shell.bind(body))
+		return true
+	var dodge_cd: AbilityCooldown = _dodge_cd[body.identity]
+	if dodge_cd.is_ready():
+		dodge_cd.use()
+		if body.identity == Body.MAESTRO:
+			body.dash(away, kd.pole_distance, kd.pole_duration)
+		else:
+			body.dash(away, kd.roll_distance, kd.roll_duration)
+		return true
+	return false
+
+
+func _end_companion_shell(body: DuoCompanion) -> void:
+	if is_instance_valid(body):
+		body.invulnerable_shell = false
+
+
+## Se queda al lado del jugador, del lado contrario a los enemigos, y se recupera de a poco.
+func _companion_retreat(body: DuoCompanion, _to_player: Vector3, _distance: float, delta: float) -> void:
+	var nearest: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES,
+			player.global_position)
+	var spot: Vector3 = player.global_position
+	if nearest != null:
+		var away: Vector3 = player.global_position - nearest.global_position
+		away.y = 0.0
+		if away.length_squared() > 0.01:
+			spot += away.normalized() * kd.follow_distance
+	var to_spot: Vector3 = spot - body.global_position
+	to_spot.y = 0.0
+	if to_spot.length() > 0.6:
+		body.steer(to_spot.normalized(), body.move_speed, delta)
+	else:
+		body.stop(delta)
+	var threat_near: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES,
+			body.global_position, kd.companion_safe_radius)
+	if threat_near == null:
+		body.health.heal(body.health.max_health * kd.companion_regen * delta)
 
 
 ## Ataca a lo mismo que el jugador: lo último que golpeó, si sigue vivo y cerca.
