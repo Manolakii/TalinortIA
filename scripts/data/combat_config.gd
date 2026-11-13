@@ -11,6 +11,8 @@ extends Resource
 @export var knockback_damping: float = 9.0
 ## Multiplicador de velocidad del estado "veloz" (rastro de Ruta de Escape del Croco).
 @export var haste_multiplier: float = 1.3
+## Multiplicador de velocidad del estado "lento" (charcos de sombra).
+@export var slow_multiplier: float = 0.6
 
 @export_group("Imán de apuntado (joystick)")
 @export var aim_magnet_angle_deg: float = 22.0

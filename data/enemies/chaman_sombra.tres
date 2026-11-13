@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Chamán de la Sombra"
+max_health = 220.0
+damage = 0.0
+move_speed = 2.8
+turn_speed = 5.0
+size_rank = 1
+attack_range = 1.7
+windup = 0.6
+recovery = 0.9
+attack_radius = 2.0
+attack_angle_deg = 100.0
+attack_knockback = 4.0
+preferred_distance = 10.0
+attack_interval = 2.0
+projectile_speed = 16.0
+projectile_count = 1
+spread_deg = 0.0
+projectile_range = 14.0
+flight_time = 1.0
+impact_radius = 1.3
+dash_distance = 0.0
+charge_speed = 0.0
+charge_max_distance = 0.0
+charge_width = 1.6
+wall_stun = 0.0
+zone_radius = 3.5
+zone_dps = 4.0
+aura_radius = 10.0
+aura_speed_bonus = 0.2
+death_stun = 3.0
+wake_chance = 0.35
+separation_radius = 1.1
+body_height = 1.75
+body_radius = 0.45
+body_color = Color(0.32, 0.26, 0.38, 1)
+id = &"chaman_sombra"

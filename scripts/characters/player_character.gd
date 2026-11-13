@@ -117,6 +117,8 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 		speed *= kit.move_speed_multiplier()
 	if status.has(StatusEffects.HASTE):
 		speed *= Balance.combat.haste_multiplier
+	if status.has(StatusEffects.SLOW):
+		speed *= Balance.combat.slow_multiplier
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
 	_move_velocity = _move_velocity.move_toward(target, rate * delta)

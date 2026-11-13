@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Soldado Agucci"
+max_health = 260.0
+damage = 16.0
+move_speed = 2.6
+turn_speed = 7.0
+size_rank = 2
+attack_range = 5.0
+windup = 0.7
+recovery = 1.0
+attack_radius = 2.0
+attack_angle_deg = 100.0
+attack_knockback = 6.0
+preferred_distance = 0.0
+attack_interval = 2.0
+projectile_speed = 16.0
+projectile_count = 1
+spread_deg = 0.0
+projectile_range = 14.0
+flight_time = 1.0
+impact_radius = 1.3
+dash_distance = 4.5
+charge_speed = 0.0
+charge_max_distance = 0.0
+charge_width = 1.4
+wall_stun = 0.0
+zone_radius = 0.0
+zone_dps = 0.0
+aura_radius = 0.0
+aura_speed_bonus = 0.0
+death_stun = 0.0
+wake_chance = 0.0
+separation_radius = 1.1
+body_height = 1.85
+body_radius = 0.42
+body_color = Color(0.28, 0.25, 0.33, 1)
+id = &"soldado_agucci"

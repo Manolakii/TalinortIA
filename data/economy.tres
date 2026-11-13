@@ -5,3 +5,4 @@
 [resource]
 script = ExtResource("1")
 starting_gold = 150
+croco_bounty_gold = 30

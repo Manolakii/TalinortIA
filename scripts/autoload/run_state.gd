@@ -8,6 +8,8 @@ var rng := RandomNumberGenerator.new()
 ## Oro por índice de jugador (0 a 3).
 var gold: Dictionary[int, int] = {}
 var in_run: bool = false
+## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
+var difficulty: int = DifficultyConfig.Level.NORMAL
 ## Bonus que se acumulan durante la partida, por jugador (por ejemplo, el Tiro por Contrato).
 var _bonuses: Dictionary[String, int] = {}
 

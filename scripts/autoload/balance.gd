@@ -7,6 +7,8 @@ const PLAYER_SLOTS_PATH := "res://data/player_slots.tres"
 const CAMERA_PATH := "res://data/camera_config.tres"
 const ECONOMY_PATH := "res://data/economy.tres"
 const COMBAT_PATH := "res://data/combat_config.tres"
+const DIFFICULTY_PATH := "res://data/difficulty.tres"
+const ELITE_PATH := "res://data/elite_config.tres"
 const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
 var roster: CharacterRoster
@@ -14,6 +16,8 @@ var player_slots: PlayerSlotsConfig
 var camera: CameraConfig
 var economy: EconomyConfig
 var combat: CombatConfig
+var difficulty: DifficultyConfig
+var elite: EliteConfig
 
 var _enemy_cache: Dictionary[StringName, EnemyData] = {}
 
@@ -25,6 +29,8 @@ func _enter_tree() -> void:
 	camera = _load_required(CAMERA_PATH) as CameraConfig
 	economy = _load_required(ECONOMY_PATH) as EconomyConfig
 	combat = _load_required(COMBAT_PATH) as CombatConfig
+	difficulty = _load_required(DIFFICULTY_PATH) as DifficultyConfig
+	elite = _load_required(ELITE_PATH) as EliteConfig
 
 
 func get_enemy(id: StringName) -> EnemyData:

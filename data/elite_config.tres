@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EliteConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/elite_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+health_multiplier = 2.5
+scale = 1.25
+armored_front_damage = 0.5
+armored_front_angle_deg = 140.0
+fast_speed_multiplier = 1.4
+puddle_interval = 1.5
+puddle_duration = 4.0
+puddle_radius = 1.4
+explosion_radius = 3.0
+explosion_delay = 0.8
+explosion_damage = 20.0

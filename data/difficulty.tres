@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DifficultyConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/difficulty_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+names = Array[String](["Fácil", "Normal", "Difícil"])
+enemy_health = Array[float]([0.8, 1.0, 1.25])
+enemy_damage = Array[float]([0.7, 1.0, 1.4])
+revive_bonus = Array[float]([10.0, 0.0, 0.0])
+extra_player_health = Array[float]([0.35, 0.45, 0.55])
+extra_player_count = Array[float]([0.2, 0.25, 0.3])
+extra_player_boss_health = Array[float]([0.6, 0.7, 0.8])
+elite_affixes = Array[int]([1, 1, 2])
+unlock_hint = Array[String](["", "Vencé al Gronk Gigante", "Ganá una partida en Normal"])

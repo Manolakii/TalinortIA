@@ -7,6 +7,7 @@ extends Control
 ##   Izquierda y derecha: elegir personaje
 ##   B o Esc: desconfirmar, o salir si no había confirmado
 ##   Start (o Enter con todos listos): arrancar
+##   E o X (cualquiera): cambiar la dificultad
 
 const GAME_SCENE := "res://scenes/rooms/test_room_talinorthland.tscn"
 
@@ -27,11 +28,14 @@ class SlotColumn:
 
 var _columns: Array[SlotColumn] = []
 var _footer: Label
+var _difficulty_label: Label
 var _starting: bool = false
 
 
 func _ready() -> void:
 	PlayerManager.reset()
+	if not is_difficulty_unlocked(RunState.difficulty):
+		RunState.difficulty = DifficultyConfig.Level.EASY
 	_build_ui()
 	_refresh()
 
@@ -57,6 +61,9 @@ func _physics_process(_delta: float) -> void:
 	var changed: bool = false
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		var input: PlayerInput = slot.input
+		if input.just_pressed(PlayerInput.Action.INTERACT):
+			_cycle_difficulty()
+			changed = true
 		if input.just_pressed(PlayerInput.Action.LEFT):
 			PlayerManager.cycle_character(slot, -1)
 			changed = true
@@ -84,6 +91,21 @@ func _physics_process(_delta: float) -> void:
 			changed = true
 	if changed:
 		_refresh()
+
+
+## Pasa a la siguiente dificultad desbloqueada (Fácil siempre; el resto con el flag de debug
+## hasta que exista el progreso entre partidas).
+func _cycle_difficulty() -> void:
+	var count: int = Balance.difficulty.names.size()
+	for step: int in range(1, count + 1):
+		var candidate: int = (RunState.difficulty + step) % count
+		if is_difficulty_unlocked(candidate):
+			RunState.difficulty = candidate
+			return
+
+
+static func is_difficulty_unlocked(level: int) -> bool:
+	return level == DifficultyConfig.Level.EASY or GameSettings.unlock_all_difficulties
 
 
 func _join(keyboard: bool, device: int) -> void:
@@ -128,6 +150,10 @@ func _build_ui() -> void:
 	var subtitle := _label("Talinorthland, donde la supervivencia es un éxito.", 24, MUTED_TEXT)
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(subtitle)
+
+	_difficulty_label = _label("", 28, Color.WHITE)
+	_difficulty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	root.add_child(_difficulty_label)
 
 	var row := HBoxContainer.new()
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -207,6 +233,9 @@ func _refresh() -> void:
 		else:
 			column.status.text = "Elegí con izquierda/derecha\ny confirmá con A o Enter"
 			column.status.add_theme_color_override("font_color", Color.WHITE)
+
+	var names: Array[String] = Balance.difficulty.names
+	_difficulty_label.text = "Dificultad: %s   (E o X para cambiar)" % names[RunState.difficulty]
 
 	if PlayerManager.all_ready():
 		_footer.text = "¡Todos listos! Start (o Enter) para arrancar"
