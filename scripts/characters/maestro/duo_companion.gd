@@ -35,7 +35,7 @@ var _extras: Node3D
 func _ready() -> void:
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	collision_layer = 1 << 2  # players
-	collision_mask = 1  # world
+	collision_mask = 1 | 512  # paredes y rocas
 	add_to_group(&"enemy_targets")
 	visual = Node3D.new()
 	visual.name = "Visual"

@@ -596,24 +596,19 @@ func _mirror(slot_kind: Slot, direction: Vector3 = Vector3.ZERO) -> void:
 
 # --- Cambio y Relevo Total ---
 
-## Pasás a manejar al otro: se intercambian identidades y lugares.
+## Pasás a manejar al otro: el que entra cae donde estabas vos (con su entrada, que pega)
+## y el que sale pasa a donde estaba el otro. La cámara no salta.
 func _switch(total: bool) -> void:
 	cancel_scheduled()
 	_charging = false
 	player.end_action()
 	_end_relay()
 	var old_controlled: Body = controlled
-	var player_pos: Vector3 = player.global_position
-	var companion_pos: Vector3 = companion.global_position
 	_hp[old_controlled] = player.health.current
 	_hp[_other(old_controlled)] = companion.health.current
 	controlled = _other(old_controlled)
 	_apply_controlled_body()
 	_dress_companion()
-	player.global_position = companion_pos
-	companion.global_position = player_pos
-	player.reset_physics_interpolation()
-	companion.reset_physics_interpolation()
 	_entrance()
 	if total:
 		_start_relay()
@@ -630,8 +625,16 @@ func _entrance() -> void:
 		var tween: Tween = player.create_tween()
 		tween.tween_property(player.visual, "rotation:x", TAU, 0.3)
 		tween.tween_callback(func() -> void: player.visual.rotation.x = 0.0)
-	Fx.ring_burst(_world(), player.global_position, 1.8, player.slot.color)
+	Fx.ring_burst(_world(), player.global_position, kd.entrance_radius, player.slot.color)
 	say("¡Te toca, %s!" % BODY_NAMES[controlled], Color.WHITE)
+	# La entrada pega: golpe en área que empuja (DECISIONES 2026-11-13).
+	var info: DamageInfo = _hit(player, kd.entrance_damage)
+	info.knockback = kd.entrance_knockback
+	info.stun = kd.entrance_stun
+	info.hitstop = Balance.combat.hitstop_heavy
+	info.shake = Balance.combat.shake_heavy * 0.4
+	Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
+			player.global_position, kd.entrance_radius))
 
 
 func _start_relay() -> void:

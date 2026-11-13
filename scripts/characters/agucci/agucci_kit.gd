@@ -10,6 +10,10 @@ extends CharacterKit
 ## Posesión: camina solo al enemigo más cercano y ataca solo; la habilidad y la esquiva
 ## pasan a ser Mordida de Sombra y Abrazo del Valle sin Luz (cuestan vida, curan si conectan).
 
+## Capas de física: paredes de la sala (1) y obstáculos como rocas (512).
+const WORLD_LAYER := 1
+const OBSTACLE_LAYER := 512
+
 ## Violeta = sombra (GDD, colores reservados).
 const SHADOW_COLOR := Color(0.45, 0.2, 0.72)
 const AURA_SHADER: Shader = preload("res://assets/shaders/fury_aura.gdshader")
@@ -36,7 +40,9 @@ var _kunai_time: float = 0.0
 var _kunai_position: Vector3 = Vector3.ZERO
 var _kunai_target: Node3D
 var _kunai_marker: MeshInstance3D
-var _saved_collision_mask: int = 3
+var _saved_collision_mask: int = 515
+var _in_shadow: bool = false
+var _dissolve_direction: Vector3 = Vector3.FORWARD
 var _projectiles: ProjectilePool
 var _shadow_material: ShaderMaterial
 var _shadow_disc: MeshInstance3D
@@ -257,7 +263,7 @@ func _throw_kunai() -> void:
 
 ## Hasta dónde llega antes de chocar con una pared o roca (el kunai se clava ahí).
 func _range_until_obstacle(from: Vector3, direction: Vector3, max_range: float) -> float:
-	var query := PhysicsRayQueryParameters3D.create(from, from + direction * max_range, 1)
+	var query := PhysicsRayQueryParameters3D.create(from, from + direction * max_range, 1 | 512)
 	var hit: Dictionary = player.get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return max_range
@@ -305,15 +311,13 @@ func _shadow_dash() -> void:
 	player.visual.visible = false
 	# Viaja por la sombra: atraviesa obstáculos y siempre llega al kunai (antes una roca lo
 	# frenaba y el corte pegaba igual, sin moverse).
-	_saved_collision_mask = player.collision_mask
-	player.collision_mask = 0
+	_enter_shadow()
 	schedule(kd.dash_time, _shadow_dash_end.bind(from, to))
 
 
 func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
-	player.collision_mask = _saved_collision_mask
 	player.global_position = Vector3(to.x, player.global_position.y, to.z)
-	player.reset_physics_interpolation()
+	_exit_shadow(to - from)
 	player.visual.visible = true
 	Fx.ring_burst(_world(), to, 1.4, SHADOW_COLOR)
 	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
@@ -338,6 +342,46 @@ func _any_dead(targets: Array[Hurtbox]) -> bool:
 	return false
 
 
+# --- Moverse por la sombra: atraviesa rocas, no las paredes de la sala ---
+
+func _enter_shadow() -> void:
+	if not _in_shadow:
+		_saved_collision_mask = player.collision_mask
+	_in_shadow = true
+	player.collision_mask = WORLD_LAYER
+
+
+## Vuelve a chocar con todo. Si quedó adentro de una roca, sale al lugar libre más cercano
+## (primero hacia adelante, en la dirección en que venía).
+func _exit_shadow(travel: Vector3) -> void:
+	if not _in_shadow:
+		return
+	_in_shadow = false
+	player.collision_mask = _saved_collision_mask
+	var forward := Vector3(travel.x, 0.0, travel.z)
+	forward = forward.normalized() if forward.length_squared() > 0.001 else player.aim_direction
+	var here: Vector3 = player.global_position
+	if not _blocked_at(here):
+		return
+	for step: int in range(1, 13):
+		for sign_dir: float in [1.0, -1.0]:
+			var candidate: Vector3 = here + forward * sign_dir * step * 0.3
+			if not _blocked_at(candidate):
+				player.global_position = candidate
+				player.reset_physics_interpolation()
+				return
+
+
+func _blocked_at(point: Vector3) -> bool:
+	var shape := SphereShape3D.new()
+	shape.radius = data.placeholder_radius
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = shape
+	query.transform = Transform3D(Basis(), Vector3(point.x, data.placeholder_height * 0.5, point.z))
+	query.collision_mask = OBSTACLE_LAYER
+	return not player.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
+
+
 # --- Disolverse (o Abrazo del Valle sin Luz en Posesión) ---
 
 func can_dodge() -> bool:
@@ -352,10 +396,13 @@ func do_dodge() -> void:
 		return
 	dodge_cooldown.use()
 	cancel_scheduled()
-	player.collision_mask = _saved_collision_mask
+	if _in_shadow:
+		_exit_shadow(Vector3.ZERO)
 	player.visual.visible = true
 	var start: Vector3 = player.global_position
 	var direction: Vector3 = dodge_direction()
+	_dissolve_direction = direction
+	_enter_shadow()
 	player.start_dodge(direction, kd.dissolve_distance, kd.dissolve_duration)
 	player.health.make_invulnerable(kd.dissolve_duration)
 	player.visual.visible = false
@@ -365,6 +412,7 @@ func do_dodge() -> void:
 
 
 func _reappear() -> void:
+	_exit_shadow(_dissolve_direction)
 	player.visual.visible = true
 	Fx.ring_burst(_world(), player.global_position, 1.2, SHADOW_COLOR, 0.25)
 

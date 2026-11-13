@@ -47,7 +47,7 @@ func _ready() -> void:
 	data = Balance.get_enemy(enemy_id)
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	collision_layer = 1 << 3  # enemies
-	collision_mask = 1  # world
+	collision_mask = 1 | 512  # paredes y rocas
 	add_to_group(&"enemies")
 	if health_multiplier < 0.0:
 		health_multiplier = Scaling.current_health_multiplier()

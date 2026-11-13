@@ -432,7 +432,7 @@ func _biggest_enemy_near() -> Enemy:
 func _toss_landing() -> Vector3:
 	var from: Vector3 = player.global_position + Vector3.UP
 	var to: Vector3 = from + player.aim_direction * kd.toss_distance
-	var query := PhysicsRayQueryParameters3D.create(from, to, 1)
+	var query := PhysicsRayQueryParameters3D.create(from, to, 1 | 512)
 	var hit: Dictionary = player.get_world_3d().direct_space_state.intersect_ray(query)
 	var landing: Vector3 = (hit["position"] as Vector3) - player.aim_direction * 0.8 \
 			if not hit.is_empty() else to

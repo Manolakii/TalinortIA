@@ -74,7 +74,7 @@ func _start_windup() -> void:
 ## Hasta dónde puede cargar antes de una pared (para que el aviso sea honesto).
 func _distance_to_wall(max_distance: float) -> float:
 	var from: Vector3 = global_position + Vector3.UP
-	var query := PhysicsRayQueryParameters3D.create(from, from + _charge_direction * max_distance, 1)
+	var query := PhysicsRayQueryParameters3D.create(from, from + _charge_direction * max_distance, 1 | 512)
 	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return max_distance

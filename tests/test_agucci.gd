@@ -176,6 +176,7 @@ func test_kunai_sticks_in_front_of_walls_and_dash_goes_through() -> void:
 	box.size = Vector3(4, 3, 1)
 	shape.shape = box
 	rock.add_child(shape)
+	rock.collision_layer = 512  # roca (obstáculo)
 	rock.position = Vector3(0, 1.5, -6)
 	add_child_autofree(rock)
 	await wait_physics_frames(2)
@@ -187,4 +188,13 @@ func test_kunai_sticks_in_front_of_walls_and_dash_goes_through() -> void:
 	release(PlayerInput.Action.ABILITY)
 	_pump(20)
 	assert_almost_eq(_player.global_position.z, -9.0, 0.3, "Viaja hasta el kunai aunque haya una roca en el medio")
-	assert_eq(_player.collision_mask, 3, "Recupera las colisiones al llegar")
+	assert_eq(_player.collision_mask, 515, "Recupera las colisiones al llegar")
+
+
+func test_dissolve_goes_through_rocks_but_not_walls() -> void:
+	press(PlayerInput.Action.DODGE)
+	_pump(1)
+	release(PlayerInput.Action.DODGE)
+	assert_eq(_player.collision_mask, AgucciKit.WORLD_LAYER, "En la sombra solo lo frenan las paredes")
+	_pump(20)
+	assert_eq(_player.collision_mask, 515, "Al reaparecer vuelve a chocar con todo")

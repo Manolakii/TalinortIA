@@ -58,8 +58,8 @@ func test_switch_swaps_control_and_places() -> void:
 	assert_eq(_kit.controlled, MaestroKit.Body.STEWIE, "Ahora manejás a Stewie")
 	assert_eq(_player.health.max_health, 80.0)
 	assert_eq(_kit.companion.identity, MaestroKit.Body.MAESTRO)
-	assert_almost_eq(_player.global_position.distance_to(stewie_spot), 0.0, 0.3,
-			"Tomás el control donde estaba Stewie")
+	assert_almost_eq(_kit.companion.global_position.distance_to(stewie_spot), 0.0, 0.3,
+			"El Maestro (ahora IA) queda donde estaba Stewie: vos seguís en tu lugar")
 	assert_false(_kit.switch_cooldown.is_ready(), "Cambio: CD 6 s")
 	assert_eq(_kit.ult_charge, 0.0)
 
@@ -203,3 +203,13 @@ func test_ai_steps_out_of_shadow_zones() -> void:
 	zone.global_position = _kit.companion.global_position
 	await wait_physics_frames(1)
 	assert_ne(_kit._hazard_exit(_kit.companion), Vector3.ZERO, "Sabe que tiene que salir")
+
+
+func test_switch_entrance_hits_around() -> void:
+	_pump(1)
+	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
+	press(PlayerInput.Action.ULTIMATE)
+	_pump(1)
+	release(PlayerInput.Action.ULTIMATE)
+	assert_lt(enemy.health.current, 1000.0, "La entrada pega en área")
+	assert_true(enemy.status.has(StatusEffects.STUN), "Y lo deja tambaleando un instante")

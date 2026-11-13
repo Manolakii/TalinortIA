@@ -47,6 +47,7 @@ enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 3d_physics/layer_7="player_hitbox"
 3d_physics/layer_8="enemy_hitbox"
 3d_physics/layer_9="interactables"
+3d_physics/layer_10="obstacles"
 
 [physics]
 

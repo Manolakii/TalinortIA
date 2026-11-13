@@ -86,6 +86,11 @@ extends Resource
 @export var fallen_revive_time: float = 15.0
 @export var fallen_revive_health: float = 0.5
 @export var switch_cooldown: float = 6.0
+## La entrada del Cambio (el Maestro cae con la garrocha, Stewie rodando) pega en área.
+@export var entrance_damage: float = 40.0
+@export var entrance_radius: float = 2.6
+@export var entrance_knockback: float = 8.0
+@export var entrance_stun: float = 0.4
 
 @export_group("Relevo Total (base)")
 @export var relay_duration: float = 8.0

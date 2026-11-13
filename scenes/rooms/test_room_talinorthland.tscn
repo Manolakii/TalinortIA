@@ -171,6 +171,7 @@ shape = SubResource("wall_side_shape")
 
 [node name="Rock1" type="StaticBody3D" parent="Rocks"]
 position = Vector3(-8, 0.3, -5)
+collision_layer = 512
 collision_mask = 0
 
 [node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock1"]
@@ -183,6 +184,7 @@ shape = SubResource("rock_shape")
 
 [node name="Rock2" type="StaticBody3D" parent="Rocks"]
 position = Vector3(9, 0.2, 4)
+collision_layer = 512
 collision_mask = 0
 
 [node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock2"]
@@ -194,6 +196,7 @@ shape = SubResource("rock_shape")
 
 [node name="Rock3" type="StaticBody3D" parent="Rocks"]
 position = Vector3(5, 0.4, -8)
+collision_layer = 512
 collision_mask = 0
 
 [node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock3"]
@@ -206,6 +209,7 @@ shape = SubResource("rock_shape")
 
 [node name="Rock4" type="StaticBody3D" parent="Rocks"]
 position = Vector3(-15, 0.15, 9)
+collision_layer = 512
 collision_mask = 0
 
 [node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock4"]

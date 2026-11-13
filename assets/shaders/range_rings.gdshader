@@ -11,9 +11,9 @@ uniform float outer_m = 13.0;
 // 0 escopeta, 1 pistola, 2 rifle.
 uniform int active_band = 1;
 uniform float strength : hint_range(0.0, 1.0) = 1.0;
-uniform float ring_alpha = 0.22;
-uniform float fill_alpha = 0.045;
-uniform float ring_width_m = 0.07;
+uniform float ring_alpha = 0.12;
+uniform float fill_alpha = 0.025;
+uniform float ring_width_m = 0.045;
 
 void fragment() {
 	float r = length(UV * 2.0 - 1.0) * outer_m;
