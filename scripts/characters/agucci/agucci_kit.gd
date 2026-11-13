@@ -61,9 +61,9 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	step_cooldown.tick(delta)
-	bite_cooldown.tick(delta)
-	embrace_cooldown.tick(delta)
+	step_cooldown.tick(cd_delta(delta))
+	bite_cooldown.tick(cd_delta(delta))
+	embrace_cooldown.tick(cd_delta(delta))
 	_since_attack += delta
 	if not player.is_in_action():
 		_combo_idle += delta
@@ -164,7 +164,7 @@ func _hit_each(targets: Array[Hurtbox], base: float, setup: Callable = Callable(
 		info.origin = origin
 		if is_lucid() and _is_behind(hurtbox, origin) and not info.is_crit:
 			info.is_crit = true
-			info.amount *= data.crit_multiplier
+			info.amount *= player.crit_multiplier()
 			info.hitstop += Balance.combat.hitstop_crit_bonus
 		if setup.is_valid():
 			setup.call(info)
@@ -193,7 +193,7 @@ func _combo_step() -> void:
 	_since_attack = 0.0
 	basic_recovery = false
 	player.face_aim_now()
-	player.start_action(kd.step_durations[index], 0.55)
+	player.start_action(kd.step_durations[index] / attack_speed(), 0.55)
 	if index < 3:
 		schedule(0.06, _cut.bind(index))
 	elif index == 3:

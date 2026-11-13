@@ -91,6 +91,8 @@ func receive_hit(info: DamageInfo) -> bool:
 		hit_avoided.emit(info)
 		return false
 
+	if is_instance_valid(info.attacker) and info.attacker.has_method("outgoing_damage_multiplier"):
+		info.amount *= info.attacker.outgoing_damage_multiplier()
 	_modify_incoming(info)
 	health.apply_damage(info)
 	if info.knockback > 0.0:

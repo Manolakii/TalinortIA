@@ -10,6 +10,7 @@ const COMBAT_PATH := "res://data/combat_config.tres"
 const DIFFICULTY_PATH := "res://data/difficulty.tres"
 const ELITE_PATH := "res://data/elite_config.tres"
 const REVIVE_PATH := "res://data/revive_config.tres"
+const GENERIC_ITEMS_PATH := "res://data/items/generic_items.tres"
 const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
 var roster: CharacterRoster
@@ -20,6 +21,7 @@ var combat: CombatConfig
 var difficulty: DifficultyConfig
 var elite: EliteConfig
 var revive: ReviveConfig
+var generic_items: GenericItemList
 
 var _enemy_cache: Dictionary[StringName, EnemyData] = {}
 
@@ -34,6 +36,7 @@ func _enter_tree() -> void:
 	difficulty = _load_required(DIFFICULTY_PATH) as DifficultyConfig
 	elite = _load_required(ELITE_PATH) as EliteConfig
 	revive = _load_required(REVIVE_PATH) as ReviveConfig
+	generic_items = _load_required(GENERIC_ITEMS_PATH) as GenericItemList
 
 
 func get_enemy(id: StringName) -> EnemyData:

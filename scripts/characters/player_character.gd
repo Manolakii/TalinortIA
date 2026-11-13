@@ -24,6 +24,8 @@ var slot: PlayerSlot
 var data: CharacterData
 var kit: CharacterKit
 var revive: ReviveComponent
+## Lo que suman objetos y mejoras (StatModifiers).
+var modifiers := StatModifiers.new()
 ## Dirección horizontal (normalizada) hacia donde apunta.
 var aim_direction: Vector3 = Vector3.FORWARD
 ## Punto del piso al que apunta (con mouse es el cursor; con joystick, unos metros adelante).
@@ -81,7 +83,10 @@ func _build() -> void:
 	if not died.is_connected(_on_died):
 		died.connect(_on_died)
 		Events.hit_landed.connect(_on_any_hit_landed)
+		Events.loadout_changed.connect(_on_loadout_changed)
+		Events.wave_cleared.connect(_on_wave_cleared)
 	_create_kit()
+	rebuild_modifiers()
 	if revive == null:
 		revive = ReviveComponent.new()
 		revive.name = "Revive"
@@ -137,6 +142,7 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 		speed *= Balance.combat.haste_multiplier
 	if status.has(StatusEffects.SLOW):
 		speed *= Balance.combat.slow_multiplier
+	speed *= modifiers.move_speed_multiplier()
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
 	_move_velocity = _move_velocity.move_toward(target, rate * delta)
@@ -287,6 +293,9 @@ func _after_hit(info: DamageInfo) -> void:
 func _on_any_hit_landed(info: DamageInfo, target: Node3D) -> void:
 	if info.attacker == self and target != self:
 		kit.on_damage_dealt(info, target)
+		var steal: float = modifiers.lifesteal()
+		if steal > 0.0 and not health.is_dead:
+			health.heal(info.final_amount * steal)
 
 
 func _on_died(info: DamageInfo) -> void:
@@ -312,6 +321,53 @@ func _on_died(info: DamageInfo) -> void:
 	timer.timeout.connect(func() -> void:
 		health.restore_full()
 		health.make_invulnerable(1.0))
+
+
+# --- Objetos y mejoras ---
+
+## Recalcula lo que suman los objetos genéricos y mejoras del jugador (RunState).
+func rebuild_modifiers() -> void:
+	modifiers.clear()
+	for item_id: Variant in RunState.get_items(slot.index):
+		var item: GenericItem = Balance.generic_items.get_item(item_id)
+		if item != null:
+			modifiers.add(item.stat, item.amount)
+	kit.apply_upgrade_stats(modifiers)
+	var ratio: float = health.ratio() if health.max_health > 0.0 else 1.0
+	health.max_health = kit.base_max_health() + modifiers.max_health_bonus()
+	health.current = clampf(health.max_health * ratio, 0.0, health.max_health) \
+			if not health.is_dead else 0.0
+	health.changed.emit(health.current, health.max_health)
+
+
+func crit_chance() -> float:
+	return data.crit_chance + modifiers.crit_chance_bonus()
+
+
+func crit_multiplier() -> float:
+	return data.crit_multiplier + modifiers.crit_damage_bonus()
+
+
+## Lo usa Combatant al pegar: daño extra de objetos y mejoras.
+func outgoing_damage_multiplier() -> float:
+	return modifiers.damage_multiplier()
+
+
+## Daño recibido con objetos (Escama), con tope.
+func _modify_incoming(info: DamageInfo) -> void:
+	info.amount *= modifiers.damage_taken_multiplier()
+
+
+func _on_loadout_changed(slot_index: int) -> void:
+	if slot != null and slot_index == slot.index:
+		rebuild_modifiers()
+
+
+## Vendas del Bosque Tuerto: cura al terminar cada oleada.
+func _on_wave_cleared(_index: int) -> void:
+	var amount: float = modifiers.heal_per_wave()
+	if amount > 0.0 and not health.is_dead:
+		health.heal(amount)
 
 
 func _allies_alive() -> int:

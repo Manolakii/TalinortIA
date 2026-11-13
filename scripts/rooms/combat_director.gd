@@ -47,6 +47,7 @@ func _physics_process(delta: float) -> void:
 				_start_wave(wave_index + 1)
 		Phase.FIGHTING:
 			if alive_enemies() == 0:
+				Events.wave_cleared.emit(wave_index)
 				if wave_index + 1 >= waves.waves.size():
 					state = Phase.CLEARED
 					room_cleared.emit()

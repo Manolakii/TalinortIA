@@ -140,6 +140,11 @@ func stop(delta: float) -> void:
 	move_with_knockback(_move_velocity)
 
 
+## Pega con los objetos del jugador.
+func outgoing_damage_multiplier() -> float:
+	return kit.player.outgoing_damage_multiplier() if kit != null else 1.0
+
+
 func can_be_targeted_by_enemies() -> bool:
 	return is_targetable() and not downed
 

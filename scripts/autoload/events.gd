@@ -13,6 +13,10 @@ signal device_reconnected(slot: PlayerSlot)
 # --- Partida ---
 signal run_started(seed_value: int)
 signal gold_changed(slot_index: int, new_amount: int)
+## Cambiaron los objetos o mejoras de un jugador (hay que recalcular sus estadísticas).
+signal loadout_changed(slot_index: int)
+## Se terminó una oleada (las Vendas del Bosque Tuerto curan).
+signal wave_cleared(index: int)
 
 # --- Combate ---
 ## Un golpe conectó (para números de daño, barras de Furia y de definitiva, etc.).

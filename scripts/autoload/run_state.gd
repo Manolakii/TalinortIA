@@ -12,6 +12,9 @@ var in_run: bool = false
 var difficulty: int = DifficultyConfig.Level.NORMAL
 ## Bonus que se acumulan durante la partida, por jugador (por ejemplo, el Tiro por Contrato).
 var _bonuses: Dictionary[String, int] = {}
+## Objetos genéricos y mejoras de personaje de cada jugador (ids), por índice de jugador.
+var items: Dictionary[int, Array] = {}
+var upgrades: Dictionary[int, Array] = {}
 
 
 ## Arranca una partida. Con seed 0 se elige una al azar (y se imprime, para poder reproducir errores).
@@ -22,6 +25,8 @@ func start_run(new_seed: int = 0) -> void:
 	rng.seed = seed_value
 	gold.clear()
 	_bonuses.clear()
+	items.clear()
+	upgrades.clear()
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		gold[slot.index] = Balance.economy.starting_gold
 	in_run = true
@@ -45,6 +50,36 @@ func get_bonus(slot_index: int, key: StringName) -> int:
 func add_bonus(slot_index: int, key: StringName, amount: int) -> void:
 	var k: String = "%d:%s" % [slot_index, key]
 	_bonuses[k] = _bonuses.get(k, 0) + amount
+
+
+func get_items(slot_index: int) -> Array:
+	return items.get(slot_index, [])
+
+
+func add_item(slot_index: int, item_id: StringName) -> void:
+	if not items.has(slot_index):
+		items[slot_index] = []
+	items[slot_index].append(item_id)
+	Events.loadout_changed.emit(slot_index)
+
+
+func get_upgrades(slot_index: int) -> Array:
+	return upgrades.get(slot_index, [])
+
+
+func has_upgrade(slot_index: int, upgrade_id: StringName) -> bool:
+	return get_upgrades(slot_index).has(upgrade_id)
+
+
+func upgrade_count(slot_index: int, upgrade_id: StringName) -> int:
+	return get_upgrades(slot_index).count(upgrade_id)
+
+
+func add_upgrade(slot_index: int, upgrade_id: StringName) -> void:
+	if not upgrades.has(slot_index):
+		upgrades[slot_index] = []
+	upgrades[slot_index].append(upgrade_id)
+	Events.loadout_changed.emit(slot_index)
 
 
 func end_run() -> void:

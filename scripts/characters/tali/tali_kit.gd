@@ -45,8 +45,8 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	call_cooldown.tick(delta)
-	slam_cooldown.tick(delta)
+	call_cooldown.tick(cd_delta(delta))
+	slam_cooldown.tick(cd_delta(delta))
 	_attack_timer -= delta
 	_lockout = maxf(_lockout - delta, 0.0)
 	if in_fury:
@@ -238,14 +238,14 @@ func _is_surrounded() -> bool:
 # --- Normal: Piedrazo ---
 
 func _throw_rock() -> void:
-	_attack_timer = kd.rock_interval
+	_attack_timer = kd.rock_interval / attack_speed()
 	player.start_action(0.18, 0.75)
 	basic_recovery = true
 	var spread: float = deg_to_rad(Combat.rng.randf_range(-kd.rock_spread_deg, kd.rock_spread_deg))
 	var direction: Vector3 = player.aim_direction.rotated(Vector3.UP, spread)
 	var lucky: bool = Combat.roll(kd.lucky_shot_chance)
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.rock_damage,
-			1.0 if lucky else data.crit_chance, data.crit_multiplier)
+			1.0 if lucky else player.crit_chance(), player.crit_multiplier())
 	info.is_melee = false
 	info.knockback = 1.5
 	info.hitstop = Balance.combat.hitstop_light
@@ -289,7 +289,7 @@ func _spawn_call(kind: int, direction: Vector3) -> void:
 func _claw() -> void:
 	var index: int = _combo_index
 	player.face_aim_now()
-	player.start_action(kd.claw_combo_time / 3.0, kd.claw_move_multiplier)
+	player.start_action(kd.claw_combo_time / 3.0 / attack_speed(), kd.claw_move_multiplier)
 	_combo_index = (index + 1) % 3
 	_combo_idle = 0.0
 	basic_recovery = false
@@ -301,7 +301,7 @@ func _claw_hit(index: int) -> void:
 	var heavy: bool = index == 2
 	var direction: Vector3 = player.aim_direction
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-			kd.claw_damage[index], data.crit_chance, data.crit_multiplier)
+			kd.claw_damage[index], player.crit_chance(), player.crit_multiplier())
 	var combat: CombatConfig = Balance.combat
 	info.knockback = 6.0 if heavy else 2.5
 	info.hitstop = combat.hitstop_heavy if heavy else combat.hitstop_light
@@ -343,7 +343,7 @@ func _slam() -> void:
 func _slam_land() -> void:
 	var center: Vector3 = player.global_position
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.slam_damage,
-			data.crit_chance, data.crit_multiplier)
+			player.crit_chance(), player.crit_multiplier())
 	info.stun = kd.slam_stun
 	info.knockback = 7.0
 	info.hitstop = Balance.combat.hitstop_heavy
@@ -445,13 +445,13 @@ func _toss_land(victim: Enemy, landing: Vector3) -> void:
 		victim.global_position = landing
 		victim.set_controlled(false)
 		var thrown: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-				kd.toss_thrown_damage, data.crit_chance, data.crit_multiplier)
+				kd.toss_thrown_damage, player.crit_chance(), player.crit_multiplier())
 		thrown.stun = kd.toss_knockdown
 		thrown.hitstop = combat.hitstop_heavy
 		thrown.tags.append(&"thrown")
 		victim.receive_hit(thrown)
 	var splash: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-			kd.toss_splash_damage, data.crit_chance, data.crit_multiplier)
+			kd.toss_splash_damage, player.crit_chance(), player.crit_multiplier())
 	splash.origin = landing
 	splash.stun = kd.toss_knockdown
 	splash.knockback = 7.0

@@ -73,7 +73,7 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	contract_cooldown.tick(delta)
+	contract_cooldown.tick(cd_delta(delta))
 	_attack_timer -= delta
 	_overheat = maxf(_overheat - delta, 0.0)
 	_mode_text_cooldown -= delta
@@ -188,7 +188,7 @@ func _fire() -> void:
 	basic_recovery = true
 	match mode:
 		Mode.SHOTGUN:
-			_attack_timer = kd.shotgun_interval
+			_attack_timer = kd.shotgun_interval / attack_speed()
 			player.start_action(0.25, 0.6)
 			for i: int in kd.shotgun_pellets:
 				var t: float = float(i) / maxf(kd.shotgun_pellets - 1, 1) - 0.5
@@ -200,14 +200,14 @@ func _fire() -> void:
 						kd.shotgun_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light)
 		Mode.PISTOL:
-			_attack_timer = kd.pistol_interval
+			_attack_timer = kd.pistol_interval / attack_speed()
 			player.start_action(0.14, 0.8)
 			var shot: DamageInfo = make_hit(kd.pistol_damage * bonus)
 			shot.knockback = kd.pistol_knockback
 			_shoot(shot, player.aim_direction, kd.pistol_speed, kd.pistol_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.6)
 		Mode.RIFLE:
-			_attack_timer = kd.rifle_interval
+			_attack_timer = kd.rifle_interval / attack_speed()
 			player.start_action(kd.rifle_burst_gap * kd.rifle_burst + 0.1, 0.7)
 			for i: int in kd.rifle_burst:
 				schedule(i * kd.rifle_burst_gap, _rifle_bullet.bind(bonus))

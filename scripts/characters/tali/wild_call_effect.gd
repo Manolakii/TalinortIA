@@ -139,7 +139,7 @@ func _place_line_pieces(front_point: Vector3) -> void:
 func _make_hit(amount: float) -> DamageInfo:
 	var player: PlayerCharacter = kit.player
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, amount,
-			player.data.crit_chance, player.data.crit_multiplier)
+			player.crit_chance(), player.crit_multiplier())
 	info.hitstop = Balance.combat.hitstop_light
 	info.is_melee = false
 	return info

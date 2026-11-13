@@ -92,7 +92,12 @@ func stewie_max_health() -> float:
 
 
 func _max_health_of(body: int) -> float:
-	return kd.maestro_max_health if body == Body.MAESTRO else stewie_max_health()
+	var bonus: float = player.modifiers.max_health_bonus() if player != null else 0.0
+	return (kd.maestro_max_health if body == Body.MAESTRO else stewie_max_health()) + bonus
+
+
+func base_max_health() -> float:
+	return kd.maestro_max_health if controlled == Body.MAESTRO else stewie_max_health()
 
 
 func _other(body: int) -> Body:
@@ -102,9 +107,9 @@ func _other(body: int) -> Body:
 # --- Cada frame ---
 
 func _tick(delta: float) -> void:
-	switch_cooldown.tick(delta)
+	switch_cooldown.tick(cd_delta(delta))
 	for body: int in _ability_cd:
-		_ability_cd[body].tick(delta)
+		_ability_cd[body].tick(cd_delta(delta))
 		_dodge_cd[body].tick(delta)
 	_attack_timer -= delta
 	if not player.is_in_action():
@@ -247,10 +252,10 @@ func _controlled_basic() -> void:
 	if controlled == Body.MAESTRO:
 		var index: int = _combo_index
 		_combo_index = (index + 1) % 3
-		player.start_action(kd.staff_step_durations[index], 0.5)
+		player.start_action(kd.staff_step_durations[index] / attack_speed(), 0.5)
 		schedule(0.12, _controlled_staff_hit.bind(index))
 	else:
-		player.start_action(kd.headbutt_interval, 0.6)
+		player.start_action(kd.headbutt_interval / attack_speed(), 0.6)
 		schedule(0.12, _controlled_headbutt_hit)
 	_mirror(Slot.BASIC)
 
