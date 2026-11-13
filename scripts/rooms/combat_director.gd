@@ -17,6 +17,8 @@ var wave_index: int = -1
 var rng := RandomNumberGenerator.new()
 ## Multiplica los enemigos comunes (los escenarios más avanzados traen más).
 var count_multiplier: float = 1.0
+## Élites extra por oleada (sala de Desafío).
+var extra_elites: int = 0
 
 var _timer: float = 0.0
 var _pending: Array[Dictionary] = []
@@ -85,9 +87,10 @@ func _start_wave(index: int) -> void:
 	for entry: RoomWaves.Entry in entries:
 		if entry.enemy_id != &"chaman_sombra":
 			fighters.append(entry.enemy_id)
-	for i: int in config.extra_elites_per_wave[RunState.difficulty]:
+	for i: int in config.extra_elites_per_wave[RunState.difficulty] + extra_elites:
 		if not fighters.is_empty():
-			_pending.append({"id": fighters[rng.randi_range(0, fighters.size() - 1)], "elite": true})
+			_pending.append({"id": fighters[rng.randi_range(0, fighters.size() - 1)], "elite": true,
+					"extra": true})
 	_pending.shuffle()
 	_timer = 0.0
 	wave_started.emit(index, waves.waves.size())
@@ -106,6 +109,8 @@ func _spawn(spec: Dictionary) -> void:
 	# Más enemigos que la base (más jugadores, más dificultad o escenario avanzado) = cada uno
 	# suelta oro con menos chance: el oro por jugador queda como en el GDD.
 	enemy.gold_chance = Balance.economy.common_drop_chance 			/ maxf(count_multiplier * Scaling.current_count_multiplier(), 1.0)
+	# Los élites extra (dificultad o Desafío) pagan como un común: si no, se llenaba de oro.
+	enemy.elite_gold = not spec.get("extra", false)
 	get_parent().add_child(enemy)
 	Fx.ring_burst(get_parent(), enemy.position, 1.2, Color(0.6, 0.55, 0.65), 0.3)
 

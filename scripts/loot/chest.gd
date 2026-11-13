@@ -12,6 +12,8 @@ const TRIM := Color(1.0, 0.78, 0.2)
 @export var locked: bool = false
 ## Si suelta oro al abrirse (los cofres de los eventos lo manejan aparte).
 var drops_gold: bool = true
+## Tabla de oro (vacía = la del Tesoro). Los cofres de evento usan la de evento.
+var gold_table: Array = []
 ## Evento Mimics: este cofre en realidad es un mimic. La pista: "breath" (respira) o "teeth" (marcas de dientes).
 var is_mimic: bool = false
 var mimic_clue: StringName = &""
@@ -109,7 +111,8 @@ func open(by: PlayerCharacter = null) -> void:
 	tween.tween_property(_glow, "light_energy", 0.0, 0.8)
 	Events.camera_shake_requested.emit(0.15)
 	if drops_gold and not is_mimic:
-		Loot.drop_for_all(get_parent(), global_position + Vector3.FORWARD * 0.3, Balance.economy.chest_gold)
+		Loot.drop_for_all(get_parent(), global_position + Vector3.FORWARD * 0.3,
+				gold_table if not gold_table.is_empty() else Balance.economy.chest_gold)
 	opened.emit(by)
 
 

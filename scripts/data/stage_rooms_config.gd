@@ -14,14 +14,18 @@ extends Resource
 ## Qué hay detrás de una puerta (sorpresa), en el orden de RoomKind.Type: Combate, Élite,
 ## Tesoro (0: es escondido), Mimics, Colonia de presos. La Cabaña no sale así.
 @export var room_weights: Array[int] = [60, 20, 0, 10, 10]
-## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Curación.
-@export var reward_weights: Array[int] = [0, 50, 30, 20]
+## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío.
+@export var reward_weights: Array[int] = [0, 45, 35, 20]
 ## Premio de Oro: para cada jugador.
-@export var gold_reward: Vector2i = Vector2i(25, 35)
-## Premio de Curación: parte de la vida máxima que cura a cada uno (y levanta a los caídos).
-@export var heal_reward: float = 0.4
+@export var gold_reward: Vector2i = Vector2i(15, 25)
+## Desafío: la sala trae estos élites extra por oleada y más enemigos, y paga una mejora de 4.
+@export var challenge_extra_elites: int = 1
+@export var challenge_count_multiplier: float = 1.25
+## Opciones al elegir mejora: normal y "mejorada" (élite, desafío o evento bien hecho).
+@export var upgrade_options: int = 3
+@export var upgrade_options_bonus: int = 4
 ## Chance de que una sala tenga una roca agrietada con un pasaje al Tesoro escondido.
-@export var hidden_treasure_chance: float = 0.35
+@export var hidden_treasure_chance: float = 0.15
 ## Golpes para romper la roca agrietada.
 @export var cracked_rock_hits: int = 3
 
@@ -40,7 +44,7 @@ extends Resource
 @export var treasure_guard_chance: float = 0.4
 ## Colonia de presos: cuántas jaulas, oro por preso y cuánto hay que mantener para abrir.
 @export var prisoner_count: int = 4
-@export var prisoner_gold: int = 6
+@export var prisoner_gold: int = 4
 @export var cage_open_time: float = 1.5
 ## En qué escenario puede aparecer el acertijo de Pipo (2 = X-3, el Bosque Tuerto).
 @export var riddle_scenario: int = 2

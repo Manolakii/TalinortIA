@@ -29,8 +29,8 @@ func test_full_combo_damage() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(int(1.6 / DT))
-	assert_almost_eq(1000.0 - enemy.health.current, 17.0 + 17.0 + 21.0 + 12.0 + 5 * 5.0, 0.01,
-			"Cortes 17/17/21, patada 12, UZI 5 × 5")
+	assert_almost_eq(1000.0 - enemy.health.current, 9.0 + 12.0 + 16.0 + 20.0 + 5 * 5.0, 0.01,
+			"Cortes 9/12/16, patada 20, UZI 5 × 5")
 
 
 func test_lucid_backstab_is_guaranteed_crit() -> void:
@@ -38,7 +38,7 @@ func test_lucid_backstab_is_guaranteed_crit() -> void:
 	enemy.facing = Vector3.FORWARD  # mira para el otro lado: Agucci está a su espalda
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(8)
-	assert_almost_eq(1000.0 - enemy.health.current, 17.0 * _player.data.crit_multiplier, 0.01,
+	assert_almost_eq(1000.0 - enemy.health.current, 9.0 * _player.data.crit_multiplier, 0.01,
 			"Primer corte por la espalda en Lucidez: crítico de 175%")
 
 
@@ -127,7 +127,7 @@ func test_night_echoes_every_hit() -> void:
 	_pump(12)
 	_slot.input._held[PlayerInput.Action.ATTACK] = false
 	_pump(10)
-	assert_almost_eq(1000.0 - enemy.health.current, 34.0, 0.5, "El corte de 17 pega doble")
+	assert_almost_eq(1000.0 - enemy.health.current, 18.0, 0.5, "El corte de 9 pega doble")
 
 
 func test_shadow_bite_costs_life_and_resets_on_kill() -> void:

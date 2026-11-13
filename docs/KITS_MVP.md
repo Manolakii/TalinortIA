@@ -8,7 +8,7 @@ Tali, Mercenario Croco, Agucci, y el Maestro Uwey con Stewie. Los números son u
 
 | Personaje | Vida | Velocidad (m/s) | Crítico | Daño por segundo del golpe común |
 | --- | --- | --- | --- | --- |
-| Agucci | 90 | 6,3 | 15%, daño 175% | ~65 (bajado de ~77 por el grupo) |
+| Agucci | 90 | 6,3 | 15%, daño 175% | ~58 (bajado de ~77 por el grupo) |
 | Mercenario Croco | 100 | 6,6 | 10% | ~51 a 70 según el modo |
 | Tali | 150 | 5,6 | 5% | ~22 en Normal, ~92 en Furia |
 | Maestro Uwey + Stewie | Maestro 110; Stewie 80 / 110 / 140 según su forma | Maestro 5,6; Stewie 5,8 | 5% | ~65 entre los dos |
@@ -87,7 +87,7 @@ Barra de Hambre de 0 a 100. Las habilidades de sombra la llenan y los golpes com
 - **Sinergia con Tali:** cerca de Tali, el Hambre baja sola. Si entra en Posesión al lado de Tali, dura la mitad.
 
 **1 · Golpe común — Katana y Plomo**
-Tres cortes rápidos (17 / 17 / 21), una patada que empuja un poco (12) y después vacía la UZI en abanico (5 balas de 5). Combo completo en ~1,4 s.
+Tres cortes rápidos que van subiendo (9 / 12 / 16), una patada que empuja un poco (20) y después vacía la UZI en abanico (5 balas de 5). Lo fuerte está al final del combo: cortarlo seguido no rinde (pedido del grupo). Combo completo en ~1,4 s.
 
 **2 · Habilidad fuerte — Paso de Sombra (CD 8 s, +20 de Hambre)**
 Tira un kunai (40 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino (90 por enemigo). Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.

@@ -103,6 +103,11 @@ extends Resource
 @export var entrance_stun: float = 0.4
 
 @export_group("Relevo Total (base)")
+## Relevo Total: el compañero salta al lado del jugador con este golpe en área.
+@export var relay_join_damage: float = 50.0
+@export var relay_join_radius: float = 3.0
+## Lección del Maestro: los golpes que copia Stewie pegan este extra.
+@export var lesson_damage_bonus: float = 0.3
 @export var relay_duration: float = 8.0
 @export var ancestral_scale: float = 2.0
 @export var ancestral_damage_bonus: float = 0.5

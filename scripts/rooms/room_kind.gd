@@ -1,11 +1,11 @@
 class_name RoomKind
 extends RefCounted
 ## Tipos de sala (GDD, Tipos de sala) y premios de las puertas.
-## Las puertas muestran el PREMIO (mejora, oro o curación) y lo que hay adentro es sorpresa
+## Las puertas muestran el PREMIO (mejora, oro o desafío) y lo que hay adentro es sorpresa
 ## (pedido del grupo). Tesoro y Cabaña de Pipo son salas extra escondidas.
 
 enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN }
-enum Reward { NONE, UPGRADE, GOLD, HEAL }
+enum Reward { NONE, UPGRADE, GOLD, CHALLENGE }
 
 const NAMES: Dictionary = {
 	Type.COMBAT: "Combate",
@@ -19,7 +19,7 @@ const REWARD_NAMES: Dictionary = {
 	Reward.NONE: "",
 	Reward.UPGRADE: "Mejora",
 	Reward.GOLD: "Oro",
-	Reward.HEAL: "Curación",
+	Reward.CHALLENGE: "Desafío",
 }
 
 
@@ -40,6 +40,6 @@ static func is_bonus(type: int) -> bool:
 	return type in [Type.TREASURE, Type.PIPO_CABIN]
 
 
-## Mejora asegurada además del premio de la puerta (GDD: siempre en las de élite).
+## Mejora asegurada (GDD: siempre en las de élite). Igual hay una sola mejora por sala.
 static func gives_upgrade(type: int) -> bool:
 	return type == Type.ELITE

@@ -133,7 +133,7 @@ func build_room(type: int) -> void:
 			var mimics := MimicEvent.new()
 			_room_root.add_child(mimics)
 			mimics.setup(template.feature_spots(), rng)
-			mimics.resolved.connect(func() -> void: _room_done(true))
+			mimics.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
 			_event = mimics
 		RoomKind.Type.PRISONERS:
 			var prisoners := PrisonerEvent.new()
@@ -189,6 +189,9 @@ func _start_director(waves: RoomWaves) -> void:
 	director.name = "CombatDirector"
 	director.waves = waves
 	director.count_multiplier = 1.0 + config.count_bonus_per_scenario * RunState.scenario
+	if RunState.room_reward == RoomKind.Reward.CHALLENGE and not RoomKind.is_bonus(room_type):
+		director.extra_elites = config.challenge_extra_elites
+		director.count_multiplier *= config.challenge_count_multiplier
 	_room_root.add_child(director)
 	director.room_cleared.connect(_on_combat_cleared)
 
@@ -206,26 +209,28 @@ func _on_combat_cleared() -> void:
 
 # --- Terminar la sala: premios y puertas ---
 
-## `event_upgrade`: el cofre de evento da mejora. `bonus_item`: objeto extra (salvaron a todos).
-func _room_done(event_upgrade: bool = false, bonus_item: bool = false) -> void:
+## Premios al terminar. Hay UNA mejora por sala como máximo (pedido del grupo: se juntaban
+## demasiadas): la da la puerta "Mejora" o "Desafío", la élite (GDD) o un evento perfecto.
+## Si se juntan dos de esas cosas, en vez de otra mejora se elige entre 4 opciones.
+## `event_perfect`: el evento salió perfecto. `bonus_item`: objeto extra (salvaron a todos).
+func _room_done(event_perfect: bool = false, bonus_item: bool = false) -> void:
 	if _done or _failed:
 		return
 	_done = true
 	Events.room_cleared.emit()
 	await get_tree().create_timer(0.8).timeout
-	# El premio de la puerta.
-	match RunState.room_reward if not RoomKind.is_bonus(room_type) else RoomKind.Reward.NONE:
-		RoomKind.Reward.UPGRADE:
-			await _pick(RewardPicker.Kind.UPGRADE)
-		RoomKind.Reward.GOLD:
-			await _give_gold_reward()
-		RoomKind.Reward.HEAL:
-			_give_heal_reward()
-	# Extra por el riesgo: élite (GDD: mejora asegurada) y cofre de evento.
-	if RoomKind.gives_upgrade(room_type):
-		await _pick(RewardPicker.Kind.UPGRADE, "¡Élite derrotado! Una mejora más")
-	if event_upgrade:
-		await _pick(RewardPicker.Kind.UPGRADE, "¡Cofre de evento! Elegí una mejora")
+	var reward: int = RunState.room_reward if not RoomKind.is_bonus(room_type) else RoomKind.Reward.NONE
+	if reward == RoomKind.Reward.GOLD:
+		await _give_gold_reward()
+	var sources: int = 0
+	for source: bool in [reward == RoomKind.Reward.UPGRADE, reward == RoomKind.Reward.CHALLENGE,
+			RoomKind.gives_upgrade(room_type), event_perfect]:
+		sources += 1 if source else 0
+	if sources > 0:
+		var better: bool = sources >= 2 or reward == RoomKind.Reward.CHALLENGE
+		var heading: String = "¡Mejora de lujo! Elegí entre 4" if better else ""
+		await _pick(RewardPicker.Kind.UPGRADE, heading,
+				config.upgrade_options_bonus if better else config.upgrade_options)
 	if bonus_item:
 		await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
 	if _riddle_here():
@@ -245,19 +250,6 @@ func _give_gold_reward() -> void:
 	await get_tree().create_timer(0.6).timeout
 	Events.room_cleared.emit()  # que vuelen solas
 	await get_tree().create_timer(0.8).timeout
-
-
-## Cura a todos una parte de la vida máxima y levanta a los caídos.
-func _give_heal_reward() -> void:
-	for player: PlayerCharacter in players:
-		if not is_instance_valid(player) or player.is_out():
-			continue
-		if player.is_downed():
-			player.complete_revive()
-		player.health.heal(player.health.max_health * config.heal_reward)
-		Fx.ring_burst(self, player.global_position, 1.6, HealMushroom.CAP_COLOR, 0.4)
-		Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.4, "¡A curarse!",
-				HealMushroom.CAP_COLOR)
 
 
 ## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
@@ -303,7 +295,7 @@ func _finish_stage() -> void:
 			"Bueno, casi: el Gronk Gigante los espera en el 1-4 (llega en la Fase 7).")
 
 
-func _pick(kind: RewardPicker.Kind, heading: String = "") -> void:
+func _pick(kind: RewardPicker.Kind, heading: String = "", option_count: int = 3) -> void:
 	var eligible: Array[PlayerCharacter] = []
 	for player: PlayerCharacter in players:
 		if is_instance_valid(player) and not player.is_out():
@@ -312,7 +304,7 @@ func _pick(kind: RewardPicker.Kind, heading: String = "") -> void:
 		return
 	var picker := RewardPicker.new()
 	add_child(picker)
-	picker.start(kind, eligible, heading)
+	picker.start(kind, eligible, heading, option_count)
 	await picker.finished
 	picker.queue_free()
 

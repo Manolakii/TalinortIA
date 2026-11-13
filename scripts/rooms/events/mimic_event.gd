@@ -1,11 +1,11 @@
 class_name MimicEvent
 extends Node3D
 ## Evento "Cofres sospechosos" (GDD, Mimics): tres cofres iguales y uno es un mimic.
-## Se puede abrir UNO. Si es de verdad: oro y mejora. Si es el mimic: hay que matarlo, y
-## después da el mismo premio. La pista del mimic: respira o tiene marcas de dientes.
+## Se puede abrir UNO. Si es de verdad: oro, y cuenta como evento perfecto (mejora de 4).
+## Si es el mimic: hay que matarlo, y da solo el oro. La pista: respira o tiene marcas de dientes.
 
-## Se resolvió: hay que dar la mejora del cofre de evento.
-signal resolved
+## Se resolvió. `perfect`: eligieron bien (mejora "mejorada"); si salió el mimic, solo oro.
+signal resolved(perfect: bool)
 
 const MIMIC_SCENE: PackedScene = preload("res://scenes/enemies/mimic.tscn")
 
@@ -21,6 +21,7 @@ func setup(spots: Array[Vector3], rng: RandomNumberGenerator) -> void:
 		var chest := Chest.new()
 		chest.is_mimic = i == mimic_index
 		chest.mimic_clue = clue
+		chest.gold_table = Balance.economy.event_chest_gold
 		chest.position = spots[i]
 		add_child(chest)
 		chest.opened.connect(_on_opened.bind(chest))
@@ -57,19 +58,19 @@ func _on_opened(_by: PlayerCharacter, chest: Chest) -> void:
 	else:
 		Events.floating_text_requested.emit(chest.global_position + Vector3.UP * 2.0, "¡Bien elegido!",
 				Color(1.0, 0.82, 0.3))
-		_resolve()
+		_resolve(true)
 
 
 func _on_mimic_died(_info: DamageInfo) -> void:
-	Loot.drop_for_all(self, _mimic.global_position, Balance.economy.chest_gold)
-	_resolve()
+	Loot.drop_for_all(self, _mimic.global_position, Balance.economy.event_chest_gold)
+	_resolve(false)
 
 
-func _resolve() -> void:
+func _resolve(perfect: bool) -> void:
 	if _done:
 		return
 	_done = true
-	resolved.emit()
+	resolved.emit(perfect)
 
 
 ## Hay un mimic suelto (para saber si se puede perder la sala).

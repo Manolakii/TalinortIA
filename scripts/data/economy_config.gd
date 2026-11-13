@@ -20,6 +20,8 @@ extends Resource
 @export var vase_mushroom_chance: float = 0.3
 @export var mushroom_heal: float = 20.0
 @export var vase_gold: Array[Vector2i] = [Vector2i(2, 6), Vector2i(4, 10), Vector2i(6, 15)]
+## Cofre de evento (además de la mejora si el evento salió perfecto): menos que el del Tesoro.
+@export var event_chest_gold: Array[Vector2i] = [Vector2i(20, 30), Vector2i(35, 50), Vector2i(55, 80)]
 @export var chest_gold: Array[Vector2i] = [Vector2i(50, 80), Vector2i(80, 130), Vector2i(130, 200)]
 @export var boss_gold: Array[int] = [60, 110, 0]
 

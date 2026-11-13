@@ -30,8 +30,9 @@ func setup_reward(which: int, label_extra: String = "") -> void:
 			_rhombus(Vector3.ZERO)
 		RoomKind.Reward.GOLD:
 			_coins()
-		RoomKind.Reward.HEAL:
-			_heal_cross()
+		RoomKind.Reward.CHALLENGE:
+			_swords(Vector3(-0.3, 0, 0))
+			_rhombus(Vector3(0.55, 0.15, 0))
 
 
 ## Puerta a una sala fija (las escondidas).
@@ -156,13 +157,6 @@ func _coins() -> void:
 		coin.position = Vector3(0.1 * (i - 1), i * 0.1 - 0.1, 0)
 		coin.material_override = Fx.flat_material(GOLD, 1.6)
 		_icon.add_child(coin)
-
-
-func _heal_cross() -> void:
-	var aqua := Color(0.35, 0.95, 0.85)
-	for size: Vector3 in [Vector3(0.25, 0.8, 0.12), Vector3(0.8, 0.25, 0.12)]:
-		var bar := _box(size, Vector3.ZERO, _icon)
-		bar.material_override = Fx.flat_material(aqua, 1.6)
 
 
 func _rhombus(offset: Vector3) -> void:

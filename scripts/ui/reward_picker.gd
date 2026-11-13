@@ -12,6 +12,11 @@ const PANEL_WIDTH := 390.0
 const BG := Color(0.07, 0.07, 0.09, 0.92)
 const CARD_BG := Color(0.13, 0.13, 0.16, 0.95)
 const GOLD := Color(1.0, 0.82, 0.3)
+## Para que se distinga a simple vista (pedido del grupo): mejoras en dorado y cálidas,
+## objetos en plateado y fríos, cada carta con su etiqueta.
+const UPGRADE_BG := Color(0.2, 0.15, 0.08, 0.95)
+const SILVER := Color(0.82, 0.87, 0.95)
+const ITEM_BG := Color(0.09, 0.12, 0.17, 0.95)
 ## Si a alguien no le queda ninguna mejora para elegir, recibe este oro.
 const NOTHING_LEFT_GOLD := 25
 
@@ -26,10 +31,13 @@ class Choice:
 var kind: Kind = Kind.UPGRADE
 var _choices: Array[Choice] = []
 var _wait: float = 0.35
+var _option_count: int = 3
 
 
-func start(which: Kind, players: Array[PlayerCharacter], heading: String = "") -> void:
+## `option_count`: cuántas opciones (3, o 4 si es una mejora "mejorada").
+func start(which: Kind, players: Array[PlayerCharacter], heading: String = "", option_count: int = 3) -> void:
 	kind = which
+	_option_count = option_count
 	layer = 35
 	var row := HBoxContainer.new()
 	row.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -40,12 +48,16 @@ func start(which: Kind, players: Array[PlayerCharacter], heading: String = "") -
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(row)
 	var top := Label.new()
-	top.text = heading if heading != "" else ("¡Elegí una mejora!" if kind == Kind.UPGRADE else "¡Elegí un objeto!")
+	var kind_title: String = "MEJORA DE PERSONAJE" if kind == Kind.UPGRADE else "OBJETO"
+	top.text = "%s
+%s" % [kind_title, heading if heading != "" else
+			("Elegí una: es solo para tu personaje" if kind == Kind.UPGRADE else "Elegí uno: suma estadísticas y se apila")]
+	top.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	top.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	top.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	top.offset_top = 60.0
 	top.add_theme_font_size_override("font_size", 40)
-	top.add_theme_color_override("font_color", GOLD)
+	top.add_theme_color_override("font_color", _accent())
 	top.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	top.add_theme_constant_override("outline_size", 10)
 	add_child(top)
@@ -71,7 +83,7 @@ func _options_for(player: PlayerCharacter) -> Array:
 	var rng: RandomNumberGenerator = RunState.rng
 	if kind == Kind.UPGRADE:
 		var owned: Array = RunState.get_upgrades(player.slot.index)
-		for upgrade: CharacterUpgrade in Balance.upgrades.offer(player.data.id, owned, rng, 3):
+		for upgrade: CharacterUpgrade in Balance.upgrades.offer(player.data.id, owned, rng, _option_count):
 			var level: int = owned.count(upgrade.id)
 			var name: String = upgrade.display_name
 			if level >= 1:
@@ -79,9 +91,11 @@ func _options_for(player: PlayerCharacter) -> Array:
 			result.append({"id": upgrade.id, "name": name, "description": upgrade.description})
 	else:
 		var pool: Array[GenericItem] = Balance.generic_items.items.duplicate()
-		while not pool.is_empty() and result.size() < 3:
+		while not pool.is_empty() and result.size() < _option_count:
 			var item: GenericItem = pool.pop_at(rng.randi_range(0, pool.size() - 1))
-			result.append({"id": item.id, "name": item.display_name, "description": item.description})
+			var owned_items: int = RunState.get_items(player.slot.index).count(item.id)
+			var item_name: String = item.display_name + (" (tenés %d)" % owned_items if owned_items > 0 else "")
+			result.append({"id": item.id, "name": item_name, "description": item.description})
 	return result
 
 
@@ -175,10 +189,15 @@ func _build_panel(choice: Choice) -> Control:
 		var card := PanelContainer.new()
 		var inner := VBoxContainer.new()
 		card.add_child(inner)
+		var tag := Label.new()
+		tag.text = "MEJORA" if kind == Kind.UPGRADE else "OBJETO"
+		tag.add_theme_font_size_override("font_size", 12)
+		tag.add_theme_color_override("font_color", _accent().darkened(0.15))
+		inner.add_child(tag)
 		var name_label := Label.new()
 		name_label.text = option["name"]
 		name_label.add_theme_font_size_override("font_size", 19)
-		name_label.add_theme_color_override("font_color", GOLD)
+		name_label.add_theme_color_override("font_color", _accent())
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		inner.add_child(name_label)
 		var description := Label.new()
@@ -196,9 +215,14 @@ func _refresh(choice: Choice) -> void:
 	for i: int in choice.cards.size():
 		var selected: bool = i == choice.selected
 		var style := StyleBoxFlat.new()
-		style.bg_color = CARD_BG.lightened(0.12) if selected else CARD_BG
+		var base: Color = UPGRADE_BG if kind == Kind.UPGRADE else ITEM_BG
+		style.bg_color = base.lightened(0.12) if selected else base
 		style.border_color = choice.player.slot.color if selected else Color(0.3, 0.3, 0.34)
 		style.set_border_width_all(3 if selected else 1)
 		style.set_corner_radius_all(8)
 		style.set_content_margin_all(8)
 		choice.cards[i].add_theme_stylebox_override("panel", style)
+
+
+func _accent() -> Color:
+	return GOLD if kind == Kind.UPGRADE else SILVER

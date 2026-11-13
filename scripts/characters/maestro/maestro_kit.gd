@@ -244,6 +244,8 @@ func _ancestral_bonus(source: Node3D) -> float:
 			or (source == companion and companion.identity == Body.STEWIE)
 	if _relay_effect == &"ancestral" and stewie_is_source:
 		return 1.0 + kd.ancestral_damage_bonus
+	if _relay_effect == &"lesson" and source == companion:
+		return 1.0 + kd.lesson_damage_bonus
 	return 1.0
 
 
@@ -389,6 +391,9 @@ func do_dodge() -> void:
 # --- IA del compañero ---
 
 func companion_think(body: DuoCompanion, delta: float) -> void:
+	if _relay_time > 0.0:
+		_relay_companion_think(body, delta)
+		return
 	var to_player: Vector3 = player.global_position - body.global_position
 	to_player.y = 0.0
 	var distance: float = to_player.length()
@@ -756,6 +761,46 @@ func _start_relay() -> void:
 		_relay_effect = &"lesson"
 		say("¡Lección del Maestro!", Color(0.95, 0.9, 0.8), 1.4)
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy * 0.5)
+	_companion_joins()
+
+
+## Relevo Total: el compañero salta al lado tuyo pegando en área (antes podía quedarse lejos
+## pegándole al aire; pedido del grupo).
+func _companion_joins() -> void:
+	if not _companion_ready():
+		return
+	companion.retreating = false
+	companion.busy = 0.0
+	companion.global_position = _relay_spot()
+	companion.reset_physics_interpolation()
+	Fx.ring_burst(_world(), companion.global_position, kd.relay_join_radius, player.slot.color, 0.35)
+	var info: DamageInfo = _hit(companion, kd.relay_join_damage)
+	info.knockback = 6.0
+	info.hitstop = Balance.combat.hitstop_heavy
+	Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
+			companion.global_position, kd.relay_join_radius))
+
+
+## Durante el Relevo Total, el compañero pelea pegado al jugador, del lado hacia donde apunta.
+func _relay_spot() -> Vector3:
+	var aim: Vector3 = player.aim_direction
+	var side := Vector3(-aim.z, 0.0, aim.x)
+	return player.global_position + side * 1.4 + aim * 0.6
+
+
+func _relay_companion_think(body: DuoCompanion, delta: float) -> void:
+	var to_spot: Vector3 = _relay_spot() - body.global_position
+	to_spot.y = 0.0
+	if to_spot.length() > 0.5:
+		body.steer(to_spot.normalized(), body.move_speed * 1.6, delta)
+	else:
+		body.stop(delta)
+	body.facing = player.aim_direction
+	# Fuera de la Lección (que copia al Maestro), pega por su cuenta a lo que tiene adelante.
+	if _relay_effect != &"lesson" and body.attack_timer <= 0.0 and body.busy <= 0.0 \
+			and CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES, body.global_position, 3.0) != null:
+		_companion_basic(body, player.aim_direction)
+		body.attack_timer /= kd.companion_attack_pace
 
 
 func _end_relay() -> void:
