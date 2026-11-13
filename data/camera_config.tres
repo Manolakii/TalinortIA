@@ -7,6 +7,7 @@ script = ExtResource("1")
 pitch_degrees = 55.0
 fov_degrees = 32.0
 character_height_m = 1.8
+character_depth_m = 0.35
 target_character_px = 75.0
 reference_viewport_height = 1080.0
 distance_override = 0.0

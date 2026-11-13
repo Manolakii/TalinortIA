@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/rooms/test_room.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/rooms/ground_with_grass.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/camera/shared_camera.gd" id="3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.36, 0.53, 0.78, 1)
@@ -31,7 +32,7 @@ glow_bloom = 0.04
 glow_hdr_threshold = 1.2
 fog_enabled = true
 fog_light_color = Color(0.74, 0.78, 0.8, 1)
-fog_density = 0.004
+fog_density = 0.0022
 fog_sky_affect = 0.3
 adjustment_enabled = true
 adjustment_contrast = 1.08
@@ -225,7 +226,6 @@ position = Vector3(1.5, 0, 2.5)
 
 [node name="Players" type="Node3D" parent="."]
 
-[node name="TempCamera" type="Camera3D" parent="."]
-rotation = Vector3(-0.9599, 0, 0)
-position = Vector3(0, 21.24, 14.87)
+[node name="SharedCamera" type="Camera3D" parent="."]
 fov = 32.0
+script = ExtResource("3")

@@ -10,6 +10,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player_charac
 @onready var _environment: WorldEnvironment = $WorldEnvironment
 @onready var _spawn_points: Node3D = $SpawnPoints
 @onready var _players_root: Node3D = $Players
+@onready var _camera: SharedCamera = $SharedCamera
 
 var players: Array[PlayerCharacter] = []
 
@@ -23,13 +24,18 @@ func _ready() -> void:
 
 
 func _spawn_players() -> void:
+	var camera_targets: Array[Node3D] = []
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		var player: PlayerCharacter = PLAYER_SCENE.instantiate()
 		player.setup(slot)
 		var spawn: Node3D = _spawn_points.get_child(slot.index) as Node3D
 		player.position = spawn.position if spawn != null else Vector3.ZERO
+		player.velocity_limiter = _camera.limit_velocity.bind(player)
 		_players_root.add_child(player)
+		player.reset_physics_interpolation()
 		players.append(player)
+		camera_targets.append(player)
+	_camera.set_targets(camera_targets)
 
 
 func _auto_join_for_testing() -> void:

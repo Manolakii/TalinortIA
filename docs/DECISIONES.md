@@ -13,7 +13,9 @@ Cada vez que cambie una decisión de diseño o técnica, se anota acá con la fe
 | 2026-11-12 | Mejoras de personaje (1 de 3) en algunas salas, en las de élite y en los cofres de evento. Objeto genérico (1 de 3) al terminar cada escenario |
 | 2026-11-12 | Escenarios X-1 a X-3 con varias salas (propuesta: 3), X-4 solo boss |
 | 2026-11-12 | Quinto autoload `GameSettings`: presets de calidad (bajo, medio, alto) y flags de debug |
-| 2026-11-12 | Altura de referencia de los personajes: 1,8 m (dato ajustable en `data/camera_config.tres`). La distancia de la cámara se calcula para que midan ~75 px a 1080p; con eso se ven unos 26 × 18 m de piso, y las salas se diseñan para ese tamaño |
+| 2026-11-12 | Los 70 a 80 px del GDD se miden como silueta en pantalla (alto proyectado más la profundidad del cuerpo vista desde arriba). Referencia: 1,8 m de alto y 0,35 m de profundidad, 75 px a 1080p (datos ajustables en `data/camera_config.tres`). Con eso la cámara queda a ~34 m y se ven unos 34 × 24 m de piso; alejada al máximo, el personaje mide ~67 px |
+| 2026-11-12 | Cámara: encuadra el centro de la caja que contiene a todos los jugadores (pies y cabeza), con márgenes de 70 px arriba y a los costados y 150 px abajo (lugar para los paneles del HUD). Al llegar al borde, el jugador se desliza por él o se frena |
+| 2026-11-12 | Interpolación de física activada, para que el movimiento se vea suave en monitores de más de 60 Hz |
 | 2026-11-12 | Pantalla de unión: Enter o A para unirse, izquierda/derecha para elegir personaje, A (o Enter) para confirmar, B (o Esc) para salir, Start (o Enter con todos listos) para arrancar |
 | 2026-11-12 | El golpe común se repite solo mientras se mantiene el botón |
 | 2026-11-12 | Maestro y Stewie: el botón de definitiva siempre hace el Cambio. El Relevo Total (con la barra llena) se lanza con Y/Triángulo + RB/R1 en joystick, y con R en teclado |

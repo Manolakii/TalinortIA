@@ -6,8 +6,7 @@ func test_character_projects_to_target_pixels() -> void:
 	var config: CameraConfig = Balance.camera
 	var distance: float = config.get_base_distance()
 	var visible_height_m: float = 2.0 * distance * tan(deg_to_rad(config.fov_degrees) * 0.5)
-	var projected_m: float = config.character_height_m * cos(deg_to_rad(config.pitch_degrees))
-	var px: float = projected_m / visible_height_m * config.reference_viewport_height
+	var px: float = config.silhouette_height_m() / visible_height_m * config.reference_viewport_height
 	assert_almost_eq(px, config.target_character_px, 0.01)
 
 

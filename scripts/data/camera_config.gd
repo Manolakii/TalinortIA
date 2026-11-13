@@ -10,7 +10,10 @@ extends Resource
 @export_group("Tamaño en pantalla")
 ## Altura de referencia de un personaje, en metros.
 @export var character_height_m: float = 1.8
-## Cuántos píxeles queremos que mida ese personaje en pantalla (a 1080p).
+## Profundidad del cuerpo, en metros. Desde arriba también se ve la parte de arriba
+## del personaje, así que la silueta en pantalla es más alta que solo el alto proyectado.
+@export var character_depth_m: float = 0.35
+## Cuántos píxeles queremos que mida la silueta de ese personaje en pantalla (a 1080p).
 @export var target_character_px: float = 75.0
 @export var reference_viewport_height: float = 1080.0
 ## Si es mayor que 0, se usa esta distancia en lugar de calcularla.
@@ -35,7 +38,12 @@ extends Resource
 func get_base_distance() -> float:
 	if distance_override > 0.0:
 		return distance_override
-	# Un segmento vertical visto desde una cámara inclinada se proyecta con cos(pitch).
-	var projected_height: float = character_height_m * cos(deg_to_rad(pitch_degrees))
-	var visible_height_m: float = projected_height * reference_viewport_height / target_character_px
+	var visible_height_m: float = silhouette_height_m() * reference_viewport_height / target_character_px
 	return visible_height_m / (2.0 * tan(deg_to_rad(fov_degrees) * 0.5))
+
+
+## Alto de la silueta del personaje en el plano de la cámara: el alto se proyecta con
+## cos(pitch) y la profundidad del cuerpo con sin(pitch).
+func silhouette_height_m() -> float:
+	var pitch: float = deg_to_rad(pitch_degrees)
+	return character_height_m * cos(pitch) + character_depth_m * sin(pitch)
