@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CameraConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/camera_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pitch_degrees = 55.0
+fov_degrees = 32.0
+character_height_m = 1.8
+target_character_px = 75.0
+reference_viewport_height = 1080.0
+distance_override = 0.0
+max_zoom_out = 1.12
+margin_px_top = 70.0
+margin_px_bottom = 150.0
+margin_px_sides = 70.0
+follow_speed = 6.0
+zoom_speed = 3.0

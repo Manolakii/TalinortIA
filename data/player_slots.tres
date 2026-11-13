@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PlayerSlotsConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/player_slots_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+colors = Array[Color]([Color(0.2, 0.48, 1, 1), Color(0.93, 0.2, 0.22, 1), Color(0.6, 0.92, 0.18, 1), Color(1, 0.84, 0.18, 1)])
+labels = Array[String](["P1", "P2", "P3", "P4"])
+max_players = 4

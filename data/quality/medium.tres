@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QualityPreset" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/quality_preset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"medium"
+display_name = "Medio"
+ssao = true
+ssil = false
+glow = true
+fog = true
+shadow_atlas_size = 4096
+soft_shadow_quality = 2
+grass_density = 0.7
+render_scale = 0.9
+msaa_3d = 1

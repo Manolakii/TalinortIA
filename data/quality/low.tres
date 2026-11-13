@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QualityPreset" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/quality_preset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"low"
+display_name = "Bajo"
+ssao = false
+ssil = false
+glow = true
+fog = false
+shadow_atlas_size = 2048
+soft_shadow_quality = 1
+grass_density = 0.35
+render_scale = 0.75
+msaa_3d = 0

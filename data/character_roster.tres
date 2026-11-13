@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CharacterRoster" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_roster.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/character_data.gd" id="2"]
+[ext_resource type="Resource" path="res://data/characters/tali.tres" id="3"]
+[ext_resource type="Resource" path="res://data/characters/croco.tres" id="4"]
+[ext_resource type="Resource" path="res://data/characters/agucci.tres" id="5"]
+[ext_resource type="Resource" path="res://data/characters/maestro.tres" id="6"]
+
+[resource]
+script = ExtResource("1")
+characters = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])

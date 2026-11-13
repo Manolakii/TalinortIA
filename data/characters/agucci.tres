@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"agucci"
+display_name = "Agucci"
+blurb = "Desertor del Alto Mando. Su sombra tiene opiniones."
+max_health = 90.0
+move_speed = 6.3
+crit_chance = 0.15
+crit_multiplier = 1.75
+placeholder_height = 1.8
+placeholder_radius = 0.33

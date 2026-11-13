@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"croco"
+display_name = "Mercenario Croco"
+blurb = "Lo hace por la plata. Bah, por la plata que algún día le van a pagar."
+max_health = 100.0
+move_speed = 6.6
+crit_chance = 0.10
+crit_multiplier = 1.5
+placeholder_height = 1.85
+placeholder_radius = 0.36
