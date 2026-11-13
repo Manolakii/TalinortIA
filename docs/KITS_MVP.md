@@ -21,7 +21,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 
 **0 · Pasiva — Suerte Absurda**
 - **Suerte:** en Normal, 20% de chance de que un ataque enemigo falle solo (el guardia se resbala, la bala se desvía).
-- **Barra de Furia:** se llena al recibir daño, y el doble si le pegan por la espalda o si está rodeado por 3 o más enemigos. Al 100% se transforma sí o sí en Furia durante 10 s. En Furia recibe 30% menos de daño. El aura de Furia es **rojo-ocre** (el naranja está reservado para los avisos enemigos).
+- **Barra de Furia:** se llena rápido al recibir daño (el doble si le pegan por la espalda o si está rodeado por 3 o más enemigos) y un poco más lento con el daño que hace. Al 100% se transforma sí o sí en Furia durante 10 s, sin necesidad de usar la definitiva. En Furia recibe 30% menos de daño. El aura de Furia es **rojo-ocre** (el naranja está reservado para los avisos enemigos).
 - **Resaca:** al terminar la Furia queda Agotado 3 s (lento y sin esquiva). La barra vuelve a cero y no se puede cargar durante 6 s.
 
 **1 · Golpe común**
@@ -29,11 +29,11 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 - **Furia — Zarpazos:** combo de 3 golpes (34 / 34 / 52) cada 1,3 s. El tercero pega fuerte contra el piso y levanta un poco a los enemigos.
 
 **2 · Habilidad fuerte**
-- **Normal — Llamado Salvaje (CD 12 s):** les pide ayuda a los animales y lo entienden mal. Sale algo al azar hacia donde apunta: una bandada de pájaros (daño en área y ceguera), una manada de bichos (empuje en línea) o, con poca probabilidad, un Gronk que carga atravesando todo. Contra el Gronk Gigante tiene chance de aturdirlo unos segundos.
+- **Normal — Llamado Salvaje (CD 12 s):** les pide ayuda a los animales y lo entienden mal. Sale algo al azar hacia donde apunta: una bandada de pájaros (daño en área y ceguera), una manada de bichos (empuje en línea) o, con poca probabilidad, un Gronk que carga atravesando todo. Lo que más sale son pájaros y bichos; el Gronk es el más fuerte y el más raro. Contra el Gronk Gigante tiene chance de aturdirlo unos segundos.
 - **Furia — Aplastón (CD 6 s):** salta y cae sobre una zona. 90 de daño en área y aturdimiento.
 
 **3 · Esquiva**
-- **Normal — Tropezón (2 cargas):** rueda torpemente. Si un ataque lo iba a impactar durante el tropezón, lo esquiva de casualidad: gana 15 de Furia y el atacante queda desequilibrado 1 s.
+- **Normal — Tropezón (2 cargas, 4 s de recarga cada una):** rueda torpemente una distancia corta. Si un ataque lo iba a impactar durante el tropezón, lo esquiva de casualidad: gana 15 de Furia y el atacante queda desequilibrado 1 s.
 - **Furia — Embestida:** carga corta que atraviesa enemigos y los tira al piso.
 
 **4 · Definitiva — La Bestia de Talinorthland**

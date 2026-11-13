@@ -24,3 +24,7 @@ Cada vez que cambie una decisión de diseño o técnica, se anota acá con la fe
 | 2026-11-12 | Mientras se desarrolla, todas las dificultades están desbloqueadas con el flag de debug `unlock_all_difficulties` de `GameSettings` |
 | 2026-11-12 | Tests de lógica pura con GUT (Godot Unit Test, licencia MIT), instalado en `addons/gut` desde la Fase 0 |
 | 2026-11-12 | El grupo deja a criterio de Claude el resto de los detalles de diseño que falten; cada uno se anota acá cuando se decide y se puede cambiar después |
+| 2026-11-13 | Tali: la barra de Furia se llena rápido al recibir daño y un poco más lento con el daño que hace (antes era solo al recibir). Al 100% entra en Furia sola |
+| 2026-11-13 | Barra de definitiva (todos los personajes): se llena más rápido con el daño recibido que con el hecho. Valores por personaje en `data/characters/` |
+| 2026-11-13 | Tropezón: distancia corta (2,8 m en 0,3 s), 2 cargas con 4 s de recarga cada una. La Embestida de Furia usa las mismas cargas |
+| 2026-11-13 | Llamado Salvaje: pájaros 45%, bichos 45%, Gronk 10% |
