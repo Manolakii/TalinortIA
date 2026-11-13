@@ -36,13 +36,18 @@ func handle_input() -> void:
 	if player.has_buffered(PlayerInput.Action.DODGE) and can_dodge():
 		player.consume_buffered(PlayerInput.Action.DODGE)
 		do_dodge()
+	_handle_ultimate()
+	_handle_input()
+
+
+## Definitiva con la barra llena. El dúo Maestro y Stewie lo sobreescribe (Cambio y Relevo).
+func _handle_ultimate() -> void:
 	var wants_ult: bool = player.has_buffered(PlayerInput.Action.ULTIMATE)
 	if wants_ult and ult_charge >= 100.0 and can_start_skill():
 		player.consume_buffered(PlayerInput.Action.ULTIMATE)
 		player.end_action()
 		if _use_ultimate():
 			ult_charge = 0.0
-	_handle_input()
 
 
 ## Puede empezar una habilidad: está libre o en la recuperación de un golpe común.
@@ -137,6 +142,12 @@ func _on_damage_dealt(_info: DamageInfo, _target: Node3D) -> void:
 
 func _on_damage_taken(_info: DamageInfo) -> void:
 	pass
+
+
+## Si el jugador cae, el kit puede evitarlo (el dúo pasa el control al otro cuerpo).
+## Devuelve true si lo resolvió.
+func handle_owner_death(_info: DamageInfo) -> bool:
+	return false
 
 
 ## Texto si el golpe se esquiva por algo propio del kit; "" si no.

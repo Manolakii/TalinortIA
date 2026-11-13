@@ -256,7 +256,9 @@ func _on_any_hit_landed(info: DamageInfo, target: Node3D) -> void:
 		kit.on_damage_dealt(info, target)
 
 
-func _on_died(_info: DamageInfo) -> void:
+func _on_died(info: DamageInfo) -> void:
+	if kit.handle_owner_death(info):
+		return
 	# Modo prueba hasta la Fase 4: se levanta solo.
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4,
 			"¡Caíste! (modo prueba)", Color(1.0, 0.6, 0.6))
@@ -331,10 +333,20 @@ func _apply_aim_magnet(direction: Vector3) -> Vector3:
 
 # --- Placeholder ---
 
-func _build_placeholder() -> void:
-	var height: float = data.placeholder_height
-	var radius: float = data.placeholder_radius
+## Rearma el cuerpo con otro tamaño (el dúo cambia entre Maestro y Stewie).
+func rebuild_body(height: float, radius: float) -> void:
+	_build_body(height, radius)
+	clear_flash_materials()
+	register_flash_material(_body_material)
+	hurtbox.radius = radius
+	hurtbox.height = height
 
+
+func _build_placeholder() -> void:
+	_build_body(data.placeholder_height, data.placeholder_radius)
+
+
+func _build_body(height: float, radius: float) -> void:
 	var shape := CapsuleShape3D.new()
 	shape.height = height
 	shape.radius = radius
