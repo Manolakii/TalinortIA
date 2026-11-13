@@ -13,6 +13,11 @@ extends Resource
 ## Para elegir "el enemigo apuntado": cono alrededor de la mira y distancia máxima.
 @export var target_cone_deg: float = 25.0
 @export var target_max_distance: float = 26.0
+## Opción A (DECISIONES 2026-11-13): el modo se elige al empezar a disparar y queda trabado
+## mientras siga disparando. Se destraba si suelta el disparo este tiempo o muere el objetivo.
+@export var lock_release_time: float = 0.3
+## Aros en el piso que muestran dónde cambia cada arma.
+@export var show_range_rings: bool = true
 ## El primer disparo después de cada cambio de modo hace este extra.
 @export var mode_switch_bonus: float = 0.3
 @export var bullet_radius: float = 0.2

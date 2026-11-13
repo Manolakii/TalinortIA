@@ -14,6 +14,12 @@ const MODE_NAMES: Array[String] = ["Escopeta", "Pistola", "Rifle"]
 const BULLET_COLOR := Color(0.92, 0.94, 1.0)
 const BEAM_COLOR := Color(0.78, 0.9, 1.0, 0.85)
 const STACK_KEY := &"contract_stacks"
+const RINGS_SHADER: Shader = preload("res://assets/shaders/range_rings.gdshader")
+const MARKER_SHADER: Shader = preload("res://assets/shaders/player_ring.gdshader")
+## Margen exterior de los aros, más allá del límite del rifle.
+const RINGS_OUTER_MARGIN := 2.0
+## Que el cartel con el nombre del arma no aparezca más seguido que esto.
+const MODE_TEXT_COOLDOWN := 0.6
 
 var kd: CrocoKitData
 var mode: Mode = Mode.PISTOL
@@ -31,6 +37,17 @@ var _rail_direction: Vector3 = Vector3.FORWARD
 var _rail_tick: float = 0.0
 var _rail_beam: MeshInstance3D
 var _overheat: float = 0.0
+## Arma trabada mientras dispara (opción A).
+var locked: bool = false
+var _lock_target: Hurtbox
+var _since_trigger: float = 99.0
+var _mode_text_cooldown: float = 0.0
+var _aimed: Hurtbox
+var _rings: MeshInstance3D
+var _rings_material: ShaderMaterial
+var _rings_strength: float = 0.0
+var _marker: MeshInstance3D
+var _marker_material: ShaderMaterial
 
 
 func _setup() -> void:
@@ -52,13 +69,17 @@ func _setup() -> void:
 	_rail_beam.top_level = true
 	_rail_beam.visible = false
 	add_child(_rail_beam)
+	_build_range_visuals()
 
 
 func _tick(delta: float) -> void:
 	contract_cooldown.tick(delta)
 	_attack_timer -= delta
 	_overheat = maxf(_overheat - delta, 0.0)
+	_mode_text_cooldown -= delta
+	_update_lock(delta)
 	_update_mode()
+	_update_range_visuals(delta)
 	if _charging:
 		_update_charge(delta)
 	if _rail_time > 0.0:
@@ -123,22 +144,44 @@ func mode_with_hysteresis(distance: float) -> Mode:
 	return mode
 
 
+## Opción A: mientras dispara, el arma queda trabada. Se destraba si suelta el disparo un
+## instante o si muere el enemigo con el que la trabó.
+func _update_lock(delta: float) -> void:
+	if player.slot.input.is_held(PlayerInput.Action.ATTACK):
+		_since_trigger = 0.0
+	else:
+		_since_trigger += delta
+	if not locked:
+		return
+	var target_gone: bool = _lock_target != null and (not is_instance_valid(_lock_target) \
+			or not _lock_target.is_targetable())
+	if _since_trigger > kd.lock_release_time or target_gone:
+		locked = false
+		_lock_target = null
+
+
 func _update_mode() -> void:
+	_aimed = aimed_enemy()
+	if locked and _overheat <= 0.0:
+		return
 	var wanted: Mode = mode
 	if _overheat > 0.0:
 		wanted = Mode.PISTOL
-	else:
-		var target: Hurtbox = aimed_enemy()
-		if target != null:
-			wanted = mode_with_hysteresis(Vector3(player.global_position.x, 0.0,
-					player.global_position.z).distance_to(target.flat_position()))
+	elif _aimed != null:
+		wanted = mode_with_hysteresis(Vector3(player.global_position.x, 0.0,
+				player.global_position.z).distance_to(_aimed.flat_position()))
 	if wanted != mode:
 		mode = wanted
 		switch_bonus_ready = _overheat <= 0.0
-		say(MODE_NAMES[mode], Color(0.85, 0.9, 1.0), 0.75)
+		if _mode_text_cooldown <= 0.0:
+			_mode_text_cooldown = MODE_TEXT_COOLDOWN
+			say(MODE_NAMES[mode], Color(0.85, 0.9, 1.0), 0.75)
 
 
 func _fire() -> void:
+	if not locked:
+		locked = true
+		_lock_target = _aimed
 	var bonus: float = 1.0 + (kd.mode_switch_bonus if switch_bonus_ready else 0.0)
 	switch_bonus_ready = false
 	player.face_aim_now()
@@ -304,11 +347,65 @@ func _world() -> Node:
 	return player.get_parent()
 
 
+# --- Aros de alcance y marca del enemigo apuntado ---
+
+func _build_range_visuals() -> void:
+	var outer: float = kd.mid_max_distance + RINGS_OUTER_MARGIN
+	_rings = MeshInstance3D.new()
+	var plane := PlaneMesh.new()
+	plane.size = Vector2.ONE * outer * 2.0
+	_rings.mesh = plane
+	_rings.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_rings.position.y = 0.05
+	_rings_material = ShaderMaterial.new()
+	_rings_material.shader = RINGS_SHADER
+	_rings_material.set_shader_parameter("ring_color", player.slot.color.lightened(0.35))
+	_rings_material.set_shader_parameter("near_m", kd.near_max_distance)
+	_rings_material.set_shader_parameter("mid_m", kd.mid_max_distance)
+	_rings_material.set_shader_parameter("outer_m", outer)
+	_rings_material.set_shader_parameter("strength", 0.0)
+	_rings.material_override = _rings_material
+	player.add_child(_rings)
+
+	_marker = MeshInstance3D.new()
+	var marker_plane := PlaneMesh.new()
+	marker_plane.size = Vector2.ONE * 1.8
+	_marker.mesh = marker_plane
+	_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_marker.top_level = true
+	_marker_material = ShaderMaterial.new()
+	_marker_material.shader = MARKER_SHADER
+	_marker_material.set_shader_parameter("inner_radius", 0.8)
+	_marker_material.set_shader_parameter("fill_alpha", 0.0)
+	_marker.material_override = _marker_material
+	_marker.visible = false
+	add_child(_marker)
+
+
+func _update_range_visuals(delta: float) -> void:
+	if _rings == null:
+		return
+	# Los aros se ven cuando hay a quién apuntar o mientras dispara; si no, se apagan.
+	var wanted: float = 1.0 if kd.show_range_rings and _rail_time <= 0.0 \
+			and (_aimed != null or locked) else 0.0
+	_rings_strength = move_toward(_rings_strength, wanted, delta * 4.0)
+	_rings_material.set_shader_parameter("strength", _rings_strength)
+	_rings_material.set_shader_parameter("active_band", int(mode))
+	_rings.visible = _rings_strength > 0.01
+	var marked: Hurtbox = _lock_target if locked and is_instance_valid(_lock_target) else _aimed
+	_marker.visible = marked != null and _rail_time <= 0.0
+	if _marker.visible:
+		_marker.global_position = marked.flat_position() + Vector3.UP * 0.06
+		_marker.scale = Vector3.ONE * maxf(marked.radius * 1.6, 0.8)
+		var alpha: float = 0.9 if locked else 0.45
+		_marker_material.set_shader_parameter("ring_color", Color(1.0, 1.0, 1.0, alpha))
+
+
 func debug_lines() -> Array[String]:
 	var chips: Array[String] = []
 	for i: int in MODE_NAMES.size():
 		chips.append("[%s]" % MODE_NAMES[i] if i == mode else MODE_NAMES[i])
-	var weapon: String = "Arma: " + " ".join(chips)
+	var weapon: String = "Arma: " + " ".join(chips) + (" (trabada)" if locked else "")
 	if switch_bonus_ready:
 		weapon += "  +30%"
 	var lines: Array[String] = [weapon]

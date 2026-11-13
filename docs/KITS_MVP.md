@@ -49,7 +49,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 Tirador versátil y el personaje más rápido. El arma que le robó a Fadied cambia de forma según la distancia, así que el Croco gana moviéndose bien y cobrando recompensas.
 
 **0 · Pasiva — Arma Adaptativa y Cazarrecompensas**
-- **Arma Adaptativa:** el arma cambia sola de modo según la distancia al enemigo apuntado: cerca escopeta, media distancia pistola, lejos rifle. El primer disparo después de cada cambio hace 30% más de daño.
+- **Arma Adaptativa:** el arma elige su modo según la distancia al enemigo apuntado: cerca escopeta, media distancia pistola, lejos rifle. El modo se elige al empezar a disparar y queda trabado mientras sigas disparando; cambia cuando soltás el disparo un instante o muere el enemigo trabado. Unos aros tenues en el piso muestran dónde cambia cada arma, y una marca indica el enemigo apuntado. El primer disparo después de cada cambio hace 30% más de daño.
 - **Recompensa:** en cada sala se marca un élite con precio (rombo dorado encima). Si lo mata el Croco, suelta oro extra, con un "+oro" que vuela a su panel.
 
 **1 · Golpe común — Según el modo**

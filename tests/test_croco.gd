@@ -135,3 +135,51 @@ func test_mode_has_margin_at_the_edges() -> void:
 	_kit.mode = CrocoKit.Mode.RIFLE
 	assert_eq(_kit.mode_with_hysteresis(10.5), CrocoKit.Mode.RIFLE, "Volviendo, tampoco cambia enseguida")
 	assert_eq(_kit.mode_with_hysteresis(9.5), CrocoKit.Mode.PISTOL)
+
+
+# --- Opción A: arma trabada mientras dispara ---
+
+func test_weapon_locks_while_firing() -> void:
+	var near := enemy_at(Vector3(0, 0, -3), 5000.0)
+	_pump(1)
+	assert_eq(_kit.mode, CrocoKit.Mode.SHOTGUN)
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_pump(2)
+	assert_true(_kit.locked, "Al disparar, el arma se traba")
+	near.global_position = Vector3(0, 0, -9)  # el objetivo se aleja a distancia de pistola
+	_pump(30)
+	assert_eq(_kit.mode, CrocoKit.Mode.SHOTGUN, "Mientras sigue disparando, no cambia")
+
+
+func test_weapon_unlocks_after_releasing() -> void:
+	var near := enemy_at(Vector3(0, 0, -3), 5000.0)
+	_pump(1)
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_pump(2)
+	near.global_position = Vector3(0, 0, -9)
+	_slot.input._held[PlayerInput.Action.ATTACK] = false
+	_pump(25)  # más de 0,3 s sin disparar
+	assert_false(_kit.locked)
+	assert_eq(_kit.mode, CrocoKit.Mode.PISTOL, "Suelta y se reevalúa")
+	assert_true(_kit.switch_bonus_ready, "El primer tiro después del cambio lleva +30%")
+
+
+func test_weapon_unlocks_when_target_dies() -> void:
+	var near := enemy_at(Vector3(0, 0, -3), 5000.0)
+	var far := enemy_at(Vector3(0, 0, -9), 5000.0)
+	_pump(1)
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_pump(2)
+	var kill := DamageInfo.new()
+	kill.amount = 99999.0
+	near.receive_hit(kill)
+	_pump(2)
+	assert_eq(_kit.mode, CrocoKit.Mode.PISTOL, "Murió el objetivo: pasa al siguiente sin soltar")
+	assert_true(is_instance_valid(far))
+
+
+func test_range_rings_show_with_a_target() -> void:
+	enemy_at(Vector3(0, 0, -7), 5000.0)
+	_pump(20)
+	assert_true(_kit._rings.visible, "Se ven los aros de alcance")
+	assert_true(_kit._marker.visible, "Y la marca en el enemigo apuntado")
