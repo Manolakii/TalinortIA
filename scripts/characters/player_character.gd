@@ -23,6 +23,7 @@ const TEST_MODE_REVIVE_DELAY := 1.5
 var slot: PlayerSlot
 var data: CharacterData
 var kit: CharacterKit
+var revive: ReviveComponent
 ## Dirección horizontal (normalizada) hacia donde apunta.
 var aim_direction: Vector3 = Vector3.FORWARD
 ## Punto del piso al que apunta (con mouse es el cursor; con joystick, unos metros adelante).
@@ -81,6 +82,11 @@ func _build() -> void:
 		died.connect(_on_died)
 		Events.hit_landed.connect(_on_any_hit_landed)
 	_create_kit()
+	if revive == null:
+		revive = ReviveComponent.new()
+		revive.name = "Revive"
+		add_child(revive)
+		revive.setup(self)
 
 
 func _create_kit() -> void:
@@ -101,8 +107,19 @@ func _physics_process(delta: float) -> void:
 		return
 	_update_aim(delta)
 	kit.tick(delta)
-	if health.is_dead or status.has(StatusEffects.STUN):
+	if health.is_dead:
+		if revive.downed or revive.out:
+			revive.downed_tick(delta)
+		else:
+			apply_movement(Vector2.ZERO, delta)
+		return
+	if status.has(StatusEffects.STUN):
 		apply_movement(Vector2.ZERO, delta)
+		return
+	# Levantando a un compañero: no se mueve ni ataca.
+	if revive.reviver_tick(delta):
+		apply_movement(Vector2.ZERO, delta)
+		face_aim_now()
 		return
 	kit.handle_input()
 	state_machine.physics_update(delta)
@@ -281,6 +298,9 @@ func _on_died(info: DamageInfo) -> void:
 		fall.tween_property(visual, "rotation:x", -1.35, 0.3)
 		Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4, "¡Caíste!",
 				Color(1.0, 0.6, 0.6))
+		# Jugando solo no hay a quién esperar: si caés, se termina.
+		if _allies_alive() > 0:
+			revive.go_down()
 		return
 	# Modo prueba hasta la Fase 4: se levanta solo.
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4,
@@ -291,6 +311,19 @@ func _on_died(info: DamageInfo) -> void:
 	timer.timeout.connect(func() -> void:
 		health.restore_full()
 		health.make_invulnerable(1.0))
+
+
+func _allies_alive() -> int:
+	var count: int = 0
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var other := node as PlayerCharacter
+		if other != null and other != self and not other.health.is_dead:
+			count += 1
+	return count
+
+
+func is_out() -> bool:
+	return revive != null and revive.out
 
 
 # --- Apuntado ---

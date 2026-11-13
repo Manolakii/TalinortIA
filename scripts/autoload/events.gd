@@ -25,6 +25,11 @@ signal camera_shake_requested(amount: float)
 ## Teñir la sala un rato (la Noche del Valle sin Luz la pone violeta).
 signal room_tint_requested(color: Color, duration: float)
 signal enemy_died(enemy: Node3D)
+## Muerte y revivir (Fase 4).
+signal player_downed(player: Node3D)
+signal player_revived(player: Node3D)
+## Se le acabó el tiempo: queda afuera hasta Birig Bamba.
+signal player_out(player: Node3D)
 
 # --- Juego en general ---
 signal pause_changed(paused: bool)

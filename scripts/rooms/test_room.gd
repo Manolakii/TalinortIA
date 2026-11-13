@@ -25,6 +25,7 @@ func _ready() -> void:
 	GameSettings.apply_to_environment(_environment.environment)
 	Events.quality_changed.connect(_on_quality_changed)
 	Events.room_tint_requested.connect(_on_room_tint)
+	Events.player_out.connect(_on_player_out)
 	if PlayerManager.player_count() == 0:
 		_auto_join_for_testing()
 	GameSettings.auto_revive_players = combat_waves == null
@@ -112,3 +113,10 @@ func _start_combat() -> void:
 	add_child(result)
 	director.room_cleared.connect(result.show_result.bind(true))
 	director.room_failed.connect(result.show_result.bind(false))
+
+
+## Quedó afuera hasta Birig Bamba: la cámara deja de seguirlo.
+func _on_player_out(player: Node3D) -> void:
+	var targets: Array[Node3D] = _camera.targets.duplicate()
+	targets.erase(player)
+	_camera.targets = targets

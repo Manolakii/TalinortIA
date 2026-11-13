@@ -693,6 +693,9 @@ func _on_companion_died(_info: DamageInfo) -> void:
 
 
 func revive_companion() -> void:
+	# Si el jugador estaba caído (cayeron los dos), el que se levanta lo levanta también.
+	if player.revive != null and player.revive.downed:
+		player.revive.complete_revive()
 	companion.set_downed(false)
 	companion.health.restore_full()
 	companion.health.current = companion.health.max_health * kd.fallen_revive_health

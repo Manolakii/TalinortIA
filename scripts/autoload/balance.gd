@@ -9,6 +9,7 @@ const ECONOMY_PATH := "res://data/economy.tres"
 const COMBAT_PATH := "res://data/combat_config.tres"
 const DIFFICULTY_PATH := "res://data/difficulty.tres"
 const ELITE_PATH := "res://data/elite_config.tres"
+const REVIVE_PATH := "res://data/revive_config.tres"
 const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
 var roster: CharacterRoster
@@ -18,6 +19,7 @@ var economy: EconomyConfig
 var combat: CombatConfig
 var difficulty: DifficultyConfig
 var elite: EliteConfig
+var revive: ReviveConfig
 
 var _enemy_cache: Dictionary[StringName, EnemyData] = {}
 
@@ -31,6 +33,7 @@ func _enter_tree() -> void:
 	combat = _load_required(COMBAT_PATH) as CombatConfig
 	difficulty = _load_required(DIFFICULTY_PATH) as DifficultyConfig
 	elite = _load_required(ELITE_PATH) as EliteConfig
+	revive = _load_required(REVIVE_PATH) as ReviveConfig
 
 
 func get_enemy(id: StringName) -> EnemyData:
