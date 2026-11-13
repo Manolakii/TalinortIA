@@ -17,9 +17,15 @@ var _config: CameraConfig
 var _pitch: float = 0.0
 var _focus: Vector3 = Vector3.ZERO
 var _zoom: float = 1.0
+## Sacudida acumulada (0 a 1). Se ve como trauma²: los golpes chicos casi no mueven.
+var _trauma: float = 0.0
+var _shake_time: float = 0.0
+var _shake_noise := FastNoiseLite.new()
 
 
 func _ready() -> void:
+	_shake_noise.frequency = 2.5
+	Events.camera_shake_requested.connect(add_trauma)
 	_config = Balance.camera
 	fov = _config.fov_degrees
 	_pitch = deg_to_rad(_config.pitch_degrees)
@@ -55,6 +61,24 @@ func _process(delta: float) -> void:
 	_focus = _focus.lerp(center, 1.0 - exp(-_config.follow_speed * delta))
 	_zoom = lerpf(_zoom, wanted_zoom, 1.0 - exp(-_config.zoom_speed * delta))
 	global_transform = _transform_for(_focus, _zoom)
+	_apply_shake(delta)
+
+
+func add_trauma(amount: float) -> void:
+	_trauma = clampf(_trauma + amount, 0.0, 1.0)
+
+
+func _apply_shake(delta: float) -> void:
+	if _trauma <= 0.0:
+		return
+	var combat: CombatConfig = Balance.combat
+	_shake_time += delta * 60.0
+	var strength: float = _trauma * _trauma * combat.shake_max_offset
+	var offset := Vector3(
+			_shake_noise.get_noise_2d(_shake_time, 0.0),
+			_shake_noise.get_noise_2d(0.0, _shake_time), 0.0) * strength
+	global_transform.origin += global_transform.basis * offset
+	_trauma = maxf(_trauma - combat.shake_decay * delta, 0.0)
 
 
 ## Devuelve la velocidad que se le permite a `body` para no salirse del cuadro.
