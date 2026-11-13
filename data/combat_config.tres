@@ -7,6 +7,7 @@ script = ExtResource("1")
 dodge_invulnerability = 0.25
 input_buffer_time = 0.15
 knockback_damping = 9.0
+haste_multiplier = 1.3
 aim_magnet_angle_deg = 22.0
 aim_magnet_range = 14.0
 aim_magnet_strength = 0.65

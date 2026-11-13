@@ -7,6 +7,8 @@ const BLIND: StringName = &"blind"
 const FEAR: StringName = &"fear"
 const EXHAUSTED: StringName = &"exhausted"
 const SLOW: StringName = &"slow"
+## Más rápido (rastro del Croco). El multiplicador está en CombatConfig.
+const HASTE: StringName = &"haste"
 
 signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)

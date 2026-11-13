@@ -13,6 +13,7 @@ class Shot:
 	var info: DamageInfo
 	var target_team: DamageInfo.Team
 	var on_hit: Callable
+	var on_expire: Callable
 
 var _shots: Array[Shot] = []
 var _mesh: Mesh
@@ -30,7 +31,8 @@ func setup(mesh: Mesh, material: Material, size: int = 16) -> void:
 ## Dispara. `info` es la plantilla del golpe (ya con el crítico tirado).
 ## `on_hit(target: Node3D, info: DamageInfo)` se llama si conecta.
 func fire(from: Vector3, direction: Vector3, speed: float, max_range: float, radius: float,
-		info: DamageInfo, target_team: DamageInfo.Team, on_hit: Callable = Callable()) -> void:
+		info: DamageInfo, target_team: DamageInfo.Team, on_hit: Callable = Callable(),
+		on_expire: Callable = Callable()) -> void:
 	var shot: Shot = _free_shot()
 	shot.active = true
 	shot.velocity = direction.normalized() * speed
@@ -40,6 +42,7 @@ func fire(from: Vector3, direction: Vector3, speed: float, max_range: float, rad
 	shot.info = info
 	shot.target_team = target_team
 	shot.on_hit = on_hit
+	shot.on_expire = on_expire
 	shot.node.global_position = from
 	shot.node.visible = true
 
@@ -65,6 +68,8 @@ func _physics_process(delta: float) -> void:
 			_release(shot)
 		elif shot.traveled >= shot.max_range:
 			_release(shot)
+			if shot.on_expire.is_valid():
+				shot.on_expire.call(to)
 
 
 func _closest(hits: Array[Hurtbox], from: Vector3) -> Hurtbox:

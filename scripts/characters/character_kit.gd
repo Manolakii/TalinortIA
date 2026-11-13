@@ -65,7 +65,7 @@ func do_dodge() -> void:
 
 ## Hacia donde camina; si está quieto, hacia donde apunta.
 func dodge_direction() -> Vector3:
-	var move: Vector2 = player.slot.input.move
+	var move: Vector2 = player.get_move_input()
 	if move != Vector2.ZERO:
 		return Vector3(move.x, 0.0, move.y).normalized()
 	return player.aim_direction
@@ -150,6 +150,23 @@ func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
 
 func move_speed_multiplier() -> float:
 	return 1.0
+
+
+## Multiplicador de daño propio del kit (Hambre de Agucci, Vínculo del dúo...).
+func outgoing_multiplier() -> float:
+	return 1.0
+
+
+## Arma un golpe de este jugador: crítico de sus datos, multiplicador del kit y hitstop liviano.
+## `source` es quien pega (por defecto el jugador; el compañero del dúo pega con su cuerpo).
+func make_hit(base_damage: float, source: Node3D = null) -> DamageInfo:
+	var info: DamageInfo = Combat.make_hit(source if source != null else player,
+			DamageInfo.Team.PLAYERS, base_damage * outgoing_multiplier(), data.crit_chance,
+			data.crit_multiplier)
+	info.hitstop = Balance.combat.hitstop_light
+	if info.is_crit:
+		info.hitstop += Balance.combat.hitstop_crit_bonus
+	return info
 
 
 ## Líneas para el HUD de prueba.

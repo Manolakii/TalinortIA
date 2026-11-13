@@ -57,18 +57,19 @@ func _think(_delta: float) -> void:
 
 # --- Ayudas para la IA ---
 
-## El jugador vivo más cercano, o null.
-func nearest_player() -> PlayerCharacter:
-	var best: PlayerCharacter = null
-	var best_distance: float = INF
-	for node: Node in get_tree().get_nodes_in_group(&"players"):
-		var player := node as PlayerCharacter
-		if player == null or not player.is_targetable():
+## El objetivo más cercano del lado de los jugadores (jugadores, compañeros, señuelos), o null.
+## Los nodos del grupo "enemy_targets" implementan can_be_targeted_by_enemies() y target_priority().
+func nearest_target() -> Node3D:
+	var best: Node3D = null
+	var best_score: float = INF
+	for node: Node in get_tree().get_nodes_in_group(&"enemy_targets"):
+		var target := node as Node3D
+		if target == null or not target.can_be_targeted_by_enemies():
 			continue
-		var d: float = flat_distance_to(player.global_position)
-		if d < best_distance:
-			best_distance = d
-			best = player
+		var score: float = flat_distance_to(target.global_position) * target.target_priority()
+		if score < best_score:
+			best_score = score
+			best = target
 	return best
 
 

@@ -32,6 +32,10 @@ var aim_point: Vector3 = Vector3.ZERO
 var velocity_limiter: Callable
 ## Si no es null, la acción en curso mueve al personaje a esta velocidad (saltos, cargas).
 var action_velocity: Variant = null
+## Si no es null, reemplaza al stick/WASD (por ejemplo, la Posesión de Agucci camina sola).
+var move_override: Variant = null
+## Los enemigos no lo ven (Noche del Valle sin Luz de Agucci, mientras no ataque).
+var hidden_from_enemies: bool = false
 
 var _move_velocity: Vector3 = Vector3.ZERO
 var _buffer: Dictionary[int, float] = {}
@@ -62,6 +66,7 @@ func setup(player_slot: PlayerSlot) -> void:
 func _ready() -> void:
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	add_to_group(&"players")
+	add_to_group(&"enemy_targets")
 	if slot != null:
 		_build()
 	state_machine.start(self)
@@ -110,6 +115,8 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 	var speed: float = data.move_speed * speed_multiplier
 	if kit != null:
 		speed *= kit.move_speed_multiplier()
+	if status.has(StatusEffects.HASTE):
+		speed *= Balance.combat.haste_multiplier
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
 	_move_velocity = _move_velocity.move_toward(target, rate * delta)
@@ -129,6 +136,21 @@ func _move_with(move_velocity: Vector3, delta: float) -> void:
 		total = velocity_limiter.call(global_position, total, delta)
 	velocity = total
 	move_and_slide()
+
+
+## Lo que pide el jugador para moverse (o lo que impone el kit).
+func get_move_input() -> Vector2:
+	return move_override as Vector2 if move_override != null else slot.input.move
+
+
+## Para los enemigos: ¿lo pueden elegir como objetivo?
+func can_be_targeted_by_enemies() -> bool:
+	return is_targetable() and not hidden_from_enemies
+
+
+## Multiplicador de distancia para elegir objetivo (los señuelos usan menos de 1: atraen más).
+func target_priority() -> float:
+	return 1.0
 
 
 # --- Esquiva y acciones (las usan los kits) ---
@@ -175,7 +197,7 @@ func action_step(delta: float) -> bool:
 	if action_velocity != null:
 		move_raw(action_velocity as Vector3, delta)
 	else:
-		apply_movement(slot.input.move, delta, _action_move_multiplier)
+		apply_movement(get_move_input(), delta, _action_move_multiplier)
 	_action_time -= delta
 	if _action_time <= 0.0:
 		action_velocity = null

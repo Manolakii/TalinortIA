@@ -4,7 +4,7 @@ extends State
 
 func physics_update(delta: float) -> void:
 	var player := owner_body as PlayerCharacter
-	var move: Vector2 = player.slot.input.move
+	var move: Vector2 = player.get_move_input()
 	player.apply_movement(move, delta)
 	if move == Vector2.ZERO:
 		machine.transition_to(&"Idle")

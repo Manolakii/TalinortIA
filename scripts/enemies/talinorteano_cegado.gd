@@ -48,7 +48,7 @@ func _think(delta: float) -> void:
 
 
 func _chase(delta: float) -> void:
-	var target: PlayerCharacter = nearest_player()
+	var target: Node3D = nearest_target()
 	if target == null:
 		stop(delta)
 		return

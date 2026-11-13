@@ -106,6 +106,10 @@ func receive_hit(info: DamageInfo) -> bool:
 	return true
 
 
+func clear_flash_materials() -> void:
+	_flash_materials.clear()
+
+
 ## Las subclases registran acá los materiales que tienen que destellar.
 func register_flash_material(material: StandardMaterial3D) -> void:
 	material.emission_enabled = true

@@ -9,6 +9,8 @@ extends Resource
 @export var input_buffer_time: float = 0.15
 ## Cómo se frena el empuje (knockback): más alto = frena antes.
 @export var knockback_damping: float = 9.0
+## Multiplicador de velocidad del estado "veloz" (rastro de Ruta de Escape del Croco).
+@export var haste_multiplier: float = 1.3
 
 @export_group("Imán de apuntado (joystick)")
 @export var aim_magnet_angle_deg: float = 22.0
