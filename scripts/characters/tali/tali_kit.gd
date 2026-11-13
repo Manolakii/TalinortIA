@@ -594,7 +594,7 @@ func _claw_range() -> float:
 func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
 	var best: Hurtbox = null
 	var best_distance: float = max_distance
-	for hurtbox: Hurtbox in CombatQuery.hurtboxes(player.get_tree(), DamageInfo.Team.ENEMIES):
+	for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
 		if hurtbox.receiver == exclude:
 			continue
 		var d: float = hurtbox.global_position.distance_to(exclude.global_position)

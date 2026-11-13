@@ -458,7 +458,7 @@ func _apply_aim_magnet(direction: Vector3) -> Vector3:
 	var best_angle: float = deg_to_rad(config.aim_magnet_angle_deg)
 	var best_direction := Vector3.ZERO
 	var here := Vector3(global_position.x, 0.0, global_position.z)
-	for hurtbox: Hurtbox in CombatQuery.hurtboxes(get_tree(), DamageInfo.Team.ENEMIES):
+	for hurtbox: Hurtbox in CombatQuery.targets(get_tree(), DamageInfo.Team.ENEMIES):
 		var to_enemy: Vector3 = hurtbox.flat_position() - here
 		var distance: float = to_enemy.length()
 		if distance < 0.01 or distance > config.aim_magnet_range:

@@ -6,3 +6,15 @@
 script = ExtResource("1")
 starting_gold = 150
 croco_bounty_gold = 30
+common_drop_chance = 0.4
+common_gold = Array[Vector2i]([Vector2i(2, 4), Vector2i(4, 7), Vector2i(7, 11)])
+elite_gold = Array[int]([20, 35, 55])
+scenario_gold = Array[int]([30, 50, 75])
+vase_gold = Array[Vector2i]([Vector2i(2, 6), Vector2i(4, 10), Vector2i(6, 15)])
+chest_gold = Array[Vector2i]([Vector2i(50, 80), Vector2i(80, 130), Vector2i(130, 200)])
+boss_gold = Array[int]([60, 110, 0])
+coin_magnet_radius = 2.6
+coin_fly_speed = 16.0
+coin_value = 5
+max_coins_per_drop = 8
+chest_open_radius = 1.9

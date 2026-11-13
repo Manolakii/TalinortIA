@@ -51,6 +51,7 @@ func _physics_process(delta: float) -> void:
 				if wave_index + 1 >= waves.waves.size():
 					state = Phase.CLEARED
 					room_cleared.emit()
+					Events.room_cleared.emit()
 				else:
 					state = Phase.WAITING
 					_timer = waves.wave_delay

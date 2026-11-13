@@ -6,6 +6,8 @@ extends Node3D
 @export var team: DamageInfo.Team = DamageInfo.Team.ENEMIES
 @export var radius: float = 0.5
 @export var height: float = 1.8
+## Objeto rompible (vasija): los ataques le pegan, pero el apuntado y las IA lo ignoran.
+@export var is_prop: bool = false
 
 ## Quién recibe el golpe. Tiene que tener receive_hit(info) -> bool. Por defecto, el padre.
 var receiver: Node

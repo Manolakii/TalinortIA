@@ -110,6 +110,8 @@ radius = 0.95
 
 [node name="TestRoomTalinorthland" type="Node3D"]
 script = ExtResource("1")
+vase_spots = PackedVector3Array(-9.6, 0, -3.6, -6.6, 0, -6.6, 10.6, 0, 5.2, 6.8, 0, -9.8, -16.6, 0, 8, 18, 0, -12)
+chest_spots = PackedVector3Array(0, 0, -5)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("environment")

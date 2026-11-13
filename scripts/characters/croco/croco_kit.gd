@@ -111,7 +111,7 @@ func aimed_enemy() -> Hurtbox:
 	var best: Hurtbox = null
 	var best_angle: float = deg_to_rad(kd.target_cone_deg)
 	var here := Vector3(player.global_position.x, 0.0, player.global_position.z)
-	for hurtbox: Hurtbox in CombatQuery.hurtboxes(player.get_tree(), DamageInfo.Team.ENEMIES):
+	for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
 		var to_enemy: Vector3 = hurtbox.flat_position() - here
 		var distance: float = to_enemy.length()
 		if distance < 0.01 or distance > kd.target_max_distance:

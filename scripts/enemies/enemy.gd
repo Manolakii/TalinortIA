@@ -24,6 +24,8 @@ var data: EnemyData
 var health_multiplier: float = -1.0
 var damage_multiplier: float = -1.0
 var is_elite: bool = false
+## Los invocados (por ejemplo, por un boss) no sueltan oro.
+var drops_gold: bool = true
 var affixes: Array[StringName] = []
 ## Lleva la Recompensa del Croco (rombo dorado).
 var has_bounty: bool = false
@@ -412,6 +414,7 @@ func _play_spawn() -> void:
 
 func _on_died(info: DamageInfo) -> void:
 	_pay_bounty(info)
+	_drop_gold()
 	if affixes.has(&"explosive"):
 		var blast := EliteExplosion.new()
 		get_parent().add_child(blast)
@@ -431,6 +434,17 @@ func _on_died(info: DamageInfo) -> void:
 	tween.tween_interval(0.35)
 	tween.tween_property(visual, "position:y", -1.2, 0.5)
 	tween.tween_callback(queue_free)
+
+
+## Oro para cada jugador (GDD): común 40% de chance, élite siempre.
+func _drop_gold() -> void:
+	if not drops_gold:
+		return
+	var economy: EconomyConfig = Balance.economy
+	if is_elite:
+		Loot.drop_for_all(get_parent(), global_position, economy.elite_gold)
+	else:
+		Loot.drop_for_all(get_parent(), global_position, economy.common_gold, economy.common_drop_chance)
 
 
 func _build_body() -> void:

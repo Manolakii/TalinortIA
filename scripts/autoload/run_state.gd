@@ -8,6 +8,8 @@ var rng := RandomNumberGenerator.new()
 ## Oro por índice de jugador (0 a 3).
 var gold: Dictionary[int, int] = {}
 var in_run: bool = false
+## Stage actual: 0 = Stage 1 (Talinorthland), 1 = Stage 2, 2 = Stage 3. Elige la fila de las tablas de oro.
+var stage: int = 0
 ## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
 var difficulty: int = DifficultyConfig.Level.NORMAL
 ## Bonus que se acumulan durante la partida, por jugador (por ejemplo, el Tiro por Contrato).
@@ -24,6 +26,7 @@ func start_run(new_seed: int = 0) -> void:
 	seed_value = new_seed
 	rng.seed = seed_value
 	gold.clear()
+	stage = 0
 	_bonuses.clear()
 	items.clear()
 	upgrades.clear()

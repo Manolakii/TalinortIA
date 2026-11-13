@@ -17,6 +17,8 @@ signal gold_changed(slot_index: int, new_amount: int)
 signal loadout_changed(slot_index: int)
 ## Se terminó una oleada (las Vendas del Bosque Tuerto curan).
 signal wave_cleared(index: int)
+## Se terminó la sala (todas las oleadas).
+signal room_cleared
 
 # --- Combate ---
 ## Un golpe conectó (para números de daño, barras de Furia y de definitiva, etc.).
