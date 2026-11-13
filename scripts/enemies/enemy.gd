@@ -77,6 +77,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if health.is_dead or is_controlled:
 		return
+	_age_time += delta
 	if not combat_tick(delta):
 		return
 	if awake:
@@ -416,6 +417,7 @@ func _play_spawn() -> void:
 
 
 func _on_died(info: DamageInfo) -> void:
+	release_attack_slot()
 	_pay_bounty(info)
 	_drop_gold()
 	if affixes.has(&"explosive"):
@@ -490,3 +492,107 @@ func _make_material(color: Color, with_outline: bool = true) -> StandardMaterial
 		outline.shader = OUTLINE_SHADER
 		material.next_pass = outline
 	return material
+
+
+# --- Táctica cuerpo a cuerpo (pedido del grupo: que no sea solo ir para adelante y pegar) ---
+
+## Cuántos enemigos tienen turno para atacar a cada objetivo (id del objetivo -> cantidad).
+static var _attack_slots: Dictionary = {}
+
+## "" (nada), "backstep" (retrocede), "strafe" (rodea) o "wait" (rodea esperando turno).
+var tactic: StringName = &""
+var _tactic_time: float = 0.0
+var _strafe_sign: float = 1.0
+var _slot_target_id: int = 0
+var _weave_phase: float = randf() * TAU
+var _age_time: float = 0.0
+
+
+func _exit_tree() -> void:
+	release_attack_slot()
+
+
+## Pide turno para atacar a `target`. Los élites no esperan.
+func take_attack_slot(target: Node3D) -> bool:
+	var id: int = target.get_instance_id()
+	if _slot_target_id == id:
+		return true
+	release_attack_slot()
+	if is_elite:
+		return true
+	var used: int = _attack_slots.get(id, 0)
+	if used >= Balance.difficulty.melee_attackers[RunState.difficulty]:
+		return false
+	_attack_slots[id] = used + 1
+	_slot_target_id = id
+	return true
+
+
+func release_attack_slot() -> void:
+	if _slot_target_id == 0:
+		return
+	var used: int = _attack_slots.get(_slot_target_id, 0)
+	if used <= 1:
+		_attack_slots.erase(_slot_target_id)
+	else:
+		_attack_slots[_slot_target_id] = used - 1
+	_slot_target_id = 0
+
+
+## Después de pegar: retrocede un paso, rodea al jugador o vuelve directo a la carga.
+func choose_reposition() -> void:
+	release_attack_slot()
+	var roll: float = randf()
+	if roll < data.backstep_chance:
+		start_tactic(&"backstep", randf_range(0.3, 0.45))
+	elif roll < data.backstep_chance + data.strafe_chance:
+		start_tactic(&"strafe", randf_range(0.5, 1.1))
+	else:
+		tactic = &""
+
+
+func start_tactic(which: StringName, duration: float) -> void:
+	tactic = which
+	_tactic_time = duration
+	_strafe_sign = -1.0 if randf() < 0.5 else 1.0
+
+
+## Hace la táctica actual mirando al objetivo. Devuelve true mientras sigue ocupado.
+func run_tactic(target: Node3D, delta: float) -> bool:
+	if tactic == &"":
+		return false
+	_tactic_time -= delta
+	if _tactic_time <= 0.0:
+		tactic = &""
+		return false
+	var to_target: Vector3 = flat_direction_to(target.global_position)
+	var side := Vector3(-to_target.z, 0.0, to_target.x) * _strafe_sign
+	var speed: float = data.move_speed * speed_multiplier()
+	match tactic:
+		&"backstep":
+			move_looking(-to_target, speed * 1.4, to_target, delta)
+		&"strafe":
+			move_looking((side + to_target * 0.15).normalized(), speed * 0.75, to_target, delta)
+		&"wait":
+			# Rodea a un par de metros, acomodándose a esa distancia, hasta que haya turno.
+			var distance: float = flat_distance_to(target.global_position)
+			var radial: float = clampf((distance - (data.attack_range + 1.6)) * 0.8, -1.0, 1.0)
+			move_looking((side * 0.8 + to_target * radial).normalized(), speed * 0.6, to_target, delta)
+	return true
+
+
+## Hacia dónde ir para acercarse: de lejos zigzaguea un poco en vez de ir en línea recta.
+func approach_direction(target: Node3D) -> Vector3:
+	var to_target: Vector3 = flat_direction_to(target.global_position)
+	if data.weave <= 0.0 or flat_distance_to(target.global_position) < 3.5:
+		return to_target
+	var side := Vector3(-to_target.z, 0.0, to_target.x)
+	return (to_target + side * sin(_age_time * 2.2 + _weave_phase) * data.weave).normalized()
+
+
+## Se mueve hacia `direction` pero mirando hacia `look` (para retroceder o rodear de frente).
+func move_looking(direction: Vector3, speed: float, look: Vector3, delta: float) -> void:
+	var wanted: Vector3 = (direction + _separation() * 1.2).normalized() * speed
+	_move_velocity = _move_velocity.move_toward(wanted, 20.0 * delta)
+	turn_towards(look, delta)
+	move_with_knockback(_move_velocity)

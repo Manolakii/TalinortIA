@@ -12,6 +12,8 @@ var _time: float = 0.0
 var _dash_direction: Vector3 = Vector3.FORWARD
 var _dash_from: Vector3
 var _hit: Array[Node] = []
+var _chain: bool = false
+var _follow_up: bool = false
 
 
 func _ready() -> void:
@@ -33,35 +35,52 @@ func _think(delta: float) -> void:
 			if target == null or status.has(StatusEffects.BLIND):
 				stop(delta)
 				return
+			if run_tactic(target, delta):
+				return
 			var direction: Vector3 = flat_direction_to(target.global_position)
 			if flat_distance_to(target.global_position) <= data.attack_range:
+				if not take_attack_slot(target):
+					start_tactic(&"wait", randf_range(0.4, 0.8))
+					return
 				turn_towards(direction, delta)
 				stop(delta)
 				if facing.angle_to(direction) < deg_to_rad(20.0):
 					_start_windup()
 			else:
-				steer(direction, data.move_speed * speed_multiplier(), delta)
+				steer(approach_direction(target), data.move_speed * speed_multiplier(), delta)
 		Mode.WINDUP:
 			stop(delta)
-			if _time >= windup_time():
+			if _time >= _current_windup():
 				_start_dash()
 		Mode.DASH:
 			var previous: Vector3 = global_position
 			move_with_knockback(_dash_direction * data.dash_distance / DASH_TIME)
 			_hit_along(previous, global_position)
 			if _time >= DASH_TIME or get_slide_collision_count() > 0:
+				_chain = not _follow_up and randf() < data.combo_chance
 				_set_mode(Mode.RECOVER)
 		Mode.RECOVER:
 			stop(delta)
-			if _time >= recovery_time():
-				_set_mode(Mode.APPROACH)
+			if _time >= recovery_time() * (0.4 if _chain else 1.0):
+				if _chain:
+					# Segundo corte: se da vuelta y vuelve a tirarse.
+					_chain = false
+					_follow_up = true
+					var target: Node3D = nearest_target()
+					if target != null:
+						facing = flat_direction_to(target.global_position)
+					_start_windup()
+				else:
+					_follow_up = false
+					choose_reposition()
+					_set_mode(Mode.APPROACH)
 
 
 func _start_windup() -> void:
 	_set_mode(Mode.WINDUP)
 	_dash_direction = facing
 	telegraph.rotation.y = facing_angle()
-	telegraph.show_rect(data.dash_distance + 1.0, data.charge_width, windup_time())
+	telegraph.show_rect(data.dash_distance + 1.0, data.charge_width, _current_windup())
 
 
 func _start_dash() -> void:
@@ -89,7 +108,12 @@ func _set_mode(new_mode: Mode) -> void:
 	_time = 0.0
 
 
+func _current_windup() -> float:
+	return windup_time() * (0.65 if _follow_up else 1.0)
+
+
 func _on_interrupted() -> void:
+	_chain = false
 	if mode == Mode.WINDUP or mode == Mode.DASH:
 		telegraph.hide_telegraph()
 		_set_mode(Mode.RECOVER)
