@@ -24,6 +24,13 @@ static func enemy_count(config: DifficultyConfig, level: int, players: int, base
 	return roundi(base * config.enemy_count[level] * (1.0 + extra * config.extra_player_count[level]))
 
 
+## Cuántos enemigos más que la base salen en la partida en curso (jugadores y dificultad).
+static func current_count_multiplier() -> float:
+	var config: DifficultyConfig = Balance.difficulty
+	var extra: int = maxi(players_for_scaling() - 1, 0)
+	return config.enemy_count[RunState.difficulty] * (1.0 + extra * config.extra_player_count[RunState.difficulty])
+
+
 ## Lo que usan los enemigos en la partida en curso.
 static func current_health_multiplier(is_boss: bool = false) -> float:
 	return enemy_health(Balance.difficulty, RunState.difficulty, players_for_scaling(), is_boss)

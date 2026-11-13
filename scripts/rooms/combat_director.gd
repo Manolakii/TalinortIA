@@ -15,6 +15,8 @@ var waves: RoomWaves
 var state: Phase = Phase.WAITING
 var wave_index: int = -1
 var rng := RandomNumberGenerator.new()
+## Multiplica los enemigos comunes (los escenarios más avanzados traen más).
+var count_multiplier: float = 1.0
 
 var _timer: float = 0.0
 var _pending: Array[Dictionary] = []
@@ -23,7 +25,7 @@ var _bounty_given: bool = false
 
 func _ready() -> void:
 	add_to_group(&"combat_director")
-	rng.seed = RunState.seed_value
+	rng.seed = RunState.room_seed(&"director")
 	_timer = waves.wave_delay
 
 
@@ -71,7 +73,7 @@ func _start_wave(index: int) -> void:
 	var players: int = Scaling.players_for_scaling()
 	var config: DifficultyConfig = Balance.difficulty
 	for entry: RoomWaves.Entry in RoomWaves.parse_wave(waves.waves[index]):
-		var commons: int = entry.count - entry.elites
+		var commons: int = roundi((entry.count - entry.elites) * count_multiplier)
 		var scaled: int = Scaling.enemy_count(config, RunState.difficulty, players, commons)
 		for i: int in scaled:
 			_pending.append({"id": entry.enemy_id, "elite": false})
@@ -101,6 +103,9 @@ func _spawn(spec: Dictionary) -> void:
 			_bounty_given = true
 			enemy.has_bounty = true
 	enemy.position = _pick_position()
+	# Más enemigos que la base (más jugadores, más dificultad o escenario avanzado) = cada uno
+	# suelta oro con menos chance: el oro por jugador queda como en el GDD.
+	enemy.gold_chance = Balance.economy.common_drop_chance 			/ maxf(count_multiplier * Scaling.current_count_multiplier(), 1.0)
 	get_parent().add_child(enemy)
 	Fx.ring_burst(get_parent(), enemy.position, 1.2, Color(0.6, 0.55, 0.65), 0.3)
 
@@ -139,6 +144,8 @@ func _pick_position() -> Vector3:
 		var candidate := global_position + Vector3(
 				rng.randf_range(-0.5, 0.5) * waves.spawn_area.x, 0.0,
 				rng.randf_range(-0.5, 0.5) * waves.spawn_area.y)
+		if _is_blocked(candidate):
+			continue
 		var nearest: float = INF
 		for node: Node in get_tree().get_nodes_in_group(&"players"):
 			var p := node as Node3D
@@ -150,3 +157,16 @@ func _pick_position() -> Vector3:
 			best_distance = nearest
 			best = candidate
 	return best
+
+
+## ¿Hay una roca o pared ahí? (para no hacer aparecer enemigos adentro).
+func _is_blocked(point: Vector3) -> bool:
+	if not is_inside_tree():
+		return false
+	var sphere := SphereShape3D.new()
+	sphere.radius = 0.9
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = sphere
+	query.transform = Transform3D(Basis.IDENTITY, point + Vector3.UP * 0.9)
+	query.collision_mask = 1 | 512
+	return not get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()

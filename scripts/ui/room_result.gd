@@ -49,12 +49,12 @@ func _ready() -> void:
 		box.add_child(label)
 
 
-func show_result(won: bool) -> void:
+func show_result(won: bool, title: String = "", line: String = "") -> void:
 	_active = true
 	_wait = 1.0  # que nadie lo saltee sin querer apretando ataque
-	_title.text = WIN_TITLE if won else LOSE_TITLE
+	_title.text = title if title != "" else (WIN_TITLE if won else LOSE_TITLE)
 	var lines: Array[String] = WIN_LINES if won else LOSE_LINES
-	_line.text = lines[randi() % lines.size()]
+	_line.text = line if line != "" else lines[randi() % lines.size()]
 	_panel.visible = true
 
 

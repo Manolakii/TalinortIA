@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="StageRoomsConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/stage_rooms_config.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/room_waves.gd" id="rw"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/templates/talinorthland_claro.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/templates/talinorthland_ruinas.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/templates/talinorthland_pedregal.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/templates/talinorthland_crater.tscn" id="5"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_combat_a.tres" id="6"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_combat_b.tres" id="7"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_combat_c.tres" id="8"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_combat_d.tres" id="9"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_elite_a.tres" id="10"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_elite_b.tres" id="11"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_treasure_guard.tres" id="12"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_prisoners.tres" id="13"]
+
+[resource]
+script = ExtResource("1")
+stage_name = "Talinorthland"
+scenario_names = Array[String](["1-1 · Llanuras Gronk", "1-2 · Ruinas de Ciudad Derrumbe", "1-3 · Bosque Tuerto"])
+rooms_per_scenario = 3
+templates = Array[PackedScene]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
+door_weights = Array[int]([40, 20, 15, 10, 8, 7])
+combat_waves = Array[ExtResource("rw")]([ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9")])
+elite_waves = Array[ExtResource("rw")]([ExtResource("10"), ExtResource("11")])
+treasure_guard_waves = ExtResource("12")
+prisoner_waves = ExtResource("13")
+count_bonus_per_scenario = 0.15
+vases_min = 2
+vases_max = 5
+treasure_guard_chance = 0.4
+prisoner_count = 4
+prisoner_gold = 6
+cage_open_time = 1.5
+riddle_scenario = 2
+turret_damage = 10.0
+turret_shots_per_second = 2.0
+turret_range = 12.0

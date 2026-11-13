@@ -10,6 +10,11 @@ const TRIM := Color(1.0, 0.78, 0.2)
 
 ## Si está cerrado con llave, no se puede abrir (por ejemplo, hasta terminar la sala).
 @export var locked: bool = false
+## Si suelta oro al abrirse (los cofres de los eventos lo manejan aparte).
+var drops_gold: bool = true
+## Evento Mimics: este cofre en realidad es un mimic. La pista: "breath" (respira) o "teeth" (marcas de dientes).
+var is_mimic: bool = false
+var mimic_clue: StringName = &""
 
 var is_open: bool = false
 var _lid: Node3D
@@ -80,6 +85,8 @@ func _ready() -> void:
 	_prompt.visible = false
 	add_child(_prompt)
 	add_to_group(&"chests")
+	if is_mimic:
+		_build_clue()
 
 
 func _physics_process(_delta: float) -> void:
@@ -101,7 +108,8 @@ func open(by: PlayerCharacter = null) -> void:
 	tween.parallel().tween_property(_glow, "light_energy", 2.5, 0.15)
 	tween.tween_property(_glow, "light_energy", 0.0, 0.8)
 	Events.camera_shake_requested.emit(0.15)
-	Loot.drop_for_all(get_parent(), global_position + Vector3.FORWARD * 0.3, Balance.economy.chest_gold)
+	if drops_gold and not is_mimic:
+		Loot.drop_for_all(get_parent(), global_position + Vector3.FORWARD * 0.3, Balance.economy.chest_gold)
 	opened.emit(by)
 
 
@@ -115,3 +123,21 @@ func _nearest_player() -> PlayerCharacter:
 		if Vector2(offset.x, offset.z).length() <= radius:
 			return player
 	return null
+
+
+## La pista del mimic: respira despacito, o tiene marcas de dientes en la tapa.
+func _build_clue() -> void:
+	if mimic_clue == &"teeth":
+		for i: int in 4:
+			var tooth := MeshInstance3D.new()
+			var mesh := PrismMesh.new()
+			mesh.size = Vector3(0.1, 0.12, 0.04)
+			tooth.mesh = mesh
+			tooth.rotation.z = PI
+			tooth.position = Vector3(-0.3 + i * 0.2, -0.03, 0.67)
+			tooth.material_override = Fx.flat_material(Color(0.95, 0.93, 0.85))
+			_lid.add_child(tooth)
+	else:
+		var tween: Tween = create_tween().set_loops()
+		tween.tween_property(_lid, "rotation:x", -0.08, 1.4).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(_lid, "rotation:x", 0.0, 1.4).set_trans(Tween.TRANS_SINE)

@@ -20,6 +20,8 @@ const BUFFERED_ACTIONS: Array[PlayerInput.Action] = [
 ## Modo prueba: tiempo hasta levantarse solo (hasta que exista revivir, Fase 4).
 const TEST_MODE_REVIVE_DELAY := 1.5
 
+## Eligiendo en un menú (mejora u objeto): no se mueve ni ataca.
+var menu_locked: bool = false
 var slot: PlayerSlot
 var data: CharacterData
 var kit: CharacterKit
@@ -126,6 +128,11 @@ func _physics_process(delta: float) -> void:
 		knockback_velocity = Vector3.ZERO
 		apply_movement(Vector2.ZERO, delta)
 		face_aim_now()
+		return
+	# Eligiendo una mejora u objeto: no se mueve ni ataca.
+	if menu_locked:
+		_buffer.clear()
+		apply_movement(Vector2.ZERO, delta)
 		return
 	kit.handle_input()
 	state_machine.physics_update(delta)

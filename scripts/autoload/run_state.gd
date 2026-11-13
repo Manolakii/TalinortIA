@@ -10,6 +10,18 @@ var gold: Dictionary[int, int] = {}
 var in_run: bool = false
 ## Stage actual: 0 = Stage 1 (Talinorthland), 1 = Stage 2, 2 = Stage 3. Elige la fila de las tablas de oro.
 var stage: int = 0
+## Escenario dentro del stage (0 = X-1, 1 = X-2, 2 = X-3) y sala dentro del escenario.
+var scenario: int = 0
+var room_index: int = 0
+## Tipo de la sala actual (RoomKind.Type).
+var room_type: int = 0
+## Salas jugadas en total (para que cada sala tenga su propia semilla).
+var rooms_played: int = 0
+## Cabaña del General Pipo: en qué sala aparece el acertijo (-1 = sin elegir) y si ya se visitó.
+var riddle_room: int = -1
+var pipo_visited: bool = false
+## La torreta aliada de Pipo espera a la sala siguiente.
+var turret_pending: bool = false
 ## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
 var difficulty: int = DifficultyConfig.Level.NORMAL
 ## Bonus que se acumulan durante la partida, por jugador (por ejemplo, el Tiro por Contrato).
@@ -27,6 +39,13 @@ func start_run(new_seed: int = 0) -> void:
 	rng.seed = seed_value
 	gold.clear()
 	stage = 0
+	scenario = 0
+	room_index = 0
+	room_type = 0
+	rooms_played = 0
+	riddle_room = -1
+	pipo_visited = false
+	turret_pending = false
 	_bonuses.clear()
 	items.clear()
 	upgrades.clear()
@@ -87,3 +106,38 @@ func add_upgrade(slot_index: int, upgrade_id: StringName) -> void:
 
 func end_run() -> void:
 	in_run = false
+
+
+# --- Recorrido del stage ---
+
+## Semilla propia de la sala actual: la misma partida (semilla) arma las mismas salas.
+func room_seed(salt: StringName = &"") -> int:
+	return hash([seed_value, stage, scenario, room_index, rooms_played, salt])
+
+
+func room_rng(salt: StringName = &"") -> RandomNumberGenerator:
+	var generator := RandomNumberGenerator.new()
+	generator.seed = room_seed(salt)
+	return generator
+
+
+## Número de sala dentro del stage (0 a 8 con 3 escenarios de 3 salas).
+func stage_room_number(rooms_per_scenario: int) -> int:
+	return scenario * rooms_per_scenario + room_index
+
+
+func is_last_room_of_scenario(rooms_per_scenario: int) -> bool:
+	return room_type != RoomKind.Type.PIPO_CABIN and room_index >= rooms_per_scenario - 1
+
+
+## Pasa a la sala elegida. La Cabaña de Pipo es una sala extra: no cuenta.
+func advance_to(next_type: int, rooms_per_scenario: int) -> void:
+	rooms_played += 1
+	if next_type == RoomKind.Type.PIPO_CABIN:
+		pipo_visited = true
+	else:
+		room_index += 1
+		if room_index >= rooms_per_scenario:
+			room_index = 0
+			scenario += 1
+	room_type = next_type

@@ -26,6 +26,9 @@ var damage_multiplier: float = -1.0
 var is_elite: bool = false
 ## Los invocados (por ejemplo, por un boss) no sueltan oro.
 var drops_gold: bool = true
+## Chance de soltar oro siendo común (-1 = la de la economía). El director la baja cuando hay
+## más enemigos que la base, para que el oro de cada uno no dependa de cuántos juegan.
+var gold_chance: float = -1.0
 var affixes: Array[StringName] = []
 ## Lleva la Recompensa del Croco (rombo dorado).
 var has_bounty: bool = false
@@ -444,7 +447,8 @@ func _drop_gold() -> void:
 	if is_elite:
 		Loot.drop_for_all(get_parent(), global_position, economy.elite_gold)
 	else:
-		Loot.drop_for_all(get_parent(), global_position, economy.common_gold, economy.common_drop_chance)
+		var chance: float = gold_chance if gold_chance >= 0.0 else economy.common_drop_chance
+		Loot.drop_for_all(get_parent(), global_position, economy.common_gold, chance)
 
 
 func _build_body() -> void:

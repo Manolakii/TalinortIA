@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RoomWaves" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/room_waves.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+room_name = "Élite"
+waves = Array[String](["tirador_agucci:2:1, talinorteano_cegado:2", "soldado_agucci:2:1, chaman_sombra:1"])
+wave_delay = 1.5
+spawn_area = Vector2(42, 26)
+min_spawn_distance = 9.0
