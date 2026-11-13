@@ -12,8 +12,9 @@ extends Resource
 
 @export_group("Puertas y premios")
 ## Qué hay detrás de una puerta (sorpresa), en el orden de RoomKind.Type: Combate, Élite,
-## Tesoro (0: es escondido), Mimics, Colonia de presos. La Cabaña no sale así.
-@export var room_weights: Array[int] = [60, 20, 0, 10, 10]
+## Tesoro (0: es escondido), Mimics, Colonia de presos, Cabaña (0: es escondida), Carreta,
+## Laberinto, Barranco. Pedido del grupo: más eventos (45%).
+@export var room_weights: Array[int] = [40, 15, 0, 9, 9, 0, 9, 9, 9]
 ## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío.
 @export var reward_weights: Array[int] = [0, 45, 35, 20]
 ## Premio de Oro: para cada jugador.
@@ -45,7 +46,27 @@ extends Resource
 ## Colonia de presos: cuántas jaulas, oro por preso y cuánto hay que mantener para abrir.
 @export var prisoner_count: int = 4
 @export var prisoner_gold: int = 4
-@export var cage_open_time: float = 1.5
+@export var cage_open_time: float = 2.5
+## Tiempo para liberarlos antes de que se los lleven.
+@export var prisoner_time_limit: float = 35.0
+## Escoltá la carreta: vida, velocidad (m/s; ~45 s de viaje si la empujan siempre), y cada
+## cuánto llegan enemigos (de a cuántos, en Normal y 1 jugador) con un máximo vivos a la vez.
+@export var cart_health: float = 500.0
+@export var cart_speed: float = 0.45
+@export var cart_spawn_interval: float = 5.5
+@export var cart_spawn_group: int = 2
+@export var cart_max_enemies: int = 10
+## Laberinto de los Gronks: cuántos duermen, y a qué distancia los despierta el ruido (pegar o
+## esquivar) o pasar pegado.
+@export var maze_gronks: int = 5
+@export var maze_noise_radius: float = 6.0
+@export var maze_touch_radius: float = 2.2
+## El barranco: daño al caer, cuánto aguanta una piedra pisada, cuánto tarda en volver y
+## chance de piedras extra (además del camino seguro).
+@export var chasm_fall_damage: float = 15.0
+@export var chasm_crumble_delay: float = 0.9
+@export var chasm_respawn_time: float = 4.0
+@export var chasm_extra_tiles: float = 0.45
 ## En qué escenario puede aparecer el acertijo de Pipo (2 = X-3, el Bosque Tuerto).
 @export var riddle_scenario: int = 2
 

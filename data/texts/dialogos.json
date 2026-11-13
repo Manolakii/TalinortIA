@@ -1,0 +1,88 @@
+{
+	"_nota": "Frases que dicen los personajes del mundo. Se elige una al azar de cada lista. Agregá, sacá o cambiá lo que quieras (en rioplatense, con humor).",
+	"presos": [
+		"¡Sacame de acá, boludo!",
+		"¡Eh, vos! ¡Abrí la jaula, no te hagas el sota!",
+		"Hace tres días que no veo un mate. TRES DÍAS.",
+		"¡La llave la tiene el Agucci ese, el de cara de culo!",
+		"¡No veo nada! Ah, no, sí veo. Perdón, es la costumbre.",
+		"¡Dale que me estoy meando!",
+		"Esto es peor que la cola del banco.",
+		"¡Si me sacás te presento a mi hermana!",
+		"¡Talinorthland libre, la concha de la lora!",
+		"¿Vos sos el Croco? Te imaginaba más alto.",
+		"¡Apurate que me pica la espalda y no llego!",
+		"Me trajeron acá por un chiste del Líder Supremo. UN CHISTE.",
+		"¡Pegale al de la máscara, que ese me robó el sánguche!"
+	],
+	"presos_libres": [
+		"¡Gracias, genio! ¡Te debo un asado!",
+		"¡Libre como el viento, carajo!",
+		"¡Me voy a mi casa a dormir tres días!",
+		"¡Grande! ¡Sos lo más!",
+		"¡Chau, Aguccis de mierda!"
+	],
+	"presos_perdidos": [
+		"¡Noooo, la puta madre!",
+		"¡Me la llevan! ¡Avisale a mi vieja!",
+		"Se lo llevaron..."
+	],
+	"carreta": [
+		"¡Dale que llegamos tarde al asado!",
+		"¿Falta mucho? ¿Y ahora? ¿Y ahora?",
+		"Esta carreta tiene menos suspensión que mi abuela.",
+		"¡Cuidado con los pozos que llevo los huevos!",
+		"Si nos agarran, yo no los conozco.",
+		"¡Más rápido, que esto parece el 60 en hora pico!",
+		"¿Quién se tiró un pedo? Fue el Gronk.",
+		"Yo dije de venir en nave. Nadie me escucha nunca.",
+		"¡Vamos Talinorthland, carajo!"
+	],
+	"carreta_quieta": [
+		"¡Eh! ¡Empujen, vagos!",
+		"¿Nos vamos a quedar acá tomando mate?",
+		"¡Que alguien se acerque, que sola no anda!",
+		"La carreta no se mueve con buena onda, che."
+	],
+	"carreta_golpe": [
+		"¡Ay, mi carreta!",
+		"¡Ojo que se rompe, animales!",
+		"¡Le pegaron a la rueda, la concha de su madre!",
+		"¡Defiendan, que para eso les pagamos! Bueno, no les pagamos."
+	],
+	"carreta_llega": [
+		"¡Llegamos! ¡Ni un rasguño! Bueno, algunos.",
+		"¡Gracias, cracks! ¡Asado en casa!",
+		"¡Talinorthland, donde la supervivencia es un éxito!"
+	],
+	"carreta_rota": [
+		"¡Se la llevaron puesta!",
+		"Bueno... la carreta ya fue. Cada uno a su casa caminando."
+	],
+	"gronk_dormido": ["Zzz...", "Zzz... mamá...", "Zzz... pasto...", "Zzz... grrrr..."],
+	"gronk_despierto": ["¡GRRRROOOONK!", "¿¡QUIÉN HIZO RUIDO!?", "¡ME DESPERTARON, PELOTUDOS!"],
+	"laberinto": [
+		"Shhh... los Gronks duermen. No peleen ni esquiven cerca.",
+		"Caminá despacito, que si se despiertan, cagamos."
+	],
+	"barranco": [
+		"Las piedras se caen al rato de pisarlas. ¡No se queden quietos!",
+		"Si te caés, te duele. Avisado estás."
+	],
+	"barranco_caida": ["¡AAAAH!", "¡La puta madre, me caí!", "¡Qué porrazo!", "¡Mi cola!"],
+	"cegados": [
+		"¡No veo un carajo!",
+		"¿Quién apagó la luz?",
+		"¡Le pego a lo que se mueva!",
+		"¿Mamá? ¿Sos vos?",
+		"La sombra me dijo que te pegue. Perdón."
+	],
+	"soldados": [
+		"¡Por la familia Agucci!",
+		"¡El Alto Mando no perdona!",
+		"Esto es por el chiste de la hermana, hijo de puta.",
+		"¡Rodéenlo, inútiles!",
+		"Me pagan poco para esto."
+	],
+	"mimic": ["¡ÑAM!", "¿Pensaste que era oro? Je.", "¡Abrime la tapa ahora, vivo!"]
+}

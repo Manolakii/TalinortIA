@@ -8,8 +8,6 @@ signal freed
 const BODY_COLOR := Color(0.62, 0.52, 0.4)
 const STEEL := Color(0.55, 0.57, 0.6)
 const USE_RADIUS := 1.9
-const SHOUTS: Array[String] = ["¡Sacame de acá!", "¡Eh, vos! ¡Abrí!", "¡No veo nada! Ah, no, sí veo.",
-		"¡La llave la tiene el Agucci!", "¡Talinorthland libre!"]
 
 var open_time: float = 1.5
 var is_free: bool = false
@@ -78,12 +76,8 @@ func _physics_process(delta: float) -> void:
 		return
 	_shout_timer -= delta
 	if _shout_timer <= 0.0:
-		_shout_timer = randf_range(4.0, 7.0)
-		_shout.text = SHOUTS.pick_random()
-		_shout.modulate.a = 1.0
-		var fade: Tween = _shout.create_tween()
-		fade.tween_interval(1.6)
-		fade.tween_property(_shout, "modulate:a", 0.0, 0.4)
+		_shout_timer = randf_range(2.5, 4.5)
+		_say(Dialogue.line("presos"), 2.2)
 	var opening: bool = false
 	for node: Node in get_tree().get_nodes_in_group(&"players"):
 		var player := node as PlayerCharacter
@@ -106,8 +100,7 @@ func free_prisoner() -> void:
 	is_free = true
 	_bar.visible = false
 	freed.emit()
-	_shout.text = "¡Gracias! ¡Viva Talinorthland!"
-	_shout.modulate.a = 1.0
+	_say(Dialogue.line("presos_libres"), 1.6)
 	var tween: Tween = create_tween()
 	tween.tween_property(_bars, "position:y", -2.2, 0.4)
 	tween.tween_property(_prisoner, "position", Vector3(0, 0, 14.0), 2.5)
@@ -119,8 +112,17 @@ func lose() -> void:
 	if is_free or is_lost:
 		return
 	is_lost = true
-	_shout.text = "Se lo llevaron..."
 	_shout.modulate = Color(0.75, 0.6, 0.9)
+	_say(Dialogue.line("presos_perdidos"), 0.8)
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "scale", Vector3(1, 0.01, 1), 0.8)
 	tween.tween_callback(queue_free)
+
+
+## Muestra una frase arriba de la jaula y la borra después de `seconds`.
+func _say(text: String, seconds: float) -> void:
+	_shout.text = text
+	_shout.modulate.a = 1.0
+	var fade: Tween = _shout.create_tween()
+	fade.tween_interval(seconds)
+	fade.tween_property(_shout, "modulate:a", 0.0, 0.4)

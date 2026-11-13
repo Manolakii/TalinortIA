@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1")
 room_name = "Colonia de presos"
-waves = Array[String](["soldado_agucci:2, tirador_agucci:1", "soldado_agucci:2, tirador_agucci:2", "soldado_agucci:1:1, tirador_agucci:1"])
-wave_delay = 4.0
+waves = Array[String](["soldado_agucci:3, tirador_agucci:2", "soldado_agucci:3, tirador_agucci:2, chaman_sombra:1", "soldado_agucci:2:1, tirador_agucci:2:1"])
+wave_delay = 2.0
 spawn_area = Vector2(42, 26)
 min_spawn_distance = 9.0

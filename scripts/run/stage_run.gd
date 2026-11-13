@@ -16,6 +16,9 @@ const HINTS: Dictionary = {
 	RoomKind.Type.MIMICS: "Uno de estos cofres muerde. Se puede abrir uno solo: mirá bien antes.",
 	RoomKind.Type.PRISONERS: "¡Liberá a los presos antes de que se los lleven! Mantené E / X al lado de cada jaula.",
 	RoomKind.Type.PIPO_CABIN: "Shhh... alguien vive acá. Acercate a la cabaña.",
+	RoomKind.Type.ESCORT: "¡Escoltá la carreta hasta la salida! Solo avanza si alguien está cerca empujando.",
+	RoomKind.Type.MAZE: "Shhh... los Gronks duermen. Si peleás o esquivás cerca, se despiertan. El cofre está a la salida.",
+	RoomKind.Type.CHASM: "Crucen el barranco: las piedras se caen al rato de pisarlas. Los huecos se saltan con la esquiva.",
 }
 const ENTRY_SPOTS: Array[Vector3] = [Vector3(-1.5, 0, 10.5), Vector3(1.5, 0, 10.5),
 		Vector3(-1.5, 0, 12.5), Vector3(1.5, 0, 12.5)]
@@ -139,10 +142,28 @@ func build_room(type: int) -> void:
 			var prisoners := PrisonerEvent.new()
 			_room_root.add_child(prisoners)
 			prisoners.setup(template.feature_spots(), config.prisoner_count, config.cage_open_time,
-					config.prisoner_gold, template.chest_spot())
+					config.prisoner_gold, template.chest_spot(), config.prisoner_time_limit)
 			prisoners.resolved.connect(func(all_saved: bool) -> void: _room_done(true, all_saved))
 			_event = prisoners
 			_start_director(config.prisoner_waves)
+		RoomKind.Type.ESCORT:
+			var escort := EscortEvent.new()
+			_room_root.add_child(escort)
+			escort.setup(config, template, rng)
+			escort.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			_event = escort
+		RoomKind.Type.MAZE:
+			var maze := MazeEvent.new()
+			_room_root.add_child(maze)
+			maze.setup(config, template, rng)
+			maze.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			_event = maze
+		RoomKind.Type.CHASM:
+			var chasm := ChasmEvent.new()
+			_room_root.add_child(chasm)
+			chasm.setup(config, template, rng)
+			chasm.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			_event = chasm
 		RoomKind.Type.PIPO_CABIN:
 			var cabin := PipoCabin.new()
 			_room_root.add_child(cabin)
@@ -154,7 +175,8 @@ func build_room(type: int) -> void:
 		turret.setup(config)
 		turret.position = Vector3(3.5, 0, 8.0)
 		_room_root.add_child(turret)
-	Events.floating_text_requested.emit(Vector3(0, 3.5, 7.0), room_title(), Color.WHITE)
+	Events.floating_text_requested.emit(Vector3(0, 3.5, 7.0), RoomKind.display_name(type).replace("Evento: ", ""),
+			Color.WHITE)
 	if HINTS.has(type):
 		show_banner(HINTS[type], 6.0)
 	else:
@@ -254,7 +276,7 @@ func _give_gold_reward() -> void:
 
 ## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
 func _can_hide_treasure(type: int) -> bool:
-	if RoomKind.is_bonus(type):
+	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.CHASM]:
 		return false
 	var last_of_stage: bool = RunState.scenario >= config.scenario_names.size() - 1 \
 			and RunState.room_index >= config.rooms_per_scenario - 1
@@ -364,7 +386,7 @@ static func pick_distinct(weights: Array[int], count: int, rng: RandomNumberGene
 ## y la primera sala de cada escenario nunca es élite.
 func roll_room_type(rng: RandomNumberGenerator) -> int:
 	var weights: Array[int] = config.room_weights.duplicate()
-	if room_type in [RoomKind.Type.MIMICS, RoomKind.Type.PRISONERS]:
+	if room_type in RoomKind.EVENTS:
 		weights[room_type] = 0
 	if RunState.room_index >= config.rooms_per_scenario - 1 and not RoomKind.is_bonus(room_type):
 		weights[RoomKind.Type.ELITE] = 0

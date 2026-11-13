@@ -36,6 +36,9 @@ var affixes: Array[StringName] = []
 var has_bounty: bool = false
 ## Despertó (Chamán muerto) y se va sin pelear.
 var awake: bool = false
+## Dormido (Laberinto de los Gronks): no hace nada hasta que lo despiertan.
+var asleep: bool = false
+signal woke_up
 var facing: Vector3 = Vector3.FORWARD
 var visual: Node3D
 var telegraph: Telegraph
@@ -74,12 +77,16 @@ func _ready() -> void:
 	if is_elite:
 		_build_elite_marks()
 	_play_spawn()
+	_maybe_bark()
 
 
 func _physics_process(delta: float) -> void:
 	if health.is_dead or is_controlled:
 		return
 	_age_time += delta
+	if asleep:
+		stop(delta)
+		return
 	if not combat_tick(delta):
 		return
 	if awake:
@@ -364,7 +371,19 @@ func _flee_awake(delta: float) -> void:
 
 
 ## El tercer zarpazo de Tali "levanta un poco" a los enemigos.
+## Se despierta (por ruido o porque le pegaron).
+func wake_up() -> void:
+	if not asleep:
+		return
+	asleep = false
+	visual.rotation.z = 0.0
+	Dialogue.say("gronk_despierto" if enemy_id == &"gronk" else "cegados",
+			global_position + Vector3.UP * 3.0, Color(1.0, 0.6, 0.4))
+	woke_up.emit()
+
+
 func _after_hit(info: DamageInfo) -> void:
+	wake_up()
 	if info.has_tag(&"launch"):
 		var tween: Tween = create_tween()
 		tween.tween_property(visual, "position:y", 0.7, 0.14).set_ease(Tween.EASE_OUT)
@@ -598,3 +617,20 @@ func move_looking(direction: Vector3, speed: float, look: Vector3, delta: float)
 	_move_velocity = _move_velocity.move_toward(wanted, 20.0 * delta)
 	turn_towards(look, delta)
 	move_with_knockback(_move_velocity)
+
+
+## Frases al aparecer (data/texts/dialogos.json): no todos hablan, así no se llena la pantalla.
+const BARKS: Dictionary = {&"talinorteano_cegado": "cegados", &"hondero_cegado": "cegados",
+		&"soldado_agucci": "soldados", &"tirador_agucci": "soldados", &"mimic": "mimic"}
+
+
+func _maybe_bark() -> void:
+	if not BARKS.has(enemy_id) or asleep:
+		return
+	var chance: float = 1.0 if enemy_id == &"mimic" else 0.2
+	if randf() >= chance:
+		return
+	var timer: SceneTreeTimer = get_tree().create_timer(randf_range(0.6, 2.5), false)
+	timer.timeout.connect(func() -> void:
+		if is_instance_valid(self) and not health.is_dead:
+			Dialogue.say(BARKS[enemy_id], global_position + Vector3.UP * 2.6, Color(0.85, 0.8, 0.9)))
