@@ -330,7 +330,7 @@ Antes de cada partida se elige la dificultad base. **Desbloqueo (aprobado):** F�
 | --- | --- | --- | --- |
 | Fácil | ×0,8 | ×0,7 | +10 s para revivir |
 | Normal | ×1 | ×1 | — |
-| Difícil | ×1,25 | ×1,4 | Los élites tienen 2 afijos y los bosses agregan un ataque por fase |
+| Difícil | ×1,5 | ×1,7 | Los élites tienen 2 afijos y los bosses agregan un ataque por fase. Además (pedido del grupo, para que sea difícil de verdad): 30% más de enemigos, 15% más rápidos, avisos 20% más cortos, atacan 25% más seguido y 1 élite extra por oleada |
 
 **Escalado por jugador extra**, según la dificultad elegida:
 

@@ -25,6 +25,7 @@ var _material: ShaderMaterial
 
 
 func _ready() -> void:
+	add_to_group(&"hazards")
 	var disc := MeshInstance3D.new()
 	var plane := PlaneMesh.new()
 	plane.size = Vector2.ONE * radius * 2.0

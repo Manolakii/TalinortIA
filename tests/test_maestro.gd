@@ -176,3 +176,30 @@ func test_maestro_ai_uses_bastonazo_on_lined_up_enemies() -> void:
 	_pump(int(1.0 / DT))
 	assert_false(_kit._ability_cd[MaestroKit.Body.MAESTRO].is_ready(), "Usó el Bastonazo")
 	assert_lt(second.health.current, 1000.0, "La onda llegó al de atrás")
+
+
+func test_ai_defends_player_from_an_enemy_winding_up() -> void:
+	_pump(1)
+	var attacker := enemy_at(Vector3(0, 0, -1.2), 1000.0)
+	attacker.facing = Vector3.BACK
+	attacker._start_windup()
+	_kit._player_target = null
+	assert_eq(_kit._choose_ai_target(_kit.companion, DT), attacker, "Va por el que está por pegarle al jugador")
+
+
+func test_ai_defends_itself() -> void:
+	_pump(1)
+	_kit._player_target = null
+	var body: DuoCompanion = _kit.companion
+	var biter := enemy_at(body.global_position + Vector3(1.0, 0, 0), 1000.0)
+	assert_eq(_kit._choose_ai_target(body, DT), biter, "Se defiende del que tiene al lado")
+
+
+func test_ai_steps_out_of_shadow_zones() -> void:
+	_pump(1)
+	var zone := ShadowZone.new()
+	zone.radius = 3.0
+	add_child_autofree(zone)
+	zone.global_position = _kit.companion.global_position
+	await wait_physics_frames(1)
+	assert_ne(_kit._hazard_exit(_kit.companion), Vector3.ZERO, "Sabe que tiene que salir")

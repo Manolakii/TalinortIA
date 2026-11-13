@@ -44,6 +44,8 @@ var _player_target: Node3D
 var _bond_line: MeshInstance3D
 var _extras: Node3D
 var _bonded: bool = false
+var _ai_target: Node3D
+var _ai_target_time: float = 0.0
 
 
 func _setup() -> void:
@@ -337,7 +339,12 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 	if body.busy > 0.0:
 		body.stop(delta)
 		return
-	# 2) Con poca vida se repliega al lado del jugador y deja de pelear.
+	# 2) Si está parado en una zona de sombra, sale.
+	var hazard_exit: Vector3 = _hazard_exit(body)
+	if hazard_exit != Vector3.ZERO:
+		body.steer(hazard_exit, speed, delta)
+		return
+	# 3) Con poca vida se repliega al lado del jugador y deja de pelear.
 	var ratio: float = body.health.ratio()
 	if body.retreating and ratio >= kd.companion_recover_health:
 		body.retreating = false
@@ -347,8 +354,8 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 	if body.retreating:
 		_companion_retreat(body, to_player, distance, delta)
 		return
-	# 3) Si no, ataca a lo mismo que el jugador.
-	var target: Node3D = _companion_target()
+	# 4) Elige a quién pegar (defender al jugador, ayudarlo o defenderse).
+	var target: Node3D = _choose_ai_target(body, delta)
 	if target != null:
 		var to_target: Vector3 = target.global_position - body.global_position
 		to_target.y = 0.0
@@ -356,7 +363,7 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		if _companion_try_skill(body, to_target, reach):
 			return
 		if to_target.length() > reach:
-			body.steer(to_target.normalized(), speed, delta)
+			body.steer(_approach_direction(body, target, reach), speed, delta)
 		else:
 			body.stop(delta)
 			body.facing = to_target.normalized()
@@ -463,6 +470,72 @@ func _companion_retreat(body: DuoCompanion, _to_player: Vector3, _distance: floa
 			body.global_position, kd.companion_safe_radius)
 	if threat_near == null:
 		body.health.heal(body.health.max_health * kd.companion_regen * delta)
+
+
+## Prioridades: 1) el enemigo que está por pegarle al jugador, 2) lo que golpea el jugador,
+## 3) el que lo ataca a él, 4) el más cercano al jugador si está encima. Mantiene el
+## objetivo un rato para no cambiar a cada rato.
+func _choose_ai_target(body: DuoCompanion, delta: float) -> Node3D:
+	_ai_target_time -= delta
+	if _ai_target_time > 0.0 and _is_valid_ai_target(_ai_target):
+		return _ai_target
+	var chosen: Node3D = _enemy_threatening(player.global_position)
+	if chosen == null:
+		chosen = _companion_target()
+	if chosen == null:
+		var near_body: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES,
+				body.global_position, kd.companion_defend_radius)
+		chosen = near_body.receiver as Node3D if near_body != null else null
+	if chosen == null:
+		var near_player: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES,
+				player.global_position, kd.companion_defend_radius)
+		chosen = near_player.receiver as Node3D if near_player != null else null
+	_ai_target = chosen
+	_ai_target_time = kd.companion_target_commit if chosen != null else 0.0
+	return chosen
+
+
+func _is_valid_ai_target(target: Node3D) -> bool:
+	if not is_instance_valid(target):
+		return false
+	var enemy := target as Combatant
+	return enemy != null and enemy.is_targetable() \
+			and enemy.global_position.distance_to(player.global_position) <= kd.companion_target_range
+
+
+## El enemigo cuyo aviso naranja tiene encima al jugador (va a defenderlo).
+func _enemy_threatening(point: Vector3) -> Node3D:
+	for node: Node in player.get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Enemy
+		if enemy != null and enemy.is_targetable() and enemy.threatens(point) \
+				and enemy.global_position.distance_to(player.global_position) <= kd.companion_target_range:
+			return enemy
+	return null
+
+
+## Si el jugador ya está pegado al objetivo, lo rodea para pegarle del otro lado.
+func _approach_direction(body: DuoCompanion, target: Node3D, reach: float) -> Vector3:
+	var goal: Vector3 = target.global_position
+	var player_side: Vector3 = target.global_position - player.global_position
+	player_side.y = 0.0
+	if player_side.length() < 3.0 and player_side.length() > 0.01:
+		goal += player_side.normalized() * reach * 0.8
+	var direction: Vector3 = goal - body.global_position
+	direction.y = 0.0
+	return direction.normalized() if direction.length_squared() > 0.01 else body.facing
+
+
+## Si está adentro de una zona de sombra, la dirección para salir. Si no, Vector3.ZERO.
+func _hazard_exit(body: DuoCompanion) -> Vector3:
+	for node: Node in player.get_tree().get_nodes_in_group(&"hazards"):
+		var zone := node as ShadowZone
+		if zone == null:
+			continue
+		var away: Vector3 = body.global_position - zone.global_position
+		away.y = 0.0
+		if away.length() < zone.radius + 0.3:
+			return away.normalized() if away.length() > 0.05 else Vector3.RIGHT
+	return Vector3.ZERO
 
 
 ## Ataca a lo mismo que el jugador: lo último que golpeó, si sigue vivo y cerca.

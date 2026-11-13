@@ -77,7 +77,7 @@ Asesino de daño explosivo, con mucha movilidad y el personaje más frágil. Usa
 **0 · Pasiva — La Sombra que Habla**
 Barra de Hambre de 0 a 100. Las habilidades de sombra la llenan y los golpes comunes la bajan de a poco.
 - **Lucidez (0–30):** los ataques por la espalda son críticos garantizados.
-- **Hambre (31–99):** +1% de daño por cada punto de Hambre.
+- **Hambre (31–99):** +0,7% de daño por cada punto de Hambre (bajado del 1% para equilibrar).
 - **Posesión (100):** durante 6 s la sombra toma el control: daño enorme y velocidad máxima, pero va sola al enemigo más cercano y le drena vida a Agucci. Después la barra vuelve a 0.
     - **Ataque automático:** golpe en área corta. Si hay un enemigo cerca, la sombra va a matarlo; si no hay a quién atacar, daña de a poco a Agucci. A cambio, tiene más robo de vida.
     - **Castigo:** usar habilidades de sombra cuesta 5% de la vida actual, pero si conectan curan 8% del daño que hacen.

@@ -53,7 +53,7 @@ extends Resource
 ## +10% de daño y de resistencia dentro del Vínculo.
 @export var bond_bonus: float = 0.1
 ## Más lejos que esto, el que maneja la IA vuelve hacia el otro.
-@export var leash_distance: float = 10.0
+@export var leash_distance: float = 7.0
 ## Más lejos que esto (por ejemplo, después de un Cambio), aparece al lado.
 @export var teleport_distance: float = 18.0
 @export var follow_distance: float = 2.5
@@ -77,6 +77,10 @@ extends Resource
 @export var companion_bastonazo_min_targets: int = 2
 ## ...cargándolo este tiempo (0,6 s = 96 de daño).
 @export var companion_bastonazo_charge: float = 0.6
+## Se defiende de los enemigos que tenga a esta distancia, aunque el jugador no les pegue.
+@export var companion_defend_radius: float = 3.5
+## Mantiene el mismo objetivo al menos este tiempo (no cambia a cada rato).
+@export var companion_target_commit: float = 0.8
 ## Stewie (IA) rueda hacia el objetivo si está más lejos que esto.
 @export var companion_roll_min_distance: float = 4.0
 @export var fallen_revive_time: float = 15.0
