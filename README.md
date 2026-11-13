@@ -30,3 +30,28 @@ Abrí Claude Code en VS Code y pegá el **primer mensaje** de `PROMPT_INICIAL.md
 | `docs/referencias/` | Imágenes de estilo (va el B, semirrealista) y la vista previa del modelo de Fadied |
 
 La biblia completa (lore, los 6 kits y el GDD) sigue en el doc compartido. Si cambian algo importante ahí, actualicen también `docs/` para que Claude Code lo sepa.
+
+## Probar el juego
+
+- **Desde el editor:** abrí el proyecto en Godot y apretá **F5**. Arranca en la pantalla de unión.
+- **Solo la sala de prueba:** abrí `scenes/rooms/test_room_talinorthland.tscn` y apretá **F6**. Se unen solos el teclado y todos los joysticks conectados.
+- **Tests:** en Godot, panel **GUT** (abajo) > *Run All*. Desde la consola:
+  `Godot_v4.7.2-stable_win64_console.exe --headless --path . -s addons/gut/gut_cmdln.gd`
+
+| En la pantalla de unión | Teclado | Joystick |
+| --- | --- | --- |
+| Unirse | Enter | A / Cruz |
+| Elegir personaje | A y D, o flechas | Cruceta o stick izquierdo |
+| Confirmar | Enter | A / Cruz |
+| Desconfirmar o salir | Esc | B / Círculo |
+| Arrancar (con todos listos) | Enter | Start |
+
+| En la sala | Teclado y mouse | Joystick |
+| --- | --- | --- |
+| Moverse | WASD | Stick izquierdo |
+| Apuntar | Mouse | Stick derecho (si no, hacia donde caminás) |
+| Pausa | Esc | Start |
+| Volver a la pantalla de unión (en pausa) | Retroceso | B / Círculo |
+| Calidad baja / media / alta | F1 / F2 / F3 | — |
+| Mostrar u ocultar datos de debug | F4 | — |
+| Pantalla completa | F11 | — |
