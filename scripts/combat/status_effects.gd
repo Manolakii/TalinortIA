@@ -9,6 +9,8 @@ const EXHAUSTED: StringName = &"exhausted"
 const SLOW: StringName = &"slow"
 ## Más rápido (rastro del Croco). El multiplicador está en CombatConfig.
 const HASTE: StringName = &"haste"
+## Acelerado por el Chamán de la Sombra.
+const SHADOW_HASTE: StringName = &"shadow_haste"
 
 signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)

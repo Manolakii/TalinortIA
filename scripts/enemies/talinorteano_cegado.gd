@@ -17,7 +17,8 @@ var _wander_time: float = 0.0
 
 
 func _ready() -> void:
-	enemy_id = &"talinorteano_cegado"
+	if enemy_id == &"":
+		enemy_id = &"talinorteano_cegado"
 	super._ready()
 	_speed_jitter = randf_range(0.85, 1.12)
 
@@ -61,7 +62,7 @@ func _chase(delta: float) -> void:
 		else:
 			stop(delta)
 		return
-	steer(direction, data.move_speed * _speed_jitter, delta)
+	steer(direction, data.move_speed * _speed_jitter * speed_multiplier(), delta)
 
 
 func threatens(point: Vector3) -> bool:
@@ -83,14 +84,7 @@ func _start_windup() -> void:
 
 func _strike() -> void:
 	telegraph.hide_telegraph()
-	var info := DamageInfo.new()
-	info.amount = data.damage
-	info.attacker = self
-	info.attacker_team = DamageInfo.Team.ENEMIES
-	info.origin = global_position
-	info.knockback = data.attack_knockback
-	info.hitstop = Balance.combat.hitstop_light
-	info.is_melee = true
+	var info: DamageInfo = make_attack()
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(get_tree(), DamageInfo.Team.PLAYERS,
 			global_position, facing, data.attack_radius, data.attack_angle_deg)
 	if Combat.deliver(info, targets) > 0:

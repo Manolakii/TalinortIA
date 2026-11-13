@@ -246,7 +246,8 @@ script = ExtResource("6")
 [node name="EnemySpawner" type="Node3D" parent="."]
 script = ExtResource("7")
 enemy_scene = ExtResource("8")
-target_count = 5
+enemy_ids = Array[StringName]([&"talinorteano_cegado", &"talinorteano_cegado", &"talinorteano_cegado", &"hondero_cegado", &"soldado_agucci", &"tirador_agucci", &"chaman_sombra", &"gronk"])
+target_count = 6
 spawn_area = Vector2(40, 26)
 
 [node name="DebugHud" parent="." instance=ExtResource("9")]

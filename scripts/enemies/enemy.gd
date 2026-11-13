@@ -7,9 +7,19 @@ const OUTLINE_SHADER: Shader = preload("res://assets/shaders/outline.gdshader")
 
 @export var enemy_id: StringName = &"talinorteano_cegado"
 
+const ENEMY_BULLET_COLOR := Color(0.85, 0.55, 1.0)
+
 var data: EnemyData
-## Multiplicador de vida (dificultad y cantidad de jugadores, Fase 3).
-var health_multiplier: float = 1.0
+## Multiplicadores de vida y daño. Negativo = se calculan solos según la dificultad
+## y la cantidad de jugadores (Scaling).
+var health_multiplier: float = -1.0
+var damage_multiplier: float = -1.0
+var is_elite: bool = false
+var affixes: Array[StringName] = []
+## Lleva la Recompensa del Croco (rombo dorado).
+var has_bounty: bool = false
+## Despertó (Chamán muerto) y se va sin pelear.
+var awake: bool = false
 var facing: Vector3 = Vector3.FORWARD
 var visual: Node3D
 var telegraph: Telegraph
@@ -28,6 +38,10 @@ func _ready() -> void:
 	collision_layer = 1 << 3  # enemies
 	collision_mask = 1  # world
 	add_to_group(&"enemies")
+	if health_multiplier < 0.0:
+		health_multiplier = Scaling.current_health_multiplier()
+	if damage_multiplier < 0.0:
+		damage_multiplier = Scaling.current_damage_multiplier()
 	_build_body()
 	setup_combatant(DamageInfo.Team.ENEMIES, data.max_health * health_multiplier,
 			data.body_radius, data.body_height, visual)
@@ -45,7 +59,10 @@ func _physics_process(delta: float) -> void:
 		return
 	if not combat_tick(delta):
 		return
-	_think(delta)
+	if awake:
+		_flee_awake(delta)
+	else:
+		_think(delta)
 	visual.rotation.y = atan2(-facing.x, -facing.z)
 	_update_stun_pose(delta)
 
@@ -56,6 +73,65 @@ func _think(_delta: float) -> void:
 
 
 # --- Ayudas para la IA ---
+
+## Velocidad con modificadores: élite Veloz, aura del Chamán.
+func speed_multiplier() -> float:
+	var multiplier: float = 1.0
+	if affixes.has(&"fast"):
+		multiplier *= Balance.elite.fast_speed_multiplier
+	if status.has(StatusEffects.SHADOW_HASTE):
+		multiplier *= 1.0 + Balance.get_enemy(&"chaman_sombra").aura_speed_bonus
+	return multiplier
+
+
+## Un golpe de este enemigo, con el daño escalado por la dificultad.
+func make_attack(amount_multiplier: float = 1.0) -> DamageInfo:
+	var info := DamageInfo.new()
+	info.amount = data.damage * damage_multiplier * amount_multiplier
+	info.attacker = self
+	info.attacker_team = DamageInfo.Team.ENEMIES
+	info.origin = global_position
+	info.knockback = data.attack_knockback
+	info.hitstop = Balance.combat.hitstop_light
+	return info
+
+
+## Mantiene una distancia con el objetivo; `strafe` (-1 a 1) lo hace moverse de costado.
+func keep_distance(target: Node3D, preferred: float, delta: float, strafe: float = 0.0) -> void:
+	var to_target: Vector3 = flat_direction_to(target.global_position)
+	var distance: float = flat_distance_to(target.global_position)
+	var side := Vector3(-to_target.z, 0.0, to_target.x) * strafe
+	var radial := Vector3.ZERO
+	if distance > preferred + 1.5:
+		radial = to_target
+	elif distance < preferred - 1.5:
+		radial = -to_target
+	var wanted: Vector3 = radial + side
+	if wanted.length_squared() < 0.01:
+		stop(delta)
+		turn_towards(to_target, delta)
+		return
+	steer(wanted.normalized(), data.move_speed * speed_multiplier(), delta)
+	turn_towards(to_target, delta)
+
+
+## Pool compartido de proyectiles enemigos.
+func enemy_projectiles() -> ProjectilePool:
+	var pool := get_tree().get_first_node_in_group(&"enemy_projectiles") as ProjectilePool
+	if pool == null:
+		pool = ProjectilePool.new()
+		pool.name = "EnemyProjectiles"
+		pool.add_to_group(&"enemy_projectiles")
+		get_tree().root.add_child(pool)
+		var mesh := SphereMesh.new()
+		mesh.radius = 0.16
+		mesh.height = 0.32
+		pool.setup(mesh, Fx.flat_material(ENEMY_BULLET_COLOR, 2.0), 32)
+	return pool
+
+
+func facing_angle() -> float:
+	return atan2(-facing.x, -facing.z)
 
 ## El objetivo más cercano del lado de los jugadores (jugadores, compañeros, señuelos), o null.
 ## Los nodos del grupo "enemy_targets" implementan can_be_targeted_by_enemies() y target_priority().
@@ -119,7 +195,37 @@ func _separation() -> Vector3:
 
 
 func is_targetable() -> bool:
-	return super.is_targetable() and not is_controlled
+	return super.is_targetable() and not is_controlled and not awake
+
+
+## Blindado: recibe menos de frente.
+func _modify_incoming(info: DamageInfo) -> void:
+	if not affixes.has(&"armored") or info.attacker_team != DamageInfo.Team.PLAYERS:
+		return
+	var from := Vector3(info.origin.x - global_position.x, 0.0, info.origin.z - global_position.z)
+	if from.length_squared() < 0.01:
+		return
+	if facing.angle_to(from) <= deg_to_rad(Balance.elite.armored_front_angle_deg) * 0.5:
+		info.amount *= Balance.elite.armored_front_damage
+
+
+## El Chamán murió: despierta, deja de pelear y se va (en la Fase 5 da oro).
+func wake_and_flee() -> void:
+	awake = true
+	telegraph.hide_telegraph()
+	remove_from_group(&"enemies")
+	Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4, "¡Desperté!",
+			Color(0.85, 0.95, 1.0))
+	Events.enemy_died.emit(self)
+	get_tree().create_timer(2.5, false).timeout.connect(queue_free)
+
+
+func _flee_awake(delta: float) -> void:
+	var target: Node3D = nearest_target()
+	var away: Vector3 = -flat_direction_to(target.global_position) if target != null else facing
+	steer(away, data.move_speed * 1.3, delta)
+	var fade: float = clampf(visual.scale.x - delta * 0.35, 0.05, 1.0)
+	visual.scale = Vector3.ONE * fade
 
 
 ## El tercer zarpazo de Tali "levanta un poco" a los enemigos.
@@ -164,10 +270,14 @@ func _update_stun_pose(delta: float) -> void:
 
 # --- Nacer y morir ---
 
+func body_scale() -> float:
+	return Balance.elite.scale if is_elite else 1.0
+
+
 func _play_spawn() -> void:
 	visual.scale = Vector3.ONE * 0.2
 	var tween: Tween = create_tween()
-	tween.tween_property(visual, "scale", Vector3.ONE, 0.3).set_trans(Tween.TRANS_BACK) \
+	tween.tween_property(visual, "scale", Vector3.ONE * body_scale(), 0.3).set_trans(Tween.TRANS_BACK) \
 			.set_ease(Tween.EASE_OUT)
 
 

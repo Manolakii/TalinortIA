@@ -91,6 +91,7 @@ func receive_hit(info: DamageInfo) -> bool:
 		hit_avoided.emit(info)
 		return false
 
+	_modify_incoming(info)
 	health.apply_damage(info)
 	if info.knockback > 0.0:
 		knockback_velocity = info.push_direction(global_position) * info.knockback
@@ -144,6 +145,11 @@ func move_with_knockback(move_velocity: Vector3) -> void:
 ## devuelve el texto a mostrar. Si no, "".
 func _try_avoid(_info: DamageInfo) -> String:
 	return ""
+
+
+## Ajusta un golpe antes de aplicarlo (por ejemplo, el élite Blindado recibe menos de frente).
+func _modify_incoming(_info: DamageInfo) -> void:
+	pass
 
 
 ## Lo llamó un golpe mientras era invulnerable (por ejemplo, durante la esquiva).

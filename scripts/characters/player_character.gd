@@ -261,7 +261,7 @@ func _on_blocked_by_invulnerability(info: DamageInfo) -> void:
 
 
 func _after_hit(info: DamageInfo) -> void:
-	if info.shake <= 0.0:
+	if info.shake <= 0.0 and not info.has_tag(&"tick"):
 		Events.camera_shake_requested.emit(Balance.combat.shake_player_hurt)
 	kit.on_damage_taken(info)
 

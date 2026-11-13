@@ -119,7 +119,7 @@ func on_blocked_by_invulnerability(info: DamageInfo) -> void:
 		return
 	_lucky_this_dodge = true
 	add_fury(kd.lucky_dodge_fury)
-	var attacker := info.attacker as Combatant
+	var attacker: Combatant = info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.is_targetable():
 		attacker.status.apply(StatusEffects.STUN, kd.lucky_dodge_unbalance)
 	_say("¡De casualidad!", Color(0.75, 0.9, 1.0))

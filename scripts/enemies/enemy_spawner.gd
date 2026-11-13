@@ -5,6 +5,8 @@ extends Node3D
 ## Atajos: F7 un enemigo más, F8 uno menos, F9 mata a todos (para ver cómo reaparecen).
 
 @export var enemy_scene: PackedScene
+## Si tiene ids, elige al azar entre ellos (escena en scenes/enemies/<id>.tscn).
+@export var enemy_ids: Array[StringName] = []
 @export var target_count: int = 5
 @export var respawn_delay: float = 1.5
 ## Zona donde aparecen (centrada en el nodo), en metros.
@@ -28,9 +30,12 @@ func _physics_process(delta: float) -> void:
 
 
 func spawn_one() -> Enemy:
-	if enemy_scene == null:
+	var scene: PackedScene = enemy_scene
+	if not enemy_ids.is_empty():
+		scene = load("res://scenes/enemies/%s.tscn" % enemy_ids.pick_random())
+	if scene == null:
 		return null
-	var enemy: Enemy = enemy_scene.instantiate()
+	var enemy: Enemy = scene.instantiate()
 	enemy.position = _pick_position()
 	get_parent().add_child(enemy)
 	return enemy
