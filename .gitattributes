@@ -1,0 +1,10 @@
+# Normalizar finales de línea
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.glb binary
+*.ogg binary
+*.wav binary
+*.mp3 binary
+*.exr binary
+*.hdr binary

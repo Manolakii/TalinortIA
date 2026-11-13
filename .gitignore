@@ -1,0 +1,16 @@
+# Godot
+.godot/
+*.tmp
+export/
+export_presets.cfg.bak
+*.translation
+mono_crash.*.json
+
+# Obsidian (estado local de cada uno)
+.obsidian/workspace*
+.obsidian/cache
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
