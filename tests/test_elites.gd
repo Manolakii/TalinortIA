@@ -3,6 +3,9 @@ extends "res://tests/helpers/kit_test.gd"
 
 
 func before_each() -> void:
+	for node: Node in get_children():
+		if node is ShadowZone or node is LobbedStone or node is EliteExplosion:
+			node.free()
 	RunState.difficulty = DifficultyConfig.Level.NORMAL
 	RunState.start_run(5)
 	make_player(&"croco")

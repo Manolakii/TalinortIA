@@ -3,6 +3,10 @@ extends "res://tests/helpers/kit_test.gd"
 
 
 func before_each() -> void:
+	# Zonas, piedras y explosiones que hayan quedado de otro test.
+	for node: Node in get_children():
+		if node is ShadowZone or node is LobbedStone or node is EliteExplosion:
+			node.free()
 	RunState.difficulty = DifficultyConfig.Level.NORMAL
 	make_player(&"croco")
 	_player.kit.dodge_cooldown.charges = 0  # que no esquive solo por el buffer
