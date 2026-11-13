@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/rooms/test_room.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/rooms/ground_with_grass.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/camera/shared_camera.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/debug_overlay.tscn" id="5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.36, 0.53, 0.78, 1)
@@ -229,3 +231,7 @@ position = Vector3(1.5, 0, 2.5)
 [node name="SharedCamera" type="Camera3D" parent="."]
 fov = 32.0
 script = ExtResource("3")
+
+[node name="PauseMenu" parent="." instance=ExtResource("4")]
+
+[node name="DebugOverlay" parent="." instance=ExtResource("5")]
