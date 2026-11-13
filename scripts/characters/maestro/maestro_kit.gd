@@ -811,3 +811,31 @@ func debug_lines() -> Array[String]:
 	lines.append("Cambio %s · %s" % ["listo" if switch_cooldown.is_ready()
 			else "%.1f s" % switch_cooldown.time_until_ready(), relay])
 	return lines
+
+
+# --- HUD ---
+
+## Dos mini retratos con el que se controla resaltado (GDD, Interfaz).
+func hud_chips() -> Array[String]:
+	return BODY_NAMES
+
+
+func hud_chip_active() -> int:
+	return int(controlled)
+
+
+## Barra de Relevo Total.
+func hud_bar() -> Dictionary:
+	if _relay_time > 0.0:
+		return {"label": ("FORMA ANCESTRAL" if _relay_effect == &"ancestral" else "LECCIÓN") \
+				+ " %d s" % ceili(_relay_time), "value": _relay_time / kd.relay_duration,
+				"color": Color(0.75, 0.95, 0.85), "pulse": true}
+	return {"label": "Relevo Total" + (" (Y+RB / R)" if ult_charge >= 100.0 else ""),
+			"value": ult_charge / 100.0, "color": Color(0.75, 0.95, 0.85), "pulse": ult_charge >= 100.0}
+
+
+func hud_abilities() -> Array[Dictionary]:
+	var is_maestro: bool = controlled == Body.MAESTRO
+	return [cooldown_slot("Bastonazo" if is_maestro else "Refugio", _ability_cd[controlled]),
+			cooldown_slot("Garrocha" if is_maestro else "Rodar", dodge_cooldown),
+			cooldown_slot("Cambio", switch_cooldown)]

@@ -542,3 +542,25 @@ func debug_lines() -> Array[String]:
 
 func _cd_text(cd: AbilityCooldown) -> String:
 	return "listo" if cd.is_ready() else "%.1f s" % cd.time_until_ready()
+
+
+# --- HUD ---
+
+func hud_bar() -> Dictionary:
+	if in_fury:
+		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / kd.fury_duration,
+				"color": Color(0.85, 0.15, 0.08), "pulse": true}
+	if is_exhausted():
+		return {"label": "Resaca", "value": 0.0, "color": Color(0.5, 0.5, 0.55), "pulse": false}
+	# Barra naranja que se pone roja al llenarse (GDD, Interfaz).
+	var color: Color = Color(0.95, 0.55, 0.1).lerp(Color(0.9, 0.12, 0.08), fury / 100.0)
+	var label: String = "Furia" if _lockout <= 0.0 else "Furia (bloqueada)"
+	return {"label": label, "value": fury / 100.0, "color": color, "pulse": fury >= 85.0}
+
+
+func hud_abilities() -> Array[Dictionary]:
+	if in_fury:
+		return [cooldown_slot("Aplastón", slam_cooldown), cooldown_slot("Embestida", dodge_cooldown),
+				ult_slot("Revoleo")]
+	return [cooldown_slot("Llamado", call_cooldown), cooldown_slot("Tropezón", dodge_cooldown),
+			ult_slot("La Bestia")]

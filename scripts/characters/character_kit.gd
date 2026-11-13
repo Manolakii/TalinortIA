@@ -187,6 +187,45 @@ func say(text: String, color: Color = Color.WHITE, size: float = 1.0) -> void:
 		damage_numbers.show_text(player.global_position + Vector3.UP * 3.4, text, color, size)
 
 
+# --- HUD ---
+
+## Barra propia del personaje (segundo renglón del panel). Vacío = no tiene.
+## Claves: "label" (String), "value" (0 a 1), "color" (Color), "pulse" (bool).
+func hud_bar() -> Dictionary:
+	return {}
+
+
+## Chips (por ejemplo, los modos del arma del Croco) y cuál está activo.
+func hud_chips() -> Array[String]:
+	return []
+
+
+func hud_chip_active() -> int:
+	return -1
+
+
+## Habilidades para el panel: [{"name", "ratio" (0 = lista, 1 = recién usada), "text"}].
+func hud_abilities() -> Array[Dictionary]:
+	return [cooldown_slot("Esquiva", dodge_cooldown), ult_slot("Definitiva")]
+
+
+## Ayudas para armar los huecos del panel.
+static func cooldown_slot(slot_name: String, cd: AbilityCooldown) -> Dictionary:
+	var ratio: float = 0.0
+	var text: String = ""
+	if cd.charges <= 0:
+		ratio = clampf(cd.time_until_ready() / maxf(cd.recharge_time, 0.01), 0.0, 1.0)
+		text = "%d" % ceili(cd.time_until_ready())
+	elif cd.max_charges > 1:
+		text = "%d" % cd.charges
+	return {"name": slot_name, "ratio": ratio, "text": text}
+
+
+func ult_slot(slot_name: String) -> Dictionary:
+	return {"name": slot_name, "ratio": 1.0 - ult_charge / 100.0,
+			"text": "¡Lista!" if ult_charge >= 100.0 else "%d%%" % roundi(ult_charge)}
+
+
 ## Líneas para el HUD de prueba.
 func debug_lines() -> Array[String]:
 	return ["Definitiva %d%%" % roundi(ult_charge), "Esquiva %d/%d" % [dodge_cooldown.charges, dodge_cooldown.max_charges]]

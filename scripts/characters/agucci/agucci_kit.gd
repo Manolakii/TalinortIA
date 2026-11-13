@@ -668,3 +668,26 @@ func debug_lines() -> Array[String]:
 
 func _cd(cd: AbilityCooldown) -> String:
 	return "listo" if cd.is_ready() else "%.1f s" % cd.time_until_ready()
+
+
+# --- HUD ---
+
+## Hambre en tres zonas (GDD, Interfaz): Lucidez (0-30), Hambre (31-99), Posesión (100).
+func hud_bar() -> Dictionary:
+	if possessed:
+		return {"label": "POSESIÓN %d s" % ceili(_possession_time), "value": 1.0,
+				"color": SHADOW_COLOR.lightened(0.25), "pulse": true}
+	var lucid: bool = hunger <= kd.lucidity_max
+	return {"label": "Lucidez" if lucid else "Hambre +%d%%" % roundi(hunger * kd.hunger_damage_per_point * 100.0),
+			"value": hunger / 100.0, "color": Color(0.55, 0.62, 0.75) if lucid else SHADOW_COLOR,
+			"pulse": hunger >= 85.0, "marks": [kd.lucidity_max / 100.0]}
+
+
+func hud_abilities() -> Array[Dictionary]:
+	if possessed:
+		return [cooldown_slot("Mordida", bite_cooldown), cooldown_slot("Abrazo", embrace_cooldown),
+				ult_slot("Noche")]
+	var step_slot: Dictionary = cooldown_slot("Paso", step_cooldown)
+	if _kunai_active:
+		step_slot = {"name": "Paso", "ratio": 0.0, "text": "¡Ya!"}
+	return [step_slot, cooldown_slot("Disolverse", dodge_cooldown), ult_slot("Noche")]

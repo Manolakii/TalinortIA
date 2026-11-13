@@ -422,3 +422,28 @@ func debug_lines() -> Array[String]:
 	lines.append("Ruta de Escape %d/%d · Definitiva %d%%" % [dodge_cooldown.charges,
 			dodge_cooldown.max_charges, roundi(ult_charge)])
 	return lines
+
+
+# --- HUD ---
+
+func hud_chips() -> Array[String]:
+	return MODE_NAMES
+
+
+func hud_chip_active() -> int:
+	return int(mode)
+
+
+func hud_bar() -> Dictionary:
+	if _rail_time > 0.0:
+		return {"label": "RIEL %d s" % ceili(_rail_time), "value": _rail_time / kd.rail_duration,
+				"color": Color(0.78, 0.9, 1.0), "pulse": true}
+	if _charging:
+		var ratio: float = clampf(_charge / kd.contract_full_charge, 0.0, 1.0)
+		return {"label": "Contrato", "value": ratio, "color": Color(0.85, 0.9, 1.0), "pulse": ratio >= 1.0}
+	return {}
+
+
+func hud_abilities() -> Array[Dictionary]:
+	return [cooldown_slot("Contrato", contract_cooldown), cooldown_slot("Ruta", dodge_cooldown),
+			ult_slot("Riel")]
