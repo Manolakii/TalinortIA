@@ -71,7 +71,7 @@ func test_health_is_kept_per_body() -> void:
 	press(PlayerInput.Action.ULTIMATE)
 	_pump(1)
 	release(PlayerInput.Action.ULTIMATE)
-	assert_eq(_kit.companion.health.current, 50.0, "El Maestro sigue con 50 en el otro cuerpo")
+	assert_almost_eq(_kit.companion.health.current, 50.0, 0.5, "El Maestro sigue con ~50 en el otro cuerpo")
 
 
 func test_fall_passes_control_and_revives_in_15s() -> void:
@@ -132,7 +132,7 @@ func test_ai_companion_takes_less_damage() -> void:
 	hit.amount = 10.0
 	hit.attacker_team = DamageInfo.Team.ENEMIES
 	_kit.companion.receive_hit(hit)
-	assert_almost_eq(80.0 - _kit.companion.health.current, 6.0, 0.01, "40% menos mientras es IA")
+	assert_almost_eq(80.0 - _kit.companion.health.current, 4.0, 0.01, "60% menos mientras es IA")
 
 
 func test_enemies_prefer_the_player_over_the_companion() -> void:

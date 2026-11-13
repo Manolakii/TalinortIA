@@ -326,6 +326,26 @@ func is_out() -> bool:
 	return revive != null and revive.out
 
 
+## Caído esperando que lo levanten. (Funciones simples para que otros scripts no tengan que
+## tocar el ReviveComponent: el editor de Godot no resolvía esa referencia circular.)
+func is_downed() -> bool:
+	return revive != null and revive.downed
+
+
+func down_time_left() -> float:
+	return revive.time_left if revive != null else 0.0
+
+
+func add_revive_progress(delta: float) -> void:
+	if revive != null:
+		revive.add_progress(delta)
+
+
+func complete_revive() -> void:
+	if revive != null:
+		revive.complete_revive()
+
+
 # --- Apuntado ---
 
 func _update_aim(delta: float) -> void:

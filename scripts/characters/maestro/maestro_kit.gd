@@ -46,6 +46,8 @@ var _extras: Node3D
 var _bonded: bool = false
 var _ai_target: Node3D
 var _ai_target_time: float = 0.0
+var _strafe_time: float = 0.0
+var _strafe_side: float = 1.0
 
 
 func _setup() -> void:
@@ -354,6 +356,10 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 	if body.retreating:
 		_companion_retreat(body, to_player, distance, delta)
 		return
+	# Fuera de pelea se recupera de a poco (así no llega destruido a la próxima oleada).
+	if CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES, body.global_position,
+			kd.companion_safe_radius) == null:
+		body.health.heal(body.health.max_health * kd.companion_idle_regen * delta)
 	# 4) Elige a quién pegar (defender al jugador, ayudarlo o defenderse).
 	var target: Node3D = _choose_ai_target(body, delta)
 	if target != null:
@@ -365,10 +371,12 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		if to_target.length() > reach:
 			body.steer(_approach_direction(body, target, reach), speed, delta)
 		else:
-			body.stop(delta)
 			body.facing = to_target.normalized()
 			if body.attack_timer <= 0.0:
+				body.stop(delta)
 				_companion_basic(body)
+			else:
+				_strafe_around(body, to_target, delta)
 		return
 	if distance > kd.follow_distance:
 		body.steer(to_player.normalized(), speed * clampf(distance / 4.0, 0.4, 1.0), delta)
@@ -407,6 +415,17 @@ func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:
 	if is_instance_valid(body) and not body.downed:
 		var ratio: float = clampf(kd.companion_bastonazo_charge / kd.bastonazo_full_charge, 0.0, 1.0)
 		_fire_bastonazo(body, direction, ratio)
+
+
+## Entre golpes se mueve un poco de costado (cambia de lado cada tanto), sin alejarse.
+func _strafe_around(body: DuoCompanion, to_target: Vector3, delta: float) -> void:
+	_strafe_time -= delta
+	if _strafe_time <= 0.0:
+		_strafe_time = randf_range(0.8, 1.6)
+		_strafe_side = -_strafe_side
+	var side := Vector3(-to_target.z, 0.0, to_target.x).normalized() * _strafe_side
+	body.steer(side, body.move_speed * kd.companion_strafe, delta)
+	body.facing = to_target.normalized()
 
 
 ## El aviso naranja que tiene encima, si hay uno.
@@ -477,7 +496,9 @@ func _companion_retreat(body: DuoCompanion, _to_player: Vector3, _distance: floa
 ## objetivo un rato para no cambiar a cada rato.
 func _choose_ai_target(body: DuoCompanion, delta: float) -> Node3D:
 	_ai_target_time -= delta
-	if _ai_target_time > 0.0 and _is_valid_ai_target(_ai_target):
+	if not is_instance_valid(_ai_target):
+		_ai_target = null
+	if _ai_target_time > 0.0 and _ai_target != null and _is_valid_ai_target(_ai_target):
 		return _ai_target
 	var chosen: Node3D = _enemy_threatening(player.global_position)
 	if chosen == null:
@@ -557,12 +578,12 @@ func _companion_basic(body: DuoCompanion, direction: Vector3 = Vector3.ZERO) -> 
 		var total: float = 0.0
 		for d: float in kd.staff_step_durations:
 			total += d
-		body.attack_timer = total
+		body.attack_timer = total * kd.companion_attack_pace
 		body.busy = total
 		for i: int in 3:
 			schedule(0.12 + i * kd.staff_step_durations[0], _companion_staff_hit.bind(body, facing, i))
 	else:
-		body.attack_timer = kd.headbutt_interval
+		body.attack_timer = kd.headbutt_interval * kd.companion_attack_pace
 		body.busy = 0.3
 		schedule(0.12, _companion_headbutt_hit.bind(body, facing))
 
@@ -694,8 +715,8 @@ func _on_companion_died(_info: DamageInfo) -> void:
 
 func revive_companion() -> void:
 	# Si el jugador estaba caído (cayeron los dos), el que se levanta lo levanta también.
-	if player.revive != null and player.revive.downed:
-		player.revive.complete_revive()
+	if player.is_downed():
+		player.complete_revive()
 	companion.set_downed(false)
 	companion.health.restore_full()
 	companion.health.current = companion.health.max_health * kd.fallen_revive_health

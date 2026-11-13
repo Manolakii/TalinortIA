@@ -260,13 +260,13 @@ func _update_panel(panel: PlayerPanel) -> void:
 			slot.queue_redraw()
 
 	# Caído o afuera
-	panel.status_label.visible = player.revive != null and (player.revive.downed or player.revive.out)
+	panel.status_label.visible = player.is_downed() or player.is_out()
 	if panel.status_label.visible:
-		if player.revive.out:
+		if player.is_out():
 			panel.status_label.text = "AFUERA"
 			panel.status_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 		else:
-			panel.status_label.text = "¡CAÍDO! %d s" % ceili(player.revive.time_left)
+			panel.status_label.text = "¡CAÍDO! %d s" % ceili(player.down_time_left())
 			panel.status_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.6))
 
 	# Si un personaje pasa por detrás del panel, el panel se vuelve semitransparente.

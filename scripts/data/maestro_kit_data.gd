@@ -58,13 +58,13 @@ extends Resource
 @export var teleport_distance: float = 18.0
 @export var follow_distance: float = 2.5
 ## La IA ataca a lo último que golpeó el jugador, si está a esta distancia del jugador.
-@export var companion_target_range: float = 6.0
+@export var companion_target_range: float = 4.5
 
 @export_group("Compañero (IA)")
 ## Mientras lo maneja la IA, recibe esta parte del daño (0,6 = 40% menos).
-@export var companion_damage_taken: float = 0.6
+@export var companion_damage_taken: float = 0.4
 ## Más de 1: los enemigos prefieren a los jugadores antes que al compañero.
-@export var companion_target_priority: float = 1.6
+@export var companion_target_priority: float = 2.5
 ## Con menos de esta vida se repliega al lado del jugador y deja de pelear...
 @export var companion_retreat_health: float = 0.4
 ## ...hasta recuperar esta.
@@ -73,6 +73,12 @@ extends Resource
 @export var companion_regen: float = 0.03
 ## "Sin enemigos cerca" = ninguno a esta distancia.
 @export var companion_safe_radius: float = 4.0
+## Pega con más calma que un jugador: sus tiempos entre golpes se multiplican por esto.
+@export var companion_attack_pace: float = 1.35
+## Fuera de pelea (sin enemigos cerca) se recupera de a poco, aunque no esté replegado.
+@export var companion_idle_regen: float = 0.02
+## Entre golpe y golpe se mueve un poquito de costado (parte de su velocidad).
+@export var companion_strafe: float = 0.35
 ## El Maestro (IA) tira el Bastonazo si en la línea hay al menos esta cantidad de enemigos...
 @export var companion_bastonazo_min_targets: int = 2
 ## ...cargándolo este tiempo (0,6 s = 96 de daño).
@@ -82,7 +88,7 @@ extends Resource
 ## Mantiene el mismo objetivo al menos este tiempo (no cambia a cada rato).
 @export var companion_target_commit: float = 0.8
 ## Stewie (IA) rueda hacia el objetivo si está más lejos que esto.
-@export var companion_roll_min_distance: float = 4.0
+@export var companion_roll_min_distance: float = 99.0
 @export var fallen_revive_time: float = 15.0
 @export var fallen_revive_health: float = 0.5
 @export var switch_cooldown: float = 6.0

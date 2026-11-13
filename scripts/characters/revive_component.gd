@@ -110,7 +110,7 @@ func reviver_tick(delta: float) -> bool:
 	if target == null:
 		return false
 	reviving = target
-	target.revive.add_progress(delta)
+	target.add_revive_progress(delta)
 	var to_target: Vector3 = target.global_position - player.global_position
 	to_target.y = 0.0
 	if to_target.length_squared() > 0.01:
@@ -123,9 +123,7 @@ func _downed_ally_nearby() -> PlayerCharacter:
 	var best_distance: float = config.revive_radius
 	for node: Node in player.get_tree().get_nodes_in_group(&"players"):
 		var other := node as PlayerCharacter
-		if other == null or other == player or other.revive == null:
-			continue
-		if not other.revive.downed or other.revive.out:
+		if other == null or other == player or not other.is_downed():
 			continue
 		var distance: float = Vector2(other.global_position.x - player.global_position.x,
 				other.global_position.z - player.global_position.z).length()
