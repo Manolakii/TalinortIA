@@ -11,8 +11,9 @@ func _ready() -> void:
 	layer = 30
 	_row = HBoxContainer.new()
 	_row.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	_row.offset_top = -150.0
+	_row.offset_top = -12.0
 	_row.offset_bottom = -12.0
+	_row.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	_row.offset_left = 16.0
 	_row.offset_right = -16.0
 	_row.add_theme_constant_override("separation", 12)

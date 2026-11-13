@@ -117,6 +117,18 @@ func _separation() -> Vector3:
 	return push
 
 
+func is_targetable() -> bool:
+	return super.is_targetable() and not is_controlled
+
+
+## El tercer zarpazo de Tali "levanta un poco" a los enemigos.
+func _after_hit(info: DamageInfo) -> void:
+	if info.has_tag(&"launch"):
+		var tween: Tween = create_tween()
+		tween.tween_property(visual, "position:y", 0.7, 0.14).set_ease(Tween.EASE_OUT)
+		tween.tween_property(visual, "position:y", 0.0, 0.22).set_ease(Tween.EASE_IN)
+
+
 # --- Agarrado y lanzado (Revoleo) ---
 
 func set_controlled(value: bool) -> void:

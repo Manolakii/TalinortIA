@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/character_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/tali/tali_kit.gd" id="2"]
+[ext_resource type="Resource" path="res://data/kits/tali.tres" id="3"]
 
 [resource]
 script = ExtResource("1")
@@ -15,3 +17,5 @@ placeholder_height = 1.5
 placeholder_radius = 0.48
 ult_per_damage_dealt = 0.04
 ult_per_damage_taken = 0.35
+kit_script = ExtResource("2")
+kit_data = ExtResource("3")

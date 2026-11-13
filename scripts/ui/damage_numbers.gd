@@ -13,10 +13,12 @@ const COLOR_PLAYER_HIT := Color(1.0, 0.55, 0.55)
 const COLOR_AVOIDED := Color(0.75, 0.9, 1.0)
 
 var _pool: Array[Label3D] = []
+var _tweens: Array[Tween] = []
 var _next: int = 0
 
 
 func _ready() -> void:
+	add_to_group(&"damage_numbers")
 	for i: int in POOL_SIZE:
 		var label := Label3D.new()
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -31,15 +33,17 @@ func _ready() -> void:
 		label.visible = false
 		add_child(label)
 		_pool.append(label)
+		_tweens.append(null)
 	Events.hit_landed.connect(_on_hit_landed)
 	Events.hit_avoided.connect(_on_hit_avoided)
 	Events.floating_text_requested.connect(show_text)
 
 
 func show_text(world_position: Vector3, text: String, color: Color, scale_factor: float = 1.0) -> void:
-	var label: Label3D = _pool[_next]
+	var index: int = _next
+	var label: Label3D = _pool[index]
 	_next = (_next + 1) % POOL_SIZE
-	var tween: Tween = label.get_meta(&"tween", null)
+	var tween: Tween = _tweens[index]
 	if tween != null and tween.is_valid():
 		tween.kill()
 	label.text = text
@@ -49,7 +53,7 @@ func show_text(world_position: Vector3, text: String, color: Color, scale_factor
 	label.scale = Vector3.ONE * scale_factor * 1.5
 	label.visible = true
 	tween = create_tween()
-	label.set_meta(&"tween", tween)
+	_tweens[index] = tween
 	tween.set_parallel(true)
 	tween.tween_property(label, "scale", Vector3.ONE * scale_factor, 0.12)
 	tween.tween_property(label, "global_position:y", world_position.y + RISE, LIFETIME) \

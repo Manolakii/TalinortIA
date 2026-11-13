@@ -10,6 +10,9 @@ var data: CharacterData
 var dodge_cooldown: AbilityCooldown
 ## Barra de definitiva, de 0 a 100.
 var ult_charge: float = 0.0
+## True cuando el golpe común ya conectó y solo queda su recuperación:
+## ahí una habilidad o la definitiva lo pueden cortar (feel).
+var basic_recovery: bool = false
 
 var _scheduled: Array[Dictionary] = []
 
@@ -34,11 +37,19 @@ func handle_input() -> void:
 		player.consume_buffered(PlayerInput.Action.DODGE)
 		do_dodge()
 	var wants_ult: bool = player.has_buffered(PlayerInput.Action.ULTIMATE)
-	if wants_ult and ult_charge >= 100.0 and player.can_act():
+	if wants_ult and ult_charge >= 100.0 and can_start_skill():
 		player.consume_buffered(PlayerInput.Action.ULTIMATE)
+		player.end_action()
 		if _use_ultimate():
 			ult_charge = 0.0
 	_handle_input()
+
+
+## Puede empezar una habilidad: está libre o en la recuperación de un golpe común.
+func can_start_skill() -> bool:
+	if player.can_act():
+		return true
+	return player.is_in_action() and basic_recovery and not player.is_dodging()
 
 
 func can_dodge() -> bool:

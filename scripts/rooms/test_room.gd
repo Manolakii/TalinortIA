@@ -21,6 +21,11 @@ func _ready() -> void:
 	if PlayerManager.player_count() == 0:
 		_auto_join_for_testing()
 	_spawn_players()
+	Fx.prewarm(_camera_focus_node())
+
+
+func _camera_focus_node() -> Node3D:
+	return _players_root
 
 
 func _spawn_players() -> void:
