@@ -28,3 +28,15 @@ Cada vez que cambie una decisión de diseño o técnica, se anota acá con la fe
 | 2026-11-13 | Barra de definitiva (todos los personajes): se llena más rápido con el daño recibido que con el hecho. Valores por personaje en `data/characters/` |
 | 2026-11-13 | Tropezón: distancia corta (2,8 m en 0,3 s), 2 cargas con 4 s de recarga cada una. La Embestida de Furia usa las mismas cargas |
 | 2026-11-13 | Llamado Salvaje: pájaros 45%, bichos 45%, Gronk 10% |
+| 2026-11-13 | Combate: los golpes buscan objetivos por forma (círculo, abanico, línea) sobre los Hurtbox, sin áreas de física. Es más simple, exacto y testeable |
+| 2026-11-13 | Hitstop por personaje (solo el que pega y el que recibe se congelan un instante), no global: con 4 jugadores, un congelado global cortaría todo el tiempo. Valores en `data/combat_config.tres` |
+| 2026-11-13 | Buffer de input de 0,15 s. La esquiva corta cualquier acción. La habilidad fuerte y la definitiva cortan la recuperación del golpe común (una vez que el golpe conectó) |
+| 2026-11-13 | Modo prueba hasta la Fase 4: si un jugador cae, se levanta solo a los 1,5 s |
+| 2026-11-13 | Barra de definitiva de todos: 0,04 por punto de daño hecho y 0,35 por punto recibido (se ajusta por personaje en `data/characters/`) |
+| 2026-11-13 | Talinorteano cegado: 3,2 m/s, ataca a 1,7 m, golpe en abanico de 2 m y 100°, 0,9 s de recuperación, empuja 4 m/s. Lleva una venda violeta (lo ciega la sombra) |
+| 2026-11-13 | Tali, Furia: 0,8 por punto de daño recibido y 0,12 por punto hecho. En Furia el cuerpo crece 30%. Resaca: 50% de velocidad |
+| 2026-11-13 | Tali, Piedrazo: piedra a 20 m/s, alcance 13 m, desvío de ±8°, empuje leve. El Tiro de Suerte (10%) es aparte del crítico base: si sale, siempre es crítico y aturde 1 s |
+| 2026-11-13 | Tali, Llamado Salvaje: pájaros a 6 m, área de 3,5 m, 40 de daño y 3 s de ceguera (los ciegos deambulan y no atacan). Bichos: línea de 10 m, 25 de daño y empuje fuerte. Gronk: línea de 16 m, 120 de daño y 1,5 s de aturdimiento |
+| 2026-11-13 | Tali, Zarpazos: alcance 2,4 m en abanico de 120°; el tercero aturde 0,5 s y levanta. Aplastón: salto de hasta 7 m en 0,45 s, área de 3 m. Embestida: 5 m, sin daño, tira al piso 1 s |
+| 2026-11-13 | Tali, definitiva. Rugido: empuja y asusta 2 s a todo lo que está a 5 m. Revoleo: agarra al más grande a 4 m, lo tira 8 m (60 de daño al lanzado y 60 en 2,5 m a los demás). Si no hay a quién revolear, no gasta la barra |
+| 2026-11-13 | Números de daño: blanco al pegarle a enemigos; crítico más grande, blanco cálido y con "!"; rojo claro al recibir; celeste para lo que se esquiva ("¡Se resbaló!", "¡De casualidad!"). Ninguno usa dorado, amarillo ni naranja |
