@@ -17,6 +17,24 @@ extends Resource
 ## 1.5 = 150% de daño.
 @export var crit_multiplier: float = 1.5
 
+@export_group("Definitiva")
+## Puntos de barra (de 100) por cada punto de daño hecho y recibido.
+## Recibir carga más rápido que pegar (DECISIONES 2026-11-13). Objetivo: ~40 s de pelea.
+@export var ult_per_damage_dealt: float = 0.04
+@export var ult_per_damage_taken: float = 0.35
+
+@export_group("Kit")
+## Script del kit (hereda de CharacterKit). Vacío = solo moverse y esquivar.
+@export var kit_script: Script
+## Datos del kit (por ejemplo, TaliKitData).
+@export var kit_data: Resource
+
+@export_group("Esquiva genérica (si el kit no define la suya)")
+@export var dodge_distance: float = 3.5
+@export var dodge_duration: float = 0.28
+@export var dodge_charges: int = 2
+@export var dodge_recharge: float = 4.0
+
 @export_group("Movimiento (feel)")
 ## Qué tan rápido llega a la velocidad máxima (m/s²). Alto = respuesta inmediata.
 @export var acceleration: float = 90.0

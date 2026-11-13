@@ -14,6 +14,16 @@ signal device_reconnected(slot: PlayerSlot)
 signal run_started(seed_value: int)
 signal gold_changed(slot_index: int, new_amount: int)
 
+# --- Combate ---
+## Un golpe conectó (para números de daño, barras de Furia y de definitiva, etc.).
+signal hit_landed(info: DamageInfo, target: Node3D)
+## Un golpe se esquivó por algo propio del objetivo ("¡Falló!", "¡De casualidad!").
+signal hit_avoided(target: Node3D, text: String)
+## Texto flotante libre sobre algo del mundo (por ejemplo "¡FURIA!").
+signal floating_text_requested(position: Vector3, text: String, color: Color)
+signal camera_shake_requested(amount: float)
+signal enemy_died(enemy: Node3D)
+
 # --- Juego en general ---
 signal pause_changed(paused: bool)
 signal quality_changed(preset: QualityPreset)

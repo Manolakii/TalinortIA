@@ -2,6 +2,7 @@
 	"dirs": ["res://tests/"],
 	"include_subdirs": true,
 	"prefix": "test_",
+	"exclude_dirs": ["res://tests/helpers/"],
 	"suffix": ".gd",
 	"should_exit": true,
 	"log_level": 1

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CombatConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/combat_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+dodge_invulnerability = 0.25
+input_buffer_time = 0.15
+knockback_damping = 9.0
+aim_magnet_angle_deg = 22.0
+aim_magnet_range = 14.0
+aim_magnet_strength = 0.65
+hitstop_light = 0.045
+hitstop_heavy = 0.09
+hitstop_crit_bonus = 0.025
+shake_light = 0.08
+shake_heavy = 0.3
+shake_player_hurt = 0.22
+shake_max_offset = 0.6
+shake_decay = 1.8
+flash_duration = 0.12
+flash_energy = 2.2

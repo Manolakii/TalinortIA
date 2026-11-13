@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Talinorteano cegado"
+max_health = 160.0
+damage = 10.0
+move_speed = 3.2
+turn_speed = 5.0
+size_rank = 1
+attack_range = 1.7
+windup = 0.6
+recovery = 0.9
+attack_radius = 2.0
+attack_angle_deg = 100.0
+attack_knockback = 4.0
+separation_radius = 1.1
+body_height = 1.7
+body_radius = 0.42
+body_color = Color(0.45, 0.38, 0.31, 1)
+id = &"talinorteano_cegado"

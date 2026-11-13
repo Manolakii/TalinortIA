@@ -13,3 +13,5 @@ crit_chance = 0.10
 crit_multiplier = 1.5
 placeholder_height = 1.85
 placeholder_radius = 0.36
+ult_per_damage_dealt = 0.04
+ult_per_damage_taken = 0.35

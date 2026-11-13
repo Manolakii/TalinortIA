@@ -6,11 +6,16 @@ const ROSTER_PATH := "res://data/character_roster.tres"
 const PLAYER_SLOTS_PATH := "res://data/player_slots.tres"
 const CAMERA_PATH := "res://data/camera_config.tres"
 const ECONOMY_PATH := "res://data/economy.tres"
+const COMBAT_PATH := "res://data/combat_config.tres"
+const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
 var roster: CharacterRoster
 var player_slots: PlayerSlotsConfig
 var camera: CameraConfig
 var economy: EconomyConfig
+var combat: CombatConfig
+
+var _enemy_cache: Dictionary[StringName, EnemyData] = {}
 
 
 func _enter_tree() -> void:
@@ -19,6 +24,13 @@ func _enter_tree() -> void:
 	player_slots = _load_required(PLAYER_SLOTS_PATH) as PlayerSlotsConfig
 	camera = _load_required(CAMERA_PATH) as CameraConfig
 	economy = _load_required(ECONOMY_PATH) as EconomyConfig
+	combat = _load_required(COMBAT_PATH) as CombatConfig
+
+
+func get_enemy(id: StringName) -> EnemyData:
+	if not _enemy_cache.has(id):
+		_enemy_cache[id] = _load_required(ENEMIES_DIR % id) as EnemyData
+	return _enemy_cache[id]
 
 
 func get_character(id: StringName) -> CharacterData:
