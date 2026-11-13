@@ -57,7 +57,9 @@ extends Resource
 @export var aura_radius: float = 0.0
 ## Velocidad extra que da a los cegados cercanos (0,2 = +20%).
 @export var aura_speed_bonus: float = 0.0
-## Al morir: aturde a los cegados cercanos este tiempo...
+## Al morir: aturde a los cegados a esta distancia...
+@export var death_radius: float = 0.0
+## ...este tiempo...
 @export var death_stun: float = 0.0
 ## ...y esta parte de ellos despierta y huye.
 @export var wake_chance: float = 0.0

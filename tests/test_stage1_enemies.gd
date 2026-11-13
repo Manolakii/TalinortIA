@@ -127,3 +127,23 @@ func test_gronk_charges_tramples_and_crashes_into_walls() -> void:
 	assert_lt(bystander.health.current, 160.0, "También a otros enemigos")
 	assert_true(gronk.status.has(StatusEffects.STUN) or gronk.mode == Gronk.Mode.RECOVER,
 			"Choca contra la pared")
+
+
+func test_hard_enemies_warn_and_attack_faster() -> void:
+	RunState.difficulty = DifficultyConfig.Level.HARD
+	var enemy := _spawn(&"talinorteano_cegado", Vector3(0, 0, -20))
+	assert_almost_eq(enemy.windup_time(), 0.6 * 0.8, 0.001, "Aviso más corto")
+	assert_almost_eq(enemy.recovery_time(), 0.9 * 0.75, 0.001, "Recupera más rápido")
+	assert_almost_eq(enemy.speed_multiplier(), 1.15, 0.001, "Más rápidos")
+	RunState.difficulty = DifficultyConfig.Level.NORMAL
+
+
+func test_shaman_death_reaches_far_blinded() -> void:
+	var shaman := _spawn(&"chaman_sombra", Vector3(0, 0, -20))
+	shaman.data = shaman.data.duplicate()
+	shaman.data.wake_chance = 0.0
+	var far := _spawn(&"talinorteano_cegado", Vector3(0, 0, -6))  # a 14 m del Chamán
+	var kill := DamageInfo.new()
+	kill.amount = 99999.0
+	shaman.receive_hit(kill)
+	assert_true(far.status.has(StatusEffects.STUN), "Aturde también a los que pelean lejos del Chamán")

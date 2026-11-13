@@ -177,9 +177,22 @@ func _pay_bounty(info: DamageInfo) -> void:
 
 # --- Ayudas para la IA ---
 
-## Velocidad con modificadores: élite Veloz, aura del Chamán.
+## Tiempos de ataque según la dificultad (en Difícil avisan y atacan más rápido).
+func windup_time() -> float:
+	return data.windup * Scaling.current_windup()
+
+
+func recovery_time() -> float:
+	return data.recovery * Scaling.current_attack_pace()
+
+
+func attack_interval_time() -> float:
+	return data.attack_interval * Scaling.current_attack_pace()
+
+
+## Velocidad con modificadores: dificultad, élite Veloz, aura del Chamán.
 func speed_multiplier() -> float:
-	var multiplier: float = 1.0
+	var multiplier: float = Scaling.current_enemy_speed()
 	if affixes.has(&"fast"):
 		multiplier *= Balance.elite.fast_speed_multiplier
 	if status.has(StatusEffects.SHADOW_HASTE):
@@ -371,8 +384,10 @@ func _on_interrupted() -> void:
 
 func _update_stun_pose(delta: float) -> void:
 	var stunned: bool = status.has(StatusEffects.STUN)
-	var target_tilt: float = 0.35 if stunned else 0.0
+	var wobble: float = sin(Time.get_ticks_msec() * 0.012) * 0.25 if stunned else 0.0
+	var target_tilt: float = 0.5 if stunned else 0.0
 	visual.rotation.x = lerpf(visual.rotation.x, target_tilt, 1.0 - exp(-12.0 * delta))
+	visual.rotation.z = lerpf(visual.rotation.z, wobble, 1.0 - exp(-12.0 * delta))
 
 
 # --- Nacer y morir ---

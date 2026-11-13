@@ -7,7 +7,7 @@ extends Resource
 ## Lucidez: de 0 a este valor (ataques por la espalda = crítico garantizado).
 @export var lucidity_max: float = 30.0
 ## En la zona de Hambre: +1% de daño por punto.
-@export var hunger_damage_per_point: float = 0.01
+@export var hunger_damage_per_point: float = 0.007
 ## Cada golpe común que conecta baja el Hambre esto.
 @export var hunger_drop_per_basic_hit: float = 0.3
 ## Cerca de Tali, el Hambre baja sola.
@@ -66,7 +66,7 @@ extends Resource
 @export var possession_duration: float = 6.0
 ## Si entra en Posesión al lado de Tali, dura esta parte.
 @export var possession_tali_multiplier: float = 0.5
-@export var possession_damage_multiplier: float = 1.6
+@export var possession_damage_multiplier: float = 1.4
 @export var possession_speed_multiplier: float = 1.4
 @export var possession_auto_radius: float = 2.2
 @export var possession_auto_damage: float = 30.0

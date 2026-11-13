@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1")
 lucidity_max = 30.0
-hunger_damage_per_point = 0.01
+hunger_damage_per_point = 0.007
 hunger_drop_per_basic_hit = 0.3
 tali_synergy_radius = 6.0
 tali_synergy_decay = 3.0
@@ -45,7 +45,7 @@ night_echo_delay = 0.12
 night_hide_after = 0.6
 possession_duration = 6.0
 possession_tali_multiplier = 0.5
-possession_damage_multiplier = 1.6
+possession_damage_multiplier = 1.4
 possession_speed_multiplier = 1.4
 possession_auto_radius = 2.2
 possession_auto_damage = 30.0

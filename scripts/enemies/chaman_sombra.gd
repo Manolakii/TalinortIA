@@ -38,8 +38,10 @@ func _think(delta: float) -> void:
 	keep_distance(target, data.preferred_distance, delta, 0.3)
 
 
-## Los cegados (Talinorteanos y Honderos) dentro del aura.
-func _blinded_nearby() -> Array[Enemy]:
+## Los cegados (Talinorteanos y Honderos) a cierta distancia.
+func _blinded_nearby(radius: float = -1.0) -> Array[Enemy]:
+	if radius < 0.0:
+		radius = data.aura_radius
 	var result: Array[Enemy] = []
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
 		var enemy := node as Enemy
@@ -47,16 +49,24 @@ func _blinded_nearby() -> Array[Enemy]:
 			continue
 		if not (enemy is TalinorteanoCegado or enemy is HonderoCegado):
 			continue
-		if flat_distance_to(enemy.global_position) <= data.aura_radius:
+		if flat_distance_to(enemy.global_position) <= radius:
 			result.append(enemy)
 	return result
 
 
 func _on_died(info: DamageInfo) -> void:
-	for blinded: Enemy in _blinded_nearby():
+	# Se rompe la sombra: se tiene que notar.
+	Fx.ring_burst(get_parent(), global_position, data.death_radius * 0.5, ShadowZone.SHADOW_COLOR, 0.6)
+	Events.camera_shake_requested.emit(Balance.combat.shake_heavy * 0.4)
+	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0, "¡Se rompió la sombra!",
+			ShadowZone.SHADOW_COLOR.lightened(0.5))
+	for blinded: Enemy in _blinded_nearby(data.death_radius):
 		blinded.status.apply(StatusEffects.STUN, data.death_stun)
 		if randf() < data.wake_chance:
 			blinded.wake_and_flee()
+		else:
+			Events.floating_text_requested.emit(blinded.global_position + Vector3.UP * 2.4, "¿Eh?",
+					Color(0.85, 0.95, 1.0))
 	if is_instance_valid(_zone):
 		_zone.queue_free()
 	super._on_died(info)

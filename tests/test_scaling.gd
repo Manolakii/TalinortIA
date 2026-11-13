@@ -28,8 +28,9 @@ func test_one_player_normal_is_reference() -> void:
 func test_easy_and_hard() -> void:
 	assert_almost_eq(Scaling.enemy_health(_config, DifficultyConfig.Level.EASY, 1), 0.8, 0.001)
 	assert_almost_eq(Scaling.enemy_damage(_config, DifficultyConfig.Level.EASY), 0.7, 0.001)
-	assert_almost_eq(Scaling.enemy_health(_config, DifficultyConfig.Level.HARD, 2), 1.25 * 1.55, 0.001)
-	assert_almost_eq(Scaling.enemy_damage(_config, DifficultyConfig.Level.HARD), 1.4, 0.001)
+	assert_almost_eq(Scaling.enemy_health(_config, DifficultyConfig.Level.HARD, 2), 1.5 * 1.55, 0.001)
+	assert_almost_eq(Scaling.enemy_damage(_config, DifficultyConfig.Level.HARD), 1.7, 0.001)
+	assert_eq(Scaling.enemy_count(_config, DifficultyConfig.Level.HARD, 1, 10), 13, "Difícil: +30% de enemigos")
 	assert_eq(_config.elite_affixes[DifficultyConfig.Level.HARD], 2, "En Difícil, 2 afijos")
 
 

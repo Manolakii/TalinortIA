@@ -21,7 +21,7 @@ static func enemy_damage(config: DifficultyConfig, level: int) -> float:
 ## Cantidad de enemigos de una oleada, redondeando para arriba desde la mitad.
 static func enemy_count(config: DifficultyConfig, level: int, players: int, base: int) -> int:
 	var extra: int = maxi(players - 1, 0)
-	return roundi(base * (1.0 + extra * config.extra_player_count[level]))
+	return roundi(base * config.enemy_count[level] * (1.0 + extra * config.extra_player_count[level]))
 
 
 ## Lo que usan los enemigos en la partida en curso.
@@ -31,3 +31,16 @@ static func current_health_multiplier(is_boss: bool = false) -> float:
 
 static func current_damage_multiplier() -> float:
 	return enemy_damage(Balance.difficulty, RunState.difficulty)
+
+
+## Agresividad de los enemigos según la dificultad.
+static func current_windup() -> float:
+	return Balance.difficulty.windup[RunState.difficulty]
+
+
+static func current_attack_pace() -> float:
+	return Balance.difficulty.attack_pace[RunState.difficulty]
+
+
+static func current_enemy_speed() -> float:
+	return Balance.difficulty.enemy_speed[RunState.difficulty]

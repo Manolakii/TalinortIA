@@ -36,6 +36,7 @@ var _kunai_time: float = 0.0
 var _kunai_position: Vector3 = Vector3.ZERO
 var _kunai_target: Node3D
 var _kunai_marker: MeshInstance3D
+var _saved_collision_mask: int = 3
 var _projectiles: ProjectilePool
 var _shadow_material: ShaderMaterial
 var _shadow_disc: MeshInstance3D
@@ -248,9 +249,19 @@ func _throw_kunai() -> void:
 	player.start_action(0.15, 0.7)
 	var info: DamageInfo = make_hit(kd.kunai_damage)
 	info.is_melee = false
-	_projectiles.fire(player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5,
-			player.aim_direction, kd.kunai_speed, kd.kunai_range, 0.25, info,
+	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5
+	_projectiles.fire(from, player.aim_direction, kd.kunai_speed,
+			_range_until_obstacle(from, player.aim_direction, kd.kunai_range), 0.25, info,
 			DamageInfo.Team.ENEMIES, _on_kunai_hit, _on_kunai_expire)
+
+
+## Hasta dónde llega antes de chocar con una pared o roca (el kunai se clava ahí).
+func _range_until_obstacle(from: Vector3, direction: Vector3, max_range: float) -> float:
+	var query := PhysicsRayQueryParameters3D.create(from, from + direction * max_range, 1)
+	var hit: Dictionary = player.get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return max_range
+	return maxf(from.distance_to(hit["position"]) - 0.6, 0.5)
 
 
 func _on_kunai_hit(target: Node3D, _info: DamageInfo) -> void:
@@ -292,10 +303,17 @@ func _shadow_dash() -> void:
 	player.start_action(kd.dash_time, 0.0)
 	player.action_velocity = offset / kd.dash_time
 	player.visual.visible = false
+	# Viaja por la sombra: atraviesa obstáculos y siempre llega al kunai (antes una roca lo
+	# frenaba y el corte pegaba igual, sin moverse).
+	_saved_collision_mask = player.collision_mask
+	player.collision_mask = 0
 	schedule(kd.dash_time, _shadow_dash_end.bind(from, to))
 
 
 func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
+	player.collision_mask = _saved_collision_mask
+	player.global_position = Vector3(to.x, player.global_position.y, to.z)
+	player.reset_physics_interpolation()
 	player.visual.visible = true
 	Fx.ring_burst(_world(), to, 1.4, SHADOW_COLOR)
 	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
@@ -334,6 +352,8 @@ func do_dodge() -> void:
 		return
 	dodge_cooldown.use()
 	cancel_scheduled()
+	player.collision_mask = _saved_collision_mask
+	player.visual.visible = true
 	var start: Vector3 = player.global_position
 	var direction: Vector3 = dodge_direction()
 	player.start_dodge(direction, kd.dissolve_distance, kd.dissolve_duration)

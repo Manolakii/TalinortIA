@@ -12,7 +12,7 @@ var _strafe_time: float = 0.0
 func _ready() -> void:
 	enemy_id = &"tirador_agucci"
 	super._ready()
-	_cooldown = randf_range(0.8, data.attack_interval)
+	_cooldown = randf_range(0.8, attack_interval_time())
 
 
 func _think(delta: float) -> void:
@@ -30,7 +30,7 @@ func _think(delta: float) -> void:
 	if _winding >= 0.0:
 		_winding += delta
 		stop(delta)
-		if _winding >= data.windup:
+		if _winding >= windup_time():
 			_winding = -1.0
 			_fire()
 		return
@@ -41,12 +41,12 @@ func _think(delta: float) -> void:
 	keep_distance(target, data.preferred_distance, delta, _strafe)
 	_cooldown -= delta
 	if _cooldown <= 0.0 and flat_distance_to(target.global_position) <= data.attack_range:
-		_cooldown = data.attack_interval
+		_cooldown = attack_interval_time()
 		_winding = 0.0
 		_aim = flat_direction_to(target.global_position)
 		facing = _aim
 		telegraph.rotation.y = facing_angle()
-		telegraph.show_sector(data.projectile_range * 0.55, data.spread_deg + 10.0, data.windup)
+		telegraph.show_sector(data.projectile_range * 0.55, data.spread_deg + 10.0, windup_time())
 
 
 func _fire() -> void:

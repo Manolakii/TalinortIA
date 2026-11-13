@@ -75,6 +75,15 @@ func _start_wave(index: int) -> void:
 			_pending.append({"id": entry.enemy_id, "elite": false})
 		for i: int in entry.elites:
 			_pending.append({"id": entry.enemy_id, "elite": true})
+	# Élites extra según la dificultad (de los tipos de esta oleada, menos el Chamán).
+	var entries: Array[RoomWaves.Entry] = RoomWaves.parse_wave(waves.waves[index])
+	var fighters: Array[StringName] = []
+	for entry: RoomWaves.Entry in entries:
+		if entry.enemy_id != &"chaman_sombra":
+			fighters.append(entry.enemy_id)
+	for i: int in config.extra_elites_per_wave[RunState.difficulty]:
+		if not fighters.is_empty():
+			_pending.append({"id": fighters[rng.randi_range(0, fighters.size() - 1)], "elite": true})
 	_pending.shuffle()
 	_timer = 0.0
 	wave_started.emit(index, waves.waves.size())

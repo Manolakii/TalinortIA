@@ -43,7 +43,7 @@ func _think(delta: float) -> void:
 				steer(direction, data.move_speed * speed_multiplier(), delta)
 		Mode.WINDUP:
 			stop(delta)
-			if _time >= data.windup:
+			if _time >= windup_time():
 				_start_dash()
 		Mode.DASH:
 			var previous: Vector3 = global_position
@@ -53,7 +53,7 @@ func _think(delta: float) -> void:
 				_set_mode(Mode.RECOVER)
 		Mode.RECOVER:
 			stop(delta)
-			if _time >= data.recovery:
+			if _time >= recovery_time():
 				_set_mode(Mode.APPROACH)
 
 
@@ -61,7 +61,7 @@ func _start_windup() -> void:
 	_set_mode(Mode.WINDUP)
 	_dash_direction = facing
 	telegraph.rotation.y = facing_angle()
-	telegraph.show_rect(data.dash_distance + 1.0, data.charge_width, data.windup)
+	telegraph.show_rect(data.dash_distance + 1.0, data.charge_width, windup_time())
 
 
 func _start_dash() -> void:

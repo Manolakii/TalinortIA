@@ -43,7 +43,7 @@ func _think(delta: float) -> void:
 				steer(direction, data.move_speed * speed_multiplier(), delta)
 		Mode.WINDUP:
 			stop(delta)
-			if _time >= data.windup:
+			if _time >= windup_time():
 				telegraph.hide_telegraph()
 				_hit.clear()
 				_traveled = 0.0
@@ -59,7 +59,7 @@ func _think(delta: float) -> void:
 				_set_mode(Mode.RECOVER)
 		Mode.RECOVER:
 			stop(delta)
-			if _time >= data.recovery:
+			if _time >= recovery_time():
 				_set_mode(Mode.APPROACH)
 
 
@@ -68,7 +68,7 @@ func _start_windup() -> void:
 	_charge_direction = facing
 	_charge_length = _distance_to_wall(data.charge_max_distance)
 	telegraph.rotation.y = facing_angle()
-	telegraph.show_rect(_charge_length + data.body_radius, data.charge_width, data.windup)
+	telegraph.show_rect(_charge_length + data.body_radius, data.charge_width, windup_time())
 
 
 ## Hasta dónde puede cargar antes de una pared (para que el aviso sea honesto).

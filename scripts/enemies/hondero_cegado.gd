@@ -16,7 +16,7 @@ var _sling: MeshInstance3D
 func _ready() -> void:
 	enemy_id = &"hondero_cegado"
 	super._ready()
-	_cooldown = randf_range(0.6, data.attack_interval)
+	_cooldown = randf_range(0.6, attack_interval_time())
 
 
 func _think(delta: float) -> void:
@@ -38,7 +38,7 @@ func _think(delta: float) -> void:
 		_winding += delta
 		stop(delta)
 		turn_towards(flat_direction_to(_target.global_position), delta)
-		if _winding >= data.windup:
+		if _winding >= windup_time():
 			_winding = -1.0
 			_throw()
 		return
@@ -49,10 +49,10 @@ func _think(delta: float) -> void:
 	keep_distance(_target, data.preferred_distance, delta, _strafe)
 	_cooldown -= delta
 	if _cooldown <= 0.0 and flat_distance_to(_target.global_position) <= data.attack_range:
-		_cooldown = data.attack_interval
+		_cooldown = attack_interval_time()
 		_winding = 0.0
 		var tween: Tween = create_tween()
-		tween.tween_property(_sling, "rotation:y", TAU * 2.0, data.windup).as_relative()
+		tween.tween_property(_sling, "rotation:y", TAU * 2.0, windup_time()).as_relative()
 
 
 func _throw() -> void:

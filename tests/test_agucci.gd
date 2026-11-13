@@ -20,7 +20,7 @@ func test_hunger_zones() -> void:
 	assert_eq(_kit.outgoing_multiplier(), 1.0)
 	_kit.add_hunger(50.0)
 	assert_false(_kit.is_lucid())
-	assert_almost_eq(_kit.outgoing_multiplier(), 1.5, 0.001, "+1% por punto de Hambre")
+	assert_almost_eq(_kit.outgoing_multiplier(), 1.35, 0.001, "+0,7% por punto de Hambre")
 	_kit.add_hunger(50.0)
 	assert_true(_kit.possessed, "Al 100%: Posesión")
 
@@ -167,3 +167,24 @@ func test_hunger_rises_mixing_basics_and_skills() -> void:
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(int(1.45 / DT))
 	assert_gt(_kit.hunger, 36.0, "Un combo completo baja poco (~2,7)")
+
+
+func test_kunai_sticks_in_front_of_walls_and_dash_goes_through() -> void:
+	var rock := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(4, 3, 1)
+	shape.shape = box
+	rock.add_child(shape)
+	rock.position = Vector3(0, 1.5, -6)
+	add_child_autofree(rock)
+	await wait_physics_frames(2)
+	var reach: float = _kit._range_until_obstacle(Vector3(0, 1.1, -0.5), Vector3.FORWARD, 12.0)
+	assert_lt(reach, 5.0, "El kunai se clava antes de la roca, no la atraviesa")
+	_kit._stick_kunai(Vector3(0, 0, -9), null)
+	press(PlayerInput.Action.ABILITY)
+	_pump(1)
+	release(PlayerInput.Action.ABILITY)
+	_pump(20)
+	assert_almost_eq(_player.global_position.z, -9.0, 0.3, "Viaja hasta el kunai aunque haya una roca en el medio")
+	assert_eq(_player.collision_mask, 3, "Recupera las colisiones al llegar")

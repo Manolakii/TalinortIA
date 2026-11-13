@@ -40,11 +40,11 @@ func _think(delta: float) -> void:
 			_chase(delta)
 		Mode.WINDUP:
 			stop(delta)
-			if _mode_time >= data.windup:
+			if _mode_time >= windup_time():
 				_strike()
 		Mode.RECOVER:
 			stop(delta)
-			if _mode_time >= data.recovery:
+			if _mode_time >= recovery_time():
 				_set_mode(Mode.CHASE)
 
 
@@ -69,7 +69,7 @@ func _start_windup() -> void:
 	_set_mode(Mode.WINDUP)
 	# El aviso queda fijo hacia donde miraba al empezar: se puede salir esquivando o caminando.
 	telegraph.rotation.y = atan2(-facing.x, -facing.z)
-	telegraph.show_sector(data.attack_radius, data.attack_angle_deg, data.windup)
+	telegraph.show_sector(data.attack_radius, data.attack_angle_deg, windup_time())
 
 
 func _strike() -> void:
