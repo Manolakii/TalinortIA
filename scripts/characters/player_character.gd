@@ -8,7 +8,7 @@ extends CharacterBody3D
 const OUTLINE_SHADER: Shader = preload("res://assets/shaders/outline.gdshader")
 const RING_SHADER: Shader = preload("res://assets/shaders/player_ring.gdshader")
 ## El aro mide esto veces el radio del personaje.
-const RING_SCALE := 2.4
+const RING_SCALE := 3.4
 
 var slot: PlayerSlot
 var data: CharacterData
