@@ -30,6 +30,10 @@ func enemy_at(pos: Vector3, max_health: float = 160.0) -> TalinorteanoCegado:
 	enemy.position = pos
 	add_child_autofree(enemy)
 	enemy.health.setup(max_health)
+	# Mirando al jugador (en el origen), para que los golpes no sean "por la espalda".
+	var to_origin := Vector3(-pos.x, 0.0, -pos.z)
+	if to_origin.length_squared() > 0.001:
+		enemy.facing = to_origin.normalized()
 	return enemy
 
 

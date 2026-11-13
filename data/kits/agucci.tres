@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="AgucciKitData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/agucci_kit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+lucidity_max = 30.0
+hunger_damage_per_point = 0.01
+hunger_drop_per_basic_hit = 1.5
+tali_synergy_radius = 6.0
+tali_synergy_decay = 3.0
+cut_damage = Array[float]([20.0, 20.0, 24.0])
+kick_damage = 14.0
+uzi_bullets = 5
+uzi_damage = 6.0
+step_durations = Array[float]([0.2, 0.2, 0.2, 0.3, 0.5])
+cut_range = 2.2
+cut_angle_deg = 110.0
+kick_range = 1.9
+kick_angle_deg = 80.0
+kick_knockback = 6.0
+uzi_spread_deg = 40.0
+uzi_speed = 30.0
+uzi_range = 10.0
+uzi_gap = 0.08
+combo_reset = 0.6
+step_cooldown = 8.0
+step_hunger = 20.0
+kunai_damage = 40.0
+kunai_speed = 30.0
+kunai_range = 12.0
+kunai_window = 4.0
+dash_damage = 110.0
+dash_width = 1.8
+dash_time = 0.15
+dash_kill_refund = 0.5
+dissolve_distance = 4.5
+dissolve_duration = 0.25
+dissolve_charges = 2
+dissolve_recharge = 4.0
+night_duration = 8.0
+night_hunger = 50.0
+night_echo_delay = 0.12
+night_hide_after = 0.6
+possession_duration = 6.0
+possession_tali_multiplier = 0.5
+possession_damage_multiplier = 1.6
+possession_speed_multiplier = 1.4
+possession_auto_radius = 2.2
+possession_auto_damage = 30.0
+possession_auto_interval = 0.5
+possession_lifesteal = 0.2
+possession_self_drain = 0.02
+possession_skill_cost = 0.05
+possession_skill_heal = 0.08
+bite_distance = 5.0
+bite_damage = 35.0
+bite_hits = 2
+bite_width = 1.6
+bite_time = 0.18
+bite_cooldown = 3.0
+embrace_radius = 5.0
+embrace_damage = 40.0
+embrace_duration = 1.0
+embrace_pull_speed = 6.0
+embrace_cooldown = 4.0

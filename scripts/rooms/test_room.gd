@@ -18,6 +18,7 @@ var players: Array[PlayerCharacter] = []
 func _ready() -> void:
 	GameSettings.apply_to_environment(_environment.environment)
 	Events.quality_changed.connect(_on_quality_changed)
+	Events.room_tint_requested.connect(_on_room_tint)
 	if PlayerManager.player_count() == 0:
 		_auto_join_for_testing()
 	_spawn_players()
@@ -54,3 +55,37 @@ func _auto_join_for_testing() -> void:
 
 func _on_quality_changed(_preset: QualityPreset) -> void:
 	GameSettings.apply_to_environment(_environment.environment)
+
+
+## Tiñe la luz del sol un rato y la vuelve a su color.
+func _on_room_tint(color: Color, duration: float) -> void:
+	var sun := get_node_or_null("Sun") as DirectionalLight3D
+	if sun == null:
+		return
+	if not has_meta(&"sun_color"):
+		set_meta(&"sun_color", sun.light_color)
+		set_meta(&"sun_energy", sun.light_energy)
+	var base_color: Color = get_meta(&"sun_color")
+	var base_energy: float = get_meta(&"sun_energy")
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(sun, "light_color", base_color.lerp(color, 0.7), 0.4)
+	tween.tween_property(sun, "light_energy", base_energy * 0.7, 0.4)
+	tween.chain().tween_interval(maxf(duration - 0.8, 0.0))
+	tween.chain().set_parallel(true)
+	tween.tween_property(sun, "light_color", base_color, 0.4)
+	tween.tween_property(sun, "light_energy", base_energy, 0.4)
+	# Velo de color sobre la escena (debajo del HUD), porque el cielo sigue iluminando.
+	var layer := CanvasLayer.new()
+	layer.layer = 1
+	var veil := ColorRect.new()
+	veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	veil.color = Color(color.darkened(0.3), 0.0)
+	layer.add_child(veil)
+	add_child(layer)
+	var veil_tween: Tween = create_tween()
+	veil_tween.tween_property(veil, "color:a", 0.22, 0.4)
+	veil_tween.tween_interval(maxf(duration - 0.8, 0.0))
+	veil_tween.tween_property(veil, "color:a", 0.0, 0.4)
+	veil_tween.tween_callback(layer.queue_free)

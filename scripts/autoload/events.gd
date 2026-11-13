@@ -22,6 +22,8 @@ signal hit_avoided(target: Node3D, text: String)
 ## Texto flotante libre sobre algo del mundo (por ejemplo "¡FURIA!").
 signal floating_text_requested(position: Vector3, text: String, color: Color)
 signal camera_shake_requested(amount: float)
+## Teñir la sala un rato (la Noche del Valle sin Luz la pone violeta).
+signal room_tint_requested(color: Color, duration: float)
 signal enemy_died(enemy: Node3D)
 
 # --- Juego en general ---
