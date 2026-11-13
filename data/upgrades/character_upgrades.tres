@@ -1,0 +1,476 @@
+[gd_resource type="Resource" script_class="UpgradePool" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_pool.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/character_upgrade.gd" id="2"]
+
+[sub_resource type="Resource" id="u_0"]
+script = ExtResource("2")
+id = &"tali_piedrazo_rebota"
+character = &"tali"
+display_name = "Piedra que rebota"
+description = "El Piedrazo rebota a un segundo enemigo"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_1"]
+script = ExtResource("2")
+id = &"tali_furia_veloz"
+character = &"tali"
+display_name = "Patas de Furia"
+description = "En Furia corrés 15% más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_2"]
+script = ExtResource("2")
+id = &"tali_tropezon_furia"
+character = &"tali"
+display_name = "Tropezón bronco"
+description = "El Tropezón da 25 de Furia en vez de 15"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_3"]
+script = ExtResource("2")
+id = &"tali_piel_dura"
+character = &"tali"
+display_name = "Cuero de Talinorteano"
+description = "+20 de vida máxima"
+stat = &"max_health"
+amount = 20.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_4"]
+script = ExtResource("2")
+id = &"tali_zarpazo_largo"
+character = &"tali"
+display_name = "Garras largas"
+description = "Los Zarpazos llegan 25% más lejos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_5"]
+script = ExtResource("2")
+id = &"tali_furia_larga"
+character = &"tali"
+display_name = "Bronca que dura"
+description = "La Furia dura 2 s más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_6"]
+script = ExtResource("2")
+id = &"croco_escopeta_mas"
+character = &"croco"
+display_name = "Más perdigones"
+description = "La escopeta tira 2 perdigones más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_7"]
+script = ExtResource("2")
+id = &"croco_senuelo_explota"
+character = &"croco"
+display_name = "Señuelo con sorpresa"
+description = "El señuelo de Ruta de Escape explota al desaparecer"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_8"]
+script = ExtResource("2")
+id = &"croco_recompensa_cura"
+character = &"croco"
+display_name = "Cobrar con propina"
+description = "La Recompensa también te da 10 de vida"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_9"]
+script = ExtResource("2")
+id = &"croco_bonus_cambio"
+character = &"croco"
+display_name = "Cambio de manos"
+description = "El primer tiro después de cambiar de modo pega +45% (en vez de +30%)"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_10"]
+script = ExtResource("2")
+id = &"croco_contrato_rapido"
+character = &"croco"
+display_name = "Mira rápida"
+description = "El Tiro por Contrato carga en 1 s"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_11"]
+script = ExtResource("2")
+id = &"croco_ruta_extra"
+character = &"croco"
+display_name = "Plan B"
+description = "+1 carga de Ruta de Escape"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_12"]
+script = ExtResource("2")
+id = &"agucci_disolverse_extra"
+character = &"agucci"
+display_name = "Sombra inquieta"
+description = "+1 carga de Disolverse"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_13"]
+script = ExtResource("2")
+id = &"agucci_espalda_letal"
+character = &"agucci"
+display_name = "Por la espalda"
+description = "Los golpes por la espalda hacen +30%"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_14"]
+script = ExtResource("2")
+id = &"agucci_kunai_veneno"
+character = &"agucci"
+display_name = "Kunai envenenado"
+description = "El kunai de Paso de Sombra envenena: 10 por segundo durante 3 s"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_15"]
+script = ExtResource("2")
+id = &"agucci_lucidez_amplia"
+character = &"agucci"
+display_name = "Mente fría"
+description = "La Lucidez llega hasta 40 de Hambre"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_16"]
+script = ExtResource("2")
+id = &"agucci_noche_larga"
+character = &"agucci"
+display_name = "Noche eterna"
+description = "La Noche del Valle sin Luz dura 3 s más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_17"]
+script = ExtResource("2")
+id = &"agucci_uzi_cargador"
+character = &"agucci"
+display_name = "Cargador extendido"
+description = "La UZI tira 2 balas más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_18"]
+script = ExtResource("2")
+id = &"senda_stewie_basic_caparazon"
+character = &"maestro"
+display_name = "Stewie: Caparazonazo"
+description = "Senda Caparazón (golpe común): Golpe lento que empuja y atrae a los enemigos"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"basic"
+senda_path = &"caparazon"
+
+[sub_resource type="Resource" id="u_19"]
+script = ExtResource("2")
+id = &"senda_stewie_basic_embestida"
+character = &"maestro"
+display_name = "Stewie: Mordiscos"
+description = "Senda Embestida (golpe común): Combo rápido de 3; el tercero es crítico"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"basic"
+senda_path = &"embestida"
+
+[sub_resource type="Resource" id="u_20"]
+script = ExtResource("2")
+id = &"senda_stewie_basic_espiritu"
+character = &"maestro"
+display_name = "Stewie: Burbuja"
+description = "Senda Espíritu (golpe común): Escupe agua a media distancia; daña y cura al aliado que atraviesa"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"basic"
+senda_path = &"espiritu"
+
+[sub_resource type="Resource" id="u_21"]
+script = ExtResource("2")
+id = &"senda_stewie_ability_caparazon"
+character = &"maestro"
+display_name = "Stewie: Fortaleza"
+description = "Senda Caparazón (habilidad fuerte): Refugio que provoca a los cercanos y devuelve 30% del daño"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"ability"
+senda_path = &"caparazon"
+
+[sub_resource type="Resource" id="u_22"]
+script = ExtResource("2")
+id = &"senda_stewie_ability_embestida"
+character = &"maestro"
+display_name = "Stewie: Caparazón Bala"
+description = "Senda Embestida (habilidad fuerte): Sale girando y rebota entre hasta 5 enemigos"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"ability"
+senda_path = &"embestida"
+
+[sub_resource type="Resource" id="u_23"]
+script = ExtResource("2")
+id = &"senda_stewie_ability_espiritu"
+character = &"maestro"
+display_name = "Stewie: Manantial"
+description = "Senda Espíritu (habilidad fuerte): Charco que cura a los aliados durante 5 s"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"ability"
+senda_path = &"espiritu"
+
+[sub_resource type="Resource" id="u_24"]
+script = ExtResource("2")
+id = &"senda_stewie_dodge_caparazon"
+character = &"maestro"
+display_name = "Stewie: Rodar Blindado"
+description = "Senda Caparazón (esquiva): Nada lo frena y empuja lo que toca"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"dodge"
+senda_path = &"caparazon"
+
+[sub_resource type="Resource" id="u_25"]
+script = ExtResource("2")
+id = &"senda_stewie_dodge_embestida"
+character = &"maestro"
+display_name = "Stewie: Rodar Filoso"
+description = "Senda Embestida (esquiva): Daña todo lo que atraviesa"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"dodge"
+senda_path = &"embestida"
+
+[sub_resource type="Resource" id="u_26"]
+script = ExtResource("2")
+id = &"senda_stewie_dodge_espiritu"
+character = &"maestro"
+display_name = "Stewie: Estela"
+description = "Senda Espíritu (esquiva): Deja un rastro que acelera y cura de a poco"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"stewie"
+senda_slot = &"dodge"
+senda_path = &"espiritu"
+
+[sub_resource type="Resource" id="u_27"]
+script = ExtResource("2")
+id = &"senda_maestro_basic_guia"
+character = &"maestro"
+display_name = "Maestro: Golpe Guía"
+description = "Senda Guía (golpe común): Cada golpe marca: Stewie y los aliados hacen +15% a los marcados"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"basic"
+senda_path = &"guia"
+
+[sub_resource type="Resource" id="u_28"]
+script = ExtResource("2")
+id = &"senda_maestro_basic_combate"
+character = &"maestro"
+display_name = "Maestro: Bastón Danzante"
+description = "Senda Combate (golpe común): Suma un cuarto y un quinto golpe giratorio"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"basic"
+senda_path = &"combate"
+
+[sub_resource type="Resource" id="u_29"]
+script = ExtResource("2")
+id = &"senda_maestro_basic_niebla"
+character = &"maestro"
+display_name = "Maestro: Bastón Nublado"
+description = "Senda Niebla (golpe común): Los golpes ralentizan 20%"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"basic"
+senda_path = &"niebla"
+
+[sub_resource type="Resource" id="u_30"]
+script = ExtResource("2")
+id = &"senda_maestro_ability_guia"
+character = &"maestro"
+display_name = "Maestro: Bendición"
+description = "Senda Guía (habilidad fuerte): Escudo y +20% de daño por 6 s a Stewie o a un aliado"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"ability"
+senda_path = &"guia"
+
+[sub_resource type="Resource" id="u_31"]
+script = ExtResource("2")
+id = &"senda_maestro_ability_combate"
+character = &"maestro"
+display_name = "Maestro: Torbellino"
+description = "Senda Combate (habilidad fuerte): Gira el bastón 2 s y le pega a todo alrededor"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"ability"
+senda_path = &"combate"
+
+[sub_resource type="Resource" id="u_32"]
+script = ExtResource("2")
+id = &"senda_maestro_ability_niebla"
+character = &"maestro"
+display_name = "Maestro: Niebla de los Valles"
+description = "Senda Niebla (habilidad fuerte): Zona donde los enemigos van lentos y fallan más"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"ability"
+senda_path = &"niebla"
+
+[sub_resource type="Resource" id="u_33"]
+script = ExtResource("2")
+id = &"senda_maestro_dodge_guia"
+character = &"maestro"
+display_name = "Maestro: Garrocha al Rescate"
+description = "Senda Guía (esquiva): Si cae al lado de un aliado, le da escudo"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"dodge"
+senda_path = &"guia"
+
+[sub_resource type="Resource" id="u_34"]
+script = ExtResource("2")
+id = &"senda_maestro_dodge_combate"
+character = &"maestro"
+display_name = "Maestro: Garrocha Caída"
+description = "Senda Combate (esquiva): Golpe en área al caer"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"dodge"
+senda_path = &"combate"
+
+[sub_resource type="Resource" id="u_35"]
+script = ExtResource("2")
+id = &"senda_maestro_dodge_niebla"
+character = &"maestro"
+display_name = "Maestro: Garrocha de Niebla"
+description = "Senda Niebla (esquiva): Deja una nube que oculta a los aliados"
+stat = &""
+amount = 0.0
+max_stacks = 2
+senda_body = &"maestro"
+senda_slot = &"dodge"
+senda_path = &"niebla"
+
+[resource]
+script = ExtResource("1")
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35")])

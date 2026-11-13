@@ -171,6 +171,8 @@ func _pay_bounty(info: DamageInfo) -> void:
 		return
 	var gold: int = Balance.economy.croco_bounty_gold
 	RunState.add_gold(killer.slot.index, gold)
+	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
+		killer.health.heal(10.0)
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0,
 			"+%d oro" % gold, BOUNTY_COLOR)
 

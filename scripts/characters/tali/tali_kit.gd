@@ -118,7 +118,7 @@ func on_blocked_by_invulnerability(info: DamageInfo) -> void:
 	if not _stumbling or _lucky_this_dodge or info.attacker_team != DamageInfo.Team.ENEMIES:
 		return
 	_lucky_this_dodge = true
-	add_fury(kd.lucky_dodge_fury)
+	add_fury(25.0 if has_upgrade(&"tali_tropezon_furia") else kd.lucky_dodge_fury)
 	var attacker: Combatant = info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.is_targetable():
 		attacker.status.apply(StatusEffects.STUN, kd.lucky_dodge_unbalance)
@@ -185,14 +185,18 @@ func is_exhausted() -> bool:
 
 
 func move_speed_multiplier() -> float:
-	return kd.exhausted_speed_multiplier if is_exhausted() else 1.0
+	if is_exhausted():
+		return kd.exhausted_speed_multiplier
+	if in_fury and has_upgrade(&"tali_furia_veloz"):
+		return 1.15
+	return 1.0
 
 
 func _enter_fury() -> void:
 	in_fury = true
 	fury = 100.0
 	_lockout = 0.0
-	_fury_time = kd.fury_duration
+	_fury_time = _fury_duration()
 	_combo_index = 0
 	_attack_timer = 0.0
 	cancel_scheduled()
@@ -261,6 +265,17 @@ func _throw_rock() -> void:
 
 
 func _on_rock_hit(target: Node3D, info: DamageInfo) -> void:
+	# Piedra que rebota: sigue hacia otro enemigo cercano (una sola vez).
+	if has_upgrade(&"tali_piedrazo_rebota") and not info.has_tag(&"bounced"):
+		var next: Hurtbox = _nearest_other_enemy(target, 7.0)
+		if next != null:
+			var bounce: DamageInfo = info.clone()
+			bounce.tags.append(&"bounced")
+			var from: Vector3 = target.global_position + Vector3.UP * 1.0
+			var direction: Vector3 = next.global_position - target.global_position
+			direction.y = 0.0
+			_rocks.fire(from, direction.normalized(), kd.rock_speed, 8.0, kd.rock_radius, bounce,
+					DamageInfo.Team.ENEMIES, _on_rock_hit)
 	if info.has_tag(&"lucky_shot"):
 		Events.floating_text_requested.emit(target.global_position + Vector3.UP * 2.6,
 				"¡Tiro de Suerte!", Color(0.75, 0.9, 1.0))
@@ -311,12 +326,12 @@ func _claw_hit(index: int) -> void:
 	if heavy:
 		info.stun = kd.claw_third_stun
 		info.tags.append(&"launch")
-	Fx.slash(_world(), player.global_position, direction, kd.claw_range, kd.claw_angle_deg,
+	Fx.slash(_world(), player.global_position, direction, _claw_range(), kd.claw_angle_deg,
 			player.slot.color)
 	if heavy:
 		Fx.ring_burst(_world(), player.global_position + direction * 1.3, 1.6, player.slot.color)
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(),
-			DamageInfo.Team.ENEMIES, player.global_position, direction, kd.claw_range,
+			DamageInfo.Team.ENEMIES, player.global_position, direction, _claw_range(),
 			kd.claw_angle_deg)
 	if Combat.deliver(info, targets) > 0:
 		player.freeze(info.hitstop)
@@ -548,7 +563,7 @@ func _cd_text(cd: AbilityCooldown) -> String:
 
 func hud_bar() -> Dictionary:
 	if in_fury:
-		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / kd.fury_duration,
+		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / _fury_duration(),
 				"color": Color(0.85, 0.15, 0.08), "pulse": true}
 	if is_exhausted():
 		return {"label": "Resaca", "value": 0.0, "color": Color(0.5, 0.5, 0.55), "pulse": false}
@@ -564,3 +579,26 @@ func hud_abilities() -> Array[Dictionary]:
 				ult_slot("Revoleo")]
 	return [cooldown_slot("Llamado", call_cooldown), cooldown_slot("Tropezón", dodge_cooldown),
 			ult_slot("La Bestia")]
+
+
+# --- Mejoras ---
+
+func _fury_duration() -> float:
+	return kd.fury_duration + (2.0 if has_upgrade(&"tali_furia_larga") else 0.0)
+
+
+func _claw_range() -> float:
+	return kd.claw_range * (1.25 if has_upgrade(&"tali_zarpazo_largo") else 1.0)
+
+
+func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
+	var best: Hurtbox = null
+	var best_distance: float = max_distance
+	for hurtbox: Hurtbox in CombatQuery.hurtboxes(player.get_tree(), DamageInfo.Team.ENEMIES):
+		if hurtbox.receiver == exclude:
+			continue
+		var d: float = hurtbox.global_position.distance_to(exclude.global_position)
+		if d < best_distance:
+			best_distance = d
+			best = hurtbox
+	return best
