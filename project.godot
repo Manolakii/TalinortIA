@@ -14,6 +14,14 @@ config/name="TalinortIA"
 config/description="Roguelike de acción 3D, co-op local de 1 a 4 jugadores."
 config/features=PackedStringArray("4.7", "Forward Plus")
 
+[autoload]
+
+Events="*res://scripts/autoload/events.gd"
+Balance="*res://scripts/autoload/balance.gd"
+GameSettings="*res://scripts/autoload/game_settings.gd"
+PlayerManager="*res://scripts/autoload/player_manager.gd"
+RunState="*res://scripts/autoload/run_state.gd"
+
 [display]
 
 window/size/viewport_width=1920
