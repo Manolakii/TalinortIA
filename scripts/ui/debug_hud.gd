@@ -42,8 +42,14 @@ func _process(_delta: float) -> void:
 				"Vida %d / %d" % [roundi(player.health.current), roundi(player.health.max_health)]]
 		lines.append_array(player.kit.debug_lines())
 		_panels[player].text = "\n".join(lines)
-	_info.text = "Enemigos: %d   (F7 más · F8 menos · F9 matar a todos)" \
-			% get_tree().get_nodes_in_group(&"enemies").size()
+	var enemies: int = get_tree().get_nodes_in_group(&"enemies").size()
+	var director := get_tree().get_first_node_in_group(&"combat_director") as CombatDirector
+	var difficulty: String = Balance.difficulty.names[RunState.difficulty]
+	if director != null:
+		_info.text = "%s · Oleada %d/%d · Enemigos: %d" % [difficulty,
+				maxi(director.wave_index + 1, 1), director.total_waves(), enemies]
+	else:
+		_info.text = "%s · Enemigos: %d   (F7 más · F8 menos · F9 matar a todos)" % [difficulty, enemies]
 
 
 func _make_panel(player: PlayerCharacter) -> Label:

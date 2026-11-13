@@ -331,7 +331,7 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		body.steer(to_player.normalized(), speed, delta)
 		return
 	# 1) Si está adentro de un aviso naranja, lo esquiva.
-	var threat: Enemy = _threat_to(body)
+	var threat: Node3D = _threat_to(body)
 	if threat != null and _companion_evade(body, threat):
 		return
 	if body.busy > 0.0:
@@ -402,17 +402,18 @@ func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:
 		_fire_bastonazo(body, direction, ratio)
 
 
-func _threat_to(body: DuoCompanion) -> Enemy:
-	for node: Node in player.get_tree().get_nodes_in_group(&"enemies"):
-		var enemy := node as Enemy
-		if enemy != null and enemy.threatens(body.global_position):
-			return enemy
+## El aviso naranja que tiene encima, si hay uno.
+func _threat_to(body: DuoCompanion) -> Node3D:
+	for node: Node in player.get_tree().get_nodes_in_group(&"telegraphs"):
+		var warning := node as Telegraph
+		if warning != null and warning.contains(body.global_position):
+			return warning
 	return null
 
 
 ## Stewie se mete en el caparazón (o rueda); el Maestro salta con la garrocha.
 ## Usa los cooldowns y cargas de ese cuerpo. Devuelve false si no tenía con qué.
-func _companion_evade(body: DuoCompanion, threat: Enemy) -> bool:
+func _companion_evade(body: DuoCompanion, threat: Node3D) -> bool:
 	var away: Vector3 = body.global_position - threat.global_position
 	away.y = 0.0
 	away = away.normalized() if away.length_squared() > 0.01 else Vector3.BACK

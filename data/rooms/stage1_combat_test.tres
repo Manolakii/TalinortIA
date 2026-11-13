@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RoomWaves" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/room_waves.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+room_name = "Llanuras de Talinorthland"
+waves = Array[String](["talinorteano_cegado:4, hondero_cegado:2", "talinorteano_cegado:3, chaman_sombra:1, soldado_agucci:1, tirador_agucci:1:1", "gronk:1, soldado_agucci:1:1, tirador_agucci:1, talinorteano_cegado:3"])
+wave_delay = 1.5
+spawn_area = Vector2(42, 26)
+min_spawn_distance = 9.0

@@ -8,6 +8,8 @@ const OUTLINE_SHADER: Shader = preload("res://assets/shaders/outline.gdshader")
 @export var enemy_id: StringName = &"talinorteano_cegado"
 
 const ENEMY_BULLET_COLOR := Color(0.85, 0.55, 1.0)
+## Los de distancia retroceden a esta parte de su velocidad.
+const RETREAT_SPEED := 0.6
 ## Afijos de élite (GDD, Élites).
 const AFFIXES: Array[StringName] = [&"armored", &"fast", &"shadowy", &"explosive"]
 const AFFIX_NAMES: Dictionary = {
@@ -138,10 +140,10 @@ func _build_bounty_marker() -> void:
 		return
 	_bounty_marker = MeshInstance3D.new()
 	var box := BoxMesh.new()
-	box.size = Vector3.ONE * 0.4
+	box.size = Vector3.ONE * 0.6
 	_bounty_marker.mesh = box
 	_bounty_marker.rotation = Vector3(PI * 0.25, 0.0, PI * 0.25)
-	_bounty_marker.position.y = data.body_height * body_scale() + 1.0
+	_bounty_marker.position.y = data.body_height * body_scale() + 1.5
 	_bounty_marker.material_override = Fx.flat_material(BOUNTY_COLOR, 2.5)
 	_bounty_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_bounty_marker)
@@ -212,7 +214,11 @@ func keep_distance(target: Node3D, preferred: float, delta: float, strafe: float
 		stop(delta)
 		turn_towards(to_target, delta)
 		return
-	steer(wanted.normalized(), data.move_speed * speed_multiplier(), delta)
+	# Retroceden más lento de lo que avanzan: si los perseguís, los alcanzás.
+	var speed: float = data.move_speed * speed_multiplier()
+	if distance < preferred - 1.5:
+		speed *= RETREAT_SPEED
+	steer(wanted.normalized(), speed, delta)
 	turn_towards(to_target, delta)
 
 
@@ -338,8 +344,8 @@ func _after_hit(info: DamageInfo) -> void:
 
 
 ## ¿Está por pegarle a este punto? (lo usa la IA del compañero para esquivar avisos)
-func threatens(_point: Vector3) -> bool:
-	return false
+func threatens(point: Vector3) -> bool:
+	return telegraph != null and telegraph.contains(point)
 
 
 # --- Agarrado y lanzado (Revoleo) ---

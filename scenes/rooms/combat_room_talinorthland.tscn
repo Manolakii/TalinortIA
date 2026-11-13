@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/rooms/test_room_talinorthland.tscn" id="1"]
+[ext_resource type="Resource" path="res://data/rooms/stage1_combat_test.tres" id="2"]
+
+[node name="CombatRoomTalinorthland" instance=ExtResource("1")]
+combat_waves = ExtResource("2")

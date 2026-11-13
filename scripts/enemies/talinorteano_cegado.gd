@@ -65,16 +65,6 @@ func _chase(delta: float) -> void:
 	steer(direction, data.move_speed * _speed_jitter * speed_multiplier(), delta)
 
 
-func threatens(point: Vector3) -> bool:
-	if mode != Mode.WINDUP:
-		return false
-	var to_point := Vector3(point.x - global_position.x, 0.0, point.z - global_position.z)
-	var distance: float = to_point.length()
-	if distance > data.attack_radius + 0.6:
-		return false
-	return distance < 0.5 or facing.angle_to(to_point) <= deg_to_rad(data.attack_angle_deg) * 0.5 + 0.2
-
-
 func _start_windup() -> void:
 	_set_mode(Mode.WINDUP)
 	# El aviso queda fijo hacia donde miraba al empezar: se puede salir esquivando o caminando.

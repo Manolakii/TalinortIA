@@ -19,6 +19,9 @@ var current_preset: QualityPreset
 ## Todas las dificultades disponibles sin haberlas desbloqueado (DECISIONES 2026-11-12).
 var unlock_all_difficulties: bool = OS.is_debug_build()
 var show_debug_overlay: bool = OS.is_debug_build()
+## En la sala de prueba los jugadores se levantan solos al caer. En las salas de combate
+## no (revivir llega en la Fase 4): si caen todos, se pierde.
+var auto_revive_players: bool = true
 
 
 func _ready() -> void:

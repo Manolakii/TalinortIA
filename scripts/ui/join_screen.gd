@@ -9,7 +9,7 @@ extends Control
 ##   Start (o Enter con todos listos): arrancar
 ##   E o X (cualquiera): cambiar la dificultad
 
-const GAME_SCENE := "res://scenes/rooms/test_room_talinorthland.tscn"
+const GAME_SCENE := "res://scenes/rooms/combat_room_talinorthland.tscn"
 
 const BG_COLOR := Color(0.07, 0.07, 0.1)
 const EMPTY_PANEL_COLOR := Color(0.13, 0.13, 0.17)

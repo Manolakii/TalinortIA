@@ -33,8 +33,8 @@ La biblia completa (lore, los 6 kits y el GDD) sigue en el doc compartido. Si ca
 
 ## Probar el juego
 
-- **Desde el editor:** abrí el proyecto en Godot y apretá **F5**. Arranca en la pantalla de unión.
-- **Solo la sala de prueba:** abrí `scenes/rooms/test_room_talinorthland.tscn` y apretá **F6**. Se unen solos el teclado y todos los joysticks conectados.
+- **Desde el editor:** abrí el proyecto en Godot y apretá **F5**. Arranca en la pantalla de unión y de ahí a una sala de combate (3 oleadas, se gana o se pierde).
+- **Sala de prueba (enemigos infinitos, te levantás solo):** abrí `scenes/rooms/test_room_talinorthland.tscn` y apretá **F6**. Se unen solos el teclado y todos los joysticks conectados.
 - **Tests:** en Godot, panel **GUT** (abajo) > *Run All*. Desde la consola:
   `Godot_v4.7.2-stable_win64_console.exe --headless --path . -s addons/gut/gut_cmdln.gd`
 
@@ -45,6 +45,7 @@ La biblia completa (lore, los 6 kits y el GDD) sigue en el doc compartido. Si ca
 | Confirmar | Enter | A / Cruz |
 | Desconfirmar o salir | Esc | B / Círculo |
 | Arrancar (con todos listos) | Enter | Start |
+| Cambiar la dificultad | E | X / Cuadrado |
 
 | En la sala | Teclado y mouse | Joystick |
 | --- | --- | --- |

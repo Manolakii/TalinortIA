@@ -6,6 +6,11 @@ extends Node3D
 ## se une sola: teclado y mouse más todos los joysticks conectados.
 
 const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player_character.tscn")
+const RESULT_SCENE: PackedScene = preload("res://scenes/ui/room_result.tscn")
+
+## Si tiene oleadas, es una sala de combate (se gana o se pierde). Si no, sala de prueba
+## con enemigos infinitos.
+@export var combat_waves: RoomWaves
 
 @onready var _environment: WorldEnvironment = $WorldEnvironment
 @onready var _spawn_points: Node3D = $SpawnPoints
@@ -13,6 +18,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player_charac
 @onready var _camera: SharedCamera = $SharedCamera
 
 var players: Array[PlayerCharacter] = []
+var director: CombatDirector
 
 
 func _ready() -> void:
@@ -21,7 +27,10 @@ func _ready() -> void:
 	Events.room_tint_requested.connect(_on_room_tint)
 	if PlayerManager.player_count() == 0:
 		_auto_join_for_testing()
+	GameSettings.auto_revive_players = combat_waves == null
 	_spawn_players()
+	if combat_waves != null:
+		_start_combat()
 	Fx.prewarm(_camera_focus_node())
 
 
@@ -89,3 +98,17 @@ func _on_room_tint(color: Color, duration: float) -> void:
 	veil_tween.tween_interval(maxf(duration - 0.8, 0.0))
 	veil_tween.tween_property(veil, "color:a", 0.0, 0.4)
 	veil_tween.tween_callback(layer.queue_free)
+
+
+func _start_combat() -> void:
+	var spawner := get_node_or_null("EnemySpawner") as EnemySpawner
+	if spawner != null:
+		spawner.queue_free()
+	director = CombatDirector.new()
+	director.name = "CombatDirector"
+	director.waves = combat_waves
+	add_child(director)
+	var result: CanvasLayer = RESULT_SCENE.instantiate()
+	add_child(result)
+	director.room_cleared.connect(result.show_result.bind(true))
+	director.room_failed.connect(result.show_result.bind(false))

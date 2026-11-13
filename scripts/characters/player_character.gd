@@ -274,6 +274,14 @@ func _on_any_hit_landed(info: DamageInfo, target: Node3D) -> void:
 func _on_died(info: DamageInfo) -> void:
 	if kit.handle_owner_death(info):
 		return
+	kit.cancel_scheduled()
+	end_action()
+	if not GameSettings.auto_revive_players:
+		var fall: Tween = create_tween()
+		fall.tween_property(visual, "rotation:x", -1.35, 0.3)
+		Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4, "¡Caíste!",
+				Color(1.0, 0.6, 0.6))
+		return
 	# Modo prueba hasta la Fase 4: se levanta solo.
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 2.4,
 			"¡Caíste! (modo prueba)", Color(1.0, 0.6, 0.6))
