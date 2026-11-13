@@ -260,7 +260,7 @@ func _throw_kunai() -> void:
 	info.is_melee = false
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5
 	_projectiles.fire(from, player.aim_direction, kd.kunai_speed,
-			_range_until_obstacle(from, player.aim_direction, kd.kunai_range), 0.25, info,
+			_range_until_obstacle(from, player.aim_direction, kd.kunai_range * (1.5 if has_upgrade(&"agucci_kunai_lejano") else 1.0)), 0.25, info,
 			DamageInfo.Team.ENEMIES, _on_kunai_hit, _on_kunai_expire)
 
 
@@ -502,7 +502,8 @@ func _update_possession(delta: float) -> void:
 	if target == null:
 		player.move_override = Vector2.ZERO
 		var drain := DamageInfo.new()
-		drain.amount = player.health.max_health * kd.possession_self_drain * delta
+		drain.amount = player.health.max_health * kd.possession_self_drain * delta \
+				* (0.5 if has_upgrade(&"agucci_sombra_docil") else 1.0)
 		drain.attacker_team = DamageInfo.Team.ENEMIES
 		player.health.apply_damage(drain)
 	else:
@@ -730,6 +731,7 @@ func _uzi_bullets() -> int:
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
 	dodge_cooldown.max_charges = kd.dissolve_charges + (1 if has_upgrade(&"agucci_disolverse_extra") else 0)
+	step_cooldown.recharge_time = kd.step_cooldown * (0.75 if has_upgrade(&"agucci_paso_apurado") else 1.0)
 
 
 ## Kunai envenenado: 10 de daño por segundo durante 3 s.

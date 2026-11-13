@@ -209,8 +209,9 @@ func _fire() -> void:
 			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.6)
 		Mode.RIFLE:
 			_attack_timer = kd.rifle_interval / attack_speed()
-			player.start_action(kd.rifle_burst_gap * kd.rifle_burst + 0.1, 0.7)
-			for i: int in kd.rifle_burst:
+			var burst: int = kd.rifle_burst + (1 if has_upgrade(&"croco_rafaga_extra") else 0)
+			player.start_action(kd.rifle_burst_gap * burst + 0.1, 0.7)
+			for i: int in burst:
 				schedule(i * kd.rifle_burst_gap, _rifle_bullet.bind(bonus))
 
 
@@ -252,7 +253,7 @@ func _fire_contract() -> void:
 	var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
 	var stacks: int = RunState.get_bonus(player.slot.index, STACK_KEY)
 	var damage: float = lerpf(kd.contract_min_damage, kd.contract_max_damage, ratio) \
-			* (1.0 + stacks * kd.contract_stack_bonus)
+			* (1.0 + stacks * kd.contract_stack_bonus) * (1.3 if has_upgrade(&"croco_contrato_letal") else 1.0)
 	var info: DamageInfo = make_hit(damage)
 	info.is_melee = false
 	info.knockback = 4.0
@@ -309,7 +310,7 @@ func do_dodge() -> void:
 
 func _use_ultimate() -> bool:
 	_cancel_charge()
-	_rail_time = kd.rail_duration
+	_rail_time = _rail_duration()
 	_rail_direction = player.aim_direction
 	_rail_tick = 0.0
 	_rail_beam.visible = true
@@ -439,7 +440,7 @@ func hud_chip_active() -> int:
 
 func hud_bar() -> Dictionary:
 	if _rail_time > 0.0:
-		return {"label": "RIEL %d s" % ceili(_rail_time), "value": _rail_time / kd.rail_duration,
+		return {"label": "RIEL %d s" % ceili(_rail_time), "value": _rail_time / _rail_duration(),
 				"color": Color(0.78, 0.9, 1.0), "pulse": true}
 	if _charging:
 		var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
@@ -464,3 +465,7 @@ func _full_charge() -> float:
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
 	dodge_cooldown.max_charges = kd.dodge_charges + (1 if has_upgrade(&"croco_ruta_extra") else 0)
+
+
+func _rail_duration() -> float:
+	return kd.rail_duration + (1.5 if has_upgrade(&"croco_riel_largo") else 0.0)

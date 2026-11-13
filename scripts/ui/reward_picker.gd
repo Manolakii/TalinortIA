@@ -73,7 +73,9 @@ func _options_for(player: PlayerCharacter) -> Array:
 		var owned: Array = RunState.get_upgrades(player.slot.index)
 		for upgrade: CharacterUpgrade in Balance.upgrades.offer(player.data.id, owned, rng, 3):
 			var level: int = owned.count(upgrade.id)
-			var name: String = upgrade.display_name + (" (nivel 2)" if level >= 1 else "")
+			var name: String = upgrade.display_name
+			if level >= 1:
+				name += " (nivel 2)" if upgrade.senda_slot != &"" else " (x%d)" % (level + 1)
 			result.append({"id": upgrade.id, "name": name, "description": upgrade.description})
 	else:
 		var pool: Array[GenericItem] = Balance.generic_items.items.duplicate()

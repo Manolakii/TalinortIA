@@ -11,11 +11,11 @@ func before_each() -> void:
 
 func test_each_character_has_its_pool() -> void:
 	for id: StringName in [&"tali", &"croco", &"agucci"]:
-		assert_eq(Balance.upgrades.available_for(id, []).size(), 6, "%s: 6 mejoras" % id)
+		assert_eq(Balance.upgrades.available_for(id, []).size(), 12, "%s: 12 mejoras" % id)
 	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
 	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
 			"Dúo: 18 Sendas")
-	assert_eq(duo.size(), 19, "Más Ojo para las vasijas")
+	assert_eq(duo.size(), 21, "Más Ojo para las vasijas, Té y Bastón")
 
 
 func test_offer_gives_three_distinct_and_skips_owned() -> void:
@@ -68,3 +68,24 @@ func test_agucci_upgrades() -> void:
 	assert_true(kit.is_lucid(), "Con Mente fría, a 38 de Hambre sigue en Lucidez")
 	RunState.add_upgrade(0, &"agucci_disolverse_extra")
 	assert_eq(kit.dodge_cooldown.max_charges, 3)
+
+
+func test_stat_upgrades_stack_and_are_offered_again() -> void:
+	RunState.add_upgrade(0, &"tali_brazo_fuerte")
+	var owned: Array = RunState.get_upgrades(0)
+	var ids: Array = Balance.upgrades.available_for(&"tali", owned).map(
+			func(u: CharacterUpgrade) -> StringName: return u.id)
+	assert_true(ids.has(&"tali_brazo_fuerte"), "Se puede volver a tomar")
+	RunState.add_upgrade(0, &"tali_brazo_fuerte")
+	RunState.add_upgrade(0, &"tali_brazo_fuerte")
+	ids = Balance.upgrades.available_for(&"tali", RunState.get_upgrades(0)).map(
+			func(u: CharacterUpgrade) -> StringName: return u.id)
+	assert_false(ids.has(&"tali_brazo_fuerte"), "Hasta 3 veces")
+
+
+func test_tali_lucky_north_makes_gronk_likelier() -> void:
+	var player: PlayerCharacter = autofree(load("res://scenes/characters/player_character.tscn").instantiate())
+	assert_not_null(player)
+	var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(&"tali_suerte_norteana")
+	assert_not_null(upgrade)
+	assert_eq(upgrade.character, &"tali")

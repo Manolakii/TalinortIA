@@ -47,10 +47,10 @@ script = ExtResource("2")
 id = &"tali_piel_dura"
 character = &"tali"
 display_name = "Cuero de Talinorteano"
-description = "+20 de vida máxima"
+description = "+20 de vida máxima (se puede tomar 3 veces)"
 stat = &"max_health"
 amount = 20.0
-max_stacks = 1
+max_stacks = 3
 senda_body = &""
 senda_slot = &""
 senda_path = &""
@@ -83,6 +83,84 @@ senda_path = &""
 
 [sub_resource type="Resource" id="u_6"]
 script = ExtResource("2")
+id = &"tali_suerte_norteana"
+character = &"tali"
+display_name = "Suerte norteana"
+description = "En el Llamado Salvaje, el Gronk sale 3 veces más seguido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_7"]
+script = ExtResource("2")
+id = &"tali_rugido_profundo"
+character = &"tali"
+display_name = "Rugido profundo"
+description = "El rugido de la definitiva asusta 4 s en vez de 2"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_8"]
+script = ExtResource("2")
+id = &"tali_aplaston_sismico"
+character = &"tali"
+display_name = "Aplastón sísmico"
+description = "El Aplastón pega en un área 40% más grande"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_9"]
+script = ExtResource("2")
+id = &"tali_bronca_rapida"
+character = &"tali"
+display_name = "Bronca acumulada"
+description = "La barra de Furia se llena 25% más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_10"]
+script = ExtResource("2")
+id = &"tali_resaca_leve"
+character = &"tali"
+display_name = "Resaca leve"
+description = "Después de la Furia quedás Agotado 1,5 s en vez de 3"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_11"]
+script = ExtResource("2")
+id = &"tali_brazo_fuerte"
+character = &"tali"
+display_name = "Brazo de Talinorteano"
+description = "+10% de daño (se puede tomar 3 veces)"
+stat = &"damage"
+amount = 0.1
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_12"]
+script = ExtResource("2")
 id = &"croco_escopeta_mas"
 character = &"croco"
 display_name = "Más perdigones"
@@ -94,7 +172,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_7"]
+[sub_resource type="Resource" id="u_13"]
 script = ExtResource("2")
 id = &"croco_senuelo_explota"
 character = &"croco"
@@ -107,7 +185,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_8"]
+[sub_resource type="Resource" id="u_14"]
 script = ExtResource("2")
 id = &"croco_recompensa_cura"
 character = &"croco"
@@ -120,7 +198,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_9"]
+[sub_resource type="Resource" id="u_15"]
 script = ExtResource("2")
 id = &"croco_bonus_cambio"
 character = &"croco"
@@ -133,7 +211,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_10"]
+[sub_resource type="Resource" id="u_16"]
 script = ExtResource("2")
 id = &"croco_contrato_rapido"
 character = &"croco"
@@ -146,7 +224,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_11"]
+[sub_resource type="Resource" id="u_17"]
 script = ExtResource("2")
 id = &"croco_ruta_extra"
 character = &"croco"
@@ -159,7 +237,85 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_12"]
+[sub_resource type="Resource" id="u_18"]
+script = ExtResource("2")
+id = &"croco_gatillo_facil"
+character = &"croco"
+display_name = "Gatillo fácil"
+description = "+10% de velocidad de ataque (se puede tomar 3 veces)"
+stat = &"attack_speed"
+amount = 0.1
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_19"]
+script = ExtResource("2")
+id = &"croco_ojo_mercenario"
+character = &"croco"
+display_name = "Ojo de mercenario"
+description = "+6% de chance de crítico (se puede tomar 2 veces)"
+stat = &"crit_chance"
+amount = 0.06
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_20"]
+script = ExtResource("2")
+id = &"croco_riel_largo"
+character = &"croco"
+display_name = "Riel recargado"
+description = "El Riel dura 1,5 s más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_21"]
+script = ExtResource("2")
+id = &"croco_contrato_letal"
+character = &"croco"
+display_name = "Contrato letal"
+description = "El Tiro por Contrato pega 30% más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_22"]
+script = ExtResource("2")
+id = &"croco_rafaga_extra"
+character = &"croco"
+display_name = "Ráfaga extra"
+description = "El rifle tira 4 balas por ráfaga en vez de 3"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_23"]
+script = ExtResource("2")
+id = &"croco_chaleco"
+character = &"croco"
+display_name = "Chaleco de cuero"
+description = "-6% de daño recibido (se puede tomar 2 veces)"
+stat = &"damage_reduction"
+amount = 0.06
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_24"]
 script = ExtResource("2")
 id = &"agucci_disolverse_extra"
 character = &"agucci"
@@ -172,7 +328,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_13"]
+[sub_resource type="Resource" id="u_25"]
 script = ExtResource("2")
 id = &"agucci_espalda_letal"
 character = &"agucci"
@@ -185,7 +341,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_14"]
+[sub_resource type="Resource" id="u_26"]
 script = ExtResource("2")
 id = &"agucci_kunai_veneno"
 character = &"agucci"
@@ -198,7 +354,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_15"]
+[sub_resource type="Resource" id="u_27"]
 script = ExtResource("2")
 id = &"agucci_lucidez_amplia"
 character = &"agucci"
@@ -211,7 +367,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_16"]
+[sub_resource type="Resource" id="u_28"]
 script = ExtResource("2")
 id = &"agucci_noche_larga"
 character = &"agucci"
@@ -224,7 +380,7 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_17"]
+[sub_resource type="Resource" id="u_29"]
 script = ExtResource("2")
 id = &"agucci_uzi_cargador"
 character = &"agucci"
@@ -237,7 +393,85 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_18"]
+[sub_resource type="Resource" id="u_30"]
+script = ExtResource("2")
+id = &"agucci_filo"
+character = &"agucci"
+display_name = "Filo de Gucci"
+description = "+20% de daño crítico (se puede tomar 2 veces)"
+stat = &"crit_damage"
+amount = 0.2
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_31"]
+script = ExtResource("2")
+id = &"agucci_paso_apurado"
+character = &"agucci"
+display_name = "Paso apurado"
+description = "Paso de Sombra recarga 25% más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_32"]
+script = ExtResource("2")
+id = &"agucci_sombra_docil"
+character = &"agucci"
+display_name = "Sombra dócil"
+description = "En la Posesión, la sombra te drena la mitad"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_33"]
+script = ExtResource("2")
+id = &"agucci_pies_ligeros"
+character = &"agucci"
+display_name = "Pies ligeros"
+description = "+7% de velocidad de movimiento (se puede tomar 2 veces)"
+stat = &"move_speed"
+amount = 0.07
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_34"]
+script = ExtResource("2")
+id = &"agucci_sed"
+character = &"agucci"
+display_name = "Sed de sombra"
+description = "+2% de robo de vida (se puede tomar 2 veces)"
+stat = &"lifesteal"
+amount = 0.02
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_35"]
+script = ExtResource("2")
+id = &"agucci_kunai_lejano"
+character = &"agucci"
+display_name = "Kunai lejano"
+description = "El kunai de Paso de Sombra llega 50% más lejos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_36"]
 script = ExtResource("2")
 id = &"duo_rompe_vasijas"
 character = &"maestro"
@@ -250,7 +484,33 @@ senda_body = &""
 senda_slot = &""
 senda_path = &""
 
-[sub_resource type="Resource" id="u_19"]
+[sub_resource type="Resource" id="u_37"]
+script = ExtResource("2")
+id = &"duo_te_valles"
+character = &"maestro"
+display_name = "Té de los Valles"
+description = "+15 de vida máxima a los dos (se puede tomar 2 veces)"
+stat = &"max_health"
+amount = 15.0
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_38"]
+script = ExtResource("2")
+id = &"duo_baston_templado"
+character = &"maestro"
+display_name = "Bastón templado"
+description = "+8% de daño a los dos (se puede tomar 3 veces)"
+stat = &"damage"
+amount = 0.08
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+
+[sub_resource type="Resource" id="u_39"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_caparazon"
 character = &"maestro"
@@ -263,7 +523,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_20"]
+[sub_resource type="Resource" id="u_40"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_embestida"
 character = &"maestro"
@@ -276,7 +536,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_21"]
+[sub_resource type="Resource" id="u_41"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_espiritu"
 character = &"maestro"
@@ -289,7 +549,7 @@ senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_22"]
+[sub_resource type="Resource" id="u_42"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_caparazon"
 character = &"maestro"
@@ -302,7 +562,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_23"]
+[sub_resource type="Resource" id="u_43"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_embestida"
 character = &"maestro"
@@ -315,7 +575,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_24"]
+[sub_resource type="Resource" id="u_44"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_espiritu"
 character = &"maestro"
@@ -328,7 +588,7 @@ senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_25"]
+[sub_resource type="Resource" id="u_45"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_caparazon"
 character = &"maestro"
@@ -341,7 +601,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"caparazon"
 
-[sub_resource type="Resource" id="u_26"]
+[sub_resource type="Resource" id="u_46"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_embestida"
 character = &"maestro"
@@ -354,7 +614,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"embestida"
 
-[sub_resource type="Resource" id="u_27"]
+[sub_resource type="Resource" id="u_47"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_espiritu"
 character = &"maestro"
@@ -367,7 +627,7 @@ senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"espiritu"
 
-[sub_resource type="Resource" id="u_28"]
+[sub_resource type="Resource" id="u_48"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_guia"
 character = &"maestro"
@@ -380,7 +640,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_29"]
+[sub_resource type="Resource" id="u_49"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_combate"
 character = &"maestro"
@@ -393,7 +653,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_30"]
+[sub_resource type="Resource" id="u_50"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_niebla"
 character = &"maestro"
@@ -406,7 +666,7 @@ senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"niebla"
 
-[sub_resource type="Resource" id="u_31"]
+[sub_resource type="Resource" id="u_51"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_guia"
 character = &"maestro"
@@ -419,7 +679,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_32"]
+[sub_resource type="Resource" id="u_52"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_combate"
 character = &"maestro"
@@ -432,7 +692,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_33"]
+[sub_resource type="Resource" id="u_53"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_niebla"
 character = &"maestro"
@@ -445,7 +705,7 @@ senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"niebla"
 
-[sub_resource type="Resource" id="u_34"]
+[sub_resource type="Resource" id="u_54"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_guia"
 character = &"maestro"
@@ -458,7 +718,7 @@ senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"guia"
 
-[sub_resource type="Resource" id="u_35"]
+[sub_resource type="Resource" id="u_55"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_combate"
 character = &"maestro"
@@ -471,7 +731,7 @@ senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"combate"
 
-[sub_resource type="Resource" id="u_36"]
+[sub_resource type="Resource" id="u_56"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_niebla"
 character = &"maestro"
@@ -486,4 +746,4 @@ senda_path = &"niebla"
 
 [resource]
 script = ExtResource("1")
-upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36")])
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56")])

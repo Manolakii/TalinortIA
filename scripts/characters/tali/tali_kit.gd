@@ -166,12 +166,12 @@ func _on_damage_taken(info: DamageInfo) -> void:
 	var multiplier: float = 1.0
 	if _is_back_hit(info) or _is_surrounded():
 		multiplier = kd.fury_bonus_multiplier
-	add_fury(info.final_amount * kd.fury_per_damage_taken * multiplier)
+	add_fury(info.final_amount * kd.fury_per_damage_taken * multiplier * _fury_gain())
 
 
 func _on_damage_dealt(info: DamageInfo, _target: Node3D) -> void:
 	if not in_fury:
-		add_fury(info.final_amount * kd.fury_per_damage_dealt)
+		add_fury(info.final_amount * kd.fury_per_damage_dealt * _fury_gain())
 
 
 func add_fury(points: float) -> void:
@@ -221,7 +221,7 @@ func _exit_fury() -> void:
 	_cancel_slam()
 	player.end_action()
 	player.health.damage_taken_multiplier = 1.0
-	player.status.apply(StatusEffects.EXHAUSTED, kd.exhausted_duration)
+	player.status.apply(StatusEffects.EXHAUSTED, kd.exhausted_duration * (0.5 if has_upgrade(&"tali_resaca_leve") else 1.0))
 	_lockout = kd.fury_lockout
 	_tween_scale(1.0)
 	_say("Resaca...", Color(0.75, 0.75, 0.8))
@@ -291,8 +291,8 @@ func _wild_call() -> void:
 	call_cooldown.use()
 	player.face_aim_now()
 	player.start_action(0.3, 0.2)
-	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs,
-			kd.call_weight_gronk])
+	var gronk_weight: float = kd.call_weight_gronk * (3.0 if has_upgrade(&"tali_suerte_norteana") else 1.0)
+	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs, gronk_weight])
 	_say(CALL_TEXTS[kind], Color.WHITE, 1.2 if kind == WildCallEffect.Kind.GRONK else 1.0)
 	schedule(0.2, _spawn_call.bind(kind, player.aim_direction))
 
@@ -368,11 +368,11 @@ func _slam_land() -> void:
 	info.hitstop = Balance.combat.hitstop_heavy
 	info.shake = 0.0
 	var targets: Array[Hurtbox] = CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
-			center, kd.slam_radius)
+			center, _slam_radius())
 	if Combat.deliver(info, targets) > 0:
 		player.freeze(Balance.combat.hitstop_heavy)
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy)
-	Fx.ring_burst(_world(), center, kd.slam_radius, player.slot.color, 0.4)
+	Fx.ring_burst(_world(), center, _slam_radius(), player.slot.color, 0.4)
 
 
 func _cancel_slam() -> void:
@@ -402,7 +402,7 @@ func _roar() -> void:
 		var away := Vector3(enemy.global_position.x - center.x, 0.0, enemy.global_position.z - center.z)
 		enemy.knockback_velocity = away.normalized() * kd.roar_knockback
 		enemy.fear_origin = center
-		enemy.status.apply(StatusEffects.FEAR, kd.roar_fear)
+		enemy.status.apply(StatusEffects.FEAR, kd.roar_fear * (2.0 if has_upgrade(&"tali_rugido_profundo") else 1.0))
 	Fx.ring_burst(_world(), center, kd.roar_radius, FURY_COLOR, 0.5)
 
 
@@ -608,3 +608,11 @@ func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
 			best_distance = d
 			best = hurtbox
 	return best
+
+
+func _slam_radius() -> float:
+	return kd.slam_radius * (1.4 if has_upgrade(&"tali_aplaston_sismico") else 1.0)
+
+
+func _fury_gain() -> float:
+	return 1.25 if has_upgrade(&"tali_bronca_rapida") else 1.0
