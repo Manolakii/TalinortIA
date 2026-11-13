@@ -5,7 +5,7 @@ extends Resource
 ## Tiempo para levantarlo según la caída: la 1.ª, la 2.ª, la 3.ª y de la 4.ª en adelante.
 @export var down_times: Array[float] = [25.0, 19.0, 13.0, 8.0]
 ## Un compañero mantiene interactuar este tiempo al lado del caído.
-@export var revive_hold: float = 5.0
+@export var revive_hold: float = 3.8
 @export var revive_radius: float = 2.3
 ## Si el que revive deja de hacerlo un instante (lo empujan, un golpe), el progreso espera
 ## este tiempo antes de empezar a bajar.

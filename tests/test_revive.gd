@@ -35,13 +35,15 @@ func test_falling_gives_time_to_be_revived() -> void:
 	assert_almost_eq(_ally.revive.time_left, 25.0, 0.01, "Primera caída: 25 s")
 
 
-func test_holding_interact_for_5s_revives_with_40_percent() -> void:
+func test_holding_interact_revives_with_40_percent() -> void:
+	var hold: float = Balance.revive.revive_hold
+	assert_eq(hold, 3.8, "Mantener 3,8 s (pedido del grupo; el GDD decía 5)")
 	_kill(_ally)
 	_slot.input._held[PlayerInput.Action.INTERACT] = true
-	_both(int(4.9 / DT))
-	assert_true(_ally.revive.downed, "Antes de 5 s sigue caído")
+	_both(int((hold - 0.1) / DT))
+	assert_true(_ally.revive.downed, "Un poquito antes sigue caído")
 	_both(10)
-	assert_false(_ally.revive.downed, "A los 5 s se levanta")
+	assert_false(_ally.revive.downed, "Al cumplir el tiempo se levanta")
 	assert_false(_ally.health.is_dead)
 	assert_almost_eq(_ally.health.current, _ally.health.max_health * 0.4, 0.01, "Con 40% de vida")
 

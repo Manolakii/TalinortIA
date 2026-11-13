@@ -59,7 +59,7 @@ Cada fase termina con algo **jugable**. No se pasa a la siguiente hasta que la a
   - nombres al empezar la sala y al revivir.
 - Muerte y revivir:
   - el tiempo para levantarlo baja de 25 s a 19, 13 y 8 s según las caídas;
-  - se mantiene interactuar 5 s para revivir;
+  - se mantiene interactuar 3,8 s para revivir;
   - el caído se arrastra solo, despacio, hacia sus compañeros;
   - si se acaba el tiempo, vuelve en Birig Bamba con 40% de vida y sin fuente;
   - si caen todos, se termina la partida.

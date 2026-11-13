@@ -316,7 +316,7 @@ La cámara encuadra a todos los jugadores y se aleja un poco cuando se separan. 
 
 ### Muerte y revivir
 
-- Cuando un jugador cae, tiene un tiempo para que lo levanten. Para revivirlo, un compañero se acerca y mantiene el botón de interactuar durante 5 s.
+- Cuando un jugador cae, tiene un tiempo para que lo levanten. Para revivirlo, un compañero se acerca y mantiene el botón de interactuar durante 3,8 s (bajado de 5 s por el grupo: con 5 s te pegaban demasiado mientras revivías).
 - **Tiempo para levantarlo (propuesta):** 25 s la primera caída, 19 s la segunda, 13 s la tercera y 8 s desde la cuarta en adelante.
 - **Decidido:** el caído se arrastra solo, despacio, hacia sus compañeros. **Propuesta:** el que revive no puede atacar mientras lo hace. La Floración de Champaka revive al instante, como dice su kit.
 - Si se acaba el tiempo, ese jugador queda afuera hasta el final del stage y vuelve en Birig Bamba con 40% de vida, sin poder curarse en la fuente (decidido). Si caen todos, termina la partida.
