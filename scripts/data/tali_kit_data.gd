@@ -13,6 +13,8 @@ extends Resource
 @export var surrounded_count: int = 3
 @export var surrounded_radius: float = 3.0
 @export var fury_duration: float = 10.0
+## Segundos extra de Furia si se entra con la definitiva (premio por usarla; pedido del grupo).
+@export var ult_fury_bonus: float = 8.0
 @export var fury_damage_taken_multiplier: float = 0.7
 ## Escala del cuerpo en Furia (placeholder).
 @export var fury_body_scale: float = 1.3

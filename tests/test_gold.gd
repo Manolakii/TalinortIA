@@ -157,3 +157,32 @@ func test_elite_always_drops_gold() -> void:
 	enemy.is_elite = true
 	enemy._drop_gold()
 	assert_eq(_coin_total(), 20)
+
+
+func test_vases_sometimes_drop_a_healing_mushroom() -> void:
+	var chance: float = Balance.economy.vase_mushroom_chance
+	Balance.economy.vase_mushroom_chance = 1.0
+	var vase := Vase.new()
+	add_child(vase)
+	vase.smash(_player)
+	Balance.economy.vase_mushroom_chance = chance
+	var mushroom: HealMushroom = null
+	for child: Node in get_children():
+		if child is HealMushroom:
+			mushroom = child
+	assert_not_null(mushroom, "Sale un honguito")
+	_player.health.current = 100.0
+	mushroom.take(_player)
+	assert_eq(_player.health.current, 100.0 + Balance.economy.mushroom_heal, "Cura 20")
+
+
+func test_mushroom_waits_for_someone_hurt() -> void:
+	var mushroom := HealMushroom.new()
+	add_child_autofree(mushroom)
+	_player.health.current = _player.health.max_health
+	for i: int in 40:
+		mushroom._physics_process(DT)
+	assert_false(mushroom._taken, "Con la vida llena no se gasta")
+	_player.health.current = 50.0
+	mushroom._physics_process(DT)
+	assert_true(mushroom._taken)

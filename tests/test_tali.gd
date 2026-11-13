@@ -232,3 +232,11 @@ func test_ability_cuts_basic_attack_recovery() -> void:
 	_press(PlayerInput.Action.ABILITY)
 	_step(5)  # puede caer en el hitstop del zarpazo: el buffer de input lo cubre
 	assert_false(_kit.slam_cooldown.is_ready(), "El Aplastón sale aunque mantenga el ataque")
+
+
+func test_ultimate_fury_lasts_longer() -> void:
+	_kit.ult_charge = 100.0
+	_kit._use_ultimate()
+	assert_true(_kit.in_fury)
+	assert_almost_eq(_kit._fury_time, _kit.kd.fury_duration + _kit.kd.ult_fury_bonus, 0.01,
+			"Con la definitiva: 10 + 8 s")

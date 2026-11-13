@@ -1,6 +1,6 @@
 class_name Vase
 extends StaticBody3D
-## Vasija: se rompe de un golpe y, a veces, suelta oro (GDD: 2 a 6 en el Stage 1) solo para
+## Vasija: se rompe de un golpe. A veces trae un honguito que cura (para cualquiera) y, a veces, oro (GDD: 2 a 6 en el Stage 1) solo para
 ## el jugador que la rompió (pedido del grupo: si no, todos se llenaban de oro).
 ## Tiene un Hurtbox de "objeto": se le puede pegar, pero el apuntado no la busca.
 
@@ -75,6 +75,11 @@ func smash(breaker: PlayerCharacter = null) -> void:
 	var economy: EconomyConfig = Balance.economy
 	if breaker != null and RunState.rng.randf() < economy.vase_drop_chance:
 		Loot.drop(get_parent(), global_position, breaker, Loot.amount_for(economy.vase_gold, RunState.stage))
+	if RunState.rng.randf() < economy.vase_mushroom_chance:
+		var mushroom := HealMushroom.new()
+		mushroom.heal_amount = economy.mushroom_heal
+		mushroom.position = position + Vector3(0.6, 0.0, 0.5)
+		get_parent().add_child(mushroom)
 	Fx.ring_burst(get_parent(), global_position, 0.9, CLAY.lightened(0.2), 0.2)
 	# Pedazos que saltan.
 	for i: int in 5:

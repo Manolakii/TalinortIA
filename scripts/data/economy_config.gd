@@ -16,6 +16,9 @@ extends Resource
 @export var scenario_gold: Array[int] = [30, 50, 75]
 ## Probabilidad de que una vasija tenga oro. El oro es solo del que la rompe (pedido del grupo).
 @export var vase_drop_chance: float = 0.5
+## Probabilidad de que una vasija tenga un honguito que cura, y cuánto cura (pedido del grupo).
+@export var vase_mushroom_chance: float = 0.3
+@export var mushroom_heal: float = 20.0
 @export var vase_gold: Array[Vector2i] = [Vector2i(2, 6), Vector2i(4, 10), Vector2i(6, 15)]
 @export var chest_gold: Array[Vector2i] = [Vector2i(50, 80), Vector2i(80, 130), Vector2i(130, 200)]
 @export var boss_gold: Array[int] = [60, 110, 0]

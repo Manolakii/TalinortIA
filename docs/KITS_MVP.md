@@ -8,7 +8,7 @@ Tali, Mercenario Croco, Agucci, y el Maestro Uwey con Stewie. Los números son u
 
 | Personaje | Vida | Velocidad (m/s) | Crítico | Daño por segundo del golpe común |
 | --- | --- | --- | --- | --- |
-| Agucci | 90 | 6,3 | 15%, daño 175% | ~77 |
+| Agucci | 90 | 6,3 | 15%, daño 175% | ~65 (bajado de ~77 por el grupo) |
 | Mercenario Croco | 100 | 6,6 | 10% | ~51 a 70 según el modo |
 | Tali | 150 | 5,6 | 5% | ~22 en Normal, ~92 en Furia |
 | Maestro Uwey + Stewie | Maestro 110; Stewie 80 / 110 / 140 según su forma | Maestro 5,6; Stewie 5,8 | 5% | ~65 entre los dos |
@@ -37,7 +37,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 - **Furia — Embestida:** carga corta que atraviesa enemigos y los tira al piso.
 
 **4 · Definitiva — La Bestia de Talinorthland**
-- **En Normal:** se transforma al instante con un rugido que empuja y asusta a los enemigos cercanos durante 2 s.
+- **En Normal:** se transforma al instante con un rugido que empuja y asusta a los enemigos cercanos durante 2 s. Entrando así, la Furia dura 8 s más (18 s), como premio por usar la definitiva.
 - **En Furia — Revoleo:** agarra al enemigo más grande (élites incluidos), lo tira contra los demás y extiende la Furia 4 s.
 
 **Mejoras de personaje (ejemplos):** el Piedrazo rebota a un segundo enemigo; en Furia corre 15% más rápido; el Tropezón da 25 de Furia en lugar de 15. Mejora en la tienda de Birig Bamba, "Ahora sí te entiendo": elegís qué animal sale del Llamado Salvaje.
@@ -77,7 +77,7 @@ Asesino de daño explosivo, con mucha movilidad y el personaje más frágil. Usa
 **0 · Pasiva — La Sombra que Habla**
 Barra de Hambre de 0 a 100. Las habilidades de sombra la llenan y los golpes comunes la bajan de a poco.
 - **Lucidez (0–30):** los ataques por la espalda son críticos garantizados.
-- **Hambre (31–99):** +0,7% de daño por cada punto de Hambre (bajado del 1% para equilibrar).
+- **Hambre (31–99):** +0,5% de daño por cada punto de Hambre (bajado del 1% y del 0,7% para equilibrar).
 - **Posesión (100):** durante 6 s la sombra toma el control: daño enorme y velocidad máxima, pero va sola al enemigo más cercano y le drena vida a Agucci. Después la barra vuelve a 0.
     - **Ataque automático:** golpe en área corta. Si hay un enemigo cerca, la sombra va a matarlo; si no hay a quién atacar, daña de a poco a Agucci. A cambio, tiene más robo de vida.
     - **Castigo:** usar habilidades de sombra cuesta 5% de la vida actual, pero si conectan curan 8% del daño que hacen.
@@ -87,10 +87,10 @@ Barra de Hambre de 0 a 100. Las habilidades de sombra la llenan y los golpes com
 - **Sinergia con Tali:** cerca de Tali, el Hambre baja sola. Si entra en Posesión al lado de Tali, dura la mitad.
 
 **1 · Golpe común — Katana y Plomo**
-Tres cortes rápidos (20 / 20 / 24), una patada que empuja un poco (14) y después vacía la UZI en abanico (5 balas de 6). Combo completo en ~1,4 s.
+Tres cortes rápidos (17 / 17 / 21), una patada que empuja un poco (12) y después vacía la UZI en abanico (5 balas de 5). Combo completo en ~1,4 s.
 
 **2 · Habilidad fuerte — Paso de Sombra (CD 8 s, +20 de Hambre)**
-Tira un kunai (40 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino (110 por enemigo). Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
+Tira un kunai (40 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino (90 por enemigo). Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
 
 **3 · Esquiva — Disolverse (2 cargas, +6 de Hambre)**
 Se hunde en su sombra y reaparece unos metros más adelante, intangible durante el trayecto. Mejora en la tienda de Birig Bamba: deja atrás 3 shurikens que salen disparados hacia los enemigos cercanos.

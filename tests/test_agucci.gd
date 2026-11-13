@@ -20,7 +20,7 @@ func test_hunger_zones() -> void:
 	assert_eq(_kit.outgoing_multiplier(), 1.0)
 	_kit.add_hunger(50.0)
 	assert_false(_kit.is_lucid())
-	assert_almost_eq(_kit.outgoing_multiplier(), 1.35, 0.001, "+0,7% por punto de Hambre")
+	assert_almost_eq(_kit.outgoing_multiplier(), 1.25, 0.001, "+0,5% por punto de Hambre")
 	_kit.add_hunger(50.0)
 	assert_true(_kit.possessed, "Al 100%: Posesión")
 
@@ -29,8 +29,8 @@ func test_full_combo_damage() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(int(1.6 / DT))
-	assert_almost_eq(1000.0 - enemy.health.current, 20.0 + 20.0 + 24.0 + 14.0 + 5 * 6.0, 0.01,
-			"Cortes 20/20/24, patada 14, UZI 5 × 6")
+	assert_almost_eq(1000.0 - enemy.health.current, 17.0 + 17.0 + 21.0 + 12.0 + 5 * 5.0, 0.01,
+			"Cortes 17/17/21, patada 12, UZI 5 × 5")
 
 
 func test_lucid_backstab_is_guaranteed_crit() -> void:
@@ -38,7 +38,7 @@ func test_lucid_backstab_is_guaranteed_crit() -> void:
 	enemy.facing = Vector3.FORWARD  # mira para el otro lado: Agucci está a su espalda
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(8)
-	assert_almost_eq(1000.0 - enemy.health.current, 20.0 * _player.data.crit_multiplier, 0.01,
+	assert_almost_eq(1000.0 - enemy.health.current, 17.0 * _player.data.crit_multiplier, 0.01,
 			"Primer corte por la espalda en Lucidez: crítico de 175%")
 
 
@@ -64,8 +64,8 @@ func test_shadow_step_kunai_then_dash() -> void:
 	release(PlayerInput.Action.ABILITY)
 	_pump(20)
 	assert_false(_kit._kunai_active)
-	assert_almost_eq(1000.0 - enemy.health.current, 40.0 + 110.0, 0.5,
-			"Corte de sombra: 110 (con 20 de Hambre sigue en Lucidez, sin bonus)")
+	assert_almost_eq(1000.0 - enemy.health.current, 40.0 + 90.0, 0.5,
+			"Corte de sombra: 90 (con 20 de Hambre sigue en Lucidez, sin bonus)")
 
 
 func test_kunai_kill_does_not_add_hunger() -> void:
@@ -127,7 +127,7 @@ func test_night_echoes_every_hit() -> void:
 	_pump(12)
 	_slot.input._held[PlayerInput.Action.ATTACK] = false
 	_pump(10)
-	assert_almost_eq(1000.0 - enemy.health.current, 40.0, 0.5, "El corte de 20 pega doble")
+	assert_almost_eq(1000.0 - enemy.health.current, 34.0, 0.5, "El corte de 17 pega doble")
 
 
 func test_shadow_bite_costs_life_and_resets_on_kill() -> void:
@@ -214,3 +214,14 @@ func test_kunai_does_not_fly_over_low_walls() -> void:
 	assert_lt(reach, 5.0, "El kunai se clava en la pared bajita, no le pasa por arriba")
 	var landing: Vector3 = _kit._clamp_to_walls(Vector3.ZERO, Vector3(0, 0, 9))
 	assert_lt(landing.z, 4.5, "El viaje por la sombra no termina del otro lado de la pared")
+
+
+func test_poison_on_an_enemy_that_disappears_does_not_break() -> void:
+	RunState.add_upgrade(0, &"agucci_kunai_veneno")
+	var enemy: TalinorteanoCegado = enemy_at(Vector3(0, 0, -3), 1000.0)
+	_kit._on_kunai_hit(enemy, DamageInfo.new())
+	enemy.free()
+	for i: int in int(4.0 / DT):
+		_kit.tick(DT)
+	RunState.upgrades.clear()
+	assert_true(true, "El veneno sobre un enemigo borrado no da error")

@@ -12,6 +12,8 @@ const LUCK_TEXTS: Array[String] = ["¡Se resbaló!", "¡Le erró!", "¡Ni lo roz
 const CALL_TEXTS: Array[String] = ["¡Pájaros!", "¡Bichos!", "¡UN GRONK!"]
 const AURA_SHADER: Shader = preload("res://assets/shaders/fury_aura.gdshader")
 
+## Duración total de la Furia actual (para la barra del HUD).
+var _fury_total: float = 10.0
 var kd: TaliKitData
 var in_fury: bool = false
 ## Barra de Furia, de 0 a 100.
@@ -192,11 +194,13 @@ func move_speed_multiplier() -> float:
 	return 1.0
 
 
-func _enter_fury() -> void:
+## `bonus`: segundos extra (con la definitiva dura más).
+func _enter_fury(bonus: float = 0.0) -> void:
 	in_fury = true
 	fury = 100.0
 	_lockout = 0.0
-	_fury_time = _fury_duration()
+	_fury_time = _fury_duration() + bonus
+	_fury_total = _fury_time
 	_combo_index = 0
 	_attack_timer = 0.0
 	cancel_scheduled()
@@ -383,7 +387,7 @@ func _use_ultimate() -> bool:
 	if in_fury:
 		return _toss()
 	_roar()
-	_enter_fury()
+	_enter_fury(kd.ult_fury_bonus)
 	return true
 
 
@@ -425,7 +429,9 @@ func _toss() -> bool:
 	tween.tween_property(victim, "global_position", above_head, 0.18)
 	tween.tween_property(victim, "global_position", landing, 0.38) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_callback(_toss_land.bind(victim, landing))
+	tween.tween_callback(func() -> void:
+		if is_instance_valid(victim):
+			_toss_land(victim, landing))
 	return true
 
 
@@ -563,7 +569,7 @@ func _cd_text(cd: AbilityCooldown) -> String:
 
 func hud_bar() -> Dictionary:
 	if in_fury:
-		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / _fury_duration(),
+		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / maxf(_fury_total, _fury_time),
 				"color": Color(0.85, 0.15, 0.08), "pulse": true}
 	if is_exhausted():
 		return {"label": "Resaca", "value": 0.0, "color": Color(0.5, 0.5, 0.55), "pulse": false}

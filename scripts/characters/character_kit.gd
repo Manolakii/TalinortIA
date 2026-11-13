@@ -137,8 +137,17 @@ func _tick_scheduled(delta: float) -> void:
 			_scheduled.remove_at(i)
 	due.reverse()
 	for callback: Callable in due:
-		if callback.is_valid():
+		if callback.is_valid() and _bound_objects_alive(callback):
 			callback.call()
+
+
+## Si algo programado usa un enemigo (o un nodo) que ya se borró, no se ejecuta.
+## Por ejemplo, el veneno del kunai cuando el enemigo ya murió y desapareció.
+static func _bound_objects_alive(callback: Callable) -> bool:
+	for argument: Variant in callback.get_bound_arguments():
+		if typeof(argument) == TYPE_OBJECT and not is_instance_valid(argument):
+			return false
+	return true
 
 
 # --- Para sobreescribir en cada kit ---
