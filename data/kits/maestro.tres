@@ -60,3 +60,6 @@ companion_retreat_health = 0.4
 companion_recover_health = 0.7
 companion_regen = 0.03
 companion_safe_radius = 4.0
+companion_bastonazo_min_targets = 2
+companion_bastonazo_charge = 0.6
+companion_roll_min_distance = 4.0

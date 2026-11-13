@@ -341,6 +341,7 @@ func do_dodge() -> void:
 	player.visual.visible = false
 	Fx.ring_burst(_world(), start, 1.2, SHADOW_COLOR, 0.25)
 	schedule(kd.dissolve_duration, _reappear)
+	add_hunger(kd.dissolve_hunger)
 
 
 func _reappear() -> void:

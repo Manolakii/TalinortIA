@@ -73,6 +73,12 @@ extends Resource
 @export var companion_regen: float = 0.03
 ## "Sin enemigos cerca" = ninguno a esta distancia.
 @export var companion_safe_radius: float = 4.0
+## El Maestro (IA) tira el Bastonazo si en la línea hay al menos esta cantidad de enemigos...
+@export var companion_bastonazo_min_targets: int = 2
+## ...cargándolo este tiempo (0,6 s = 96 de daño).
+@export var companion_bastonazo_charge: float = 0.6
+## Stewie (IA) rueda hacia el objetivo si está más lejos que esto.
+@export var companion_roll_min_distance: float = 4.0
 @export var fallen_revive_time: float = 15.0
 @export var fallen_revive_health: float = 0.5
 @export var switch_cooldown: float = 6.0

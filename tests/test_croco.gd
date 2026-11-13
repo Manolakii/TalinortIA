@@ -26,7 +26,7 @@ func _pump(frames: int) -> void:
 func test_mode_follows_distance() -> void:
 	assert_eq(_kit.mode_for_distance(3.0), CrocoKit.Mode.SHOTGUN)
 	assert_eq(_kit.mode_for_distance(7.0), CrocoKit.Mode.PISTOL)
-	assert_eq(_kit.mode_for_distance(16.0), CrocoKit.Mode.RIFLE)
+	assert_eq(_kit.mode_for_distance(13.0), CrocoKit.Mode.RIFLE)
 
 
 func test_switching_mode_gives_bonus_to_first_shot() -> void:
@@ -46,8 +46,8 @@ func test_pistol_damage_and_rate() -> void:
 	_pump(1)
 	_kit.switch_bonus_ready = false
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
-	_pump(72)  # 4 tiros en ~0,94 s, más lo que tarda la última bala en llegar
-	assert_almost_eq(1000.0 - enemy.health.current, 16.0 * 4.0, 0.01, "3,2 tiros/s: 4 en 1 s")
+	_pump(72)  # tiros a los 0 y 0,625 s, más lo que tarda la bala en llegar
+	assert_almost_eq(1000.0 - enemy.health.current, 34.0 * 2.0, 0.01, "Revólver: 34 a 1,6 tiros/s")
 
 
 func test_rifle_burst() -> void:
@@ -130,15 +130,8 @@ func test_rail_damage_and_overheat() -> void:
 
 func test_mode_has_margin_at_the_edges() -> void:
 	_kit.mode = CrocoKit.Mode.PISTOL
-	assert_eq(_kit.mode_with_hysteresis(14.5), CrocoKit.Mode.PISTOL, "Apenas pasado el límite: sigue")
-	assert_eq(_kit.mode_with_hysteresis(16.0), CrocoKit.Mode.RIFLE, "Bien pasado: rifle")
+	assert_eq(_kit.mode_with_hysteresis(11.5), CrocoKit.Mode.PISTOL, "Apenas pasado el límite: sigue")
+	assert_eq(_kit.mode_with_hysteresis(12.5), CrocoKit.Mode.RIFLE, "Pasado 1 m: rifle")
 	_kit.mode = CrocoKit.Mode.RIFLE
-	assert_eq(_kit.mode_with_hysteresis(13.5), CrocoKit.Mode.RIFLE, "Volviendo, tampoco cambia enseguida")
-	assert_eq(_kit.mode_with_hysteresis(12.0), CrocoKit.Mode.PISTOL)
-	_kit.mode = CrocoKit.Mode.PISTOL
-	assert_eq(_kit.mode_with_hysteresis(4.0), CrocoKit.Mode.PISTOL)
-	assert_eq(_kit.mode_with_hysteresis(2.5), CrocoKit.Mode.SHOTGUN)
-
-
-func test_pistol_covers_a_wide_band() -> void:
-	assert_eq(_kit.mode_for_distance(12.0), CrocoKit.Mode.PISTOL, "La pistola llega hasta 14 m")
+	assert_eq(_kit.mode_with_hysteresis(10.5), CrocoKit.Mode.RIFLE, "Volviendo, tampoco cambia enseguida")
+	assert_eq(_kit.mode_with_hysteresis(9.5), CrocoKit.Mode.PISTOL)

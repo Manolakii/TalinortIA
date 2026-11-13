@@ -59,7 +59,7 @@ La regla que pidieron: **los personajes tienen menos vida que los enemigos, pero
 **Daño por golpe, para programar:**
 
 - **Agucci:** cortes 20 / 20 / 24, patada 14, UZI 5 balas de 6. Combo completo en \~1,4 s. Kunai 40.
-- **Croco:** pistola 16 por tiro (3,2 tiros/s); escopeta 7 perdigones de 10 (1 disparo/s); rifle ráfaga de 3 × 22 (1 ráfaga/s). Tiro por Contrato de 60 a 180 según la carga. Riel 120 por segundo durante 4 s.
+- **Croco:** pistola tipo revólver, 34 por tiro (1,6 tiros/s); escopeta 7 perdigones de 10 (1 disparo/s); rifle ráfaga de 3 × 22 (1 ráfaga/s). Tiro por Contrato de 60 a 180 según la carga. Riel 120 por segundo durante 4 s.
 - **Tali:** Piedrazo 18 cada 0,8 s. Zarpazos 34 / 34 / 52 cada 1,3 s. Aplastón 90 en área.
 - **Maestro:** bastón 18 / 18 / 34 (onda) cada 1,4 s. Bastonazo de 60 a 120 según la carga. **Stewie:** Cabezazo 14 cada 0,9 s.
 - **Pipo:** Bláster 32 cada 0,7 s. Torreta 10 por tiro, 2 tiros/s. Bombardeo 6 impactos de 90.

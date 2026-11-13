@@ -9,7 +9,7 @@ extends Resource
 ## En la zona de Hambre: +1% de daño por punto.
 @export var hunger_damage_per_point: float = 0.01
 ## Cada golpe común que conecta baja el Hambre esto.
-@export var hunger_drop_per_basic_hit: float = 1.5
+@export var hunger_drop_per_basic_hit: float = 0.3
 ## Cerca de Tali, el Hambre baja sola.
 @export var tali_synergy_radius: float = 6.0
 @export var tali_synergy_decay: float = 3.0
@@ -51,6 +51,8 @@ extends Resource
 @export var dissolve_duration: float = 0.25
 @export var dissolve_charges: int = 2
 @export var dissolve_recharge: float = 4.0
+## Disolverse también es de sombra: suma Hambre (pedido del grupo, se llenaba muy poco).
+@export var dissolve_hunger: float = 6.0
 
 @export_group("Noche del Valle sin Luz")
 @export var night_duration: float = 8.0

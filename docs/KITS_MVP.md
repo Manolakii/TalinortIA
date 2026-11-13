@@ -54,7 +54,7 @@ Tirador versátil y el personaje más rápido. El arma que le robó a Fadied cam
 
 **1 · Golpe común — Según el modo**
 - **Escopeta (cerca):** disparo en cono, 7 perdigones de 10, un disparo por segundo, con empuje.
-- **Pistola (media):** tiro a tiro, 16 de daño, 3,2 tiros por segundo.
+- **Pistola (media), tipo revólver:** tiro a tiro, 34 de daño, 1,6 tiros por segundo, con algo de empuje.
 - **Rifle (lejos):** ráfaga de 3 balas de 22, una ráfaga por segundo.
 
 **2 · Habilidad fuerte — Tiro por Contrato (CD 10 s)**
@@ -92,7 +92,7 @@ Tres cortes rápidos (20 / 20 / 24), una patada que empuja un poco (14) y despu�
 **2 · Habilidad fuerte — Paso de Sombra (CD 8 s, +20 de Hambre)**
 Tira un kunai (40 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino (110 por enemigo). Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
 
-**3 · Esquiva — Disolverse (2 cargas)**
+**3 · Esquiva — Disolverse (2 cargas, +6 de Hambre)**
 Se hunde en su sombra y reaparece unos metros más adelante, intangible durante el trayecto. Mejora en la tienda de Birig Bamba: deja atrás 3 shurikens que salen disparados hacia los enemigos cercanos.
 
 **4 · Definitiva — Noche del Valle sin Luz (+50 de Hambre)**

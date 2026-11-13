@@ -160,3 +160,19 @@ func test_stewie_ai_shells_up_inside_a_warning() -> void:
 	assert_true(enemy.threatens(_kit.companion.global_position))
 	_pump(1)
 	assert_true(_kit.companion.invulnerable_shell, "Stewie se mete en el caparazón")
+
+
+func test_maestro_ai_uses_bastonazo_on_lined_up_enemies() -> void:
+	_pump(1)
+	_kit.switch_cooldown.refill()
+	press(PlayerInput.Action.ULTIMATE)  # el Maestro pasa a la IA
+	_pump(1)
+	release(PlayerInput.Action.ULTIMATE)
+	var body: DuoCompanion = _kit.companion
+	assert_eq(body.identity, MaestroKit.Body.MAESTRO)
+	var first := enemy_at(body.global_position + Vector3(0, 0, -2.0), 1000.0)
+	var second := enemy_at(body.global_position + Vector3(0, 0, -5.0), 1000.0)
+	_kit._player_target = first
+	_pump(int(1.0 / DT))
+	assert_false(_kit._ability_cd[MaestroKit.Body.MAESTRO].is_ready(), "Usó el Bastonazo")
+	assert_lt(second.health.current, 1000.0, "La onda llegó al de atrás")

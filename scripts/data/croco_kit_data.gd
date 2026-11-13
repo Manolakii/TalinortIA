@@ -7,9 +7,9 @@ extends Resource
 ## Hasta esta distancia al enemigo apuntado: escopeta.
 @export var near_max_distance: float = 4.5
 ## Hasta esta distancia: pistola. Más lejos: rifle.
-@export var mid_max_distance: float = 14.0
+@export var mid_max_distance: float = 11.0
 ## Margen para no cambiar ida y vuelta en el límite: hay que pasarse este tanto.
-@export var mode_hysteresis: float = 1.5
+@export var mode_hysteresis: float = 1.0
 ## Para elegir "el enemigo apuntado": cono alrededor de la mira y distancia máxima.
 @export var target_cone_deg: float = 25.0
 @export var target_max_distance: float = 26.0
@@ -26,10 +26,12 @@ extends Resource
 @export var shotgun_speed: float = 32.0
 @export var shotgun_knockback: float = 5.0
 
-@export_group("Pistola (media)")
-@export var pistol_damage: float = 16.0
-## 3,2 tiros por segundo.
-@export var pistol_interval: float = 0.3125
+@export_group("Pistola (media), tipo revólver")
+## Pedido del grupo: más lenta y que pegue más (antes 16 a 3,2 tiros/s).
+@export var pistol_damage: float = 34.0
+## 1,6 tiros por segundo.
+@export var pistol_interval: float = 0.625
+@export var pistol_knockback: float = 2.5
 @export var pistol_range: float = 18.0
 @export var pistol_speed: float = 38.0
 

@@ -158,9 +158,11 @@ func _fire() -> void:
 			Events.camera_shake_requested.emit(Balance.combat.shake_light)
 		Mode.PISTOL:
 			_attack_timer = kd.pistol_interval
-			player.start_action(0.1, 0.85)
-			_shoot(make_hit(kd.pistol_damage * bonus), player.aim_direction, kd.pistol_speed,
-					kd.pistol_range)
+			player.start_action(0.14, 0.8)
+			var shot: DamageInfo = make_hit(kd.pistol_damage * bonus)
+			shot.knockback = kd.pistol_knockback
+			_shoot(shot, player.aim_direction, kd.pistol_speed, kd.pistol_range)
+			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.6)
 		Mode.RIFLE:
 			_attack_timer = kd.rifle_interval
 			player.start_action(kd.rifle_burst_gap * kd.rifle_burst + 0.1, 0.7)

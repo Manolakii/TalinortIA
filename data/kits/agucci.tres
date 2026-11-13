@@ -6,7 +6,7 @@
 script = ExtResource("1")
 lucidity_max = 30.0
 hunger_damage_per_point = 0.01
-hunger_drop_per_basic_hit = 1.5
+hunger_drop_per_basic_hit = 0.3
 tali_synergy_radius = 6.0
 tali_synergy_decay = 3.0
 cut_damage = Array[float]([20.0, 20.0, 24.0])
@@ -38,6 +38,7 @@ dissolve_distance = 4.5
 dissolve_duration = 0.25
 dissolve_charges = 2
 dissolve_recharge = 4.0
+dissolve_hunger = 6.0
 night_duration = 8.0
 night_hunger = 50.0
 night_echo_delay = 0.12

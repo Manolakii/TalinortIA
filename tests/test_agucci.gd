@@ -154,3 +154,16 @@ func test_shadow_dash_does_not_slide_after_arriving() -> void:
 	_pump(20)
 	assert_lte(_player._move_velocity.length(), _player.data.move_speed + 0.01,
 			"Al llegar, frena: no sigue patinando con la velocidad del viaje")
+
+
+func test_hunger_rises_mixing_basics_and_skills() -> void:
+	enemy_at(Vector3(0, 0, -1.5), 5000.0)
+	press(PlayerInput.Action.DODGE)
+	_pump(1)
+	release(PlayerInput.Action.DODGE)
+	assert_eq(_kit.hunger, 6.0, "Disolverse suma 6")
+	_pump(20)
+	_kit.hunger = 40.0
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_pump(int(1.45 / DT))
+	assert_gt(_kit.hunger, 36.0, "Un combo completo baja poco (~2,7)")

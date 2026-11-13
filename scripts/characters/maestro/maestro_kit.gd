@@ -267,17 +267,25 @@ func _update_charge(delta: float) -> void:
 		_charging = false
 		_ability_cd[Body.MAESTRO].use()
 		var ratio: float = clampf(_charge / kd.bastonazo_full_charge, 0.0, 1.0)
-		var from: Vector3 = player.global_position
-		var info: DamageInfo = _hit(player, lerpf(kd.bastonazo_min_damage, kd.bastonazo_max_damage, ratio))
-		info.knockback = 6.0
-		info.hitstop = Balance.combat.hitstop_heavy
-		info.shake = Balance.combat.shake_heavy * 0.4
-		var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
-				from, from + player.aim_direction * kd.bastonazo_length, kd.bastonazo_width)
-		Combat.deliver(info, targets)
-		Fx.beam(_world(), from + Vector3.UP * 0.3, player.aim_direction, kd.bastonazo_length,
-				kd.bastonazo_width * 0.6, Color(player.slot.color.lightened(0.5), 0.6), 0.25)
+		_fire_bastonazo(player, player.aim_direction, ratio)
 		player.start_action(0.25, 0.3)
+
+
+## Golpe al piso que lanza una onda de chi en línea (60 a 120 según la carga).
+func _fire_bastonazo(source: Node3D, direction: Vector3, ratio: float) -> void:
+	var from: Vector3 = source.global_position
+	var info: DamageInfo = _hit(source, lerpf(kd.bastonazo_min_damage, kd.bastonazo_max_damage, ratio))
+	info.knockback = 6.0
+	info.hitstop = Balance.combat.hitstop_heavy
+	info.shake = Balance.combat.shake_heavy * 0.4
+	Combat.deliver(info, _bastonazo_targets(from, direction))
+	Fx.beam(_world(), from + Vector3.UP * 0.3, direction, kd.bastonazo_length,
+			kd.bastonazo_width * 0.6, Color(player.slot.color.lightened(0.5), 0.6), 0.25)
+
+
+func _bastonazo_targets(from: Vector3, direction: Vector3) -> Array[Hurtbox]:
+	return CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES, from,
+			from + direction * kd.bastonazo_length, kd.bastonazo_width)
 
 
 func _refuge() -> void:
@@ -345,6 +353,8 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		var to_target: Vector3 = target.global_position - body.global_position
 		to_target.y = 0.0
 		var reach: float = (kd.staff_range if body.identity == Body.MAESTRO else kd.headbutt_range) * 0.85
+		if _companion_try_skill(body, to_target, reach):
+			return
 		if to_target.length() > reach:
 			body.steer(to_target.normalized(), speed, delta)
 		else:
@@ -357,6 +367,39 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 		body.steer(to_player.normalized(), speed * clampf(distance / 4.0, 0.4, 1.0), delta)
 	else:
 		body.stop(delta)
+
+
+## Habilidades de la IA (Senda base):
+##   Maestro: Bastonazo si le pega a 2 o más en línea, o al objetivo fuera del alcance del bastón.
+##   Stewie: Rodar para llegar rápido al objetivo, guardando siempre una carga para esquivar.
+func _companion_try_skill(body: DuoCompanion, to_target: Vector3, reach: float) -> bool:
+	var distance: float = to_target.length()
+	var direction: Vector3 = to_target / distance if distance > 0.01 else body.facing
+	if body.identity == Body.MAESTRO:
+		var ability_cd: AbilityCooldown = _ability_cd[Body.MAESTRO]
+		if not ability_cd.is_ready() or distance > kd.bastonazo_length * 0.9:
+			return false
+		var lined_up: int = _bastonazo_targets(body.global_position, direction).size()
+		if lined_up >= kd.companion_bastonazo_min_targets or distance > reach + 1.0:
+			ability_cd.use()
+			body.facing = direction
+			body.busy = kd.companion_bastonazo_charge + 0.25
+			say("¡Bastonazo!", Color(0.95, 0.9, 0.8), 0.8)
+			schedule(kd.companion_bastonazo_charge, _companion_bastonazo.bind(body, direction))
+			return true
+		return false
+	var dodge_cd: AbilityCooldown = _dodge_cd[Body.STEWIE]
+	if distance > kd.companion_roll_min_distance and dodge_cd.charges >= 2:
+		dodge_cd.use()
+		body.dash(direction, minf(kd.roll_distance, distance - reach), kd.roll_duration)
+		return true
+	return false
+
+
+func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:
+	if is_instance_valid(body) and not body.downed:
+		var ratio: float = clampf(kd.companion_bastonazo_charge / kd.bastonazo_full_charge, 0.0, 1.0)
+		_fire_bastonazo(body, direction, ratio)
 
 
 func _threat_to(body: DuoCompanion) -> Enemy:
