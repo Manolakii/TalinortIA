@@ -116,8 +116,9 @@ func _physics_process(delta: float) -> void:
 	if status.has(StatusEffects.STUN):
 		apply_movement(Vector2.ZERO, delta)
 		return
-	# Levantando a un compañero: no se mueve ni ataca.
+	# Levantando a un compañero: no se mueve ni ataca, y no lo empujan.
 	if revive.reviver_tick(delta):
+		knockback_velocity = Vector3.ZERO
 		apply_movement(Vector2.ZERO, delta)
 		face_aim_now()
 		return

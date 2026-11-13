@@ -77,8 +77,10 @@ extends Resource
 @export var companion_attack_pace: float = 1.35
 ## Fuera de pelea (sin enemigos cerca) se recupera de a poco, aunque no esté replegado.
 @export var companion_idle_regen: float = 0.02
-## Entre golpe y golpe se mueve un poquito de costado (parte de su velocidad).
-@export var companion_strafe: float = 0.35
+## Sin pelea, da vueltas alrededor del jugador a esta distancia (no se queda parado).
+@export var companion_idle_orbit: float = 3.0
+## Entre golpe y golpe se mueve de costado alrededor del enemigo (parte de su velocidad).
+@export var companion_strafe: float = 0.6
 ## El Maestro (IA) tira el Bastonazo si en la línea hay al menos esta cantidad de enemigos...
 @export var companion_bastonazo_min_targets: int = 2
 ## ...cargándolo este tiempo (0,6 s = 96 de daño).

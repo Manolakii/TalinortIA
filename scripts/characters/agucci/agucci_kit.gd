@@ -263,11 +263,26 @@ func _throw_kunai() -> void:
 
 ## Hasta dónde llega antes de chocar con una pared o roca (el kunai se clava ahí).
 func _range_until_obstacle(from: Vector3, direction: Vector3, max_range: float) -> float:
-	var query := PhysicsRayQueryParameters3D.create(from, from + direction * max_range, 1 | 512)
+	# Se mide a ras del piso: la pared sur es bajita y a la altura de la mano el kunai
+	# le pasaba por arriba y quedaba clavado afuera de la sala.
+	var low := Vector3(from.x, 0.3, from.z)
+	var query := PhysicsRayQueryParameters3D.create(low, low + direction * max_range, 1 | 512)
 	var hit: Dictionary = player.get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return max_range
-	return maxf(from.distance_to(hit["position"]) - 0.6, 0.5)
+	return maxf(low.distance_to(hit["position"]) - 0.6, 0.5)
+
+
+## Hasta dónde se puede llegar de `from` a `to` sin cruzar una pared de la sala.
+func _clamp_to_walls(from: Vector3, to: Vector3) -> Vector3:
+	var low_from := Vector3(from.x, 0.3, from.z)
+	var low_to := Vector3(to.x, 0.3, to.z)
+	var query := PhysicsRayQueryParameters3D.create(low_from, low_to, WORLD_LAYER)
+	var hit: Dictionary = player.get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return Vector3(to.x, 0.0, to.z)
+	var stop: Vector3 = (hit["position"] as Vector3) - (low_to - low_from).normalized() * 0.7
+	return Vector3(stop.x, 0.0, stop.z)
 
 
 func _on_kunai_hit(target: Node3D, _info: DamageInfo) -> void:
@@ -301,7 +316,7 @@ func _clear_kunai() -> void:
 ## Viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino.
 func _shadow_dash() -> void:
 	var from := Vector3(player.global_position.x, 0.0, player.global_position.z)
-	var to: Vector3 = _kunai_position
+	var to: Vector3 = _clamp_to_walls(from, _kunai_position)
 	_clear_kunai()
 	var offset: Vector3 = to - from
 	Fx.ring_burst(_world(), from, 1.4, SHADOW_COLOR)

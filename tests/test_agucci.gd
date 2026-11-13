@@ -198,3 +198,19 @@ func test_dissolve_goes_through_rocks_but_not_walls() -> void:
 	assert_eq(_player.collision_mask, AgucciKit.WORLD_LAYER, "En la sombra solo lo frenan las paredes")
 	_pump(20)
 	assert_eq(_player.collision_mask, 515, "Al reaparecer vuelve a chocar con todo")
+
+
+func test_kunai_does_not_fly_over_low_walls() -> void:
+	var wall := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(10, 0.8, 1)  # como la pared sur: bajita
+	shape.shape = box
+	wall.add_child(shape)
+	wall.position = Vector3(0, 0.4, 5)
+	add_child_autofree(wall)
+	await wait_physics_frames(2)
+	var reach: float = _kit._range_until_obstacle(Vector3(0, 1.1, 0), Vector3.BACK, 12.0)
+	assert_lt(reach, 5.0, "El kunai se clava en la pared bajita, no le pasa por arriba")
+	var landing: Vector3 = _kit._clamp_to_walls(Vector3.ZERO, Vector3(0, 0, 9))
+	assert_lt(landing.z, 4.5, "El viaje por la sombra no termina del otro lado de la pared")

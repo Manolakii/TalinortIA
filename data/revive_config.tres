@@ -6,7 +6,8 @@
 script = ExtResource("1")
 down_times = Array[float]([25.0, 19.0, 13.0, 8.0])
 revive_hold = 5.0
-revive_radius = 1.8
+revive_radius = 2.3
+progress_grace = 0.5
 revive_health = 0.4
 revive_invulnerability = 1.5
 crawl_speed = 1.2

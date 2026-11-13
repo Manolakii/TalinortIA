@@ -213,3 +213,22 @@ func test_switch_entrance_hits_around() -> void:
 	release(PlayerInput.Action.ULTIMATE)
 	assert_lt(enemy.health.current, 1000.0, "La entrada pega en área")
 	assert_true(enemy.status.has(StatusEffects.STUN), "Y lo deja tambaleando un instante")
+
+
+func test_when_both_fall_nobody_gets_up_alone() -> void:
+	_pump(1)
+	GameSettings.auto_revive_players = false
+	var ally: PlayerCharacter = make_player(&"tali", 1)
+	ally.global_position = Vector3(10, 0, 10)
+	_player.global_position = Vector3(0, 0, 0)
+	var hit := DamageInfo.new()
+	hit.amount = 9999.0
+	hit.attacker_team = DamageInfo.Team.ENEMIES
+	_player.receive_hit(hit)  # cae el Maestro: pasás a Stewie
+	_player.receive_hit(hit)  # cae Stewie también: caen los dos
+	assert_true(_player.is_downed(), "El jugador queda caído como cualquier otro")
+	var frozen_time: float = _kit.companion.downed_time
+	_pump(int(16.0 / DT))
+	assert_true(_player.health.is_dead, "Pasados 15 s no se levanta solo")
+	assert_almost_eq(_kit.companion.downed_time, frozen_time, 0.01, "El reloj del compañero se frenó")
+	GameSettings.auto_revive_players = true

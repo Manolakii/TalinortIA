@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1")
 id = &"maestro"
+initials = "MS"
 display_name = "Maestro Uwey y Stewie"
 blurb = "Dos cuerpos, un jugador. El Maestro desconfía de la tecnología; Stewie, de todo."
 max_health = 110.0

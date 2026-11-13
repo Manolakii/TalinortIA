@@ -9,7 +9,6 @@ extends CanvasLayer
 const GOLD_COLOR := Color(1.0, 0.8, 0.25)
 const PANEL_BG := Color(0.06, 0.06, 0.09, 0.82)
 const NAME_TIME := 2.5
-const INITIALS: Dictionary = {&"tali": "T", &"croco": "Cr", &"agucci": "A", &"maestro": "MS"}
 
 ## Hueco de habilidad: cooldown que baja como sombra y número encima del ícono.
 class AbilitySlot:
@@ -156,7 +155,7 @@ func _make_panel(player: PlayerCharacter) -> PlayerPanel:
 	portrait_style.set_corner_radius_all(31)
 	portrait.add_theme_stylebox_override("panel", portrait_style)
 	var initials := Label.new()
-	initials.text = INITIALS.get(player.data.id, player.data.display_name.left(1))
+	initials.text = player.data.initials if player.data.initials != "" else player.data.display_name.left(1)
 	initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	initials.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	initials.add_theme_font_size_override("font_size", 24)
@@ -261,6 +260,8 @@ func _update_panel(panel: PlayerPanel) -> void:
 
 	# Caído o afuera
 	panel.status_label.visible = player.is_downed() or player.is_out()
+	# Caído o afuera: el resto del panel se atenúa para que el cartel se lea limpio.
+	(panel.root.get_child(0) as Control).modulate.a = 0.25 if panel.status_label.visible else 1.0
 	if panel.status_label.visible:
 		if player.is_out():
 			panel.status_label.text = "AFUERA"

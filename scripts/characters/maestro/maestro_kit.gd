@@ -48,6 +48,8 @@ var _ai_target: Node3D
 var _ai_target_time: float = 0.0
 var _strafe_time: float = 0.0
 var _strafe_side: float = 1.0
+var _strafe_radial: float = 0.0
+var _orbit_angle: float = 0.0
 
 
 func _setup() -> void:
@@ -378,10 +380,7 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 			else:
 				_strafe_around(body, to_target, delta)
 		return
-	if distance > kd.follow_distance:
-		body.steer(to_player.normalized(), speed * clampf(distance / 4.0, 0.4, 1.0), delta)
-	else:
-		body.stop(delta)
+	_idle_orbit(body, delta)
 
 
 ## Habilidades de la IA (Senda base):
@@ -417,15 +416,31 @@ func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:
 		_fire_bastonazo(body, direction, ratio)
 
 
-## Entre golpes se mueve un poco de costado (cambia de lado cada tanto), sin alejarse.
+## Entre golpes gira alrededor del enemigo (cambia de lado cada tanto) y se acerca y se
+## aleja un poco, como un aliado de IA de un beat 'em up: se mueve, pero no se va.
 func _strafe_around(body: DuoCompanion, to_target: Vector3, delta: float) -> void:
 	_strafe_time -= delta
 	if _strafe_time <= 0.0:
-		_strafe_time = randf_range(0.8, 1.6)
-		_strafe_side = -_strafe_side
-	var side := Vector3(-to_target.z, 0.0, to_target.x).normalized() * _strafe_side
-	body.steer(side, body.move_speed * kd.companion_strafe, delta)
-	body.facing = to_target.normalized()
+		_strafe_time = randf_range(0.7, 1.4)
+		_strafe_side = -_strafe_side if randf() < 0.7 else _strafe_side
+		_strafe_radial = randf_range(-0.5, 0.35)
+	var forward: Vector3 = to_target.normalized()
+	var side := Vector3(-forward.z, 0.0, forward.x) * _strafe_side
+	body.steer((side + forward * _strafe_radial).normalized(), body.move_speed * kd.companion_strafe, delta)
+	body.facing = forward
+
+
+## Sin pelea, da vueltas alrededor del jugador en vez de quedarse parado.
+func _idle_orbit(body: DuoCompanion, delta: float) -> void:
+	_orbit_angle += delta * 0.6
+	var spot: Vector3 = player.global_position + Vector3(cos(_orbit_angle), 0.0,
+			sin(_orbit_angle)) * kd.companion_idle_orbit
+	var to_spot: Vector3 = spot - body.global_position
+	to_spot.y = 0.0
+	if to_spot.length() > 0.4:
+		body.steer(to_spot.normalized(), body.move_speed * clampf(to_spot.length() / 3.0, 0.35, 1.0), delta)
+	else:
+		body.stop(delta)
 
 
 ## El aviso naranja que tiene encima, si hay uno.
@@ -713,10 +728,11 @@ func _on_companion_died(_info: DamageInfo) -> void:
 			roundi(kd.fallen_revive_time)], Color(1.0, 0.7, 0.7))
 
 
+func player_is_down() -> bool:
+	return player.health.is_dead
+
+
 func revive_companion() -> void:
-	# Si el jugador estaba caído (cayeron los dos), el que se levanta lo levanta también.
-	if player.is_downed():
-		player.complete_revive()
 	companion.set_downed(false)
 	companion.health.restore_full()
 	companion.health.current = companion.health.max_health * kd.fallen_revive_health

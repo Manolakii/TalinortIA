@@ -5,6 +5,8 @@ extends Resource
 
 @export var id: StringName
 @export var display_name: String = ""
+## Iniciales para el retrato del HUD y el círculo de revivir (hasta que haya retratos).
+@export var initials: String = ""
 ## Texto corto que se muestra en la pantalla de unión.
 @export_multiline var blurb: String = ""
 

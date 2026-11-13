@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1")
 id = &"agucci"
+initials = "A"
 display_name = "Agucci"
 blurb = "Desertor del Alto Mando. Su sombra tiene opiniones."
 max_health = 90.0

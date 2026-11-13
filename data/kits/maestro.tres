@@ -71,4 +71,5 @@ companion_defend_radius = 3.5
 companion_target_commit = 0.8
 companion_attack_pace = 1.35
 companion_idle_regen = 0.02
-companion_strafe = 0.35
+companion_strafe = 0.6
+companion_idle_orbit = 3.0

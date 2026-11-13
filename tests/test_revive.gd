@@ -90,3 +90,21 @@ func test_solo_player_does_not_go_down() -> void:
 	await wait_physics_frames(1)
 	_kill(_player)
 	assert_false(_player.revive.downed, "Jugando solo, si caés se termina")
+
+
+func test_short_interruptions_do_not_lose_progress() -> void:
+	_kill(_ally)
+	_slot.input._held[PlayerInput.Action.INTERACT] = true
+	_both(int(2.0 / DT))
+	var before: float = _ally.revive.progress
+	_slot.input._held[PlayerInput.Action.INTERACT] = false
+	_both(15)  # 0,25 s sin levantar (por ejemplo, un golpe)
+	assert_almost_eq(_ally.revive.progress, before, 0.001, "Un corte chiquito no hace perder progreso")
+
+
+func test_reviver_is_not_pushed_away() -> void:
+	_kill(_ally)
+	_slot.input._held[PlayerInput.Action.INTERACT] = true
+	_player.knockback_velocity = Vector3(10, 0, 0)
+	_both(1)
+	assert_eq(_player.knockback_velocity, Vector3.ZERO, "Mientras levanta, no lo empujan")

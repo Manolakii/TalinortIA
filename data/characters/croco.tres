@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1")
 id = &"croco"
+initials = "Cr"
 display_name = "Mercenario Croco"
 blurb = "Lo hace por la plata. Bah, por la plata que algún día le van a pagar."
 max_health = 100.0

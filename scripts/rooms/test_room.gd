@@ -11,6 +11,8 @@ const RESULT_SCENE: PackedScene = preload("res://scenes/ui/room_result.tscn")
 ## Si tiene oleadas, es una sala de combate (se gana o se pierde). Si no, sala de prueba
 ## con enemigos infinitos.
 @export var combat_waves: RoomWaves
+## Interior de la sala (x, z): red de seguridad, si algo queda afuera vuelve adentro.
+@export var room_bounds: Rect2 = Rect2(-23.6, -15.6, 47.2, 31.2)
 
 @onready var _environment: WorldEnvironment = $WorldEnvironment
 @onready var _spawn_points: Node3D = $SpawnPoints
@@ -120,3 +122,20 @@ func _on_player_out(player: Node3D) -> void:
 	var targets: Array[Node3D] = _camera.targets.duplicate()
 	targets.erase(player)
 	_camera.targets = targets
+
+
+## Red de seguridad: si un jugador, compañero o enemigo quedó fuera de la sala (por un
+## movimiento muy rápido o un bug), vuelve al borde de adentro.
+func _physics_process(_delta: float) -> void:
+	for group: StringName in [&"enemy_targets", &"enemies"]:
+		for node: Node in get_tree().get_nodes_in_group(group):
+			var body := node as Node3D
+			if body == null:
+				continue
+			var p: Vector3 = body.global_position
+			var inside := Vector2(clampf(p.x, room_bounds.position.x, room_bounds.end.x),
+					clampf(p.z, room_bounds.position.y, room_bounds.end.y))
+			if not is_equal_approx(inside.x, p.x) or not is_equal_approx(inside.y, p.z):
+				body.global_position = Vector3(inside.x, p.y, inside.y)
+				if body is Node3D:
+					body.reset_physics_interpolation()

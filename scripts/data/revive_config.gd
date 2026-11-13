@@ -6,7 +6,10 @@ extends Resource
 @export var down_times: Array[float] = [25.0, 19.0, 13.0, 8.0]
 ## Un compañero mantiene interactuar este tiempo al lado del caído.
 @export var revive_hold: float = 5.0
-@export var revive_radius: float = 1.8
+@export var revive_radius: float = 2.3
+## Si el que revive deja de hacerlo un instante (lo empujan, un golpe), el progreso espera
+## este tiempo antes de empezar a bajar.
+@export var progress_grace: float = 0.5
 ## Vida con la que se levanta (parte de la máxima).
 @export var revive_health: float = 0.4
 @export var revive_invulnerability: float = 1.5

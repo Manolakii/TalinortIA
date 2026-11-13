@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1")
 id = &"tali"
+initials = "T"
 display_name = "Tali"
 blurb = "Torpe, con suerte absurda y una Furia que da miedo."
 max_health = 150.0

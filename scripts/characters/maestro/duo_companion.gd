@@ -102,6 +102,10 @@ func extras() -> Node3D:
 
 func _physics_process(delta: float) -> void:
 	if downed:
+		# Si cayeron los dos (el jugador también está caído), el reloj se frena: el jugador
+		# queda caído como cualquier otro y lo tienen que levantar los compañeros.
+		if kit != null and kit.player_is_down():
+			return
 		downed_time -= delta
 		if downed_time <= 0.0 and kit != null:
 			kit.revive_companion()
