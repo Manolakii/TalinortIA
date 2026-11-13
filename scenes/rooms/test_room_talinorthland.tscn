@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/enemy_spawner.gd" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/talinorteano_cegado.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="9"]
+[ext_resource type="Script" path="res://scripts/rooms/occlusion_helper.gd" id="10"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.36, 0.53, 0.78, 1)
@@ -255,3 +256,6 @@ target_count = 6
 spawn_area = Vector2(40, 26)
 
 [node name="Hud" parent="." instance=ExtResource("9")]
+
+[node name="Occlusion" type="Node" parent="."]
+script = ExtResource("10")
