@@ -5,6 +5,10 @@
 [ext_resource type="Script" path="res://scripts/camera/shared_camera.gd" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/debug_overlay.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/ui/damage_numbers.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_spawner.gd" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/talinorteano_cegado.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/debug_hud.tscn" id="9"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.36, 0.53, 0.78, 1)
@@ -235,3 +239,14 @@ script = ExtResource("3")
 [node name="PauseMenu" parent="." instance=ExtResource("4")]
 
 [node name="DebugOverlay" parent="." instance=ExtResource("5")]
+
+[node name="DamageNumbers" type="Node3D" parent="."]
+script = ExtResource("6")
+
+[node name="EnemySpawner" type="Node3D" parent="."]
+script = ExtResource("7")
+enemy_scene = ExtResource("8")
+target_count = 5
+spawn_area = Vector2(40, 26)
+
+[node name="DebugHud" parent="." instance=ExtResource("9")]
