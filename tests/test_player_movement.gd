@@ -66,3 +66,81 @@ func test_aims_where_it_walks_without_right_stick() -> void:
 	_slot.input.move = Vector2.RIGHT
 	_step(2)
 	assert_almost_eq(_player.aim_direction, Vector3.RIGHT, Vector3.ONE * 0.001)
+
+
+# --- Esquiva ---
+
+func _press(action: PlayerInput.Action) -> void:
+	_slot.input._prev[action] = false
+	_slot.input._held[action] = true
+
+
+func _release(action: PlayerInput.Action) -> void:
+	_slot.input._prev[action] = _slot.input._held[action]
+	_slot.input._held[action] = false
+
+
+func test_dodge_gives_short_invulnerability() -> void:
+	_press(PlayerInput.Action.DODGE)
+	_step(1)
+	assert_true(_player.is_dodging())
+	assert_true(_player.health.is_invulnerable(), "Invulnerable al inicio")
+	_release(PlayerInput.Action.DODGE)
+	_step(16)  # ~0,27 s
+	assert_false(_player.health.is_invulnerable(), "Solo 0,25 s")
+
+
+func test_dodge_travels_its_distance() -> void:
+	# Se mide velocidad × duración: llamando a _physics_process a mano, move_and_slide
+	# usa otro delta y la posición no sirve para medir.
+	var character: CharacterData = _slot.character
+	_slot.input.move = Vector2.RIGHT
+	_press(PlayerInput.Action.DODGE)
+	var frames_dodging: int = 0
+	for i: int in 40:
+		_step(1)
+		if i == 0:
+			_release(PlayerInput.Action.DODGE)
+			_slot.input.move = Vector2.ZERO
+		if _player.is_dodging():
+			frames_dodging += 1
+			assert_almost_eq(_player.velocity.x, character.dodge_distance / character.dodge_duration, 0.01)
+	assert_almost_eq(frames_dodging * DT * character.dodge_distance / character.dodge_duration,
+			character.dodge_distance, 0.25)
+
+
+func test_dodge_uses_charges() -> void:
+	for i: int in 3:
+		_press(PlayerInput.Action.DODGE)
+		_step(1)
+		_release(PlayerInput.Action.DODGE)
+		_step(20)
+	assert_eq(_player.kit.dodge_cooldown.charges, 0, "Con 2 cargas, la tercera no sale")
+
+
+func test_dodge_cancels_action() -> void:
+	_player.start_action(1.0)
+	_step(1)
+	assert_true(_player.is_in_action())
+	_press(PlayerInput.Action.DODGE)
+	_step(1)
+	assert_true(_player.is_dodging(), "La esquiva corta cualquier acción")
+
+
+func test_dodge_is_buffered() -> void:
+	_press(PlayerInput.Action.DODGE)
+	_step(1)
+	_release(PlayerInput.Action.DODGE)
+	_step(12)  # todavía esquivando, pero ya en los últimos 0,15 s
+	_press(PlayerInput.Action.DODGE)
+	_step(1)
+	_release(PlayerInput.Action.DODGE)
+	_step(8)  # termina la primera esquiva: sale la segunda guardada
+	assert_eq(_player.kit.dodge_cooldown.charges, 0, "La segunda esquiva salió por el buffer")
+
+
+func test_frozen_player_does_not_move() -> void:
+	_slot.input.move = Vector2.RIGHT
+	_player.freeze(0.1)
+	_step(3)
+	assert_eq(_player.global_position.x, 0.0, "Durante el hitstop no se mueve")

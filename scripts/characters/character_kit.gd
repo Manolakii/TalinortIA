@@ -1,0 +1,146 @@
+class_name CharacterKit
+extends Node
+## Base de los kits de personaje. Decide qué hace cada botón; el PlayerCharacter
+## se encarga del movimiento, la esquiva y los estados.
+##
+## Este kit base solo esquiva (lo usan los personajes que todavía no tienen kit).
+
+var player: PlayerCharacter
+var data: CharacterData
+var dodge_cooldown: AbilityCooldown
+## Barra de definitiva, de 0 a 100.
+var ult_charge: float = 0.0
+
+var _scheduled: Array[Dictionary] = []
+
+
+func setup(owner_player: PlayerCharacter) -> void:
+	player = owner_player
+	data = owner_player.data
+	dodge_cooldown = AbilityCooldown.new(data.dodge_recharge, data.dodge_charges)
+	_setup()
+
+
+## Cooldowns, barras y acciones programadas. Lo llama el jugador si no está congelado.
+func tick(delta: float) -> void:
+	dodge_cooldown.tick(delta)
+	_tick_scheduled(delta)
+	_tick(delta)
+
+
+## Lee los botones (con buffer) y dispara acciones.
+func handle_input() -> void:
+	if player.has_buffered(PlayerInput.Action.DODGE) and can_dodge():
+		player.consume_buffered(PlayerInput.Action.DODGE)
+		do_dodge()
+	var wants_ult: bool = player.has_buffered(PlayerInput.Action.ULTIMATE)
+	if wants_ult and ult_charge >= 100.0 and player.can_act():
+		player.consume_buffered(PlayerInput.Action.ULTIMATE)
+		if _use_ultimate():
+			ult_charge = 0.0
+	_handle_input()
+
+
+func can_dodge() -> bool:
+	return dodge_cooldown.is_ready() and not player.is_dodging()
+
+
+## Esquiva genérica: cancela lo que esté haciendo.
+func do_dodge() -> void:
+	dodge_cooldown.use()
+	cancel_scheduled()
+	player.start_dodge(dodge_direction(), data.dodge_distance, data.dodge_duration)
+
+
+## Hacia donde camina; si está quieto, hacia donde apunta.
+func dodge_direction() -> Vector3:
+	var move: Vector2 = player.slot.input.move
+	if move != Vector2.ZERO:
+		return Vector3(move.x, 0.0, move.y).normalized()
+	return player.aim_direction
+
+
+func add_ult(points: float) -> void:
+	ult_charge = clampf(ult_charge + points, 0.0, 100.0)
+
+
+## Llamado cuando un golpe de este jugador conectó.
+func on_damage_dealt(info: DamageInfo, _target: Node3D) -> void:
+	add_ult(info.final_amount * data.ult_per_damage_dealt)
+	_on_damage_dealt(info, _target)
+
+
+## Llamado cuando este jugador recibió un golpe.
+func on_damage_taken(info: DamageInfo) -> void:
+	add_ult(info.final_amount * data.ult_per_damage_taken)
+	_on_damage_taken(info)
+
+
+# --- Programar acciones (respetan el hitstop y se cancelan con la esquiva) ---
+
+func schedule(delay: float, callback: Callable) -> void:
+	_scheduled.append({"time": delay, "callback": callback})
+
+
+func cancel_scheduled() -> void:
+	_scheduled.clear()
+
+
+func _tick_scheduled(delta: float) -> void:
+	if _scheduled.is_empty():
+		return
+	var due: Array[Callable] = []
+	for i: int in range(_scheduled.size() - 1, -1, -1):
+		_scheduled[i]["time"] -= delta
+		if _scheduled[i]["time"] <= 0.0:
+			due.append(_scheduled[i]["callback"])
+			_scheduled.remove_at(i)
+	due.reverse()
+	for callback: Callable in due:
+		if callback.is_valid():
+			callback.call()
+
+
+# --- Para sobreescribir en cada kit ---
+
+func _setup() -> void:
+	pass
+
+
+func _tick(_delta: float) -> void:
+	pass
+
+
+func _handle_input() -> void:
+	pass
+
+
+## Devuelve true si la definitiva se usó (y hay que vaciar la barra).
+func _use_ultimate() -> bool:
+	return false
+
+
+func _on_damage_dealt(_info: DamageInfo, _target: Node3D) -> void:
+	pass
+
+
+func _on_damage_taken(_info: DamageInfo) -> void:
+	pass
+
+
+## Texto si el golpe se esquiva por algo propio del kit; "" si no.
+func try_avoid(_info: DamageInfo) -> String:
+	return ""
+
+
+func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
+	pass
+
+
+func move_speed_multiplier() -> float:
+	return 1.0
+
+
+## Líneas para el HUD de prueba.
+func debug_lines() -> Array[String]:
+	return ["Definitiva %d%%" % roundi(ult_charge), "Esquiva %d/%d" % [dodge_cooldown.charges, dodge_cooldown.max_charges]]

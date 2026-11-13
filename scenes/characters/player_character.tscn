@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/components/state_machine.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/characters/states/idle_state.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/characters/states/move_state.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/characters/states/dodge_state.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/characters/states/action_state.gd" id="6"]
 
 [node name="PlayerCharacter" type="CharacterBody3D"]
 collision_layer = 4
@@ -30,3 +32,9 @@ script = ExtResource("3")
 
 [node name="Move" type="Node" parent="StateMachine"]
 script = ExtResource("4")
+
+[node name="Dodge" type="Node" parent="StateMachine"]
+script = ExtResource("5")
+
+[node name="Action" type="Node" parent="StateMachine"]
+script = ExtResource("6")
