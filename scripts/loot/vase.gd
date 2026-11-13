@@ -1,6 +1,7 @@
 class_name Vase
 extends StaticBody3D
-## Vasija: se rompe de un golpe y suelta oro para cada jugador (GDD: 2 a 6 en el Stage 1).
+## Vasija: se rompe de un golpe y, a veces, suelta oro (GDD: 2 a 6 en el Stage 1) solo para
+## el jugador que la rompió (pedido del grupo: si no, todos se llenaban de oro).
 ## Tiene un Hurtbox de "objeto": se le puede pegar, pero el apuntado no la busca.
 
 const CLAY := Color(0.62, 0.36, 0.22)
@@ -58,18 +59,22 @@ func is_targetable() -> bool:
 func receive_hit(info: DamageInfo) -> bool:
 	if _broken or info.attacker_team != DamageInfo.Team.PLAYERS:
 		return false
-	smash()
+	smash(_breaker_of(info.attacker))
 	return true
 
 
-func smash() -> void:
+## Rompe la vasija. El oro (si tiene) es de `breaker`; sin dueño, del jugador más cercano.
+func smash(breaker: PlayerCharacter = null) -> void:
 	if _broken:
 		return
 	_broken = true
 	collision_layer = 0
 	_hurtbox.queue_free()
-	Loot.drop_for_all(get_parent(), global_position, Balance.economy.vase_gold,
-			Balance.economy.vase_drop_chance)
+	if breaker == null:
+		breaker = _nearest_player()
+	var economy: EconomyConfig = Balance.economy
+	if breaker != null and RunState.rng.randf() < economy.vase_drop_chance:
+		Loot.drop(get_parent(), global_position, breaker, Loot.amount_for(economy.vase_gold, RunState.stage))
 	Fx.ring_burst(get_parent(), global_position, 0.9, CLAY.lightened(0.2), 0.2)
 	# Pedazos que saltan.
 	for i: int in 5:
@@ -90,3 +95,28 @@ func smash() -> void:
 	var cleanup: Tween = create_tween()
 	cleanup.tween_interval(1.2)
 	cleanup.tween_callback(queue_free)
+
+
+## Quién la rompió: el jugador, o el dueño del compañero del dúo (o de un señuelo).
+func _breaker_of(attacker: Node) -> PlayerCharacter:
+	if not is_instance_valid(attacker):
+		return null
+	if attacker is PlayerCharacter:
+		return attacker
+	if attacker is DuoCompanion and is_instance_valid(attacker.kit):
+		return (attacker.kit as CharacterKit).player
+	return null
+
+
+func _nearest_player() -> PlayerCharacter:
+	var best: PlayerCharacter = null
+	var best_distance: float = INF
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var player := node as PlayerCharacter
+		if player == null or player.is_out():
+			continue
+		var d: float = player.global_position.distance_to(global_position)
+		if d < best_distance:
+			best_distance = d
+			best = player
+	return best

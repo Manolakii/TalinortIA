@@ -118,6 +118,20 @@ func test_vases_do_not_always_have_gold() -> void:
 	assert_between(with_gold, 8, 32, "Alrededor de la mitad tiene oro")
 
 
+func test_vase_gold_is_only_for_who_broke_it() -> void:
+	var p2: PlayerCharacter = make_player(&"croco", 1)
+	var chance: float = Balance.economy.vase_drop_chance
+	Balance.economy.vase_drop_chance = 1.0
+	var vase := Vase.new()
+	add_child(vase)
+	var info: DamageInfo = p2.kit.make_hit(10.0)
+	vase.receive_hit(info)
+	Balance.economy.vase_drop_chance = chance
+	assert_gt(_coins().size(), 0)
+	for coin: GoldCoin in _coins():
+		assert_eq(coin.slot_index, 1, "Solo para el que la rompió (P2)")
+
+
 func test_aim_ignores_vases() -> void:
 	var vase := Vase.new()
 	vase.position = Vector3(1.0, 0, -2.0)
