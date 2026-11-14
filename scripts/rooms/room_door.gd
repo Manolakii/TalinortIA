@@ -134,6 +134,9 @@ func _build_icon(type: int) -> void:
 			_cage()
 		RoomKind.Type.PIPO_CABIN:
 			_hut()
+		RoomKind.Type.BOSS:
+			_crown()
+			_icon.scale *= 1.4
 
 
 func _swords(offset: Vector3) -> void:

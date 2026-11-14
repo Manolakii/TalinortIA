@@ -4,7 +4,7 @@ extends RefCounted
 ## Las puertas muestran el PREMIO (mejora, oro o desafío) y lo que hay adentro es sorpresa
 ## (pedido del grupo). Tesoro y Cabaña de Pipo son salas extra escondidas.
 
-enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN, ESCORT, MAZE, STAMPEDE }
+enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN, ESCORT, MAZE, STAMPEDE, BOSS }
 enum Reward { NONE, UPGRADE, GOLD, CHALLENGE }
 
 const NAMES: Dictionary = {
@@ -17,6 +17,7 @@ const NAMES: Dictionary = {
 	Type.ESCORT: "Evento: escoltá la carreta",
 	Type.MAZE: "Evento: laberinto de los Gronks",
 	Type.STAMPEDE: "Evento: la estampida",
+	Type.BOSS: "Boss: Gronk Gigante",
 }
 ## Los eventos (no se repite el mismo seguido).
 const EVENTS: Array[int] = [Type.MIMICS, Type.PRISONERS, Type.ESCORT, Type.MAZE, Type.STAMPEDE]

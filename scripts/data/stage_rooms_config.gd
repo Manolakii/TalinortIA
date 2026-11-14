@@ -7,6 +7,8 @@ extends Resource
 ## Nombre de cada escenario (X-1, X-2, X-3). El X-4 es el boss.
 @export var scenario_names: Array[String] = []
 @export var rooms_per_scenario: int = 3
+## El X-4: una sola sala, la del boss.
+@export var boss_scenario_name: String = "1-4 · Gronk Gigante"
 ## Plantillas de sala: escenas con rocas y lugares para vasijas, cofres y eventos.
 @export var templates: Array[PackedScene] = []
 
@@ -14,7 +16,7 @@ extends Resource
 ## Qué hay detrás de una puerta (sorpresa), en el orden de RoomKind.Type: Combate, Élite,
 ## Tesoro (0: es escondido), Mimics, Colonia de presos, Cabaña (0: es escondida), Carreta,
 ## Laberinto, Barranco. Pedido del grupo: más eventos (45%).
-@export var room_weights: Array[int] = [40, 15, 0, 9, 9, 0, 9, 9, 9]
+@export var room_weights: Array[int] = [40, 15, 0, 9, 9, 0, 9, 9, 9, 0]
 ## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío.
 @export var reward_weights: Array[int] = [0, 45, 35, 20]
 ## Premio de Oro: para cada jugador.
