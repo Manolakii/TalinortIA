@@ -27,6 +27,7 @@ var _woken: int = 0
 var _finished: bool = false
 var _noise_positions: Array[Vector3] = []
 var _chest: Chest
+var _passages: Array = []
 var _label: Label
 
 
@@ -40,6 +41,7 @@ func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerato
 	var exit_col: int = rng.randi_range(0, COLS - 1)
 	_build_maze(rng, COLS / 2, exit_col)
 	_place_gronks(rng)
+	_place_traps(rng)
 	var chest := Chest.new()
 	chest.gold_table = Balance.economy.event_chest_gold
 	# Cerca de la salida, sin pisar el lugar de las puertas (x = ±7).
@@ -151,6 +153,26 @@ func woken_count() -> int:
 
 # --- Armado ---
 
+## Guillotinas en pasillos y pinchos en celdas (pedido del grupo: era muy fácil).
+func _place_traps(rng: RandomNumberGenerator) -> void:
+	var passages: Array = _passages.duplicate()
+	for i: int in mini(_config.maze_guillotines, passages.size()):
+		var passage: Array = passages.pop_at(rng.randi_range(0, passages.size() - 1))
+		var trap := MazeTrap.new()
+		trap.position = passage[0]
+		add_child(trap)
+		trap.setup(MazeTrap.Kind.GUILLOTINE, passage[1], passage[2], _config.maze_trap_damage, rng.randf())
+	var cells: Array[Vector2i] = []
+	for col: int in COLS:
+		for row: int in ROWS - 1:
+			cells.append(Vector2i(col, row))
+	for i: int in mini(_config.maze_spikes, cells.size()):
+		var cell: Vector2i = cells.pop_at(rng.randi_range(0, cells.size() - 1))
+		var trap := MazeTrap.new()
+		trap.position = _cell_center(cell.x, cell.y) + Vector3(rng.randf_range(-1.2, 1.2), 0, 0)
+		add_child(trap)
+		trap.setup(MazeTrap.Kind.SPIKES, Vector3.BACK, 2.6, _config.maze_trap_damage * 0.8, rng.randf())
+
 func _place_gronks(rng: RandomNumberGenerator) -> void:
 	var cells: Array[Vector2i] = []
 	for col: int in COLS:
@@ -204,6 +226,14 @@ func _build_maze(rng: RandomNumberGenerator, entrance_col: int, exit_col: int) -
 		stack.append(chosen)
 	var cell_w: float = (MAX_X - MIN_X) / COLS
 	var cell_h: float = (MAX_Z - MIN_Z) / ROWS
+	# Pasillos abiertos (para las guillotinas): centro, dirección de la cuchilla y largo.
+	for col: int in COLS:
+		for row: int in ROWS:
+			var here: Vector3 = _cell_center(col, row)
+			if col < COLS - 1 and not right_walls[col][row]:
+				_passages.append([here + Vector3(cell_w * 0.5, 0, 0), Vector3.BACK, cell_h - WALL_THICKNESS])
+			if row < ROWS - 1 and not bottom_walls[col][row]:
+				_passages.append([here + Vector3(0, 0, cell_h * 0.5), Vector3.RIGHT, cell_w - WALL_THICKNESS])
 	# Paredes interiores.
 	for col: int in COLS:
 		for row: int in ROWS:

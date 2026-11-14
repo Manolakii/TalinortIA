@@ -455,31 +455,92 @@ func companion_think(body: DuoCompanion, delta: float) -> void:
 	_idle_orbit(body, delta)
 
 
-## Habilidades de la IA (Senda base):
-##   Maestro: Bastonazo si le pega a 2 o más en línea, o al objetivo fuera del alcance del bastón.
-##   Stewie: Rodar para llegar rápido al objetivo, guardando siempre una carga para esquivar.
+## Habilidades de la IA (pedido del grupo: que tire más habilidades, no solo acompañar y pegar).
+##   Maestro: su Senda de habilidad cuando conviene; si no, Bastonazo apenas tiene a alguien a
+##   tiro; Garrocha para entrar a la pelea (con la Senda Caída, cae pegando).
+##   Stewie: su Senda (Fortaleza si lo rodean, Caparazón Bala, Manantial si alguien está herido);
+##   sin Senda, Caparazón para tanquear cuando lo rodean; Rodar para llegar o atravesar enemigos.
 func _companion_try_skill(body: DuoCompanion, to_target: Vector3, reach: float) -> bool:
 	var distance: float = to_target.length()
 	var direction: Vector3 = to_target / distance if distance > 0.01 else body.facing
+	var around: int = CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
+			body.global_position, 3.5).size()
+	var ability_cd: AbilityCooldown = _ability_cd[body.identity]
+	var dodge_cd: AbilityCooldown = _dodge_cd[body.identity]
 	if body.identity == Body.MAESTRO:
-		var ability_cd: AbilityCooldown = _ability_cd[Body.MAESTRO]
-		if not ability_cd.is_ready() or distance > kd.bastonazo_length * 0.9:
-			return false
-		var lined_up: int = _bastonazo_targets(body.global_position, direction).size()
-		if lined_up >= kd.companion_bastonazo_min_targets or distance > reach + 1.0:
+		var path: StringName = senda(&"maestro", &"ability")
+		if ability_cd.is_ready() and path != &"":
+			var worth: bool = (path == &"guia" and distance <= 6.0) \
+					or (path == &"combate" and around >= 1) \
+					or (path == &"niebla" and distance <= 8.0)
+			if worth:
+				ability_cd.use()
+				body.facing = direction
+				body.busy = 2.0 if path == &"combate" else 0.4
+				_maestro_senda_ability(body, direction)
+				return true
+		elif ability_cd.is_ready() and distance <= kd.bastonazo_length * 0.9 and distance > 1.2:
 			ability_cd.use()
 			body.facing = direction
 			body.busy = kd.companion_bastonazo_charge + 0.25
 			say("¡Bastonazo!", Color(0.95, 0.9, 0.8), 0.8)
 			schedule(kd.companion_bastonazo_charge, _companion_bastonazo.bind(body, direction))
 			return true
+		# Garrocha: entra a la pelea saltando (se guarda una carga para esquivar).
+		if dodge_cd.charges >= 2 and distance > reach + 2.5 and distance < kd.pole_distance + reach + 1.0:
+			dodge_cd.use()
+			body.dash(direction, minf(kd.pole_distance, distance - reach), kd.pole_duration)
+			if senda(&"maestro", &"dodge") != &"":
+				schedule(kd.pole_duration, _pole_landing.bind(body))
+			return true
 		return false
-	var dodge_cd: AbilityCooldown = _dodge_cd[Body.STEWIE]
-	if distance > kd.companion_roll_min_distance and dodge_cd.charges >= 2:
+	# --- Stewie ---
+	var stewie_path: StringName = senda(&"stewie", &"ability")
+	if ability_cd.is_ready():
+		var hurt: bool = player.health.ratio() < 0.75 or body.health.ratio() < 0.75
+		if stewie_path == &"caparazon" and around >= 2:
+			ability_cd.use()
+			_companion_fortress(body)
+			return true
+		if stewie_path == &"embestida" and distance <= 7.0:
+			ability_cd.use()
+			_stewie_senda_ability(body)
+			return true
+		if stewie_path == &"espiritu" and hurt:
+			ability_cd.use()
+			_stewie_senda_ability(body)
+			return true
+		if stewie_path == &"" and around >= 3:
+			ability_cd.use()
+			body.invulnerable_shell = true
+			body.busy = kd.refuge_duration
+			say("¡Caparazón!", Color(0.8, 0.95, 0.8), 0.8)
+			schedule(kd.refuge_duration, _end_companion_shell.bind(body))
+			return true
+	# Rodar: para llegar, o a través de los enemigos si tiene Senda de esquiva.
+	var dodge_path: StringName = senda(&"stewie", &"dodge")
+	if dodge_cd.charges >= 2 and (distance > kd.companion_roll_min_distance \
+			or (dodge_path != &"" and distance > 1.0 and distance < kd.roll_distance)):
 		dodge_cd.use()
-		body.dash(direction, minf(kd.roll_distance, distance - reach), kd.roll_duration)
+		var start: Vector3 = body.global_position
+		var roll_length: float = kd.roll_distance if dodge_path != &"" else minf(kd.roll_distance, distance - reach)
+		body.dash(direction, roll_length, kd.roll_duration)
+		if dodge_path != &"":
+			schedule(kd.roll_duration, _roll_end.bind(body, start))
 		return true
 	return false
+
+
+## Fortaleza del compañero: se mete en el caparazón y atrae a los enemigos un rato.
+func _companion_fortress(body: DuoCompanion) -> void:
+	body.invulnerable_shell = true
+	body.busy = kd.refuge_duration
+	body.priority = 0.25
+	say("¡Fortaleza!", Color(0.85, 0.95, 0.85), 0.9)
+	schedule(kd.refuge_duration, func() -> void:
+		if is_instance_valid(body):
+			body.invulnerable_shell = false
+			body.priority = kd.companion_target_priority)
 
 
 func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:

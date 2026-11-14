@@ -8,6 +8,9 @@ signal freed
 const BODY_COLOR := Color(0.62, 0.52, 0.4)
 const STEEL := Color(0.55, 0.57, 0.6)
 const USE_RADIUS := 1.9
+## Piedrazos que tira el preso liberado antes de irse, y su daño.
+const STONES := 3
+const STONE_DAMAGE := 15.0
 
 var open_time: float = 1.5
 var is_free: bool = false
@@ -103,6 +106,10 @@ func free_prisoner() -> void:
 	_say(Dialogue.line("presos_libres"), 1.6)
 	var tween: Tween = create_tween()
 	tween.tween_property(_bars, "position:y", -2.2, 0.4)
+	# Se suma a la pelea un ratito: tira piedrazos a los Aguccis cercanos, y después se va.
+	for i: int in STONES:
+		tween.tween_interval(0.6)
+		tween.tween_callback(_throw_stone)
 	tween.tween_property(_prisoner, "position", Vector3(0, 0, 14.0), 2.5)
 	tween.tween_callback(_prisoner.queue_free)
 
@@ -126,3 +133,22 @@ func _say(text: String, seconds: float) -> void:
 	var fade: Tween = _shout.create_tween()
 	fade.tween_interval(seconds)
 	fade.tween_property(_shout, "modulate:a", 0.0, 0.4)
+
+
+func _throw_stone() -> void:
+	if not is_instance_valid(_prisoner):
+		return
+	var from: Vector3 = _prisoner.global_position + Vector3.UP * 1.3
+	var target: Hurtbox = CombatQuery.nearest(get_tree(), DamageInfo.Team.ENEMIES, from, 12.0)
+	if target == null:
+		return
+	var info := DamageInfo.new()
+	info.amount = STONE_DAMAGE
+	info.attacker_team = DamageInfo.Team.PLAYERS
+	info.origin = from
+	info.is_melee = false
+	info.knockback = 2.0
+	target.take_hit(info)
+	var to: Vector3 = target.global_position + Vector3.UP * 1.0
+	Fx.beam(get_parent(), from, (to - from).normalized(), from.distance_to(to), 0.12,
+			Color(0.62, 0.55, 0.45), 0.12)

@@ -175,3 +175,16 @@ func _is_blocked(point: Vector3) -> bool:
 	query.transform = Transform3D(Basis.IDENTITY, point + Vector3.UP * 0.9)
 	query.collision_mask = 1 | 512
 	return not get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
+
+
+## Corta la pelea: no vienen más oleadas y los enemigos que quedan se van corriendo.
+## (Eventos que terminan antes, como la Colonia de presos cuando se acaba el tiempo.)
+func stop_and_scatter() -> void:
+	_pending.clear()
+	state = Phase.CLEARED
+	set_physics_process(false)
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Enemy
+		if enemy != null and enemy.is_targetable():
+			enemy.wake_and_flee()
+	Events.room_cleared.emit()

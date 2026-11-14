@@ -176,3 +176,26 @@ func test_companion_breaks_vases_with_the_upgrade() -> void:
 func _pump_seconds(seconds: float) -> void:
 	for i: int in int(seconds / DT):
 		_player._physics_process(DT)
+
+
+func test_ai_maestro_uses_its_senda_ability() -> void:
+	_take("senda_maestro_ability_combate")
+	_kit.companion.set_downed(false, 0.0)
+	if _kit.companion.identity != MaestroKit.Body.MAESTRO:
+		_kit._switch(false)
+	var enemy := enemy_at(_kit.companion.global_position + Vector3(1.2, 0, 0), 1000.0)
+	var used: bool = _kit._companion_try_skill(_kit.companion,
+			enemy.global_position - _kit.companion.global_position, 2.0)
+	assert_true(used, "Con un enemigo encima, tira el Torbellino")
+	assert_false(_kit._ability_cd[MaestroKit.Body.MAESTRO].is_ready())
+
+
+func test_ai_stewie_shells_up_when_surrounded() -> void:
+	_kit.companion.set_downed(false, 0.0)
+	var stewie: DuoCompanion = _kit.companion
+	assert_eq(stewie.identity, MaestroKit.Body.STEWIE)
+	for i: int in 3:
+		enemy_at(stewie.global_position + Vector3(cos(i * 2.0), 0, sin(i * 2.0)) * 1.5, 1000.0)
+	var used: bool = _kit._companion_try_skill(stewie, Vector3(1.5, 0, 0), 1.5)
+	assert_true(used)
+	assert_true(stewie.invulnerable_shell, "Rodeada, se mete en el caparazón")

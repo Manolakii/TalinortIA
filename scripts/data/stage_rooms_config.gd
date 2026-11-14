@@ -65,6 +65,10 @@ extends Resource
 @export var maze_touch_radius: float = 2.2
 ## Laberinto: si se despiertan más Gronks que esto, se comen el cofre y se pierde el evento.
 @export var maze_max_woken: int = 2
+## Trampas del laberinto: guillotinas en pasillos, pinchos en celdas, y su daño (en Normal).
+@export var maze_guillotines: int = 6
+@export var maze_spikes: int = 4
+@export var maze_trap_damage: float = 25.0
 ## La estampida: cuánto dura, cada cuánto pasa una manada (al principio y al final), aviso,
 ## velocidad, ancho del carril y daño (en Normal).
 @export var stampede_duration: float = 40.0

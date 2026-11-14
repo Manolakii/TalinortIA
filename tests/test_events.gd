@@ -8,7 +8,7 @@ var _template: Node3D
 
 func before_each() -> void:
 	RunState.start_run(9)
-	make_player(&"tali")
+	make_player(&"croco")  # Tali a veces esquiva de casualidad: haría los tests inestables
 	_config = Balance.stage_rooms(0)
 	_holder = Node3D.new()
 	add_child(_holder)
@@ -197,3 +197,53 @@ func test_prisoners_are_lost_when_time_runs_out() -> void:
 		event._physics_process(DT)
 	assert_true(event._cages[1].is_lost, "Se acabó el tiempo: se lo llevaron")
 	assert_eq(event.saved_count(), 1)
+
+
+func test_gronk_does_not_get_stunned_by_rocks() -> void:
+	var rock := RockProp.new()
+	rock.size = Vector3(2.5, 1.6, 2.5)
+	rock.position = Vector3(0, 0, -4.0)
+	_holder.add_child(rock)
+	var gronk: Gronk = load("res://scenes/enemies/gronk.tscn").instantiate()
+	gronk.position = Vector3(0, 0, -8.0)
+	_holder.add_child(gronk)
+	await wait_physics_frames(2)
+	# Lo forzamos a cargar derecho contra la roca.
+	gronk.facing = Vector3.BACK
+	gronk._start_windup()
+	gronk._charge_length = 8.0
+	gronk._set_mode(Gronk.Mode.CHARGE)
+	for i: int in 40:
+		gronk._physics_process(DT)
+	assert_false(gronk.status.has(StatusEffects.STUN), "Contra una roca frena sin aturdirse")
+
+
+func test_maze_has_traps_that_hurt() -> void:
+	var event := MazeEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _template, _rng())
+	var traps: Array[MazeTrap] = []
+	for child: Node in event.get_children():
+		if child is MazeTrap:
+			traps.append(child)
+	assert_eq(traps.size(), _config.maze_guillotines + _config.maze_spikes, "Guillotinas y pinchos")
+	var trap: MazeTrap = traps[0]
+	# Croco (Tali a veces esquiva de casualidad, por su suerte).
+	var croco: PlayerCharacter = make_player(&"croco", 1)
+	_player.global_position = Vector3(30, 0, 30)
+	croco.global_position = trap.global_position
+	var before: float = croco.health.current
+	trap._timer = 0.0
+	for i: int in int(2.5 / DT):
+		trap._physics_process(DT)
+	assert_lt(croco.health.current, before, "Si te agarra, duele")
+
+
+func test_director_can_stop_and_send_enemies_away() -> void:
+	var director := CombatDirector.new()
+	director.waves = Balance.stage_rooms(0).prisoner_waves
+	_holder.add_child(director)
+	var enemy := enemy_at(Vector3(5, 0, 0))
+	director.stop_and_scatter()
+	assert_eq(director.state, CombatDirector.Phase.CLEARED, "No vienen más oleadas")
+	assert_true(enemy.awake, "Los que quedan se van")

@@ -144,6 +144,10 @@ func build_room(type: int) -> void:
 			prisoners.setup(template.feature_spots(), config.prisoner_count, config.cage_open_time,
 					config.prisoner_gold, template.chest_spot(), config.prisoner_time_limit)
 			prisoners.resolved.connect(func(won: bool) -> void: _on_event_resolved(won, won))
+			prisoners.ended.connect(func() -> void:
+				if director != null:
+					director.stop_and_scatter()
+				prisoners.finish_combat())
 			_event = prisoners
 			_start_director(config.prisoner_waves)
 		RoomKind.Type.ESCORT:

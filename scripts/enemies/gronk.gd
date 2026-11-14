@@ -62,6 +62,9 @@ func _think(delta: float) -> void:
 			_trample(previous, global_position)
 			if get_slide_collision_count() > 0 and _hit_wall():
 				_crash()
+			elif get_slide_collision_count() > 0 and _hit_rock():
+				# Contra una roca frena, sin aturdirse (GDD: se aturde contra paredes).
+				_set_mode(Mode.RECOVER)
 			elif _traveled >= _charge_length or _time > _charge_length / data.charge_speed + 0.4:
 				_set_mode(Mode.RECOVER)
 		Mode.RECOVER:
@@ -88,19 +91,35 @@ func _distance_to_wall(max_distance: float) -> float:
 	return maxf(from.distance_to(hit["position"]) - data.body_radius * 0.5, 1.0)
 
 
-## ¿Puede cargar derecho hasta el objetivo sin chocar una roca o pared?
+## ¿Puede cargar derecho hasta el objetivo sin chocar una roca o pared? Mira el centro y los
+## dos costados del cuerpo (es ancho: antes una roca le rozaba el costado y se estrellaba).
 func _line_is_clear(target: Node3D) -> bool:
-	var from: Vector3 = global_position + Vector3.UP
-	var to: Vector3 = Vector3(target.global_position.x, from.y, target.global_position.z)
-	var query := PhysicsRayQueryParameters3D.create(from, to, 1 | 512)
-	query.exclude = [get_rid()]
-	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+	var to_target: Vector3 = target.global_position - global_position
+	to_target.y = 0.0
+	var side := Vector3(-to_target.z, 0.0, to_target.x).normalized() * data.body_radius * 0.9
+	for offset: Vector3 in [Vector3.ZERO, side, -side]:
+		var from: Vector3 = global_position + Vector3.UP + offset
+		var query := PhysicsRayQueryParameters3D.create(from, from + to_target, 1 | 512)
+		query.exclude = [get_rid()]
+		if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+			return false
+	return true
 
 
+## Chocó una pared (capa del mundo): se aturde.
 func _hit_wall() -> bool:
 	for i: int in get_slide_collision_count():
-		var collider: Object = get_slide_collision(i).get_collider()
-		if collider is StaticBody3D:
+		var collider := get_slide_collision(i).get_collider() as StaticBody3D
+		if collider != null and collider.collision_layer & 1:
+			return true
+	return false
+
+
+## Chocó una roca u obstáculo: solo frena.
+func _hit_rock() -> bool:
+	for i: int in get_slide_collision_count():
+		var collider := get_slide_collision(i).get_collider() as StaticBody3D
+		if collider != null and collider.collision_layer & 512:
 			return true
 	return false
 

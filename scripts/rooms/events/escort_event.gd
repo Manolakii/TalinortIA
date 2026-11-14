@@ -2,8 +2,8 @@ class_name EscortEvent
 extends Node3D
 ## Evento "Escoltá la carreta" (idea del grupo): una carreta con Talinorteanos cruza la sala de
 ## sur a norte, despacio, mientras llegan enemigos sin parar. Solo avanza si alguien la empuja
-## (un jugador cerca). Si llega: cofre de evento y evento perfecto. Si la rompen: hay que
-## terminar de pelear y no hay premio del evento.
+## (un jugador cerca). Si llega: cofre de evento y se gana. Si la rompen: se pierde y los
+## enemigos se van (no tiene sentido seguir peleando).
 
 signal resolved(perfect: bool)
 
@@ -47,9 +47,6 @@ func _physics_process(delta: float) -> void:
 	if _finished:
 		return
 	if _broken:
-		if get_tree().get_nodes_in_group(&"enemies").is_empty():
-			_finished = true
-			resolved.emit(false)
 		return
 	_update_focus(delta)
 	if not _spawning:
@@ -93,9 +90,19 @@ func _on_arrived() -> void:
 			resolved.emit(true))
 
 
+## La rompieron: el evento terminó (se pierde) y los enemigos se van con el botín.
 func _on_destroyed() -> void:
 	_spawning = false
 	_broken = true
+	var tween: Tween = create_tween()
+	tween.tween_interval(2.0)
+	tween.tween_callback(func() -> void:
+		for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+			var enemy := node as Enemy
+			if enemy != null and enemy.is_targetable():
+				enemy.wake_and_flee()
+		_finished = true
+		resolved.emit(false))
 
 
 ## Saca rocas, vasijas y rocas agrietadas del camino de la carreta.

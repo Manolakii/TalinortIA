@@ -7,6 +7,8 @@ extends Node3D
 
 ## `won`: salvaron a todos (y abrieron el cofre). Si no, se pierde el evento y no hay premio.
 signal resolved(won: bool)
+## Se terminó el evento (todos libres o se acabó el tiempo): hay que cortar la pelea.
+signal ended
 
 var _cages: Array[PrisonerCage] = []
 var _saved: int = 0
@@ -15,6 +17,7 @@ var _gold: int = 6
 var _time_left: float = 35.0
 var _timer_label: Label
 var _timer_over: bool = false
+var _finished: bool = false
 
 
 func setup(spots: Array[Vector3], count: int, open_time: float, gold: int, chest_spot: Vector3,
@@ -63,9 +66,10 @@ func _physics_process(delta: float) -> void:
 			left += 1
 	if left == 0:
 		_timer_over = true
-		_timer_label.text = "¡Liberaron a todos!"
+		_timer_label.text = "¡Liberaron a todos! Los Aguccis salen corriendo"
 		_timer_label.add_theme_color_override("font_color", Color(1.0, 0.82, 0.3))
 		_hide_timer_later()
+		ended.emit()
 		return
 	_timer_label.text = "Presos: %d · ¡Quedan %d s!" % [left, ceili(maxf(_time_left, 0.0))]
 	_timer_label.add_theme_color_override("font_color",
@@ -75,6 +79,7 @@ func _physics_process(delta: float) -> void:
 		_lose_remaining()
 		_timer_label.text = "Se acabó el tiempo: se llevaron a %d" % left
 		_hide_timer_later()
+		ended.emit()
 
 
 func _lose_remaining() -> void:
@@ -95,6 +100,9 @@ func _on_freed(_cage: PrisonerCage) -> void:
 
 ## Terminó la pelea: los que quedan se pierden y aparece el cofre de evento.
 func finish_combat() -> void:
+	if _finished:
+		return
+	_finished = true
 	_timer_over = true
 	_lose_remaining()
 	_timer_label.modulate.a = 0.0
