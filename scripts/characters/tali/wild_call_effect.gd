@@ -142,6 +142,8 @@ func _make_hit(amount: float) -> DamageInfo:
 			player.crit_chance(), player.crit_multiplier())
 	info.hitstop = Balance.combat.hitstop_light
 	info.is_melee = false
+	# Marca para el Gronk Gigante: el Llamado lo hace dudar (GDD).
+	info.tags.append(&"wild_call")
 	return info
 
 

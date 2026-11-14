@@ -19,6 +19,7 @@ const HINTS: Dictionary = {
 	RoomKind.Type.PIPO_CABIN: "Shhh... alguien vive acá. Acercate a la cabaña.",
 	RoomKind.Type.ESCORT: "¡Escoltá la carreta hasta la salida! Solo avanza si alguien está cerca empujando.",
 	RoomKind.Type.MAZE: "Shhh... los Gronks duermen. Si peleás o esquivás cerca, se despiertan. El cofre está a la salida.",
+	RoomKind.Type.BOSS: "¡El Gronk Gigante! Hacelo chocar contra las columnas: queda aturdido y recibe más daño.",
 	RoomKind.Type.STAMPEDE: "¡Estampida de Gronks! Aguanten sin que caiga nadie: miren los avisos naranjas de cada carril.",
 }
 const ENTRY_SPOTS: Array[Vector3] = [Vector3(-1.5, 0, 10.5), Vector3(1.5, 0, 10.5),
@@ -81,6 +82,8 @@ func _physics_process(delta: float) -> void:
 
 ## Título para el HUD: "1-2 · Ruinas de Ciudad Derrumbe · Sala 2 de 3 · Élite".
 func room_title() -> String:
+	if room_type == RoomKind.Type.BOSS:
+		return config.boss_scenario_name
 	var scenario_name: String = config.scenario_names[mini(RunState.scenario, config.scenario_names.size() - 1)]
 	if RoomKind.is_bonus(room_type):
 		return "%s · %s" % [scenario_name, RoomKind.display_name(room_type)]
@@ -164,6 +167,12 @@ func build_room(type: int) -> void:
 			maze.setup(config, template, rng)
 			maze.resolved.connect(_on_event_resolved)
 			_event = maze
+		RoomKind.Type.BOSS:
+			var arena := BossArena.new()
+			_room_root.add_child(arena)
+			arena.setup(template)
+			arena.resolved.connect(func(_won: bool) -> void: _room_done())
+			_event = arena
 		RoomKind.Type.STAMPEDE:
 			var stampede := StampedeEvent.new()
 			_room_root.add_child(stampede)
@@ -273,14 +282,24 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 				config.upgrade_options_bonus if better else config.upgrade_options)
 	if bonus_item:
 		await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
+	if room_type == RoomKind.Type.BOSS:
+		_finish_stage()
+		return
 	if _riddle_here():
 		_spawn_riddle()
 	if RunState.is_last_room_of_scenario(config.rooms_per_scenario):
 		await _finish_scenario()
 		if RunState.scenario >= config.scenario_names.size() - 1:
-			_finish_stage()
+			_show_boss_door()
 			return
 	_show_doors()
+
+
+## Después del 1-3: una sola puerta, la del 1-4 (GDD: el X-4 es una sola sala, la del boss).
+func _show_boss_door() -> void:
+	_doors_shown = true
+	_add_room_door(RoomKind.Type.BOSS, Vector3(0, 0, DOOR_Z))
+	show_banner("¡El 1-4! El Gronk Gigante los espera. Entren cuando estén listos (E / X).", -1.0)
 
 
 func _give_gold_reward() -> void:
@@ -294,7 +313,7 @@ func _give_gold_reward() -> void:
 
 ## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
 func _can_hide_treasure(type: int) -> bool:
-	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.STAMPEDE]:
+	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.STAMPEDE, RoomKind.Type.BOSS]:
 		return false
 	var last_of_stage: bool = RunState.scenario >= config.scenario_names.size() - 1 \
 			and RunState.room_index >= config.rooms_per_scenario - 1
@@ -330,9 +349,9 @@ func _finish_scenario() -> void:
 	await _pick(RewardPicker.Kind.ITEM, "Fin del %s: elegí un objeto" % scenario_name.get_slice(" · ", 0))
 
 
-## Terminó el stage: vuelven a Birig Bamba (el Gronk Gigante del 1-4 llega en la Fase 7).
+## Terminó el stage (ganaron al boss): vuelven a Birig Bamba.
 func _finish_stage() -> void:
-	show_banner("¡%s liberado! Bueno, casi: el Gronk Gigante los espera (Fase 7). Volviendo a Birig Bamba..." % config.stage_name, -1.0)
+	show_banner("¡%s liberado! El Gronk queda libre. Volviendo a Birig Bamba..." % config.stage_name, -1.0)
 	await get_tree().create_timer(4.0).timeout
 	_transitioning = true
 	var tween: Tween = create_tween()

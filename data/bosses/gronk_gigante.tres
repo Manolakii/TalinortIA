@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BossGronkConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/boss_gronk_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+phase_two_at = 0.66
+phase_three_at = 0.33
+phase_roar_time = 1.6
+charge_windup = 1.0
+charge_speed = 20.0
+charge_max_distance = 30.0
+charge_width = 3.2
+charge_damage = 35.0
+column_stun = 3.0
+vulnerable_multiplier = 1.5
+wall_stun = 1.0
+charges_per_phase = Array[int]([1, 2, 3])
+stomp_radius = 5.0
+stomp_windup = 0.9
+stomp_damage = 30.0
+stomp_cooldown = 4.0
+roar_interval = 16.0
+summon_count = 3
+rocks_interval = 7.0
+rocks_damage = 22.0
+rocks_radius = 2.0
+rocks_flight = 1.2
+puddle_radius = 3.0
+puddle_duration = 8.0
+wave_interval = 11.0
+wave_windup = 1.2
+wave_speed = 10.0
+wave_damage = 30.0
+wave_gap_deg = 60.0
+idle_time = 1.4
+wild_call_stun = 2.5
+wild_call_cooldown = 12.0
