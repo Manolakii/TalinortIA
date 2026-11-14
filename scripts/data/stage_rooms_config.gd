@@ -7,6 +7,9 @@ extends Resource
 ## Nombre de cada escenario (X-1, X-2, X-3). El X-4 es el boss.
 @export var scenario_names: Array[String] = []
 @export var rooms_per_scenario: int = 3
+## Luz de cada escenario (X-1, X-2, X-3) y la del boss.
+@export var scenario_lights: Array[LightPreset] = []
+@export var boss_light: LightPreset
 ## El X-4: una sola sala, la del boss.
 @export var boss_scenario_name: String = "1-4 · Gronk Gigante"
 ## Plantillas de sala: escenas con rocas y lugares para vasijas, cofres y eventos.

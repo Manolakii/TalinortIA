@@ -193,6 +193,9 @@ func build_room(type: int) -> void:
 		turret.position = Vector3(3.5, 0, 8.0)
 		_room_root.add_child(turret)
 	Sound.music("boss" if type == RoomKind.Type.BOSS else "talinorthland_explore")
+	_apply_light(config.boss_light if type == RoomKind.Type.BOSS
+			else config.scenario_lights[mini(RunState.scenario, config.scenario_lights.size() - 1)]
+			if not config.scenario_lights.is_empty() else null)
 	Events.floating_text_requested.emit(Vector3(0, 3.5, 7.0), RoomKind.display_name(type).replace("Evento: ", ""),
 			Color.WHITE)
 	if HINTS.has(type):
@@ -542,3 +545,23 @@ func _all_players_down() -> bool:
 		if is_instance_valid(player) and not player.health.is_dead:
 			return false
 	return true
+
+
+## Luz y posprocesado del escenario (cada parte del Stage 1 tiene su clima).
+func _apply_light(preset: LightPreset) -> void:
+	if preset == null:
+		return
+	var sun := get_node_or_null("Sun") as DirectionalLight3D
+	if sun != null:
+		sun.light_color = preset.sun_color
+		sun.light_energy = preset.sun_energy
+		sun.rotation_degrees.x = preset.sun_pitch_deg
+		# El tinte de sala (Noche del Agucci, fases del boss) vuelve a esta luz.
+		set_meta(&"sun_color", preset.sun_color)
+		set_meta(&"sun_energy", preset.sun_energy)
+	var env: Environment = _environment.environment
+	env.ambient_light_energy = preset.ambient_energy
+	env.fog_light_color = preset.fog_color
+	env.fog_density = preset.fog_density
+	env.adjustment_saturation = preset.saturation
+	env.adjustment_contrast = preset.contrast
