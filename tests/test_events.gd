@@ -199,7 +199,7 @@ func test_prisoners_are_lost_when_time_runs_out() -> void:
 	assert_eq(event.saved_count(), 1)
 
 
-func test_gronk_does_not_get_stunned_by_rocks() -> void:
+func test_gronk_is_stunned_if_it_crashes_into_a_rock() -> void:
 	var rock := RockProp.new()
 	rock.size = Vector3(2.5, 1.6, 2.5)
 	rock.position = Vector3(0, 0, -4.0)
@@ -215,7 +215,7 @@ func test_gronk_does_not_get_stunned_by_rocks() -> void:
 	gronk._set_mode(Gronk.Mode.CHARGE)
 	for i: int in 40:
 		gronk._physics_process(DT)
-	assert_false(gronk.status.has(StatusEffects.STUN), "Contra una roca frena sin aturdirse")
+	assert_true(gronk.status.has(StatusEffects.STUN), "Si igual se choca la roca, queda aturdido")
 
 
 func test_maze_has_traps_that_hurt() -> void:
@@ -247,3 +247,19 @@ func test_director_can_stop_and_send_enemies_away() -> void:
 	director.stop_and_scatter()
 	assert_eq(director.state, CombatDirector.Phase.CLEARED, "No vienen más oleadas")
 	assert_true(enemy.awake, "Los que quedan se van")
+
+
+func test_freed_prisoner_keeps_fighting_until_the_event_ends() -> void:
+	var cage := PrisonerCage.new()
+	_holder.add_child(cage)
+	var enemy := enemy_at(Vector3(4, 0, 0), 1000.0)
+	cage.free_prisoner()
+	for i: int in int(5.0 / DT):
+		cage._physics_process(DT)
+	var after_five: float = 1000.0 - enemy.health.current
+	assert_gt(after_five, PrisonerCage.STONE_DAMAGE * 3.0, "Más de 3 piedrazos: se queda peleando")
+	cage.dismiss()
+	var before: float = enemy.health.current
+	for i: int in int(3.0 / DT):
+		cage._physics_process(DT)
+	assert_eq(enemy.health.current, before, "Al terminar el evento, se va")

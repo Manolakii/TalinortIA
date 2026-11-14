@@ -62,9 +62,6 @@ func _think(delta: float) -> void:
 			_trample(previous, global_position)
 			if get_slide_collision_count() > 0 and _hit_wall():
 				_crash()
-			elif get_slide_collision_count() > 0 and _hit_rock():
-				# Contra una roca frena, sin aturdirse (GDD: se aturde contra paredes).
-				_set_mode(Mode.RECOVER)
 			elif _traveled >= _charge_length or _time > _charge_length / data.charge_speed + 0.4:
 				_set_mode(Mode.RECOVER)
 		Mode.RECOVER:
@@ -106,20 +103,11 @@ func _line_is_clear(target: Node3D) -> bool:
 	return true
 
 
-## Chocó una pared (capa del mundo): se aturde.
+## Chocó una pared o una roca: se aturde (pedido del grupo). Igual, antes de cargar intenta
+## no apuntar a una roca (ver _line_is_clear).
 func _hit_wall() -> bool:
 	for i: int in get_slide_collision_count():
-		var collider := get_slide_collision(i).get_collider() as StaticBody3D
-		if collider != null and collider.collision_layer & 1:
-			return true
-	return false
-
-
-## Chocó una roca u obstáculo: solo frena.
-func _hit_rock() -> bool:
-	for i: int in get_slide_collision_count():
-		var collider := get_slide_collision(i).get_collider() as StaticBody3D
-		if collider != null and collider.collision_layer & 512:
+		if get_slide_collision(i).get_collider() is StaticBody3D:
 			return true
 	return false
 

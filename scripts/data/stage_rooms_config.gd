@@ -46,9 +46,9 @@ extends Resource
 ## Colonia de presos: cuántas jaulas, oro por preso y cuánto hay que mantener para abrir.
 @export var prisoner_count: int = 4
 @export var prisoner_gold: int = 4
-@export var cage_open_time: float = 2.5
+@export var cage_open_time: float = 1.5
 ## Tiempo para liberarlos antes de que se los lleven.
-@export var prisoner_time_limit: float = 35.0
+@export var prisoner_time_limit: float = 45.0
 ## Escoltá la carreta: vida, velocidad (m/s; ~45 s de viaje si la empujan siempre), y cada
 ## cuánto llegan enemigos (de a cuántos, en Normal y 1 jugador) con un máximo vivos a la vez.
 @export var cart_health: float = 500.0

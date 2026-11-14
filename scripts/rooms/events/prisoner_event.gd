@@ -88,6 +88,13 @@ func _lose_remaining() -> void:
 			cage.lose()
 
 
+## Los liberados que se quedaron peleando se despiden.
+func _dismiss_freed() -> void:
+	for cage: PrisonerCage in _cages:
+		if is_instance_valid(cage):
+			cage.dismiss()
+
+
 func _hide_timer_later() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_interval(3.0)
@@ -105,6 +112,7 @@ func finish_combat() -> void:
 	_finished = true
 	_timer_over = true
 	_lose_remaining()
+	_dismiss_freed()
 	_timer_label.modulate.a = 0.0
 	var all_saved: bool = saved_count() == _cages.size()
 	if not all_saved:

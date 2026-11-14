@@ -8,9 +8,10 @@ signal freed
 const BODY_COLOR := Color(0.62, 0.52, 0.4)
 const STEEL := Color(0.55, 0.57, 0.6)
 const USE_RADIUS := 1.9
-## Piedrazos que tira el preso liberado antes de irse, y su daño.
-const STONES := 3
-const STONE_DAMAGE := 15.0
+## El preso liberado se queda peleando hasta que termina el evento (pedido del grupo):
+## tira un piedrazo cada tanto al Agucci más cercano.
+const STONE_DAMAGE := 20.0
+const STONE_INTERVAL := 1.2
 
 var open_time: float = 1.5
 var is_free: bool = false
@@ -21,6 +22,8 @@ var _prisoner: Node3D
 var _bars: Node3D
 var _shout: Label3D
 var _shout_timer: float = 0.0
+var _fighting: bool = false
+var _stone_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -75,6 +78,12 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _fighting:
+		_stone_timer -= delta
+		if _stone_timer <= 0.0:
+			_stone_timer = STONE_INTERVAL
+			_throw_stone()
+		return
 	if is_free or is_lost:
 		return
 	_shout_timer -= delta
@@ -106,10 +115,18 @@ func free_prisoner() -> void:
 	_say(Dialogue.line("presos_libres"), 1.6)
 	var tween: Tween = create_tween()
 	tween.tween_property(_bars, "position:y", -2.2, 0.4)
-	# Se suma a la pelea un ratito: tira piedrazos a los Aguccis cercanos, y después se va.
-	for i: int in STONES:
-		tween.tween_interval(0.6)
-		tween.tween_callback(_throw_stone)
+	_fighting = true
+	_stone_timer = 0.5
+
+
+## Terminó el evento: el preso liberado se despide y se va.
+func dismiss() -> void:
+	if not is_free or not _fighting:
+		return
+	_fighting = false
+	if not is_instance_valid(_prisoner):
+		return
+	var tween: Tween = create_tween()
 	tween.tween_property(_prisoner, "position", Vector3(0, 0, 14.0), 2.5)
 	tween.tween_callback(_prisoner.queue_free)
 
