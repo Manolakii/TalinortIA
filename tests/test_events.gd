@@ -263,3 +263,32 @@ func test_freed_prisoner_keeps_fighting_until_the_event_ends() -> void:
 	for i: int in int(3.0 / DT):
 		cage._physics_process(DT)
 	assert_eq(enemy.health.current, before, "Al terminar el evento, se va")
+
+
+func test_maze_path_always_has_traps_and_gronks() -> void:
+	for seed_value: int in [1, 2, 3, 4, 5]:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = seed_value
+		var holder := Node3D.new()
+		_holder.add_child(holder)
+		var template := Node3D.new()
+		holder.add_child(template)
+		var event := MazeEvent.new()
+		holder.add_child(event)
+		event.setup(_config, template, rng)
+		var path: Array[Vector2i] = event.path_cells()
+		assert_eq(path[0].y, MazeEvent.ROWS - 1, "Arranca en la entrada")
+		assert_eq(path[-1].y, 0, "Llega a la salida")
+		var guillotines_on_path: int = 0
+		for child: Node in event.get_children():
+			var trap := child as MazeTrap
+			if trap != null and trap.kind == MazeTrap.Kind.GUILLOTINE:
+				for i: int in path.size() - 1:
+					var a: Vector3 = event._cell_center(path[i].x, path[i].y)
+					var b: Vector3 = event._cell_center(path[i + 1].x, path[i + 1].y)
+					if trap.global_position.distance_to((a + b) * 0.5) < 0.5:
+						guillotines_on_path += 1
+		assert_gte(guillotines_on_path, mini(3, path.size() - 1), "El camino tiene guillotinas")
+		for gronk: Enemy in event._gronks:
+			gronk.free()
+		holder.free()
