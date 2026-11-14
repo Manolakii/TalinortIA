@@ -76,6 +76,11 @@ func _init() -> void:
 	Events.room_cleared.connect(func() -> void: _play("pickup", -4.0, 0.0))
 
 
+func _exit_tree() -> void:
+	if _instance == self:
+		_instance = null
+
+
 func _process(delta: float) -> void:
 	# La capa de combate entra y sale suave.
 	var target: float = MUSIC_DB if _combat and _current_music == "talinorthland_explore" else -60.0

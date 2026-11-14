@@ -10,6 +10,8 @@ extends Control
 ##   E o X (cualquiera): cambiar la dificultad
 
 const GAME_SCENE := "res://scenes/hub/birig_bamba.tscn"
+const INTRO_SCENE := "res://scenes/ui/intro.tscn"
+const Intro := preload("res://scripts/ui/intro.gd")
 
 const BG_COLOR := Color(0.07, 0.07, 0.1)
 const EMPTY_PANEL_COLOR := Color(0.13, 0.13, 0.17)
@@ -124,7 +126,8 @@ func _start_game() -> void:
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		slot.input.consume_all()
 	RunState.start_run()
-	get_tree().change_scene_to_file(GAME_SCENE)
+	# La intro se ve la primera vez (GDD); después se va directo a Birig Bamba.
+	get_tree().change_scene_to_file(GAME_SCENE if Intro.was_seen() else INTRO_SCENE)
 
 
 # --- UI ---
