@@ -17,6 +17,8 @@ var _spawning: bool = true
 var _broken: bool = false
 var _finished: bool = false
 var _rng: RandomNumberGenerator
+## Cada cuánto cada enemigo vuelve a decidir si va por la carreta o por los jugadores.
+var _focus_timers: Dictionary = {}
 
 
 func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerator) -> void:
@@ -49,6 +51,7 @@ func _physics_process(delta: float) -> void:
 			_finished = true
 			resolved.emit(false)
 		return
+	_update_focus(delta)
 	if not _spawning:
 		return
 	_spawn_timer -= delta
@@ -105,3 +108,21 @@ func _clear_path(root: Node3D, from: Vector3, to: Vector3) -> void:
 		var closest: Vector3 = Geometry3D.get_closest_point_to_segment(Vector3(p.x, 0, p.z), from, to)
 		if closest.distance_to(Vector3(p.x, 0, p.z)) < 3.2:
 			node.queue_free()
+
+
+## Pedido del grupo: que no le peguen todos a la carreta. Cada enemigo va cambiando: a veces
+## va por la carreta y a veces por los jugadores (y ahí ignora la carreta).
+func _update_focus(delta: float) -> void:
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Enemy
+		if enemy == null:
+			continue
+		var left: float = _focus_timers.get(enemy, 0.0) - delta
+		if left <= 0.0:
+			left = _rng.randf_range(4.0, 8.0)
+			var go_for_cart: bool = _rng.randf() < _config.cart_focus_chance and not _broken
+			enemy.focus_target = cart if go_for_cart else null
+			enemy.ignored_targets.clear()
+			if not go_for_cart:
+				enemy.ignored_targets.append(cart)
+		_focus_timers[enemy] = left

@@ -54,7 +54,7 @@ func test_enemies_like_the_cart() -> void:
 	_holder.add_child(event)
 	event.setup(_config, _template, _rng())
 	assert_true(event.cart.is_in_group(&"enemy_targets"))
-	assert_lt(event.cart.target_priority(), 1.0, "La prefieren")
+	assert_eq(event.cart.target_priority(), 1.0, "Ya no la prefieren todos: cada enemigo decide")
 
 
 func test_cart_arrival_gives_a_chest_and_perfect_event() -> void:
@@ -98,33 +98,91 @@ func test_maze_is_perfect_without_waking_anyone() -> void:
 	assert_signal_emitted_with_parameters(event, "resolved", [true])
 
 
-# --- Barranco ---
+# --- Laberinto: si se despiertan demasiados, se pierde ---
 
-func test_falling_into_the_chasm_hurts_and_sends_you_back() -> void:
-	var event := ChasmEvent.new()
+func test_maze_lost_when_too_many_gronks_wake() -> void:
+	var event := MazeEvent.new()
 	_holder.add_child(event)
 	event.setup(_config, _template, _rng())
-	_player.global_position = Vector3(0, 0, ChasmEvent.BAND_MAX_Z + 1.0)
-	event._physics_process(DT)
-	# Al medio del barranco, donde no hay piedra.
-	var spot := Vector3(22.5, 0, -1.0)
-	_player.global_position = spot
-	var before: float = _player.health.current
-	for i: int in 15:
+	watch_signals(event)
+	for gronk: Enemy in event._gronks:
+		_player.global_position = gronk.global_position + Vector3(1.0, 0, 0)
 		event._physics_process(DT)
-	assert_lt(_player.health.current, before, "Duele")
-	assert_gt(_player.global_position.z, ChasmEvent.BAND_MAX_Z, "Vuelve al borde seguro")
-	assert_eq(event.fall_count(), 1)
+	await wait_seconds(2.3)
+	assert_signal_emitted_with_parameters(event, "resolved", [false])
 
 
-func test_tiles_crumble_after_stepping() -> void:
-	var tile := ChasmTile.new()
-	tile.crumble_delay = 0.5
-	add_child_autofree(tile)
-	tile.step_on()
-	for i: int in int(0.6 / DT):
-		tile._physics_process(DT)
-	assert_false(tile.is_solid(), "Se cayó")
+# --- Estampida ---
+
+func test_stampede_warns_then_tramples() -> void:
+	var event := StampedeEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _rng())
+	event._launch_herd(false)
+	var herd: Dictionary = event._herds[0]
+	assert_true((herd["warning"] as Telegraph).visible, "Primero el aviso naranja")
+	# Ponemos al jugador en el carril.
+	_player.global_position = (herd["from"] + herd["to"]) * 0.5
+	var before: float = _player.health.current
+	for i: int in int(3.5 / DT):
+		event._move_herds(DT)
+	assert_lt(_player.health.current, before, "La manada lo pisa")
+
+
+func test_stampede_is_won_by_surviving() -> void:
+	var event := StampedeEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _rng())
+	watch_signals(event)
+	event._time = _config.stampede_duration
+	event._physics_process(DT)
+	assert_signal_emitted_with_parameters(event, "resolved", [true])
+
+
+func test_stampede_is_lost_if_someone_goes_down() -> void:
+	var event := StampedeEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _rng())
+	watch_signals(event)
+	Events.player_downed.emit(_player)
+	assert_signal_emitted_with_parameters(event, "resolved", [false])
+
+
+# --- Carreta: los enemigos van variando ---
+
+func test_escort_enemies_split_between_cart_and_players() -> void:
+	var event := EscortEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _template, _rng())
+	var enemies: Array[TalinorteanoCegado] = []
+	for i: int in 20:
+		enemies.append(enemy_at(Vector3(10 + i, 0, 0)))
+	event._update_focus(DT)
+	var on_cart: int = 0
+	for enemy: TalinorteanoCegado in enemies:
+		if enemy.focus_target == event.cart:
+			on_cart += 1
+		else:
+			assert_true(enemy.ignored_targets.has(event.cart), "Los otros van por los jugadores")
+	assert_between(on_cart, 2, 18, "Algunos por la carreta, no todos")
+
+
+# --- Gronk: no se tira contra una roca ---
+
+func test_gronk_goes_around_a_rock_instead_of_charging_into_it() -> void:
+	var rock := RockProp.new()
+	rock.size = Vector3(2.5, 1.6, 2.5)
+	rock.position = Vector3(0, 0, -4.0)
+	_holder.add_child(rock)
+	var gronk: Gronk = load("res://scenes/enemies/gronk.tscn").instantiate()
+	gronk.position = Vector3(0, 0, -8.0)
+	_holder.add_child(gronk)
+	gronk.facing = Vector3.BACK
+	await wait_physics_frames(2)
+	gronk._time = 1.0
+	gronk._physics_process(DT)
+	assert_ne(gronk.mode, Gronk.Mode.WINDUP, "Con la roca en el medio no carga")
+	assert_eq(gronk.tactic, &"strafe", "La rodea")
 
 
 # --- Presos con tiempo ---

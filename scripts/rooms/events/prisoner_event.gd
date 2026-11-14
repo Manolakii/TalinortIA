@@ -5,8 +5,8 @@ extends Node3D
 ## sigan en la jaula cuando se acaba se los llevan. Cada preso liberado da oro, y si se salva
 ## a todos es "perfecto" (mejora de 4 y un objeto extra). Al terminar la pelea, cofre de evento.
 
-## Se abrió el cofre de evento. `all_saved`: salvaron a todos (objeto extra).
-signal resolved(all_saved: bool)
+## `won`: salvaron a todos (y abrieron el cofre). Si no, se pierde el evento y no hay premio.
+signal resolved(won: bool)
 
 var _cages: Array[PrisonerCage] = []
 var _saved: int = 0
@@ -89,9 +89,8 @@ func _hide_timer_later() -> void:
 	tween.tween_property(_timer_label, "modulate:a", 0.0, 0.5)
 
 
-func _on_freed(cage: PrisonerCage) -> void:
+func _on_freed(_cage: PrisonerCage) -> void:
 	_saved += 1
-	Loot.drop_for_all(self, cage.global_position, [_gold])
 
 
 ## Terminó la pelea: los que quedan se pierden y aparece el cofre de evento.
@@ -100,13 +99,20 @@ func finish_combat() -> void:
 	_lose_remaining()
 	_timer_label.modulate.a = 0.0
 	var all_saved: bool = saved_count() == _cages.size()
-	var text: String = "¡Salvaron a todos!" if all_saved else "Salvaron a %d de %d" % [saved_count(), _cages.size()]
-	Events.floating_text_requested.emit(_chest_spot + Vector3.UP * 3.0, text, Color(1.0, 0.82, 0.3))
+	if not all_saved:
+		Events.floating_text_requested.emit(_chest_spot + Vector3.UP * 3.0,
+				"Salvaron a %d de %d: perdieron el evento" % [saved_count(), _cages.size()], Color(0.8, 0.8, 0.85))
+		resolved.emit(false)
+		return
+	Events.floating_text_requested.emit(_chest_spot + Vector3.UP * 3.0, "¡Salvaron a todos!", Color(1.0, 0.82, 0.3))
 	var chest := Chest.new()
 	chest.gold_table = Balance.economy.event_chest_gold
 	chest.position = _chest_spot
 	add_child(chest)
-	chest.opened.connect(func(_by: PlayerCharacter) -> void: resolved.emit(all_saved))
+	chest.opened.connect(func(_by: PlayerCharacter) -> void:
+		# Los presos agradecidos también ponen su parte.
+		Loot.drop_for_all(self, _chest_spot, [_gold * _cages.size()])
+		resolved.emit(true))
 
 
 func saved_count() -> int:

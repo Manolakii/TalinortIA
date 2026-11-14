@@ -56,17 +56,24 @@ extends Resource
 @export var cart_spawn_interval: float = 5.5
 @export var cart_spawn_group: int = 2
 @export var cart_max_enemies: int = 10
+## Chance de que un enemigo vaya por la carreta (si no, va por los jugadores). Se re-decide cada 4 a 8 s.
+@export var cart_focus_chance: float = 0.4
 ## Laberinto de los Gronks: cuántos duermen, y a qué distancia los despierta el ruido (pegar o
 ## esquivar) o pasar pegado.
 @export var maze_gronks: int = 5
 @export var maze_noise_radius: float = 6.0
 @export var maze_touch_radius: float = 2.2
-## El barranco: daño al caer, cuánto aguanta una piedra pisada, cuánto tarda en volver y
-## chance de piedras extra (además del camino seguro).
-@export var chasm_fall_damage: float = 15.0
-@export var chasm_crumble_delay: float = 0.9
-@export var chasm_respawn_time: float = 4.0
-@export var chasm_extra_tiles: float = 0.45
+## Laberinto: si se despiertan más Gronks que esto, se comen el cofre y se pierde el evento.
+@export var maze_max_woken: int = 2
+## La estampida: cuánto dura, cada cuánto pasa una manada (al principio y al final), aviso,
+## velocidad, ancho del carril y daño (en Normal).
+@export var stampede_duration: float = 40.0
+@export var stampede_interval_start: float = 3.0
+@export var stampede_interval_end: float = 1.4
+@export var stampede_warning: float = 1.2
+@export var stampede_speed: float = 22.0
+@export var stampede_width: float = 3.2
+@export var stampede_damage: float = 30.0
 ## En qué escenario puede aparecer el acertijo de Pipo (2 = X-3, el Bosque Tuerto).
 @export var riddle_scenario: int = 2
 

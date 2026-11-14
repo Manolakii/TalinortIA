@@ -18,7 +18,7 @@ const HINTS: Dictionary = {
 	RoomKind.Type.PIPO_CABIN: "Shhh... alguien vive acá. Acercate a la cabaña.",
 	RoomKind.Type.ESCORT: "¡Escoltá la carreta hasta la salida! Solo avanza si alguien está cerca empujando.",
 	RoomKind.Type.MAZE: "Shhh... los Gronks duermen. Si peleás o esquivás cerca, se despiertan. El cofre está a la salida.",
-	RoomKind.Type.CHASM: "Crucen el barranco: las piedras se caen al rato de pisarlas. Los huecos se saltan con la esquiva.",
+	RoomKind.Type.STAMPEDE: "¡Estampida de Gronks! Aguanten sin que caiga nadie: miren los avisos naranjas de cada carril.",
 }
 const ENTRY_SPOTS: Array[Vector3] = [Vector3(-1.5, 0, 10.5), Vector3(1.5, 0, 10.5),
 		Vector3(-1.5, 0, 12.5), Vector3(1.5, 0, 12.5)]
@@ -136,34 +136,34 @@ func build_room(type: int) -> void:
 			var mimics := MimicEvent.new()
 			_room_root.add_child(mimics)
 			mimics.setup(template.feature_spots(), rng)
-			mimics.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			mimics.resolved.connect(_on_event_resolved)
 			_event = mimics
 		RoomKind.Type.PRISONERS:
 			var prisoners := PrisonerEvent.new()
 			_room_root.add_child(prisoners)
 			prisoners.setup(template.feature_spots(), config.prisoner_count, config.cage_open_time,
 					config.prisoner_gold, template.chest_spot(), config.prisoner_time_limit)
-			prisoners.resolved.connect(func(all_saved: bool) -> void: _room_done(true, all_saved))
+			prisoners.resolved.connect(func(won: bool) -> void: _on_event_resolved(won, won))
 			_event = prisoners
 			_start_director(config.prisoner_waves)
 		RoomKind.Type.ESCORT:
 			var escort := EscortEvent.new()
 			_room_root.add_child(escort)
 			escort.setup(config, template, rng)
-			escort.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			escort.resolved.connect(_on_event_resolved)
 			_event = escort
 		RoomKind.Type.MAZE:
 			var maze := MazeEvent.new()
 			_room_root.add_child(maze)
 			maze.setup(config, template, rng)
-			maze.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
+			maze.resolved.connect(_on_event_resolved)
 			_event = maze
-		RoomKind.Type.CHASM:
-			var chasm := ChasmEvent.new()
-			_room_root.add_child(chasm)
-			chasm.setup(config, template, rng)
-			chasm.resolved.connect(func(perfect: bool) -> void: _room_done(perfect))
-			_event = chasm
+		RoomKind.Type.STAMPEDE:
+			var stampede := StampedeEvent.new()
+			_room_root.add_child(stampede)
+			stampede.setup(config, rng)
+			stampede.resolved.connect(_on_event_resolved)
+			_event = stampede
 		RoomKind.Type.PIPO_CABIN:
 			var cabin := PipoCabin.new()
 			_room_root.add_child(cabin)
@@ -231,17 +231,29 @@ func _on_combat_cleared() -> void:
 
 # --- Terminar la sala: premios y puertas ---
 
+## Pedido del grupo: un evento hay que ganarlo sí o sí. Si se pierde, no hay NINGÚN premio
+## (ni el de la puerta). Si se gana, el premio de la puerta y la mejora sale "de lujo" (4 opciones).
+func _on_event_resolved(won: bool, bonus_item: bool = false) -> void:
+	if won:
+		_room_done(true, bonus_item)
+	else:
+		_room_done(false, false, true)
+
+
 ## Premios al terminar. Hay UNA mejora por sala como máximo (pedido del grupo: se juntaban
 ## demasiadas): la da la puerta "Mejora" o "Desafío", la élite (GDD) o un evento perfecto.
 ## Si se juntan dos de esas cosas, en vez de otra mejora se elige entre 4 opciones.
 ## `event_perfect`: el evento salió perfecto. `bonus_item`: objeto extra (salvaron a todos).
-func _room_done(event_perfect: bool = false, bonus_item: bool = false) -> void:
+func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_lost: bool = false) -> void:
 	if _done or _failed:
 		return
 	_done = true
 	Events.room_cleared.emit()
 	await get_tree().create_timer(0.8).timeout
 	var reward: int = RunState.room_reward if not RoomKind.is_bonus(room_type) else RoomKind.Reward.NONE
+	if event_lost:
+		reward = RoomKind.Reward.NONE
+		show_banner("Perdieron el evento: esta vez no hay premio.", 4.0)
 	if reward == RoomKind.Reward.GOLD:
 		await _give_gold_reward()
 	var sources: int = 0
@@ -276,7 +288,7 @@ func _give_gold_reward() -> void:
 
 ## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
 func _can_hide_treasure(type: int) -> bool:
-	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.CHASM]:
+	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.STAMPEDE]:
 		return false
 	var last_of_stage: bool = RunState.scenario >= config.scenario_names.size() - 1 \
 			and RunState.room_index >= config.rooms_per_scenario - 1

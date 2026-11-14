@@ -2,9 +2,10 @@ class_name MazeEvent
 extends Node3D
 ## Evento "Laberinto de los Gronks" (GDD, ideas de eventos): un laberinto con Gronks dormidos.
 ## Si hacés ruido cerca (pegar o esquivar) o pasás muy pegado, se despiertan y cargan. El cofre
-## está a la salida, al norte. Si llegan sin despertar a ninguno, el evento sale perfecto.
+## está a la salida, al norte. Si se despiertan más de `maze_max_woken`, se comen el cofre y se
+## pierde el evento (pedido del grupo: hay que ganarlo).
 
-signal resolved(perfect: bool)
+signal resolved(won: bool)
 
 const GRONK_SCENE: PackedScene = preload("res://scenes/enemies/gronk.tscn")
 const STONE: Material = preload("res://assets/materials/rock_material.tres")
@@ -25,6 +26,8 @@ var _snore_timers: Dictionary = {}
 var _woken: int = 0
 var _finished: bool = false
 var _noise_positions: Array[Vector3] = []
+var _chest: Chest
+var _label: Label
 
 
 func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerator) -> void:
@@ -46,7 +49,21 @@ func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerato
 	chest.position = Vector3(chest_x, 0, MIN_Z - 1.4)
 	add_child(chest)
 	chest.opened.connect(_on_chest_opened)
+	_chest = chest
 	Events.hit_landed.connect(_on_hit_landed)
+	var layer := CanvasLayer.new()
+	layer.layer = 31
+	add_child(layer)
+	_label = Label.new()
+	_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_label.offset_top = 92.0
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_label.add_theme_font_size_override("font_size", 34)
+	_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_label.add_theme_constant_override("outline_size", 10)
+	layer.add_child(_label)
+	_update_label()
 
 
 func _physics_process(delta: float) -> void:
@@ -59,6 +76,10 @@ func _physics_process(delta: float) -> void:
 		if _noise_near(gronk, players):
 			_woken += 1
 			gronk.wake_up()
+			_update_label()
+			if _woken > _config.maze_max_woken:
+				_lose()
+				return
 			continue
 		_snore_timers[gronk] = _snore_timers.get(gronk, randf_range(0.5, 3.0)) - delta
 		if _snore_timers[gronk] <= 0.0:
@@ -93,11 +114,35 @@ func _on_chest_opened(_by: PlayerCharacter) -> void:
 	if _finished:
 		return
 	_finished = true
-	# Los despiertos se cansan y se van.
+	_send_gronks_away()
+	_label.text = "¡Llegaron al cofre!"
+	resolved.emit(true)
+
+
+## Se despertaron demasiados: se comen el cofre y se pierde el evento.
+func _lose() -> void:
+	_finished = true
+	if is_instance_valid(_chest):
+		Events.floating_text_requested.emit(_chest.global_position + Vector3.UP * 2.0,
+				"¡Los Gronks se comieron el cofre!", Color(1.0, 0.6, 0.4))
+		_chest.queue_free()
+	_label.text = "Se despertaron demasiados Gronks: perdieron el evento"
+	var tween: Tween = create_tween()
+	tween.tween_interval(2.0)
+	tween.tween_callback(func() -> void:
+		_send_gronks_away()
+		resolved.emit(false))
+
+
+## Los despiertos se cansan y se van.
+func _send_gronks_away() -> void:
 	for gronk: Enemy in _gronks:
 		if is_instance_valid(gronk) and gronk.is_targetable() and not gronk.asleep:
 			gronk.wake_and_flee()
-	resolved.emit(_woken == 0)
+
+
+func _update_label() -> void:
+	_label.text = "Gronks despiertos: %d de %d permitidos" % [_woken, _config.maze_max_woken]
 
 
 func woken_count() -> int:

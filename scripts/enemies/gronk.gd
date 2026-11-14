@@ -32,8 +32,15 @@ func _think(delta: float) -> void:
 			if target == null or status.has(StatusEffects.BLIND):
 				stop(delta)
 				return
+			if run_tactic(target, delta):
+				return
 			var direction: Vector3 = flat_direction_to(target.global_position)
 			var distance: float = flat_distance_to(target.global_position)
+			if distance <= data.attack_range and _time > 0.8 and not _line_is_clear(target):
+				# Hay una roca en el medio (pedido del grupo: te escondías atrás y se chocaba
+				# siempre): en vez de cargar, la rodea buscando un camino libre.
+				start_tactic(&"strafe", 1.0)
+				return
 			if distance <= data.attack_range and _time > 0.8:
 				turn_towards(direction, delta)
 				stop(delta)
@@ -79,6 +86,15 @@ func _distance_to_wall(max_distance: float) -> float:
 	if hit.is_empty():
 		return max_distance
 	return maxf(from.distance_to(hit["position"]) - data.body_radius * 0.5, 1.0)
+
+
+## ¿Puede cargar derecho hasta el objetivo sin chocar una roca o pared?
+func _line_is_clear(target: Node3D) -> bool:
+	var from: Vector3 = global_position + Vector3.UP
+	var to: Vector3 = Vector3(target.global_position.x, from.y, target.global_position.z)
+	var query := PhysicsRayQueryParameters3D.create(from, to, 1 | 512)
+	query.exclude = [get_rid()]
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 
 func _hit_wall() -> bool:

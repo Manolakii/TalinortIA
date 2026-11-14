@@ -1,11 +1,12 @@
 class_name MimicEvent
 extends Node3D
 ## Evento "Cofres sospechosos" (GDD, Mimics): tres cofres iguales y uno es un mimic.
-## Se puede abrir UNO. Si es de verdad: oro, y cuenta como evento perfecto (mejora de 4).
-## Si es el mimic: hay que matarlo, y da solo el oro. La pista: respira o tiene marcas de dientes.
+## Se puede abrir UNO. Si es de verdad: se gana (oro, premio de la puerta y mejora de 4).
+## Si es el mimic: hay que matarlo y se pierde el evento, sin premio. La pista: respira o tiene
+## marcas de dientes.
 
-## Se resolvió. `perfect`: eligieron bien (mejora "mejorada"); si salió el mimic, solo oro.
-signal resolved(perfect: bool)
+## Se resolvió. `won`: eligieron el cofre bueno.
+signal resolved(won: bool)
 
 const MIMIC_SCENE: PackedScene = preload("res://scenes/enemies/mimic.tscn")
 
@@ -62,7 +63,6 @@ func _on_opened(_by: PlayerCharacter, chest: Chest) -> void:
 
 
 func _on_mimic_died(_info: DamageInfo) -> void:
-	Loot.drop_for_all(self, _mimic.global_position, Balance.economy.event_chest_gold)
 	_resolve(false)
 
 

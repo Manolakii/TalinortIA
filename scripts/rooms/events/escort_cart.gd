@@ -15,7 +15,7 @@ var path_to: Vector3
 var speed: float = 0.45
 var push_radius: float = 6.0
 ## Menos de 1: los enemigos la prefieren antes que a los jugadores a la misma distancia.
-var priority: float = 0.7
+var priority: float = 1.0
 
 var _progress: float = 0.0
 var _talk_timer: float = 2.0

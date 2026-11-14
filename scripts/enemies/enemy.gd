@@ -38,6 +38,10 @@ var has_bounty: bool = false
 var awake: bool = false
 ## Dormido (Laberinto de los Gronks): no hace nada hasta que lo despiertan.
 var asleep: bool = false
+## Si está puesto, va por este objetivo (por ejemplo, la carreta del evento).
+var focus_target: Node3D = null
+## Objetivos que ignora (si no, la carreta se lleva a todos los enemigos).
+var ignored_targets: Array[Node3D] = []
 signal woke_up
 var facing: Vector3 = Vector3.FORWARD
 var visual: Node3D
@@ -275,11 +279,13 @@ func facing_angle() -> float:
 ## El objetivo más cercano del lado de los jugadores (jugadores, compañeros, señuelos), o null.
 ## Los nodos del grupo "enemy_targets" implementan can_be_targeted_by_enemies() y target_priority().
 func nearest_target() -> Node3D:
+	if is_instance_valid(focus_target) and focus_target.can_be_targeted_by_enemies():
+		return focus_target
 	var best: Node3D = null
 	var best_score: float = INF
 	for node: Node in get_tree().get_nodes_in_group(&"enemy_targets"):
 		var target := node as Node3D
-		if target == null or not target.can_be_targeted_by_enemies():
+		if target == null or not target.can_be_targeted_by_enemies() or ignored_targets.has(target):
 			continue
 		var score: float = flat_distance_to(target.global_position) * target.target_priority()
 		if score < best_score:

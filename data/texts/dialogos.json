@@ -65,11 +65,10 @@
 		"Shhh... los Gronks duermen. No peleen ni esquiven cerca.",
 		"Caminá despacito, que si se despiertan, cagamos."
 	],
-	"barranco": [
-		"Las piedras se caen al rato de pisarlas. ¡No se queden quietos!",
-		"Si te caés, te duele. Avisado estás."
+	"estampida": [
+		"¡Estampida! ¿Quién carajo pidió esto?",
+		"Eso no es un temblor, boludo. Son los Gronks."
 	],
-	"barranco_caida": ["¡AAAAH!", "¡La puta madre, me caí!", "¡Qué porrazo!", "¡Mi cola!"],
 	"cegados": [
 		"¡No veo un carajo!",
 		"¿Quién apagó la luz?",

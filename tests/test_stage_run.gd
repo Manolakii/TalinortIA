@@ -121,27 +121,37 @@ func test_mimic_event_one_chest_only_and_the_mimic_bites() -> void:
 	assert_signal_emitted(event, "resolved", "Matándolo, el premio")
 
 
-func test_prisoners_give_gold_and_chest_at_the_end() -> void:
+func test_prisoners_must_all_be_saved() -> void:
 	var event := PrisonerEvent.new()
 	add_child(event)
-	var spots: Array[Vector3] = [Vector3(-4, 0, -2), Vector3(4, 0, -2), Vector3(0, 0, -6), Vector3(0, 0, 2)]
-	event.setup(spots, 4, 1.5, 6, Vector3(0, 0, -3))
+	var spots: Array[Vector3] = [Vector3(-4, 0, -2), Vector3(4, 0, -2)]
+	event.setup(spots, 2, 1.5, 4, Vector3(0, 0, -3))
 	event._cages[0].free_prisoner()
-	assert_eq(event.saved_count(), 1)
-	var coins: int = 0
+	watch_signals(event)
+	event.finish_combat()
+	# Salvaron a 1 de 2: perdieron.
+	assert_signal_emitted_with_parameters(event, "resolved", [false])
 	for child: Node in event.get_children():
-		if child is GoldCoin:
-			coins += (child as GoldCoin).value
-	assert_eq(coins, 6, "6 de oro por preso")
+		assert_false(child is Chest, "Sin cofre")
+		assert_false(child is GoldCoin, "Sin oro")
+
+
+func test_saving_all_prisoners_gives_the_chest() -> void:
+	var event := PrisonerEvent.new()
+	add_child(event)
+	var spots: Array[Vector3] = [Vector3(-4, 0, -2), Vector3(4, 0, -2)]
+	event.setup(spots, 2, 1.5, 4, Vector3(0, 0, -3))
+	for cage: PrisonerCage in event._cages:
+		cage.free_prisoner()
 	watch_signals(event)
 	event.finish_combat()
 	var chest: Chest = null
 	for child: Node in event.get_children():
 		if child is Chest:
 			chest = child
-	assert_not_null(chest, "Cofre de evento al final")
+	assert_not_null(chest, "Cofre de evento")
 	chest.open(_player)
-	assert_signal_emitted_with_parameters(event, "resolved", [false])
+	assert_signal_emitted_with_parameters(event, "resolved", [true])
 
 
 func test_cage_opens_holding_interact() -> void:
