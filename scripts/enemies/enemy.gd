@@ -446,6 +446,12 @@ func _play_spawn() -> void:
 func _on_died(info: DamageInfo) -> void:
 	release_attack_slot()
 	_pay_bounty(info)
+	var killer := info.attacker as PlayerCharacter if is_instance_valid(info.attacker) else null
+	if killer != null and RunState.has_special(killer.slot.index, &"espora_errante") and randf() < 0.1:
+		var mushroom := HealMushroom.new()
+		mushroom.heal_amount = Balance.economy.mushroom_heal
+		mushroom.position = Vector3(global_position.x, 0, global_position.z)
+		get_parent().add_child(mushroom)
 	_drop_gold()
 	if affixes.has(&"explosive"):
 		var blast := EliteExplosion.new()

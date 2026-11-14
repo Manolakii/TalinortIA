@@ -74,7 +74,10 @@ func smash(breaker: PlayerCharacter = null) -> void:
 		breaker = _nearest_player()
 	var economy: EconomyConfig = Balance.economy
 	if breaker != null and RunState.rng.randf() < economy.vase_drop_chance:
-		Loot.drop(get_parent(), global_position, breaker, Loot.amount_for(economy.vase_gold, RunState.stage))
+		var amount: int = Loot.amount_for(economy.vase_gold, RunState.stage)
+		if RunState.has_special(breaker.slot.index, &"vasija_sin_fondo"):
+			amount *= 2
+		Loot.drop(get_parent(), global_position, breaker, amount)
 	if RunState.rng.randf() < economy.vase_mushroom_chance:
 		var mushroom := HealMushroom.new()
 		mushroom.heal_amount = economy.mushroom_heal

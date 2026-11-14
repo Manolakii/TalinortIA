@@ -196,11 +196,11 @@ func _companion_ready() -> bool:
 
 func is_bonded() -> bool:
 	return companion != null and not companion.downed \
-			and player.global_position.distance_to(companion.global_position) <= kd.bond_distance
+			and player.global_position.distance_to(companion.global_position) <= _bond_distance()
 
 
 func outgoing_multiplier() -> float:
-	return 1.0 + (kd.bond_bonus if is_bonded() else 0.0)
+	return 1.0 + (_bond_bonus() if is_bonded() else 0.0)
 
 
 func _update_bond() -> void:
@@ -208,7 +208,7 @@ func _update_bond() -> void:
 		return
 	var bonded: bool = is_bonded()
 	_bonded = bonded
-	var resist: float = 1.0 - (kd.bond_bonus if bonded else 0.0)
+	var resist: float = 1.0 - (_bond_bonus() if bonded else 0.0)
 	player.health.damage_taken_multiplier = resist
 	# El que maneja la IA, además, aguanta más (si no, se metía a pelear y moría enseguida).
 	companion.health.damage_taken_multiplier = resist * kd.companion_damage_taken
@@ -807,6 +807,7 @@ func _entrance() -> void:
 
 
 func _start_relay() -> void:
+	Events.ultimate_used.emit(player)
 	_relay_time = kd.relay_duration
 	if controlled == Body.STEWIE:
 		_relay_effect = &"ancestral"
@@ -1337,3 +1338,16 @@ func _nearest_vase() -> Vase:
 			best_distance = d
 			best = vase
 	return best
+
+
+## Mejora de la tienda "Vínculo eterno": llega más lejos y da más.
+func _bond_distance() -> float:
+	return 14.0 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_distance
+
+
+func _bond_bonus() -> float:
+	return 0.15 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_bonus
+
+
+func ability_cooldowns() -> Array[AbilityCooldown]:
+	return [_ability_cd[controlled]]

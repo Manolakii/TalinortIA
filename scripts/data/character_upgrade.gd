@@ -16,3 +16,7 @@ extends Resource
 @export var senda_body: StringName = &""
 @export var senda_slot: StringName = &""
 @export var senda_path: StringName = &""
+## Solo se compra en la tienda de Yole Sajor (la "Mejora en Birig Bamba" de cada kit).
+@export var shop_only: bool = false
+## Mejoras que se excluyen entre sí (por ejemplo, las variantes de "Ahora sí te entiendo").
+@export var exclusive_group: StringName = &""

@@ -31,6 +31,10 @@ var _bonuses: Dictionary[String, int] = {}
 ## Objetos genéricos y mejoras de personaje de cada jugador (ids), por índice de jugador.
 var items: Dictionary[int, Array] = {}
 var upgrades: Dictionary[int, Array] = {}
+## Objetos especiales comprados a Yole Sajor, por jugador.
+var specials: Dictionary[int, Array] = {}
+## Visitas a Birig Bamba en esta partida (0 = antes del Stage 1): elige la rareza del stock.
+var visit: int = 0
 
 
 ## Arranca una partida. Con seed 0 se elige una al azar (y se imprime, para poder reproducir errores).
@@ -52,6 +56,8 @@ func start_run(new_seed: int = 0) -> void:
 	_bonuses.clear()
 	items.clear()
 	upgrades.clear()
+	specials.clear()
+	visit = 0
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		gold[slot.index] = Balance.economy.starting_gold
 	in_run = true
@@ -145,3 +151,20 @@ func advance_to(next_type: int, rooms_per_scenario: int, reward: int = RoomKind.
 			room_index = 0
 			scenario += 1
 	room_type = next_type
+
+
+# --- Objetos especiales ---
+
+func get_specials(slot_index: int) -> Array:
+	return specials.get(slot_index, [])
+
+
+func has_special(slot_index: int, item_id: StringName) -> bool:
+	return get_specials(slot_index).has(item_id)
+
+
+func add_special(slot_index: int, item_id: StringName) -> void:
+	if not specials.has(slot_index):
+		specials[slot_index] = []
+	specials[slot_index].append(item_id)
+	Events.loadout_changed.emit(slot_index)

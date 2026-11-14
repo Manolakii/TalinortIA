@@ -424,6 +424,8 @@ func do_dodge() -> void:
 	var direction: Vector3 = dodge_direction()
 	_dissolve_direction = direction
 	_enter_shadow()
+	if has_upgrade(&"agucci_shurikens"):
+		_throw_shurikens(start)
 	player.start_dodge(direction, kd.dissolve_distance, kd.dissolve_duration)
 	player.health.make_invulnerable(kd.dissolve_duration)
 	player.visual.visible = false
@@ -744,3 +746,26 @@ func _poison_tick(target: Node3D) -> void:
 	info.is_melee = false
 	info.tags.append(&"tick")
 	victim.receive_hit(info)
+
+
+## Mejora de la tienda: al disolverse deja 3 shurikens que van a los enemigos más cercanos.
+func _throw_shurikens(from: Vector3) -> void:
+	var targets: Array[Hurtbox] = CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES)
+	targets.sort_custom(func(a: Hurtbox, b: Hurtbox) -> bool:
+		return a.global_position.distance_to(from) < b.global_position.distance_to(from))
+	var origin: Vector3 = from + Vector3.UP * 1.0
+	for i: int in mini(3, targets.size()):
+		var target: Hurtbox = targets[i]
+		if target.global_position.distance_to(from) > 8.0:
+			break
+		var info: DamageInfo = make_hit(15.0)
+		info.is_melee = false
+		info.hitstop = 0.0
+		target.take_hit(info)
+		var to: Vector3 = target.global_position + Vector3.UP * 1.0
+		Fx.beam(_world(), origin, (to - origin).normalized(), origin.distance_to(to), 0.08,
+				Color(0.55, 0.35, 0.75), 0.12)
+
+
+func ability_cooldowns() -> Array[AbilityCooldown]:
+	return [step_cooldown, bite_cooldown]
