@@ -8,6 +8,7 @@ extends "res://scripts/rooms/test_room.gd"
 ## Los jugadores, la cámara y el HUD quedan; lo de la sala vive en `_room_root` y se cambia
 ## entero al cruzar una puerta.
 
+const HUB_SCENE := "res://scenes/hub/birig_bamba.tscn"
 const DOOR_Z := -12.5
 const DOOR_X := 7.0
 ## Qué hay que hacer en cada tipo de sala (cartel en pantalla al entrar).
@@ -44,6 +45,7 @@ var _cracked_rock: CrackedRock
 
 func _ready() -> void:
 	add_to_group(&"stage_run")
+	add_to_group(&"room_title")
 	config = Balance.stage_rooms(RunState.stage)
 	GameSettings.apply_to_environment(_environment.environment)
 	Events.quality_changed.connect(_on_quality_changed)
@@ -328,9 +330,18 @@ func _finish_scenario() -> void:
 	await _pick(RewardPicker.Kind.ITEM, "Fin del %s: elegí un objeto" % scenario_name.get_slice(" · ", 0))
 
 
+## Terminó el stage: vuelven a Birig Bamba (el Gronk Gigante del 1-4 llega en la Fase 7).
 func _finish_stage() -> void:
-	_result_screen.show_result(true, "¡%s liberado!" % config.stage_name,
-			"Bueno, casi: el Gronk Gigante los espera en el 1-4 (llega en la Fase 7).")
+	show_banner("¡%s liberado! Bueno, casi: el Gronk Gigante los espera (Fase 7). Volviendo a Birig Bamba..." % config.stage_name, -1.0)
+	await get_tree().create_timer(4.0).timeout
+	_transitioning = true
+	var tween: Tween = create_tween()
+	tween.tween_property(_fade, "color:a", 1.0, 0.5)
+	await tween.finished
+	_collect_leftover_coins()
+	RunState.save_party(players)
+	RunState.return_to_hub()
+	get_tree().change_scene_to_file(HUB_SCENE)
 
 
 func _pick(kind: RewardPicker.Kind, heading: String = "", option_count: int = 3) -> void:

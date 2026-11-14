@@ -20,10 +20,12 @@ const BUFFERED_ACTIONS: Array[PlayerInput.Action] = [
 ## Modo prueba: tiempo hasta levantarse solo (hasta que exista revivir, Fase 4).
 const TEST_MODE_REVIVE_DELAY := 1.5
 
-## Eligiendo en un menú (mejora u objeto): no se mueve ni ataca.
 ## Efectos de los objetos especiales de Yole Sajor.
 var specials: SpecialItemEffects
+## Eligiendo en un menú (mejora u objeto): no se mueve ni ataca.
 var menu_locked: bool = false
+## En Birig Bamba no se pelea (LORE, Pacto del Bombo): camina, pero no ataca ni usa habilidades.
+var peaceful: bool = false
 var slot: PlayerSlot
 var data: CharacterData
 var kit: CharacterKit
@@ -139,6 +141,10 @@ func _physics_process(delta: float) -> void:
 	if menu_locked:
 		_buffer.clear()
 		apply_movement(Vector2.ZERO, delta)
+		return
+	if peaceful:
+		_buffer.clear()
+		state_machine.physics_update(delta)
 		return
 	kit.handle_input()
 	state_machine.physics_update(delta)

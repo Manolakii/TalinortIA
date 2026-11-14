@@ -1,0 +1,61 @@
+{
+	"_nota": "Charlas de los NPCs de Birig Bamba. Cada NPC tiene charlas por personaje (tali, croco, agucci, maestro) y una 'default'. Cada charla es una lista de líneas; se elige según la visita (visita 0 = la primera, 1 = la segunda...). Si no hay para ese personaje, usa 'default'.",
+	"yole": {
+		"nombre": "Yole Sajor",
+		"iniciales": "YS",
+		"color": "#8f8f9a",
+		"charlas": {
+			"default": [
+				["¡Eeeh, mirá quién llegó! Pasá, pasá, que hoy tengo de todo.", "Todo original, eh. Bueno, original de alguien.", "Apretá E de nuevo y te muestro la mercadería, que no tengo todo el día. Bueno, sí tengo, pero no te lo digo."],
+				["¡Volviste vivo! Pensé que te perdía como cliente.", "Mirá que lo nuevo se cayó de un camión hace diez minutos. Todavía está calentito."]
+			],
+			"tali": [
+				["¡Tali! ¡Mi Talinorteano favorito! Bueno, el único que me paga.", "¿Viste que te tenía razón? La Furia se paga sola. Ahora pagame vos a mí."],
+				["Me contaron que revoleaste un Gronk. Eso no se hace, papá. Eso se vende."]
+			],
+			"croco": [
+				["Croco, hermano. Vos y yo somos iguales: trabajamos por plata y fingimos que es por honor.", "Igual te cobro. La amistad es la amistad y el negocio es el negocio."],
+				["¿Otra vez vos? Con lo que me debés me compro un asteroide."]
+			],
+			"agucci": [
+				["Un Agucci en mi puesto... ¿Viniste a cobrarme la deuda o a sumarte a la cola?", "Tranqui, tranqui. Acá en Birig Bamba no se pelea. Se regatea."],
+				["Che, tu sombra me miró feo. Decile que acá se respeta el Pacto del Bombo."]
+			],
+			"maestro": [
+				["Maestro Uwey, qué honor. Y la tortuga... ¡sacá la pata de la mercadería, Stewie!", "Para usted, precio de amigo. Que es el mismo precio, pero dicho con cariño."],
+				["Stewie se me sentó arriba de la caja de los legendarios. Si se rompe algo, lo pagan."]
+			]
+		}
+	},
+	"barman": {
+		"nombre": "Pocho, el barman",
+		"iniciales": "PB",
+		"color": "#c28a4a",
+		"charlas": {
+			"default": [
+				["Bienvenido al Salón Beláustegui. Leé el cartel de la entrada.", "\"Se prohíben los chistes sobre familiares\". Por un chistecito de esos se armó una guerra, ¿sabés?", "El Líder Supremo se hizo el gracioso con la hermana de los Agucci. Y mirá cómo estamos."],
+				["¿Otra vuelta? La casa no invita, pero escucha.", "Dicen que en el Bosque Tuerto vive un tuerto que no quiere que lo encuentren. Yo no dije nada."]
+			],
+			"agucci": [
+				["Un Agucci en el Salón... Mirá que acá rige el Pacto del Bombo, eh.", "Y por favor, nada de chistes de hermanas. Ya sabemos cómo termina eso."]
+			],
+			"tali": [
+				["¡Tali! El Croco te trajo de la Tierra, ¿no? ¿Cómo es allá? ¿Hay asado?", "Acá el asado lo hacemos con carne de... mejor no te digo."]
+			]
+		}
+	},
+	"consejo": {
+		"nombre": "Bombisto del Consejo",
+		"iniciales": "CB",
+		"color": "#6a8fd6",
+		"charlas": {
+			"default": [
+				["¡BOM! ¡BOM! ¿Escuchás? Es el corazón de Birig Bamba.", "El Consejo del Bombo es neutral: acá no se pelea. Afuera, rómpanse todo lo que quieran.", "Y si volvés entero del Talinorthland, la fuente te cura gratis. Una vez. No abuses."],
+				["¡Volvieron! El bombo sonó más fuerte cuando llegaron. O fue el motor. No sé, son iguales."]
+			],
+			"maestro": [
+				["Maestro Uwey. El Consejo recuerda cuando Uwey era solo valles y no ciudades flotantes.", "Fadied vende tecnología a crédito y los Aguccis compraron. Usted sabe cómo terminan las deudas."]
+			]
+		}
+	}
+}
