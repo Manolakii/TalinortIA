@@ -141,3 +141,4 @@ Cada vez que cambie una decisión de diseño o técnica, se anota acá con la fe
 | 2026-11-14 | Gronk y rocas (seguía pasando): antes de cargar mira el centro y los dos costados de su cuerpo; y si igual roza una roca, frena sin aturdirse. Contra paredes sigue estrellándose y aturdiéndose (GDD) |
 | 2026-11-14 | Presos más accesibles (pedido del grupo: no lo podían ganar): cada jaula se abre en 1,5 s (antes 2,5), hay 45 s (antes 35), y cada preso liberado se queda peleando hasta que termina el evento (un piedrazo de 20 cada 1,2 s al Agucci más cercano) |
 | 2026-11-14 | Gronk (pedido del grupo): si igual se choca una roca, vuelve a quedar aturdido como contra una pared. Sigue intentando no cargar contra rocas (mira el centro y los costados antes) |
+| 2026-11-14 | Fase 5 aprobada por el grupo |
