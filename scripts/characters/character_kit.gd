@@ -193,6 +193,15 @@ func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
 	pass
 
 
+## Cargas de esquiva sin mejoras (la primera vez que se arman las estadísticas).
+var base_dodge_charges: int = -1
+
+
+## Nivel de una mejora de Héroe comprada con McoinIA (GDD).
+func hero(id: StringName) -> int:
+	return MetaProgress.level(id)
+
+
 ## Los cooldowns de la habilidad fuerte (para el Núcleo Uwey).
 func ability_cooldowns() -> Array[AbilityCooldown]:
 	return []

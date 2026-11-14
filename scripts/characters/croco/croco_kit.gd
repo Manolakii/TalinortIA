@@ -273,7 +273,7 @@ func _fire_contract() -> void:
 		if victim != null and victim.health.is_dead:
 			killed = true
 	if killed:
-		contract_cooldown.reduce(kd.contract_cooldown * kd.contract_kill_refund)
+		contract_cooldown.reduce(kd.contract_cooldown * (kd.contract_kill_refund + 0.1 * hero(&"croco_contrato")))
 		RunState.add_bonus(player.slot.index, STACK_KEY, 1)
 		say("¡Contrato cumplido!", Color(0.85, 0.9, 1.0))
 
@@ -456,7 +456,7 @@ func hud_abilities() -> Array[Dictionary]:
 # --- Mejoras ---
 
 func _switch_bonus() -> float:
-	return 0.45 if has_upgrade(&"croco_bonus_cambio") else kd.mode_switch_bonus
+	return 0.45 if has_upgrade(&"croco_bonus_cambio") else kd.mode_switch_bonus + 0.05 * hero(&"croco_cambio")
 
 
 func _full_charge() -> float:

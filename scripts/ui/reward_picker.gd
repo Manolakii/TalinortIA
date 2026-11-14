@@ -27,6 +27,8 @@ class Choice:
 	var done: bool = false
 	var cards: Array[PanelContainer] = []
 	var title: Label
+	var box: VBoxContainer
+	var reroll_hint: Label
 
 var kind: Kind = Kind.UPGRADE
 var _choices: Array[Choice] = []
@@ -117,6 +119,21 @@ func _physics_process(delta: float) -> void:
 			_refresh(choice)
 		elif input.just_pressed(PlayerInput.Action.CONFIRM) or input.just_pressed(PlayerInput.Action.INTERACT):
 			_pick(choice)
+		elif input.just_pressed(PlayerInput.Action.ULTIMATE):
+			reroll(choice)
+
+
+## Segunda opinión (McoinIA): vuelve a tirar las opciones de este jugador.
+func reroll(choice: Choice) -> void:
+	var index: int = choice.player.slot.index
+	if choice.done or RunState.rerolls_left.get(index, 0) <= 0:
+		return
+	RunState.rerolls_left[index] -= 1
+	choice.options = _options_for(choice.player)
+	choice.selected = 0
+	Sound.play("ui_confirm", -4.0, 0.0)
+	_build_cards(choice)
+	_refresh(choice)
 
 
 ## Elige la opción marcada (también lo usan los tests).
@@ -145,6 +162,8 @@ func _finish_choice(choice: Choice, text: String) -> void:
 		choice.player.menu_locked = false
 		choice.player.slot.input.consume_all()
 	choice.title.text = text
+	if choice.reroll_hint != null:
+		choice.reroll_hint.visible = false
 	for i: int in choice.cards.size():
 		choice.cards[i].modulate.a = 1.0 if i == choice.selected else 0.25
 
@@ -188,6 +207,22 @@ func _build_panel(choice: Choice) -> Control:
 	choice.title.add_theme_color_override("font_color", color.lightened(0.3))
 	choice.title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(choice.title)
+	choice.box = box
+	choice.reroll_hint = Label.new()
+	choice.reroll_hint.add_theme_font_size_override("font_size", 13)
+	choice.reroll_hint.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
+	box.add_child(choice.reroll_hint)
+	_build_cards(choice)
+	return panel
+
+
+func _build_cards(choice: Choice) -> void:
+	for card: PanelContainer in choice.cards:
+		card.queue_free()
+	choice.cards.clear()
+	var left: int = RunState.rerolls_left.get(choice.player.slot.index, 0)
+	choice.reroll_hint.text = "Q / RB: volver a tirar (Segunda opinión: quedan %d)" % left
+	choice.reroll_hint.visible = left > 0 and not choice.done
 	for option: Dictionary in choice.options:
 		var card := PanelContainer.new()
 		var inner := VBoxContainer.new()
@@ -209,9 +244,8 @@ func _build_panel(choice: Choice) -> Control:
 		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		description.custom_minimum_size = Vector2(PANEL_WIDTH - 44.0, 0)
 		inner.add_child(description)
-		box.add_child(card)
+		choice.box.add_child(card)
 		choice.cards.append(card)
-	return panel
 
 
 func _refresh(choice: Choice) -> void:

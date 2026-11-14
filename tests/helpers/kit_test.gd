@@ -11,6 +11,7 @@ var _slot: PlayerSlot
 
 
 func make_player(character_id: StringName, index: int = 0) -> PlayerCharacter:
+	MetaProgress.reset_for_tests()
 	var slot := PlayerSlot.new(index, false, 90 + index)
 	slot.color = Balance.player_slots.colors[index]
 	slot.label = Balance.player_slots.labels[index]

@@ -188,7 +188,7 @@ func _pay_bounty(info: DamageInfo) -> void:
 	var killer := info.attacker as PlayerCharacter
 	if killer == null or not (killer.kit is CrocoKit):
 		return
-	var gold: int = Balance.economy.croco_bounty_gold
+	var gold: int = roundi(Balance.economy.croco_bounty_gold * (1.0 + 0.15 * MetaProgress.level(&"croco_recompensa")))
 	RunState.add_gold(killer.slot.index, gold)
 	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
 		killer.health.heal(10.0)

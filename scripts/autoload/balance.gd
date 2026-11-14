@@ -13,6 +13,7 @@ const REVIVE_PATH := "res://data/revive_config.tres"
 const GENERIC_ITEMS_PATH := "res://data/items/generic_items.tres"
 const UPGRADES_PATH := "res://data/upgrades/character_upgrades.tres"
 const SHOP_PATH := "res://data/shop.tres"
+const MCOINIA_PATH := "res://data/mcoinia.tres"
 const STAGE_ROOMS_PATH := "res://data/rooms/stage%d.tres"
 const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
@@ -27,6 +28,7 @@ var revive: ReviveConfig
 var generic_items: GenericItemList
 var upgrades: UpgradePool
 var shop: ShopConfig
+var mcoinia: McoiniaConfig
 var _stage_cache: Dictionary = {}
 
 var _enemy_cache: Dictionary[StringName, EnemyData] = {}
@@ -45,6 +47,7 @@ func _enter_tree() -> void:
 	generic_items = _load_required(GENERIC_ITEMS_PATH) as GenericItemList
 	upgrades = _load_required(UPGRADES_PATH) as UpgradePool
 	shop = _load_required(SHOP_PATH) as ShopConfig
+	mcoinia = _load_required(MCOINIA_PATH) as McoiniaConfig
 
 
 func get_enemy(id: StringName) -> EnemyData:

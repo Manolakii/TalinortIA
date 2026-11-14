@@ -345,6 +345,7 @@ func _riddle_here() -> bool:
 
 
 func _finish_scenario() -> void:
+	RunState.scenarios_cleared += 1
 	var center: Vector3 = _players_center()
 	Events.floating_text_requested.emit(center + Vector3.UP * 4.0, "¡Escenario superado!", Color(1.0, 0.82, 0.3))
 	Loot.drop_for_all(_room_root, center + Vector3(0, 0, -2.5), Balance.economy.scenario_gold)

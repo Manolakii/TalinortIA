@@ -9,6 +9,7 @@ var _slot: PlayerSlot
 
 
 func before_each() -> void:
+	MetaProgress.reset_for_tests()  # sin las McoinIA guardadas en la compu
 	# Un slot suelto (fuera de PlayerManager) para controlar el input a mano.
 	_slot = PlayerSlot.new(0, false, 99)
 	_slot.color = Color.BLUE

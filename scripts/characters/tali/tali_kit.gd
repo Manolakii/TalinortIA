@@ -155,7 +155,7 @@ func _update_charge() -> void:
 func try_avoid(info: DamageInfo) -> String:
 	if in_fury or info.attacker_team != DamageInfo.Team.ENEMIES:
 		return ""
-	if Combat.roll(kd.luck_miss_chance):
+	if Combat.roll(kd.luck_miss_chance + 0.04 * hero(&"tali_suerte")):
 		return LUCK_TEXTS[Combat.rng.randi() % LUCK_TEXTS.size()]
 	return ""
 
@@ -221,7 +221,8 @@ func _exit_fury() -> void:
 	_cancel_slam()
 	player.end_action()
 	player.health.damage_taken_multiplier = 1.0
-	player.status.apply(StatusEffects.EXHAUSTED, kd.exhausted_duration * (0.5 if has_upgrade(&"tali_resaca_leve") else 1.0))
+	player.status.apply(StatusEffects.EXHAUSTED, maxf(kd.exhausted_duration * (0.5 if has_upgrade(&"tali_resaca_leve") else 1.0)
+			- 0.5 * hero(&"tali_resaca"), 0.3))
 	_lockout = kd.fury_lockout
 	_tween_scale(1.0)
 	_say("Resaca...", Color(0.75, 0.75, 0.8))
@@ -594,7 +595,7 @@ func hud_abilities() -> Array[Dictionary]:
 # --- Mejoras ---
 
 func _fury_duration() -> float:
-	return kd.fury_duration + (2.0 if has_upgrade(&"tali_furia_larga") else 0.0)
+	return kd.fury_duration + (2.0 if has_upgrade(&"tali_furia_larga") else 0.0) + hero(&"tali_furia")
 
 
 func _claw_range() -> float:

@@ -1,0 +1,193 @@
+[gd_resource type="Resource" script_class="McoiniaConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/mcoinia_config.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/mcoinia_upgrade.gd" id="2"]
+
+[sub_resource type="Resource" id="m_0"]
+script = ExtResource("2")
+id = &"ojo_afilado"
+character = &""
+display_name = "Ojo afilado"
+description = "+3% de chance de crítico por nivel"
+costs = Array[int]([20, 45, 80])
+amount = 0.03
+stat = &"crit_chance"
+
+[sub_resource type="Resource" id="m_1"]
+script = ExtResource("2")
+id = &"colmillo"
+character = &""
+display_name = "Colmillo"
+description = "+2% de robo de vida por nivel"
+costs = Array[int]([20, 45, 80])
+amount = 0.02
+stat = &"lifesteal"
+
+[sub_resource type="Resource" id="m_2"]
+script = ExtResource("2")
+id = &"piel_dura"
+character = &""
+display_name = "Piel dura"
+description = "+8 de vida máxima por nivel"
+costs = Array[int]([20, 45, 80])
+amount = 8.0
+stat = &"max_health"
+
+[sub_resource type="Resource" id="m_3"]
+script = ExtResource("2")
+id = &"bolsillo_profundo"
+character = &""
+display_name = "Bolsillo profundo"
+description = "+25 de oro inicial por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 25.0
+stat = &""
+
+[sub_resource type="Resource" id="m_4"]
+script = ExtResource("2")
+id = &"segunda_opinion"
+character = &""
+display_name = "Segunda opinión"
+description = "Volver a tirar una recompensa por partida (por nivel)"
+costs = Array[int]([40, 90])
+amount = 1.0
+stat = &""
+
+[sub_resource type="Resource" id="m_5"]
+script = ExtResource("2")
+id = &"pierna_extra"
+character = &""
+display_name = "Pierna extra"
+description = "+1 carga de esquiva"
+costs = Array[int]([150])
+amount = 1.0
+stat = &""
+
+[sub_resource type="Resource" id="m_6"]
+script = ExtResource("2")
+id = &"tali_resaca"
+character = &"tali"
+display_name = "Resaca corta"
+description = "La Resaca dura 0,5 s menos por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.5
+stat = &""
+
+[sub_resource type="Resource" id="m_7"]
+script = ExtResource("2")
+id = &"tali_suerte"
+character = &"tali"
+display_name = "Más suerte"
+description = "+4% de Suerte (esquivar de casualidad) por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.04
+stat = &""
+
+[sub_resource type="Resource" id="m_8"]
+script = ExtResource("2")
+id = &"tali_furia"
+character = &"tali"
+display_name = "Furia larga"
+description = "La Furia dura +1 s por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 1.0
+stat = &""
+
+[sub_resource type="Resource" id="m_9"]
+script = ExtResource("2")
+id = &"croco_cambio"
+character = &"croco"
+display_name = "Mano rápida"
+description = "El bonus del primer tiro tras cambiar de modo sube a 35 / 40 / 45%"
+costs = Array[int]([15, 35, 60])
+amount = 0.05
+stat = &""
+
+[sub_resource type="Resource" id="m_10"]
+script = ExtResource("2")
+id = &"croco_recompensa"
+character = &"croco"
+display_name = "Buen cobrador"
+description = "La Recompensa paga +15% por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.15
+stat = &""
+
+[sub_resource type="Resource" id="m_11"]
+script = ExtResource("2")
+id = &"croco_contrato"
+character = &"croco"
+display_name = "Contrato cumplido"
+description = "El Tiro por Contrato recupera +10% de cooldown al matar, por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.1
+stat = &""
+
+[sub_resource type="Resource" id="m_12"]
+script = ExtResource("2")
+id = &"agucci_lucidez"
+character = &"agucci"
+display_name = "Lucidez larga"
+description = "La Lucidez llega hasta 33 / 36 / 40 de Hambre"
+costs = Array[int]([15, 35, 60])
+amount = 3.0
+stat = &""
+
+[sub_resource type="Resource" id="m_13"]
+script = ExtResource("2")
+id = &"agucci_disolverse"
+character = &"agucci"
+display_name = "Sombra larga"
+description = "Disolverse recorre +15% por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.15
+stat = &""
+
+[sub_resource type="Resource" id="m_14"]
+script = ExtResource("2")
+id = &"agucci_paso"
+character = &"agucci"
+display_name = "Paso filoso"
+description = "Paso de Sombra pega +10% por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 0.1
+stat = &""
+
+[sub_resource type="Resource" id="m_15"]
+script = ExtResource("2")
+id = &"maestro_vinculo"
+character = &"maestro"
+display_name = "Vínculo amplio"
+description = "El Vínculo llega hasta 9 / 10 / 11 m"
+costs = Array[int]([15, 35, 60])
+amount = 1.0
+stat = &""
+
+[sub_resource type="Resource" id="m_16"]
+script = ExtResource("2")
+id = &"maestro_stewie"
+character = &"maestro"
+display_name = "Stewie fuerte"
+description = "Stewie empieza con +10 de vida por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 10.0
+stat = &""
+
+[sub_resource type="Resource" id="m_17"]
+script = ExtResource("2")
+id = &"maestro_cambio"
+character = &"maestro"
+display_name = "Cambio rápido"
+description = "El Cambio tiene 1 s menos de cooldown por nivel"
+costs = Array[int]([15, 35, 60])
+amount = 1.0
+stat = &""
+
+[resource]
+script = ExtResource("1")
+per_scenario = 1
+per_elite = 2
+per_boss = 8
+win_bonus = 15
+difficulty_multipliers = Array[float]([1.0, 1.5, 2.0])
+upgrades = Array[ExtResource("2")]([SubResource("m_0"), SubResource("m_1"), SubResource("m_2"), SubResource("m_3"), SubResource("m_4"), SubResource("m_5"), SubResource("m_6"), SubResource("m_7"), SubResource("m_8"), SubResource("m_9"), SubResource("m_10"), SubResource("m_11"), SubResource("m_12"), SubResource("m_13"), SubResource("m_14"), SubResource("m_15"), SubResource("m_16"), SubResource("m_17")])

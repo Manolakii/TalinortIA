@@ -364,7 +364,15 @@ func rebuild_modifiers() -> void:
 		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(upgrade_id)
 		if upgrade != null and upgrade.stat != &"":
 			modifiers.add(upgrade.stat, upgrade.amount)
+	for meta: McoiniaUpgrade in Balance.mcoinia.column(&""):
+		if meta.stat != &"" and MetaProgress.level(meta.id) > 0:
+			modifiers.add(meta.stat, MetaProgress.bonus(meta.id))
+	# La esquiva vuelve a su base antes de sumarle mejoras (si no, se acumularía).
+	if kit.base_dodge_charges < 0:
+		kit.base_dodge_charges = kit.dodge_cooldown.max_charges
+	kit.dodge_cooldown.max_charges = kit.base_dodge_charges
 	kit.apply_upgrade_stats(modifiers)
+	kit.dodge_cooldown.max_charges += int(MetaProgress.bonus(&"pierna_extra"))
 	var ratio: float = health.ratio() if health.max_health > 0.0 else 1.0
 	health.max_health = kit.base_max_health() + modifiers.max_health_bonus()
 	health.current = clampf(health.max_health * ratio, 0.0, health.max_health) \

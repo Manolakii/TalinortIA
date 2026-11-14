@@ -59,7 +59,7 @@ func _setup() -> void:
 	# Copia propia: la velocidad cambia según el cuerpo y no hay que pisar los datos compartidos.
 	data = data.duplicate()
 	player.data = data
-	switch_cooldown = AbilityCooldown.new(kd.switch_cooldown)
+	switch_cooldown = AbilityCooldown.new(maxf(kd.switch_cooldown - hero(&"maestro_cambio"), 1.0))
 	_ability_cd[Body.MAESTRO] = AbilityCooldown.new(kd.bastonazo_cooldown)
 	_ability_cd[Body.STEWIE] = AbilityCooldown.new(kd.refuge_cooldown)
 	_dodge_cd[Body.MAESTRO] = AbilityCooldown.new(kd.pole_recharge, kd.pole_charges)
@@ -106,7 +106,7 @@ func stewie_form() -> int:
 
 
 func stewie_max_health() -> float:
-	return kd.stewie_health_by_form[stewie_form()]
+	return kd.stewie_health_by_form[stewie_form()] + 10.0 * hero(&"maestro_stewie")
 
 
 func _max_health_of(body: int) -> float:
@@ -1342,7 +1342,7 @@ func _nearest_vase() -> Vase:
 
 ## Mejora de la tienda "Vínculo eterno": llega más lejos y da más.
 func _bond_distance() -> float:
-	return 14.0 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_distance
+	return 14.0 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_distance + hero(&"maestro_vinculo")
 
 
 func _bond_bonus() -> float:

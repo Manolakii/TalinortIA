@@ -57,6 +57,10 @@ func show_result(won: bool, title: String = "", line: String = "") -> void:
 	_title.text = title if title != "" else (WIN_TITLE if won else LOSE_TITLE)
 	var lines: Array[String] = WIN_LINES if won else LOSE_LINES
 	_line.text = line if line != "" else lines[randi() % lines.size()]
+	# Ganes o pierdas, cobrás McoinIA (GDD).
+	var earned: int = RunState.award_mcoinia(won)
+	if RunState.mcoinia_awarded:
+		_line.text += "\n\n+%d McoinIA  ·  total: %d (se gasta en Birig Bamba)" % [earned, MetaProgress.get_balance()]
 	_panel.visible = true
 
 

@@ -11,6 +11,7 @@ var _kit: TaliKit
 
 
 func before_each() -> void:
+	MetaProgress.reset_for_tests()  # sin las McoinIA guardadas en la compu
 	Combat.rng.seed = 1234
 	_slot = PlayerSlot.new(0, false, 99)
 	_slot.color = Color.BLUE

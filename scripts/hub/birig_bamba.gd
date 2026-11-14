@@ -51,6 +51,7 @@ func _ready() -> void:
 	_build_fountain()
 	_build_drum()
 	_build_ship()
+	_build_mcoinia_booth()
 	Sound.music("birig_bamba")
 	Fx.prewarm(_camera_focus_node())
 
@@ -324,6 +325,28 @@ func _npc(at: Vector3, color: Color, npc_id: String, prompt_text: String) -> voi
 	add_child(spot)
 	spot.setup(prompt_text, 2.4, 2.6)
 	spot.used.connect(func(by: PlayerCharacter) -> void: _talk(by, npc_id, spot))
+
+
+## Puesto de McoinIA (GDD: las mejoras permanentes se compran con McoinIA).
+func _build_mcoinia_booth() -> void:
+	var center := Vector3(16, 0, 9)
+	var counter := _box(Vector3(3.0, 1.1, 1.0), center + Vector3(0, 0.55, 0), Fx.flat_material(Color(0.2, 0.22, 0.3)))
+	_solid(counter, Vector3(3.0, 1.1, 1.0))
+	_box(Vector3(3.2, 0.12, 1.2), center + Vector3(0, 1.15, 0), Fx.flat_material(Color(1.0, 0.82, 0.3), 1.5))
+	var sign := _label("Casa de cambio McoinIA", 54, Color(1.0, 0.82, 0.3))
+	sign.position = center + Vector3(0, 3.0, 0)
+	add_child(sign)
+	_light(center + Vector3(0, 2.2, 1.2), Color(1.0, 0.82, 0.3), 1.5, 6.0)
+	var spot := HubInteractable.new()
+	spot.position = center + Vector3(0, 0, 1.6)
+	add_child(spot)
+	spot.setup("Gastar McoinIA (E / X)", 2.4, 2.4)
+	spot.used.connect(func(by: PlayerCharacter) -> void:
+		spot.busy = true
+		var panel := McoiniaPanel.new()
+		add_child(panel)
+		panel.open(by)
+		panel.closed.connect(func() -> void: spot.busy = false))
 
 
 # --- Ayudas para armar formas ---

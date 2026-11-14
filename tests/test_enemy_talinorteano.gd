@@ -11,6 +11,7 @@ var _enemy: TalinorteanoCegado
 
 
 func before_each() -> void:
+	MetaProgress.reset_for_tests()  # sin las McoinIA guardadas en la compu
 	_slot = PlayerSlot.new(0, false, 99)
 	_slot.character = Balance.get_character(&"croco")
 	_player = PLAYER_SCENE.instantiate()

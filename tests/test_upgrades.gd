@@ -5,6 +5,7 @@ var _rng := RandomNumberGenerator.new()
 
 
 func before_each() -> void:
+	MetaProgress.reset_for_tests()  # sin las McoinIA guardadas en la compu
 	RunState.start_run(6)
 	_rng.seed = 6
 

@@ -42,6 +42,13 @@ var party: Dictionary[int, Dictionary] = {}
 var shop_state: Dictionary[int, Dictionary] = {}
 ## Fuente: quién ya se curó en esta visita.
 var fountain_used: Array[int] = []
+## Para la McoinIA al terminar (GDD): escenarios superados, élites y bosses derrotados.
+var scenarios_cleared: int = 0
+var elites_killed: int = 0
+var bosses_killed: int = 0
+var mcoinia_awarded: bool = false
+## Segunda opinión (McoinIA): recompensas que cada jugador todavía puede volver a tirar.
+var rerolls_left: Dictionary[int, int] = {}
 
 
 ## Arranca una partida. Con seed 0 se elige una al azar (y se imprime, para poder reproducir errores).
@@ -68,8 +75,14 @@ func start_run(new_seed: int = 0) -> void:
 	party.clear()
 	shop_state.clear()
 	fountain_used.clear()
+	scenarios_cleared = 0
+	elites_killed = 0
+	bosses_killed = 0
+	mcoinia_awarded = false
+	rerolls_left.clear()
 	for slot: PlayerSlot in PlayerManager.active_slots():
-		gold[slot.index] = Balance.economy.starting_gold
+		gold[slot.index] = Balance.economy.starting_gold + int(MetaProgress.bonus(&"bolsillo_profundo"))
+		rerolls_left[slot.index] = int(MetaProgress.bonus(&"segunda_opinion"))
 	in_run = true
 	print("Partida nueva, semilla: %d" % seed_value)
 	Events.run_started.emit(seed_value)
@@ -204,3 +217,37 @@ func return_to_hub() -> void:
 	room_index = 0
 	room_type = 0
 	room_reward = 1
+
+
+# --- McoinIA ---
+
+func _ready() -> void:
+	Events.enemy_died.connect(_on_enemy_died)
+
+
+func _on_enemy_died(enemy: Node3D) -> void:
+	if not in_run:
+		return
+	if enemy is GronkGigante:
+		bosses_killed += 1
+	elif enemy is Enemy and (enemy as Enemy).is_elite:
+		elites_killed += 1
+
+
+## McoinIA de esta partida (GDD): 1 por escenario, 2 por élite, 8 por boss, 15 por ganar,
+## por la dificultad.
+func mcoinia_for(won: bool) -> int:
+	var config: McoiniaConfig = Balance.mcoinia
+	var total: float = scenarios_cleared * config.per_scenario + elites_killed * config.per_elite \
+			+ bosses_killed * config.per_boss + (config.win_bonus if won else 0)
+	return roundi(total * config.difficulty_multipliers[difficulty])
+
+
+## Al terminar la partida (ganada o perdida): cobra la McoinIA una sola vez. Devuelve cuánto.
+func award_mcoinia(won: bool) -> int:
+	if mcoinia_awarded:
+		return 0
+	mcoinia_awarded = true
+	var earned: int = mcoinia_for(won)
+	MetaProgress.add(earned)
+	return earned

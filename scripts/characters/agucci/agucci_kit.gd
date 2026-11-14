@@ -343,7 +343,7 @@ func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
 	Fx.ring_burst(_world(), to, 1.4, SHADOW_COLOR)
 	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
 			from, to, kd.dash_width)
-	_hit_each(targets, kd.dash_damage, _setup_dash, false, from)
+	_hit_each(targets, kd.dash_damage * (1.0 + 0.1 * hero(&"agucci_paso")), _setup_dash, false, from)
 	if _any_dead(targets):
 		step_cooldown.reduce(kd.step_cooldown * kd.dash_kill_refund)
 	if not targets.is_empty():
@@ -426,7 +426,7 @@ func do_dodge() -> void:
 	_enter_shadow()
 	if has_upgrade(&"agucci_shurikens"):
 		_throw_shurikens(start)
-	player.start_dodge(direction, kd.dissolve_distance, kd.dissolve_duration)
+	player.start_dodge(direction, kd.dissolve_distance * (1.0 + 0.15 * hero(&"agucci_disolverse")), kd.dissolve_duration)
 	player.health.make_invulnerable(kd.dissolve_duration)
 	player.visual.visible = false
 	Fx.ring_burst(_world(), start, 1.2, SHADOW_COLOR, 0.25)
@@ -720,7 +720,9 @@ func hud_abilities() -> Array[Dictionary]:
 # --- Mejoras ---
 
 func _lucidity_max() -> float:
-	return 40.0 if has_upgrade(&"agucci_lucidez_amplia") else kd.lucidity_max
+	if has_upgrade(&"agucci_lucidez_amplia"):
+		return 40.0
+	return kd.lucidity_max + [0.0, 3.0, 6.0, 10.0][mini(hero(&"agucci_lucidez"), 3)]
 
 
 func _night_duration() -> float:
