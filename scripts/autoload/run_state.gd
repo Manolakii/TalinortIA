@@ -31,6 +31,17 @@ var _bonuses: Dictionary[String, int] = {}
 ## Objetos genéricos y mejoras de personaje de cada jugador (ids), por índice de jugador.
 var items: Dictionary[int, Array] = {}
 var upgrades: Dictionary[int, Array] = {}
+## Objetos especiales comprados a Yole Sajor, por jugador.
+var specials: Dictionary[int, Array] = {}
+## Visitas a Birig Bamba en esta partida (0 = antes del Stage 1): elige la rareza del stock.
+var visit: int = 0
+## Vida de cada jugador al cambiar de escena (proporción) y si quedó afuera (GDD: vuelve en
+## Birig Bamba con 40% y sin fuente). Por índice de jugador.
+var party: Dictionary[int, Dictionary] = {}
+## Tienda de Yole Sajor: stock de cada jugador en esta visita.
+var shop_state: Dictionary[int, Dictionary] = {}
+## Fuente: quién ya se curó en esta visita.
+var fountain_used: Array[int] = []
 
 
 ## Arranca una partida. Con seed 0 se elige una al azar (y se imprime, para poder reproducir errores).
@@ -52,6 +63,11 @@ func start_run(new_seed: int = 0) -> void:
 	_bonuses.clear()
 	items.clear()
 	upgrades.clear()
+	specials.clear()
+	visit = 0
+	party.clear()
+	shop_state.clear()
+	fountain_used.clear()
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		gold[slot.index] = Balance.economy.starting_gold
 	in_run = true
@@ -145,3 +161,46 @@ func advance_to(next_type: int, rooms_per_scenario: int, reward: int = RoomKind.
 			room_index = 0
 			scenario += 1
 	room_type = next_type
+
+
+# --- Objetos especiales ---
+
+func get_specials(slot_index: int) -> Array:
+	return specials.get(slot_index, [])
+
+
+func has_special(slot_index: int, item_id: StringName) -> bool:
+	return get_specials(slot_index).has(item_id)
+
+
+func add_special(slot_index: int, item_id: StringName) -> void:
+	if not specials.has(slot_index):
+		specials[slot_index] = []
+	specials[slot_index].append(item_id)
+	Events.loadout_changed.emit(slot_index)
+
+
+# --- Entre escenas ---
+
+## Guarda la vida de cada jugador antes de cambiar de escena.
+func save_party(players: Array) -> void:
+	for node: Variant in players:
+		var player := node as PlayerCharacter
+		if player == null or not is_instance_valid(player):
+			continue
+		party[player.slot.index] = {
+			"ratio": player.health.ratio() if not player.health.is_dead else 0.0,
+			"out": player.is_out() or player.health.is_dead,
+		}
+
+
+## Vuelve de un stage a Birig Bamba: nueva visita (stock nuevo, fuente disponible) y el
+## recorrido vuelve al principio para el stage que sigue.
+func return_to_hub() -> void:
+	visit += 1
+	shop_state.clear()
+	fountain_used.clear()
+	scenario = 0
+	room_index = 0
+	room_type = 0
+	room_reward = 1

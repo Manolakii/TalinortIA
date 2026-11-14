@@ -17,6 +17,8 @@ const MARKED: StringName = &"marked"
 const FOGGED: StringName = &"fogged"
 ## Oculto en la nube de la Garrocha de Niebla: los enemigos no lo ven.
 const HIDDEN: StringName = &"hidden"
+## Bombito de Birig Bamba: +15% de velocidad.
+const BOMBITO: StringName = &"bombito"
 
 signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)

@@ -48,6 +48,7 @@ func _handle_ultimate() -> void:
 		player.end_action()
 		if _use_ultimate():
 			ult_charge = 0.0
+			Events.ultimate_used.emit(player)
 
 
 ## Puede empezar una habilidad: está libre o en la recuperación de un golpe común.
@@ -190,6 +191,11 @@ func try_avoid(_info: DamageInfo) -> String:
 
 func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
 	pass
+
+
+## Los cooldowns de la habilidad fuerte (para el Núcleo Uwey).
+func ability_cooldowns() -> Array[AbilityCooldown]:
+	return []
 
 
 ## Multiplicador para que los enemigos lo elijan (menos de 1 = atrae más).

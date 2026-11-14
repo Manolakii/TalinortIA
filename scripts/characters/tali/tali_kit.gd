@@ -293,6 +293,10 @@ func _wild_call() -> void:
 	player.start_action(0.3, 0.2)
 	var gronk_weight: float = kd.call_weight_gronk * (3.0 if has_upgrade(&"tali_suerte_norteana") else 1.0)
 	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs, gronk_weight])
+	# Mejora de la tienda "Ahora sí te entiendo": elegís el animal.
+	for i: int in 3:
+		if has_upgrade(StringName("tali_entiende_" + ["pajaros", "bichos", "gronk"][i])):
+			kind = i
 	_say(CALL_TEXTS[kind], Color.WHITE, 1.2 if kind == WildCallEffect.Kind.GRONK else 1.0)
 	schedule(0.2, _spawn_call.bind(kind, player.aim_direction))
 
@@ -616,3 +620,7 @@ func _slam_radius() -> float:
 
 func _fury_gain() -> float:
 	return 1.25 if has_upgrade(&"tali_bronca_rapida") else 1.0
+
+
+func ability_cooldowns() -> Array[AbilityCooldown]:
+	return [call_cooldown, slam_cooldown]

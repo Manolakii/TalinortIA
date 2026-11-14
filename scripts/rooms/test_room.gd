@@ -66,9 +66,20 @@ func _spawn_players() -> void:
 		player.velocity_limiter = _camera.limit_velocity.bind(player)
 		_players_root.add_child(player)
 		player.reset_physics_interpolation()
+		_restore_health(player)
 		players.append(player)
 		camera_targets.append(player)
 	_camera.set_targets(camera_targets)
+
+
+## Vida que traía de la escena anterior. Los que quedaron afuera vuelven con el 40% (GDD).
+func _restore_health(player: PlayerCharacter) -> void:
+	if not RunState.party.has(player.slot.index):
+		return
+	var saved: Dictionary = RunState.party[player.slot.index]
+	var ratio: float = 0.4 if saved.get("out", false) else saved.get("ratio", 1.0)
+	player.health.current = maxf(player.health.max_health * ratio, 1.0)
+	player.health.changed.emit(player.health.current, player.health.max_health)
 
 
 func _auto_join_for_testing() -> void:

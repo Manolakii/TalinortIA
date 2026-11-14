@@ -1,8 +1,10 @@
 extends CanvasLayer
 ## Cartel de fin de sala: ganaron o perdieron. Cualquiera puede elegir:
-##   Enter o A: jugar la sala de nuevo · E o X: volver a la pantalla de unión.
+##   Enter o A: partida nueva (desde Birig Bamba) · E o X: volver a la pantalla de unión.
 
 const JOIN_SCENE := "res://scenes/ui/join_screen.tscn"
+## "Jugar de nuevo" arranca una partida nueva desde Birig Bamba.
+const HUB_SCENE := "res://scenes/hub/birig_bamba.tscn"
 const WIN_TITLE := "¡Sala superada!"
 const WIN_LINES: Array[String] = [
 	"Talinorthland, donde la supervivencia es un éxito.",
@@ -68,7 +70,7 @@ func _physics_process(delta: float) -> void:
 		if slot.input.just_pressed(PlayerInput.Action.CONFIRM):
 			_active = false
 			RunState.start_run()
-			get_tree().reload_current_scene()
+			get_tree().change_scene_to_file(HUB_SCENE)
 			return
 		if slot.input.just_pressed(PlayerInput.Action.INTERACT):
 			_active = false

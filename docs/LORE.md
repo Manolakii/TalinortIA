@@ -47,7 +47,7 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 
 ## NPCs del MVP
 
-- **Yole Sajor:** mapache comerciante del Salón Beláustegui. Vende los objetos especiales.
+- **Yole Sajor:** mapache que habla, transa del mercado negro de Birig Bamba (cambio de lore del grupo, 2026-11-14). Vende los objetos especiales "que se cayeron de un camión". Berretinero, chamuyero, tira chistes bien argentinos, te descansa y te vende hasta lo que no tiene.
 - **Consejo del Bombo:** los neutrales de Birig Bamba.
 - **Birigbambenses:** el público de la cantina.
 

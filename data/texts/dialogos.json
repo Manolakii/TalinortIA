@@ -83,5 +83,33 @@
 		"¡Rodéenlo, inútiles!",
 		"Me pagan poco para esto."
 	],
+	"yole_saludo": [
+		"¿Qué te llevás, maestro? Todo original. Bueno, casi.",
+		"Pasá, pasá, mirá sin compromiso. Bueno, con un poco de compromiso.",
+		"Mercadería fina, recién caída de un camión.",
+		"Para vos, precio especial: el mismo, pero con una sonrisa."
+	],
+	"yole_compra": [
+		"¡Gran compra, crack! No te fijes en las manchas.",
+		"Ese lo usaba mi abuela. Bueno, mi abuela lo robó, pero lo usaba.",
+		"Vendido. Sin garantía, sin devolución, sin preguntas.",
+		"¡Excelente! Con eso no te gana ni el Gronk Gigante. Bueno, capaz que sí."
+	],
+	"yole_sin_plata": [
+		"¿Y la plata, campeón? Esto no es un comedor.",
+		"No te alcanza, ratón. Y el mapache acá soy yo.",
+		"Fiado no, que después te morís y quién me paga.",
+		"Volvé cuando tengas oro, que el cariño no se come."
+	],
+	"yole_retira": [
+		"¿No te gustó nada? Dame un segundo que busco atrás...",
+		"Uh, qué exigente. A ver esto que me trajeron recién.",
+		"Bueno, bueno. Saco lo que tenía guardado para los amigos."
+	],
+	"yole_chau": [
+		"¡Chau, crack! Volvé con más oro.",
+		"Si te preguntan, no me conocés.",
+		"Andá, andá. Y no le digas a nadie dónde compraste eso."
+	],
 	"mimic": ["¡ÑAM!", "¿Pensaste que era oro? Je.", "¡Abrime la tapa ahora, vivo!"]
 }

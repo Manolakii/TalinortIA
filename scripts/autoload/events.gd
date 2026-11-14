@@ -31,6 +31,8 @@ signal camera_shake_requested(amount: float)
 ## Teñir la sala un rato (la Noche del Valle sin Luz la pone violeta).
 signal room_tint_requested(color: Color, duration: float)
 signal enemy_died(enemy: Node3D)
+## Un jugador usó su definitiva (o el Relevo Total del dúo).
+signal ultimate_used(player: Node3D)
 ## Muerte y revivir (Fase 4).
 signal player_downed(player: Node3D)
 signal player_revived(player: Node3D)

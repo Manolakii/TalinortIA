@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="ShopConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/shop_config.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/special_item.gd" id="2"]
+
+[sub_resource type="Resource" id="s_0"]
+script = ExtResource("2")
+id = &"piedra_suerte"
+display_name = "Piedra de la Suerte"
+description = "El golpe común tiene 8% de chance de aturdir 0,5 s"
+rarity = 0
+
+[sub_resource type="Resource" id="s_1"]
+script = ExtResource("2")
+id = &"bombito"
+display_name = "Bombito de Birig Bamba"
+description = "Al usar la definitiva, los aliados cercanos van 15% más rápido por 4 s"
+rarity = 0
+
+[sub_resource type="Resource" id="s_2"]
+script = ExtResource("2")
+id = &"vasija_sin_fondo"
+display_name = "Vasija sin fondo"
+description = "Las vasijas que rompés sueltan el doble de oro"
+rarity = 0
+
+[sub_resource type="Resource" id="s_3"]
+script = ExtResource("2")
+id = &"statik"
+display_name = "Statik"
+description = "Al moverte se carga una barra; al llenarse, el próximo golpe común encadena un rayo a 3 enemigos"
+rarity = 1
+
+[sub_resource type="Resource" id="s_4"]
+script = ExtResource("2")
+id = &"escama_gronk"
+display_name = "Escama de Gronk"
+description = "Al recibir un golpe cuerpo a cuerpo, le devolvés 20 de daño"
+rarity = 1
+
+[sub_resource type="Resource" id="s_5"]
+script = ExtResource("2")
+id = &"kunai_repuesto"
+display_name = "Kunai de repuesto"
+description = "La esquiva deja un kunai que explota a los 0,5 s"
+rarity = 1
+
+[sub_resource type="Resource" id="s_6"]
+script = ExtResource("2")
+id = &"nucleo_uwey"
+display_name = "Núcleo Uwey"
+description = "Cada tercera habilidad no gasta cooldown"
+rarity = 2
+
+[sub_resource type="Resource" id="s_7"]
+script = ExtResource("2")
+id = &"espora_errante"
+display_name = "Espora errante"
+description = "Los enemigos que matás tienen 10% de chance de dejar un honguito que cura"
+rarity = 2
+
+[sub_resource type="Resource" id="s_8"]
+script = ExtResource("2")
+id = &"fragmento_crepusculo"
+display_name = "Fragmento del Crepúsculo"
+description = "Los críticos dejan un eco de sombra que repite el golpe al 50%"
+rarity = 3
+
+[sub_resource type="Resource" id="s_9"]
+script = ExtResource("2")
+id = &"corona_lider"
+display_name = "Corona del Líder Supremo"
+description = "Una vez por partida, si caés, te levantás solo con el 40% de la vida"
+rarity = 3
+
+[resource]
+script = ExtResource("1")
+items = Array[ExtResource("2")]([SubResource("s_0"), SubResource("s_1"), SubResource("s_2"), SubResource("s_3"), SubResource("s_4"), SubResource("s_5"), SubResource("s_6"), SubResource("s_7"), SubResource("s_8"), SubResource("s_9")])
+rarity_prices = Array[int]([70, 150, 250, 470])
+rarity_names = Array[String](["Común", "Raro", "Épico", "Legendario"])
+visit_chances = Array[PackedFloat32Array]([PackedFloat32Array(0.6, 0.35, 0.05, 0), PackedFloat32Array(0.4, 0.35, 0.2, 0.05), PackedFloat32Array(0.25, 0.35, 0.28, 0.12)])
+stock_size = 4
+kit_upgrade_price = 120
+reroll_base = 25
+reroll_step = 25

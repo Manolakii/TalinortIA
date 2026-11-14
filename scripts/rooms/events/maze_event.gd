@@ -28,6 +28,10 @@ var _finished: bool = false
 var _noise_positions: Array[Vector3] = []
 var _chest: Chest
 var _passages: Array = []
+## Celdas del camino de la entrada a la salida (las trampas y Gronks van sobre todo ahí).
+var _path: Array[Vector2i] = []
+var _right_walls: Array = []
+var _bottom_walls: Array = []
 var _label: Label
 
 
@@ -155,32 +159,34 @@ func woken_count() -> int:
 
 ## Guillotinas en pasillos y pinchos en celdas (pedido del grupo: era muy fácil).
 func _place_traps(rng: RandomNumberGenerator) -> void:
-	var passages: Array = _passages.duplicate()
-	for i: int in mini(_config.maze_guillotines, passages.size()):
-		var passage: Array = passages.pop_at(rng.randi_range(0, passages.size() - 1))
+	# Pedido del grupo (a veces el camino quedaba libre): la mayoría de las guillotinas van en
+	# pasillos del camino a la salida, así no se pueden esquivar del todo.
+	var on_path: Array = _passages.filter(func(p: Array) -> bool: return _path.has(p[3]) and _path.has(p[4]))
+	var others: Array = _passages.filter(func(p: Array) -> bool: return not on_path.has(p))
+	var wanted_on_path: int = ceili(_config.maze_guillotines * 0.65)
+	var chosen: Array = []
+	while chosen.size() < wanted_on_path and not on_path.is_empty():
+		chosen.append(on_path.pop_at(rng.randi_range(0, on_path.size() - 1)))
+	others.append_array(on_path)
+	while chosen.size() < _config.maze_guillotines and not others.is_empty():
+		chosen.append(others.pop_at(rng.randi_range(0, others.size() - 1)))
+	for passage: Array in chosen:
 		var trap := MazeTrap.new()
 		trap.position = passage[0]
 		add_child(trap)
 		trap.setup(MazeTrap.Kind.GUILLOTINE, passage[1], passage[2], _config.maze_trap_damage, rng.randf())
-	var cells: Array[Vector2i] = []
-	for col: int in COLS:
-		for row: int in ROWS - 1:
-			cells.append(Vector2i(col, row))
+	var cells: Array[Vector2i] = _ordered_cells(rng, ceili(_config.maze_spikes * 0.5))
 	for i: int in mini(_config.maze_spikes, cells.size()):
-		var cell: Vector2i = cells.pop_at(rng.randi_range(0, cells.size() - 1))
+		var cell: Vector2i = cells[i]
 		var trap := MazeTrap.new()
 		trap.position = _cell_center(cell.x, cell.y) + Vector3(rng.randf_range(-1.2, 1.2), 0, 0)
 		add_child(trap)
 		trap.setup(MazeTrap.Kind.SPIKES, Vector3.BACK, 2.6, _config.maze_trap_damage * 0.8, rng.randf())
 
 func _place_gronks(rng: RandomNumberGenerator) -> void:
-	var cells: Array[Vector2i] = []
-	for col: int in COLS:
-		for row: int in ROWS:
-			if row < ROWS - 1:  # la fila de la entrada queda libre
-				cells.append(Vector2i(col, row))
+	var cells: Array[Vector2i] = _ordered_cells(rng, 2)
 	for i: int in mini(_config.maze_gronks, cells.size()):
-		var cell: Vector2i = cells.pop_at(rng.randi_range(0, cells.size() - 1))
+		var cell: Vector2i = cells[i]
 		var gronk: Enemy = GRONK_SCENE.instantiate()
 		gronk.asleep = true
 		gronk.position = _cell_center(cell.x, cell.y)
@@ -224,6 +230,9 @@ func _build_maze(rng: RandomNumberGenerator, entrance_col: int, exit_col: int) -
 			bottom_walls[cell.x][mini(chosen.y, cell.y)] = false
 		visited[chosen] = true
 		stack.append(chosen)
+	_right_walls = right_walls
+	_bottom_walls = bottom_walls
+	_path = _solve(Vector2i(entrance_col, ROWS - 1), Vector2i(exit_col, 0))
 	var cell_w: float = (MAX_X - MIN_X) / COLS
 	var cell_h: float = (MAX_Z - MIN_Z) / ROWS
 	# Pasillos abiertos (para las guillotinas): centro, dirección de la cuchilla y largo.
@@ -231,9 +240,11 @@ func _build_maze(rng: RandomNumberGenerator, entrance_col: int, exit_col: int) -
 		for row: int in ROWS:
 			var here: Vector3 = _cell_center(col, row)
 			if col < COLS - 1 and not right_walls[col][row]:
-				_passages.append([here + Vector3(cell_w * 0.5, 0, 0), Vector3.BACK, cell_h - WALL_THICKNESS])
+				_passages.append([here + Vector3(cell_w * 0.5, 0, 0), Vector3.BACK, cell_h - WALL_THICKNESS,
+						Vector2i(col, row), Vector2i(col + 1, row)])
 			if row < ROWS - 1 and not bottom_walls[col][row]:
-				_passages.append([here + Vector3(0, 0, cell_h * 0.5), Vector3.RIGHT, cell_w - WALL_THICKNESS])
+				_passages.append([here + Vector3(0, 0, cell_h * 0.5), Vector3.RIGHT, cell_w - WALL_THICKNESS,
+						Vector2i(col, row), Vector2i(col, row + 1)])
 	# Paredes interiores.
 	for col: int in COLS:
 		for row: int in ROWS:
@@ -276,3 +287,62 @@ func _wall(center: Vector3, size: Vector3) -> void:
 	mesh.mesh = box_mesh
 	mesh.position.y = size.y * 0.5
 	body.add_child(mesh)
+
+
+## Celdas (sin la fila de la entrada) en orden: primero `on_path` al azar del camino a la
+## salida, después el resto al azar.
+func _ordered_cells(rng: RandomNumberGenerator, on_path: int) -> Array[Vector2i]:
+	var path_cells: Array[Vector2i] = []
+	var other_cells: Array[Vector2i] = []
+	for col: int in COLS:
+		for row: int in ROWS - 1:
+			var cell := Vector2i(col, row)
+			if _path.has(cell):
+				path_cells.append(cell)
+			else:
+				other_cells.append(cell)
+	var result: Array[Vector2i] = []
+	while result.size() < on_path and not path_cells.is_empty():
+		result.append(path_cells.pop_at(rng.randi_range(0, path_cells.size() - 1)))
+	other_cells.append_array(path_cells)
+	while not other_cells.is_empty():
+		result.append(other_cells.pop_at(rng.randi_range(0, other_cells.size() - 1)))
+	return result
+
+
+## Camino de la entrada a la salida (búsqueda a lo ancho por los pasillos abiertos).
+func _solve(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
+	var came_from: Dictionary = {from: from}
+	var queue: Array[Vector2i] = [from]
+	while not queue.is_empty():
+		var cell: Vector2i = queue.pop_front()
+		if cell == to:
+			break
+		for next: Vector2i in _neighbors(cell):
+			if not came_from.has(next):
+				came_from[next] = cell
+				queue.append(next)
+	var path: Array[Vector2i] = []
+	var step: Vector2i = to
+	while came_from.has(step) and step != from:
+		path.push_front(step)
+		step = came_from[step]
+	path.push_front(from)
+	return path
+
+
+func _neighbors(cell: Vector2i) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if cell.x < COLS - 1 and not _right_walls[cell.x][cell.y]:
+		result.append(cell + Vector2i(1, 0))
+	if cell.x > 0 and not _right_walls[cell.x - 1][cell.y]:
+		result.append(cell + Vector2i(-1, 0))
+	if cell.y < ROWS - 1 and not _bottom_walls[cell.x][cell.y]:
+		result.append(cell + Vector2i(0, 1))
+	if cell.y > 0 and not _bottom_walls[cell.x][cell.y - 1]:
+		result.append(cell + Vector2i(0, -1))
+	return result
+
+
+func path_cells() -> Array[Vector2i]:
+	return _path

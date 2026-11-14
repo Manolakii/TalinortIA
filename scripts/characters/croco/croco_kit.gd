@@ -465,7 +465,12 @@ func _full_charge() -> float:
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
 	dodge_cooldown.max_charges = kd.dodge_charges + (1 if has_upgrade(&"croco_ruta_extra") else 0)
+	contract_cooldown.max_charges = 2 if has_upgrade(&"croco_contrato_doble") else 1
 
 
 func _rail_duration() -> float:
 	return kd.rail_duration + (1.5 if has_upgrade(&"croco_riel_largo") else 0.0)
+
+
+func ability_cooldowns() -> Array[AbilityCooldown]:
+	return [contract_cooldown]

@@ -220,7 +220,7 @@ El oro es individual. Para que nadie se pelee por las monedas, **cada jugador ve
 
 ### Yole Sajor y Birig Bamba
 
-**Yole Sajor** es un mapache comerciante del Salón Beláustegui. Hay que hablarle para ver su mercadería.
+**Yole Sajor** es un mapache que habla y es el transa del mercado negro de Birig Bamba, con su puesto en el Salón Beláustegui (cambio de lore del grupo, 2026-11-14): berretinero, chamuyero, te tira chistes, te descansa y te vende todo "que se cayó de un camión". Hay que hablarle para ver su mercadería.
 
 - **Stock:** cada jugador ve sus propios 4 objetos especiales, sacados al azar, más 1 mejora de kit de su personaje (las "Mejora en Birig Bamba" de los kits), a 120.
 - **Volver a tirar el stock:** 25 de oro, y sube 25 cada vez.

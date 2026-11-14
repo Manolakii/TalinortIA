@@ -20,8 +20,12 @@ const BUFFERED_ACTIONS: Array[PlayerInput.Action] = [
 ## Modo prueba: tiempo hasta levantarse solo (hasta que exista revivir, Fase 4).
 const TEST_MODE_REVIVE_DELAY := 1.5
 
+## Efectos de los objetos especiales de Yole Sajor.
+var specials: SpecialItemEffects
 ## Eligiendo en un menú (mejora u objeto): no se mueve ni ataca.
 var menu_locked: bool = false
+## En Birig Bamba no se pelea (LORE, Pacto del Bombo): camina, pero no ataca ni usa habilidades.
+var peaceful: bool = false
 var slot: PlayerSlot
 var data: CharacterData
 var kit: CharacterKit
@@ -94,6 +98,10 @@ func _build() -> void:
 		revive.name = "Revive"
 		add_child(revive)
 		revive.setup(self)
+		specials = SpecialItemEffects.new()
+		specials.name = "Specials"
+		add_child(specials)
+		specials.setup(self)
 
 
 func _create_kit() -> void:
@@ -134,6 +142,10 @@ func _physics_process(delta: float) -> void:
 		_buffer.clear()
 		apply_movement(Vector2.ZERO, delta)
 		return
+	if peaceful:
+		_buffer.clear()
+		state_machine.physics_update(delta)
+		return
 	kit.handle_input()
 	state_machine.physics_update(delta)
 
@@ -149,6 +161,8 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 		speed *= Balance.combat.haste_multiplier
 	if status.has(StatusEffects.SLOW):
 		speed *= Balance.combat.slow_multiplier
+	if status.has(StatusEffects.BOMBITO):
+		speed *= 1.15
 	speed *= modifiers.move_speed_multiplier()
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
@@ -311,6 +325,8 @@ func _on_any_hit_landed(info: DamageInfo, target: Node3D) -> void:
 
 func _on_died(info: DamageInfo) -> void:
 	if kit.handle_owner_death(info):
+		return
+	if _try_crown():
 		return
 	kit.cancel_scheduled()
 	end_action()
@@ -538,3 +554,25 @@ func _make_body_material(color: Color) -> StandardMaterial3D:
 	outline.shader = OUTLINE_SHADER
 	material.next_pass = outline
 	return material
+
+
+## Corona del Líder Supremo: una vez por partida, al caer, te levantás solo con el 40%.
+func _try_crown() -> bool:
+	if not RunState.has_special(slot.index, &"corona_lider") \
+			or RunState.get_bonus(slot.index, &"corona_used") > 0:
+		return false
+	RunState.add_bonus(slot.index, &"corona_used", 1)
+	kit.cancel_scheduled()
+	end_action()
+	Events.floating_text_requested.emit(global_position + Vector3.UP * 2.6,
+			"¡La Corona del Líder Supremo!", Color(1.0, 0.82, 0.3))
+	var fall: Tween = create_tween()
+	fall.tween_property(visual, "rotation:x", -1.35, 0.3)
+	fall.tween_interval(0.9)
+	fall.tween_callback(func() -> void:
+		health.restore_full()
+		health.current = health.max_health * 0.4
+		health.changed.emit(health.current, health.max_health)
+		health.make_invulnerable(1.5))
+	fall.tween_property(visual, "rotation:x", 0.0, 0.25)
+	return true

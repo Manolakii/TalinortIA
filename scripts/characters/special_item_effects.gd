@@ -1,0 +1,191 @@
+class_name SpecialItemEffects
+extends Node
+## Efectos de los objetos especiales de Yole Sajor (GDD, "Objetos especiales") para UN jugador.
+## Algunos efectos viven en otros lados porque necesitan saber algo de ahí:
+##   Vasija sin fondo → Vase; Espora errante → Enemy; Corona del Líder Supremo → PlayerCharacter.
+
+const STATIK_PER_METER := 4.0
+const STATIK_CHAIN_DAMAGE := 30.0
+const ECHO_COLOR := Color(0.55, 0.35, 0.75)
+const STATIK_COLOR := Color(0.75, 0.9, 1.0)
+
+var player: PlayerCharacter
+## Barra de Statik (0 a 100).
+var statik: float = 0.0
+
+var _last_attack_input: float = -10.0
+var _last_skill_input: float = -10.0
+var _was_dodging: bool = false
+var _last_position: Vector3
+var _ability_charges: Dictionary = {}  # AbilityCooldown -> cargas del frame anterior
+var _abilities_used: int = 0
+
+
+func setup(owner_player: PlayerCharacter) -> void:
+	player = owner_player
+	_last_position = player.global_position if player.is_inside_tree() else Vector3.ZERO
+	Events.hit_landed.connect(_on_hit_landed)
+	Events.ultimate_used.connect(_on_ultimate_used)
+	player.hit_taken.connect(_on_hit_taken)
+
+
+func has(item_id: StringName) -> bool:
+	return player != null and RunState.has_special(player.slot.index, item_id)
+
+
+func _physics_process(delta: float) -> void:
+	if player == null or player.slot == null:
+		return
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var input: PlayerInput = player.slot.input
+	if input.is_held(PlayerInput.Action.ATTACK):
+		_last_attack_input = now
+	for action: PlayerInput.Action in [PlayerInput.Action.ABILITY, PlayerInput.Action.ULTIMATE,
+			PlayerInput.Action.DODGE]:
+		if input.is_held(action):
+			_last_skill_input = now
+	# Statik: se carga caminando.
+	if has(&"statik") and statik < 100.0:
+		var moved: float = Vector2(player.global_position.x - _last_position.x,
+				player.global_position.z - _last_position.z).length()
+		statik = minf(statik + moved * STATIK_PER_METER, 100.0)
+	_last_position = player.global_position
+	# Kunai de repuesto: al empezar una esquiva.
+	var dodging: bool = player.is_dodging()
+	if dodging and not _was_dodging and has(&"kunai_repuesto"):
+		_drop_kunai(player.global_position)
+	_was_dodging = dodging
+	# Núcleo Uwey: cuenta las habilidades usadas (una carga que se gastó).
+	if has(&"nucleo_uwey"):
+		_watch_abilities()
+
+
+## ¿Este golpe es del golpe común? (atacando hace poco y sin habilidades recientes)
+func is_basic_hit() -> bool:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	return now - _last_attack_input < 0.6 and now - _last_skill_input > 0.8
+
+
+func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
+	if player == null or info.attacker != player or not is_instance_valid(target) or target == player:
+		return
+	var victim := target as Combatant
+	if victim == null or victim.team == DamageInfo.Team.PLAYERS:
+		return
+	var basic: bool = is_basic_hit() and not info.has_tag(&"tick") and not info.has_tag(&"echo")
+	if basic and has(&"piedra_suerte") and randf() < 0.08:
+		victim.status.apply(StatusEffects.STUN, 0.5)
+		Events.floating_text_requested.emit(victim.global_position + Vector3.UP * 2.4, "¡Piedrazo de suerte!",
+				Color(0.75, 0.9, 1.0))
+	if basic and has(&"statik") and statik >= 100.0:
+		statik = 0.0
+		_chain_lightning(victim)
+	if info.is_crit and has(&"fragmento_crepusculo") and not info.has_tag(&"echo"):
+		_shadow_echo(victim, info.final_amount * 0.5)
+
+
+## Bombito: al usar la definitiva, los aliados cercanos van 15% más rápido por 4 s.
+func _on_ultimate_used(user: Node3D) -> void:
+	if user != player or not has(&"bombito"):
+		return
+	for node: Node in player.get_tree().get_nodes_in_group(&"players"):
+		var ally := node as PlayerCharacter
+		if ally != null and not ally.health.is_dead \
+				and ally.global_position.distance_to(player.global_position) <= 7.0:
+			ally.status.apply(StatusEffects.BOMBITO, 4.0)
+	Fx.ring_burst(player.get_parent(), player.global_position, 7.0, Color(1.0, 0.82, 0.3), 0.4)
+
+
+## Escama de Gronk: un golpe cuerpo a cuerpo le devuelve 20 al que pegó.
+func _on_hit_taken(info: DamageInfo) -> void:
+	if not has(&"escama_gronk") or not info.is_melee or info.has_tag(&"reflect"):
+		return
+	var attacker := info.attacker as Combatant
+	if attacker == null or not is_instance_valid(attacker) or not attacker.is_targetable():
+		return
+	var reflected: DamageInfo = player.kit.make_hit(20.0)
+	reflected.is_crit = false
+	reflected.tags.append(&"reflect")
+	reflected.hitstop = 0.0
+	attacker.receive_hit(reflected)
+
+
+func _chain_lightning(first: Node3D) -> void:
+	var hit: Array[Node3D] = []
+	var from: Vector3 = first.global_position + Vector3.UP
+	for i: int in 3:
+		var next: Hurtbox = null
+		var best: float = 8.0
+		for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
+			if hit.has(hurtbox.receiver):
+				continue
+			var d: float = hurtbox.global_position.distance_to(from)
+			if d < best:
+				best = d
+				next = hurtbox
+		if next == null:
+			break
+		hit.append(next.receiver)
+		var info: DamageInfo = player.kit.make_hit(STATIK_CHAIN_DAMAGE)
+		info.is_melee = false
+		info.tags.append(&"tick")
+		next.take_hit(info)
+		var to: Vector3 = next.global_position + Vector3.UP
+		Fx.beam(player.get_parent(), from, (to - from).normalized(), from.distance_to(to), 0.1, STATIK_COLOR, 0.15)
+		from = to
+	Events.floating_text_requested.emit(first.global_position + Vector3.UP * 2.6, "¡Statik!", STATIK_COLOR)
+
+
+## Fragmento del Crepúsculo: el crítico deja un eco de sombra que repite el golpe al 50%.
+func _shadow_echo(victim: Combatant, amount: float) -> void:
+	var timer: SceneTreeTimer = player.get_tree().create_timer(0.25, false)
+	timer.timeout.connect(func() -> void:
+		if not is_instance_valid(victim) or not victim.is_targetable() or not is_instance_valid(player):
+			return
+		var echo := DamageInfo.new()
+		echo.amount = amount
+		echo.attacker = player
+		echo.attacker_team = DamageInfo.Team.PLAYERS
+		echo.origin = victim.global_position
+		echo.hitstop = 0.0
+		echo.tags.append(&"echo")
+		victim.receive_hit(echo)
+		Fx.ring_burst(victim.get_parent(), victim.global_position, 1.0, ECHO_COLOR, 0.2))
+
+
+## Kunai de repuesto: queda donde arrancó la esquiva y explota a los 0,5 s.
+func _drop_kunai(at: Vector3) -> void:
+	var world: Node = player.get_parent()
+	var spot := Vector3(at.x, 0.0, at.z)
+	var mark := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(0.12, 0.12, 0.5)
+	mark.mesh = mesh
+	mark.material_override = Fx.flat_material(Color(0.7, 0.72, 0.76), 0.5)
+	world.add_child(mark)
+	mark.global_position = spot + Vector3.UP * 0.2
+	var timer: SceneTreeTimer = player.get_tree().create_timer(0.5, false)
+	timer.timeout.connect(func() -> void:
+		if is_instance_valid(mark):
+			mark.queue_free()
+		if not is_instance_valid(player):
+			return
+		var info: DamageInfo = player.kit.make_hit(35.0)
+		info.origin = spot
+		info.is_melee = false
+		info.knockback = 5.0
+		Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, spot, 2.5))
+		Fx.ring_burst(world, spot, 2.5, Color(1.0, 0.9, 0.7), 0.3))
+
+
+## Núcleo Uwey: cada tercera habilidad recupera la carga al toque.
+func _watch_abilities() -> void:
+	for cooldown: AbilityCooldown in player.kit.ability_cooldowns():
+		var before: int = _ability_charges.get(cooldown, cooldown.charges)
+		if cooldown.charges < before:
+			_abilities_used += 1
+			if _abilities_used % 3 == 0:
+				cooldown.refill()
+				Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.6,
+						"¡Núcleo Uwey!", Color(0.8, 0.9, 1.0))
+		_ability_charges[cooldown] = cooldown.charges

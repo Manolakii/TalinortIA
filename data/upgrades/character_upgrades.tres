@@ -15,6 +15,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_1"]
 script = ExtResource("2")
@@ -28,6 +30,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_2"]
 script = ExtResource("2")
@@ -41,6 +45,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_3"]
 script = ExtResource("2")
@@ -54,6 +60,8 @@ max_stacks = 3
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_4"]
 script = ExtResource("2")
@@ -67,6 +75,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_5"]
 script = ExtResource("2")
@@ -80,6 +90,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_6"]
 script = ExtResource("2")
@@ -93,6 +105,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_7"]
 script = ExtResource("2")
@@ -106,6 +120,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_8"]
 script = ExtResource("2")
@@ -119,6 +135,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_9"]
 script = ExtResource("2")
@@ -132,6 +150,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_10"]
 script = ExtResource("2")
@@ -145,6 +165,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_11"]
 script = ExtResource("2")
@@ -158,6 +180,8 @@ max_stacks = 3
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_12"]
 script = ExtResource("2")
@@ -171,6 +195,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_13"]
 script = ExtResource("2")
@@ -184,6 +210,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_14"]
 script = ExtResource("2")
@@ -197,6 +225,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_15"]
 script = ExtResource("2")
@@ -210,6 +240,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_16"]
 script = ExtResource("2")
@@ -223,6 +255,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_17"]
 script = ExtResource("2")
@@ -236,6 +270,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_18"]
 script = ExtResource("2")
@@ -249,6 +285,8 @@ max_stacks = 3
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_19"]
 script = ExtResource("2")
@@ -262,6 +300,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_20"]
 script = ExtResource("2")
@@ -275,6 +315,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_21"]
 script = ExtResource("2")
@@ -288,6 +330,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_22"]
 script = ExtResource("2")
@@ -301,6 +345,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_23"]
 script = ExtResource("2")
@@ -314,6 +360,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_24"]
 script = ExtResource("2")
@@ -327,6 +375,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_25"]
 script = ExtResource("2")
@@ -340,6 +390,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_26"]
 script = ExtResource("2")
@@ -353,6 +405,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_27"]
 script = ExtResource("2")
@@ -366,6 +420,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_28"]
 script = ExtResource("2")
@@ -379,6 +435,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_29"]
 script = ExtResource("2")
@@ -392,6 +450,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_30"]
 script = ExtResource("2")
@@ -405,6 +465,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_31"]
 script = ExtResource("2")
@@ -418,6 +480,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_32"]
 script = ExtResource("2")
@@ -431,6 +495,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_33"]
 script = ExtResource("2")
@@ -444,6 +510,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_34"]
 script = ExtResource("2")
@@ -457,6 +525,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_35"]
 script = ExtResource("2")
@@ -470,6 +540,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_36"]
 script = ExtResource("2")
@@ -483,6 +555,8 @@ max_stacks = 1
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_37"]
 script = ExtResource("2")
@@ -496,6 +570,8 @@ max_stacks = 2
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_38"]
 script = ExtResource("2")
@@ -509,6 +585,8 @@ max_stacks = 3
 senda_body = &""
 senda_slot = &""
 senda_path = &""
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_39"]
 script = ExtResource("2")
@@ -522,6 +600,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"caparazon"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_40"]
 script = ExtResource("2")
@@ -535,6 +615,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"embestida"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_41"]
 script = ExtResource("2")
@@ -548,6 +630,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"basic"
 senda_path = &"espiritu"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_42"]
 script = ExtResource("2")
@@ -561,6 +645,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"caparazon"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_43"]
 script = ExtResource("2")
@@ -574,6 +660,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"embestida"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_44"]
 script = ExtResource("2")
@@ -587,6 +675,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"ability"
 senda_path = &"espiritu"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_45"]
 script = ExtResource("2")
@@ -600,6 +690,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"caparazon"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_46"]
 script = ExtResource("2")
@@ -613,6 +705,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"embestida"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_47"]
 script = ExtResource("2")
@@ -626,6 +720,8 @@ max_stacks = 2
 senda_body = &"stewie"
 senda_slot = &"dodge"
 senda_path = &"espiritu"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_48"]
 script = ExtResource("2")
@@ -639,6 +735,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"guia"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_49"]
 script = ExtResource("2")
@@ -652,6 +750,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"combate"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_50"]
 script = ExtResource("2")
@@ -665,6 +765,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"basic"
 senda_path = &"niebla"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_51"]
 script = ExtResource("2")
@@ -678,6 +780,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"guia"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_52"]
 script = ExtResource("2")
@@ -691,6 +795,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"combate"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_53"]
 script = ExtResource("2")
@@ -704,6 +810,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"ability"
 senda_path = &"niebla"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_54"]
 script = ExtResource("2")
@@ -717,6 +825,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"guia"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_55"]
 script = ExtResource("2")
@@ -730,6 +840,8 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"combate"
+shop_only = false
+exclusive_group = &""
 
 [sub_resource type="Resource" id="u_56"]
 script = ExtResource("2")
@@ -743,7 +855,99 @@ max_stacks = 2
 senda_body = &"maestro"
 senda_slot = &"dodge"
 senda_path = &"niebla"
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_57"]
+script = ExtResource("2")
+id = &"tali_entiende_pajaros"
+character = &"tali"
+display_name = "Ahora sí te entiendo: Pájaros"
+description = "El Llamado Salvaje siempre trae a los pájaros"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &"tali_entiende"
+
+[sub_resource type="Resource" id="u_58"]
+script = ExtResource("2")
+id = &"tali_entiende_bichos"
+character = &"tali"
+display_name = "Ahora sí te entiendo: Bichos"
+description = "El Llamado Salvaje siempre trae a los bichos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &"tali_entiende"
+
+[sub_resource type="Resource" id="u_59"]
+script = ExtResource("2")
+id = &"tali_entiende_gronk"
+character = &"tali"
+display_name = "Ahora sí te entiendo: Gronk"
+description = "El Llamado Salvaje siempre trae a el Gronk"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &"tali_entiende"
+
+[sub_resource type="Resource" id="u_60"]
+script = ExtResource("2")
+id = &"croco_contrato_doble"
+character = &"croco"
+display_name = "Contrato doble"
+description = "El Tiro por Contrato tiene 2 cargas"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_61"]
+script = ExtResource("2")
+id = &"agucci_shurikens"
+character = &"agucci"
+display_name = "Shurikens de la sombra"
+description = "Disolverse deja 3 shurikens que salen disparados hacia los enemigos cercanos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_62"]
+script = ExtResource("2")
+id = &"duo_vinculo_eterno"
+character = &"maestro"
+display_name = "Vínculo eterno"
+description = "El Vínculo llega hasta 14 m (antes 8) y da +15% (antes +10%)"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &""
 
 [resource]
 script = ExtResource("1")
-upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56")])
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56"), SubResource("u_57"), SubResource("u_58"), SubResource("u_59"), SubResource("u_60"), SubResource("u_61"), SubResource("u_62")])

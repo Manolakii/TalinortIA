@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/rooms/test_room_talinorthland.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/hub/birig_bamba.gd" id="2"]
+
+[node name="BirigBamba" instance=ExtResource("1")]
+script = ExtResource("2")
+vase_spots = PackedVector3Array()
+chest_spots = PackedVector3Array()
