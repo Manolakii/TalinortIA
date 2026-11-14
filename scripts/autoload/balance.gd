@@ -10,6 +10,9 @@ const COMBAT_PATH := "res://data/combat_config.tres"
 const DIFFICULTY_PATH := "res://data/difficulty.tres"
 const ELITE_PATH := "res://data/elite_config.tres"
 const REVIVE_PATH := "res://data/revive_config.tres"
+const GENERIC_ITEMS_PATH := "res://data/items/generic_items.tres"
+const UPGRADES_PATH := "res://data/upgrades/character_upgrades.tres"
+const STAGE_ROOMS_PATH := "res://data/rooms/stage%d.tres"
 const ENEMIES_DIR := "res://data/enemies/%s.tres"
 
 var roster: CharacterRoster
@@ -20,6 +23,9 @@ var combat: CombatConfig
 var difficulty: DifficultyConfig
 var elite: EliteConfig
 var revive: ReviveConfig
+var generic_items: GenericItemList
+var upgrades: UpgradePool
+var _stage_cache: Dictionary = {}
 
 var _enemy_cache: Dictionary[StringName, EnemyData] = {}
 
@@ -34,6 +40,8 @@ func _enter_tree() -> void:
 	difficulty = _load_required(DIFFICULTY_PATH) as DifficultyConfig
 	elite = _load_required(ELITE_PATH) as EliteConfig
 	revive = _load_required(REVIVE_PATH) as ReviveConfig
+	generic_items = _load_required(GENERIC_ITEMS_PATH) as GenericItemList
+	upgrades = _load_required(UPGRADES_PATH) as UpgradePool
 
 
 func get_enemy(id: StringName) -> EnemyData:
@@ -55,3 +63,10 @@ func _load_required(path: String) -> Resource:
 	if res == null:
 		push_error("Balance: no se pudo cargar %s" % path)
 	return res
+
+
+## Cómo se arma el stage (0 = Stage 1). Se carga la primera vez que se pide.
+func stage_rooms(stage_index: int = 0) -> StageRoomsConfig:
+	if not _stage_cache.has(stage_index):
+		_stage_cache[stage_index] = _load_required(STAGE_ROOMS_PATH % (stage_index + 1)) as StageRoomsConfig
+	return _stage_cache[stage_index]

@@ -6,6 +6,9 @@ extends Node3D
 var _time_left: float = 1.5
 var _priority: float = 0.35
 var _material: StandardMaterial3D
+var _explode_owner: Node3D
+var _explode_damage: float = 0.0
+var _explode_radius: float = 0.0
 
 
 func setup(color: Color, height: float, radius: float, duration: float, priority: float) -> void:
@@ -38,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	# Parpadeo de holograma.
 	_material.albedo_color.a = 0.3 + 0.2 * absf(sin(_time_left * 18.0))
 	if _time_left <= 0.0:
+		_explode()
 		queue_free()
 
 
@@ -56,3 +60,25 @@ func is_targetable() -> bool:
 ## Se come el golpe sin daño.
 func receive_hit(_info: DamageInfo) -> bool:
 	return true
+
+
+## Mejora "Señuelo con sorpresa": explota al desaparecer.
+func explode_on_expire(owner_player: Node3D, damage: float, radius: float) -> void:
+	_explode_owner = owner_player
+	_explode_damage = damage
+	_explode_radius = radius
+
+
+func _explode() -> void:
+	if _explode_damage <= 0.0:
+		return
+	var info := DamageInfo.new()
+	info.amount = _explode_damage
+	info.attacker = _explode_owner if is_instance_valid(_explode_owner) else null
+	info.attacker_team = DamageInfo.Team.PLAYERS
+	info.origin = global_position
+	info.knockback = 6.0
+	info.hitstop = Balance.combat.hitstop_light
+	Combat.deliver(info, CombatQuery.in_circle(get_tree(), DamageInfo.Team.ENEMIES,
+			global_position, _explode_radius))
+	Fx.ring_burst(get_parent(), global_position, _explode_radius, Color(1.0, 0.95, 0.85), 0.3)

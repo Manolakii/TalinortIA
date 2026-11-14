@@ -25,6 +25,7 @@ var _grass: MultiMeshInstance3D
 
 
 func _ready() -> void:
+	add_to_group(&"ground")
 	_noise.seed = layout_seed
 	_noise.frequency = 0.06
 	_noise.fractal_octaves = 3
@@ -77,6 +78,26 @@ func _build_ground() -> void:
 	add_child(body)
 
 
+var _transforms: Array[Transform3D] = []
+
+
+## Saca el pasto de una zona (x, z), por ejemplo el barranco. restore_grass() lo devuelve.
+func hide_grass_in(area: Rect2) -> void:
+	if _grass == null:
+		return
+	for i: int in _transforms.size():
+		var origin: Vector3 = _transforms[i].origin
+		if area.has_point(Vector2(origin.x, origin.z)):
+			_grass.multimesh.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ZERO), origin))
+
+
+func restore_grass() -> void:
+	if _grass == null:
+		return
+	for i: int in _transforms.size():
+		_grass.multimesh.set_instance_transform(i, _transforms[i])
+
+
 func _build_grass() -> void:
 	if _grass != null:
 		_grass.queue_free()
@@ -104,6 +125,7 @@ func _build_grass() -> void:
 		var tint: float = rng.randf_range(0.8, 1.15)
 		colors.append(Color(tint * rng.randf_range(0.95, 1.08), tint, tint * 0.9))
 
+	_transforms = transforms
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_3D
 	multimesh.use_colors = true

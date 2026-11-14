@@ -32,8 +32,15 @@ func _think(delta: float) -> void:
 			if target == null or status.has(StatusEffects.BLIND):
 				stop(delta)
 				return
+			if run_tactic(target, delta):
+				return
 			var direction: Vector3 = flat_direction_to(target.global_position)
 			var distance: float = flat_distance_to(target.global_position)
+			if distance <= data.attack_range and _time > 0.8 and not _line_is_clear(target):
+				# Hay una roca en el medio (pedido del grupo: te escondías atrás y se chocaba
+				# siempre): en vez de cargar, la rodea buscando un camino libre.
+				start_tactic(&"strafe", 1.0)
+				return
 			if distance <= data.attack_range and _time > 0.8:
 				turn_towards(direction, delta)
 				stop(delta)
@@ -81,10 +88,26 @@ func _distance_to_wall(max_distance: float) -> float:
 	return maxf(from.distance_to(hit["position"]) - data.body_radius * 0.5, 1.0)
 
 
+## ¿Puede cargar derecho hasta el objetivo sin chocar una roca o pared? Mira el centro y los
+## dos costados del cuerpo (es ancho: antes una roca le rozaba el costado y se estrellaba).
+func _line_is_clear(target: Node3D) -> bool:
+	var to_target: Vector3 = target.global_position - global_position
+	to_target.y = 0.0
+	var side := Vector3(-to_target.z, 0.0, to_target.x).normalized() * data.body_radius * 0.9
+	for offset: Vector3 in [Vector3.ZERO, side, -side]:
+		var from: Vector3 = global_position + Vector3.UP + offset
+		var query := PhysicsRayQueryParameters3D.create(from, from + to_target, 1 | 512)
+		query.exclude = [get_rid()]
+		if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+			return false
+	return true
+
+
+## Chocó una pared o una roca: se aturde (pedido del grupo). Igual, antes de cargar intenta
+## no apuntar a una roca (ver _line_is_clear).
 func _hit_wall() -> bool:
 	for i: int in get_slide_collision_count():
-		var collider: Object = get_slide_collision(i).get_collider()
-		if collider is StaticBody3D:
+		if get_slide_collision(i).get_collider() is StaticBody3D:
 			return true
 	return false
 

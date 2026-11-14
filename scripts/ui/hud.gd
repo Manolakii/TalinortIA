@@ -291,7 +291,13 @@ func _someone_behind(rect: Rect2) -> bool:
 func _update_room_label() -> void:
 	var director := get_tree().get_first_node_in_group(&"combat_director") as CombatDirector
 	var difficulty: String = Balance.difficulty.names[RunState.difficulty]
-	if director != null:
+	var stage_run: Node = get_tree().get_first_node_in_group(&"stage_run")
+	if stage_run != null:
+		var text: String = "%s · %s" % [stage_run.room_title(), difficulty]
+		if director != null and director.wave_index >= 0 and director.state != CombatDirector.Phase.CLEARED:
+			text += " · Oleada %d de %d" % [director.wave_index + 1, director.total_waves()]
+		_room_label.text = text
+	elif director != null:
 		_room_label.text = "%s · %s · Oleada %d de %d" % [director.waves.room_name, difficulty,
 				maxi(director.wave_index + 1, 1), director.total_waves()]
 	else:

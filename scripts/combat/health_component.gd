@@ -12,6 +12,8 @@ var current: float = 100.0
 ## 0.7 = recibe 30% menos de daño.
 var damage_taken_multiplier: float = 1.0
 var is_dead: bool = false
+## Escudo: absorbe daño antes que la vida (Bendición, Garrocha al Rescate).
+var shield: float = 0.0
 var _invulnerable_left: float = 0.0
 
 
@@ -40,6 +42,10 @@ func apply_damage(info: DamageInfo) -> float:
 	if is_dead:
 		return 0.0
 	var final_amount: float = maxf(info.amount * damage_taken_multiplier, 0.0)
+	if shield > 0.0:
+		var absorbed: float = minf(shield, final_amount)
+		shield -= absorbed
+		final_amount -= absorbed
 	current = maxf(current - final_amount, 0.0)
 	info.final_amount = final_amount
 	damaged.emit(info)
@@ -56,6 +62,10 @@ func heal(amount: float) -> void:
 	current = minf(current + amount, max_health)
 	healed.emit(amount)
 	changed.emit(current, max_health)
+
+
+func add_shield(amount: float) -> void:
+	shield = maxf(shield, amount)
 
 
 func restore_full() -> void:

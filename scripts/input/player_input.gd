@@ -18,6 +18,8 @@ enum Action {
 	BACK,       ## Menús: Esc / B.
 	LEFT,       ## Menús: A o flecha izquierda / cruceta o stick.
 	RIGHT,      ## Menús: D o flecha derecha / cruceta o stick.
+	UP,         ## Menús: W o flecha arriba / cruceta o stick.
+	DOWN,       ## Menús: S o flecha abajo / cruceta o stick.
 }
 
 const MOVE_DEADZONE := 0.2
@@ -104,6 +106,10 @@ func _read_keyboard(viewport: Viewport) -> void:
 			or Input.is_physical_key_pressed(KEY_LEFT)
 	_held[Action.RIGHT] = Input.is_physical_key_pressed(KEY_D) \
 			or Input.is_physical_key_pressed(KEY_RIGHT)
+	_held[Action.UP] = Input.is_physical_key_pressed(KEY_W) \
+			or Input.is_physical_key_pressed(KEY_UP)
+	_held[Action.DOWN] = Input.is_physical_key_pressed(KEY_S) \
+			or Input.is_physical_key_pressed(KEY_DOWN)
 
 
 func _read_joypad() -> void:
@@ -128,6 +134,8 @@ func _read_joypad() -> void:
 	_held[Action.BACK] = _button(JOY_BUTTON_B)
 	_held[Action.LEFT] = _button(JOY_BUTTON_DPAD_LEFT) or raw_move.x < -MENU_STICK_THRESHOLD
 	_held[Action.RIGHT] = _button(JOY_BUTTON_DPAD_RIGHT) or raw_move.x > MENU_STICK_THRESHOLD
+	_held[Action.UP] = _button(JOY_BUTTON_DPAD_UP) or raw_move.y < -MENU_STICK_THRESHOLD
+	_held[Action.DOWN] = _button(JOY_BUTTON_DPAD_DOWN) or raw_move.y > MENU_STICK_THRESHOLD
 
 
 func _key(key: Key) -> float:

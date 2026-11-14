@@ -12,6 +12,8 @@ const LUCK_TEXTS: Array[String] = ["¡Se resbaló!", "¡Le erró!", "¡Ni lo roz
 const CALL_TEXTS: Array[String] = ["¡Pájaros!", "¡Bichos!", "¡UN GRONK!"]
 const AURA_SHADER: Shader = preload("res://assets/shaders/fury_aura.gdshader")
 
+## Duración total de la Furia actual (para la barra del HUD).
+var _fury_total: float = 10.0
 var kd: TaliKitData
 var in_fury: bool = false
 ## Barra de Furia, de 0 a 100.
@@ -45,8 +47,8 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	call_cooldown.tick(delta)
-	slam_cooldown.tick(delta)
+	call_cooldown.tick(cd_delta(delta))
+	slam_cooldown.tick(cd_delta(delta))
 	_attack_timer -= delta
 	_lockout = maxf(_lockout - delta, 0.0)
 	if in_fury:
@@ -118,7 +120,7 @@ func on_blocked_by_invulnerability(info: DamageInfo) -> void:
 	if not _stumbling or _lucky_this_dodge or info.attacker_team != DamageInfo.Team.ENEMIES:
 		return
 	_lucky_this_dodge = true
-	add_fury(kd.lucky_dodge_fury)
+	add_fury(25.0 if has_upgrade(&"tali_tropezon_furia") else kd.lucky_dodge_fury)
 	var attacker: Combatant = info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.is_targetable():
 		attacker.status.apply(StatusEffects.STUN, kd.lucky_dodge_unbalance)
@@ -164,12 +166,12 @@ func _on_damage_taken(info: DamageInfo) -> void:
 	var multiplier: float = 1.0
 	if _is_back_hit(info) or _is_surrounded():
 		multiplier = kd.fury_bonus_multiplier
-	add_fury(info.final_amount * kd.fury_per_damage_taken * multiplier)
+	add_fury(info.final_amount * kd.fury_per_damage_taken * multiplier * _fury_gain())
 
 
 func _on_damage_dealt(info: DamageInfo, _target: Node3D) -> void:
 	if not in_fury:
-		add_fury(info.final_amount * kd.fury_per_damage_dealt)
+		add_fury(info.final_amount * kd.fury_per_damage_dealt * _fury_gain())
 
 
 func add_fury(points: float) -> void:
@@ -185,14 +187,20 @@ func is_exhausted() -> bool:
 
 
 func move_speed_multiplier() -> float:
-	return kd.exhausted_speed_multiplier if is_exhausted() else 1.0
+	if is_exhausted():
+		return kd.exhausted_speed_multiplier
+	if in_fury and has_upgrade(&"tali_furia_veloz"):
+		return 1.15
+	return 1.0
 
 
-func _enter_fury() -> void:
+## `bonus`: segundos extra (con la definitiva dura más).
+func _enter_fury(bonus: float = 0.0) -> void:
 	in_fury = true
 	fury = 100.0
 	_lockout = 0.0
-	_fury_time = kd.fury_duration
+	_fury_time = _fury_duration() + bonus
+	_fury_total = _fury_time
 	_combo_index = 0
 	_attack_timer = 0.0
 	cancel_scheduled()
@@ -213,7 +221,7 @@ func _exit_fury() -> void:
 	_cancel_slam()
 	player.end_action()
 	player.health.damage_taken_multiplier = 1.0
-	player.status.apply(StatusEffects.EXHAUSTED, kd.exhausted_duration)
+	player.status.apply(StatusEffects.EXHAUSTED, kd.exhausted_duration * (0.5 if has_upgrade(&"tali_resaca_leve") else 1.0))
 	_lockout = kd.fury_lockout
 	_tween_scale(1.0)
 	_say("Resaca...", Color(0.75, 0.75, 0.8))
@@ -238,14 +246,14 @@ func _is_surrounded() -> bool:
 # --- Normal: Piedrazo ---
 
 func _throw_rock() -> void:
-	_attack_timer = kd.rock_interval
+	_attack_timer = kd.rock_interval / attack_speed()
 	player.start_action(0.18, 0.75)
 	basic_recovery = true
 	var spread: float = deg_to_rad(Combat.rng.randf_range(-kd.rock_spread_deg, kd.rock_spread_deg))
 	var direction: Vector3 = player.aim_direction.rotated(Vector3.UP, spread)
 	var lucky: bool = Combat.roll(kd.lucky_shot_chance)
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.rock_damage,
-			1.0 if lucky else data.crit_chance, data.crit_multiplier)
+			1.0 if lucky else player.crit_chance(), player.crit_multiplier())
 	info.is_melee = false
 	info.knockback = 1.5
 	info.hitstop = Balance.combat.hitstop_light
@@ -261,6 +269,17 @@ func _throw_rock() -> void:
 
 
 func _on_rock_hit(target: Node3D, info: DamageInfo) -> void:
+	# Piedra que rebota: sigue hacia otro enemigo cercano (una sola vez).
+	if has_upgrade(&"tali_piedrazo_rebota") and not info.has_tag(&"bounced"):
+		var next: Hurtbox = _nearest_other_enemy(target, 7.0)
+		if next != null:
+			var bounce: DamageInfo = info.clone()
+			bounce.tags.append(&"bounced")
+			var from: Vector3 = target.global_position + Vector3.UP * 1.0
+			var direction: Vector3 = next.global_position - target.global_position
+			direction.y = 0.0
+			_rocks.fire(from, direction.normalized(), kd.rock_speed, 8.0, kd.rock_radius, bounce,
+					DamageInfo.Team.ENEMIES, _on_rock_hit)
 	if info.has_tag(&"lucky_shot"):
 		Events.floating_text_requested.emit(target.global_position + Vector3.UP * 2.6,
 				"¡Tiro de Suerte!", Color(0.75, 0.9, 1.0))
@@ -272,8 +291,8 @@ func _wild_call() -> void:
 	call_cooldown.use()
 	player.face_aim_now()
 	player.start_action(0.3, 0.2)
-	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs,
-			kd.call_weight_gronk])
+	var gronk_weight: float = kd.call_weight_gronk * (3.0 if has_upgrade(&"tali_suerte_norteana") else 1.0)
+	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs, gronk_weight])
 	_say(CALL_TEXTS[kind], Color.WHITE, 1.2 if kind == WildCallEffect.Kind.GRONK else 1.0)
 	schedule(0.2, _spawn_call.bind(kind, player.aim_direction))
 
@@ -289,7 +308,7 @@ func _spawn_call(kind: int, direction: Vector3) -> void:
 func _claw() -> void:
 	var index: int = _combo_index
 	player.face_aim_now()
-	player.start_action(kd.claw_combo_time / 3.0, kd.claw_move_multiplier)
+	player.start_action(kd.claw_combo_time / 3.0 / attack_speed(), kd.claw_move_multiplier)
 	_combo_index = (index + 1) % 3
 	_combo_idle = 0.0
 	basic_recovery = false
@@ -301,7 +320,7 @@ func _claw_hit(index: int) -> void:
 	var heavy: bool = index == 2
 	var direction: Vector3 = player.aim_direction
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-			kd.claw_damage[index], data.crit_chance, data.crit_multiplier)
+			kd.claw_damage[index], player.crit_chance(), player.crit_multiplier())
 	var combat: CombatConfig = Balance.combat
 	info.knockback = 6.0 if heavy else 2.5
 	info.hitstop = combat.hitstop_heavy if heavy else combat.hitstop_light
@@ -311,12 +330,12 @@ func _claw_hit(index: int) -> void:
 	if heavy:
 		info.stun = kd.claw_third_stun
 		info.tags.append(&"launch")
-	Fx.slash(_world(), player.global_position, direction, kd.claw_range, kd.claw_angle_deg,
+	Fx.slash(_world(), player.global_position, direction, _claw_range(), kd.claw_angle_deg,
 			player.slot.color)
 	if heavy:
 		Fx.ring_burst(_world(), player.global_position + direction * 1.3, 1.6, player.slot.color)
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(),
-			DamageInfo.Team.ENEMIES, player.global_position, direction, kd.claw_range,
+			DamageInfo.Team.ENEMIES, player.global_position, direction, _claw_range(),
 			kd.claw_angle_deg)
 	if Combat.deliver(info, targets) > 0:
 		player.freeze(info.hitstop)
@@ -343,17 +362,17 @@ func _slam() -> void:
 func _slam_land() -> void:
 	var center: Vector3 = player.global_position
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.slam_damage,
-			data.crit_chance, data.crit_multiplier)
+			player.crit_chance(), player.crit_multiplier())
 	info.stun = kd.slam_stun
 	info.knockback = 7.0
 	info.hitstop = Balance.combat.hitstop_heavy
 	info.shake = 0.0
 	var targets: Array[Hurtbox] = CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
-			center, kd.slam_radius)
+			center, _slam_radius())
 	if Combat.deliver(info, targets) > 0:
 		player.freeze(Balance.combat.hitstop_heavy)
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy)
-	Fx.ring_burst(_world(), center, kd.slam_radius, player.slot.color, 0.4)
+	Fx.ring_burst(_world(), center, _slam_radius(), player.slot.color, 0.4)
 
 
 func _cancel_slam() -> void:
@@ -368,7 +387,7 @@ func _use_ultimate() -> bool:
 	if in_fury:
 		return _toss()
 	_roar()
-	_enter_fury()
+	_enter_fury(kd.ult_fury_bonus)
 	return true
 
 
@@ -383,7 +402,7 @@ func _roar() -> void:
 		var away := Vector3(enemy.global_position.x - center.x, 0.0, enemy.global_position.z - center.z)
 		enemy.knockback_velocity = away.normalized() * kd.roar_knockback
 		enemy.fear_origin = center
-		enemy.status.apply(StatusEffects.FEAR, kd.roar_fear)
+		enemy.status.apply(StatusEffects.FEAR, kd.roar_fear * (2.0 if has_upgrade(&"tali_rugido_profundo") else 1.0))
 	Fx.ring_burst(_world(), center, kd.roar_radius, FURY_COLOR, 0.5)
 
 
@@ -410,7 +429,9 @@ func _toss() -> bool:
 	tween.tween_property(victim, "global_position", above_head, 0.18)
 	tween.tween_property(victim, "global_position", landing, 0.38) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_callback(_toss_land.bind(victim, landing))
+	tween.tween_callback(func() -> void:
+		if is_instance_valid(victim):
+			_toss_land(victim, landing))
 	return true
 
 
@@ -445,13 +466,13 @@ func _toss_land(victim: Enemy, landing: Vector3) -> void:
 		victim.global_position = landing
 		victim.set_controlled(false)
 		var thrown: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-				kd.toss_thrown_damage, data.crit_chance, data.crit_multiplier)
+				kd.toss_thrown_damage, player.crit_chance(), player.crit_multiplier())
 		thrown.stun = kd.toss_knockdown
 		thrown.hitstop = combat.hitstop_heavy
 		thrown.tags.append(&"thrown")
 		victim.receive_hit(thrown)
 	var splash: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS,
-			kd.toss_splash_damage, data.crit_chance, data.crit_multiplier)
+			kd.toss_splash_damage, player.crit_chance(), player.crit_multiplier())
 	splash.origin = landing
 	splash.stun = kd.toss_knockdown
 	splash.knockback = 7.0
@@ -548,7 +569,7 @@ func _cd_text(cd: AbilityCooldown) -> String:
 
 func hud_bar() -> Dictionary:
 	if in_fury:
-		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / kd.fury_duration,
+		return {"label": "FURIA %d s" % ceili(_fury_time), "value": _fury_time / maxf(_fury_total, _fury_time),
 				"color": Color(0.85, 0.15, 0.08), "pulse": true}
 	if is_exhausted():
 		return {"label": "Resaca", "value": 0.0, "color": Color(0.5, 0.5, 0.55), "pulse": false}
@@ -564,3 +585,34 @@ func hud_abilities() -> Array[Dictionary]:
 				ult_slot("Revoleo")]
 	return [cooldown_slot("Llamado", call_cooldown), cooldown_slot("Tropezón", dodge_cooldown),
 			ult_slot("La Bestia")]
+
+
+# --- Mejoras ---
+
+func _fury_duration() -> float:
+	return kd.fury_duration + (2.0 if has_upgrade(&"tali_furia_larga") else 0.0)
+
+
+func _claw_range() -> float:
+	return kd.claw_range * (1.25 if has_upgrade(&"tali_zarpazo_largo") else 1.0)
+
+
+func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
+	var best: Hurtbox = null
+	var best_distance: float = max_distance
+	for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
+		if hurtbox.receiver == exclude:
+			continue
+		var d: float = hurtbox.global_position.distance_to(exclude.global_position)
+		if d < best_distance:
+			best_distance = d
+			best = hurtbox
+	return best
+
+
+func _slam_radius() -> float:
+	return kd.slam_radius * (1.4 if has_upgrade(&"tali_aplaston_sismico") else 1.0)
+
+
+func _fury_gain() -> float:
+	return 1.25 if has_upgrade(&"tali_bronca_rapida") else 1.0

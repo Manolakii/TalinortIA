@@ -27,5 +27,8 @@ enum Level { EASY, NORMAL, HARD }
 @export var attack_pace: Array[float] = [1.2, 1.0, 0.75]
 ## Élites extra en cada oleada.
 @export var extra_elites_per_wave: Array[int] = [0, 0, 1]
+## Cuántos enemigos cuerpo a cuerpo atacan a la vez al mismo jugador; el resto lo rodea
+## esperando su turno (los élites no esperan).
+@export var melee_attackers: Array[int] = [2, 2, 3]
 ## Cómo se desbloquea cada una (se muestra en la pantalla de unión).
 @export var unlock_hint: Array[String] = ["", "Vencé al Gronk Gigante", "Ganá una partida en Normal"]

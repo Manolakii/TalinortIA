@@ -5,3 +5,4 @@
 
 [node name="CombatRoomTalinorthland" instance=ExtResource("1")]
 combat_waves = ExtResource("2")
+chest_spots = PackedVector3Array()

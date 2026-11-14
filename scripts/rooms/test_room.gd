@@ -11,6 +11,9 @@ const RESULT_SCENE: PackedScene = preload("res://scenes/ui/room_result.tscn")
 ## Si tiene oleadas, es una sala de combate (se gana o se pierde). Si no, sala de prueba
 ## con enemigos infinitos.
 @export var combat_waves: RoomWaves
+## Vasijas y cofre (provisorio: con las plantillas de sala salen de cada plantilla).
+@export var vase_spots: PackedVector3Array = PackedVector3Array()
+@export var chest_spots: PackedVector3Array = PackedVector3Array()
 ## Interior de la sala (x, z): red de seguridad, si algo queda afuera vuelve adentro.
 @export var room_bounds: Rect2 = Rect2(-23.6, -15.6, 47.2, 31.2)
 
@@ -32,9 +35,21 @@ func _ready() -> void:
 		_auto_join_for_testing()
 	GameSettings.auto_revive_players = combat_waves == null
 	_spawn_players()
+	_spawn_props()
 	if combat_waves != null:
 		_start_combat()
 	Fx.prewarm(_camera_focus_node())
+
+
+func _spawn_props() -> void:
+	for spot: Vector3 in vase_spots:
+		var vase := Vase.new()
+		vase.position = spot
+		add_child(vase)
+	for spot: Vector3 in chest_spots:
+		var chest := Chest.new()
+		chest.position = spot
+		add_child(chest)
 
 
 func _camera_focus_node() -> Node3D:

@@ -64,6 +64,15 @@ extends Resource
 ## ...y esta parte de ellos despierta y huye.
 @export var wake_chance: float = 0.0
 
+@export_group("Táctica cuerpo a cuerpo (pedido del grupo: IA más natural)")
+## Después de pegar: chance de retroceder un paso o de rodear al jugador (si no, vuelve a la carga).
+@export var backstep_chance: float = 0.0
+@export var strafe_chance: float = 0.0
+## Chance de encadenar un segundo golpe rápido (con aviso más corto).
+@export var combo_chance: float = 0.0
+## Cuánto zigzaguea al acercarse (0 = derecho).
+@export var weave: float = 0.0
+
 @export_group("Grupo")
 ## Distancia que intentan mantener con otros enemigos.
 @export var separation_radius: float = 1.1

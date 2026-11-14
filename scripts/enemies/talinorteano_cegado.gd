@@ -14,6 +14,9 @@ var _mode_time: float = 0.0
 var _speed_jitter: float = 1.0
 var _wander_direction: Vector3 = Vector3.FORWARD
 var _wander_time: float = 0.0
+## Combo: después de este golpe viene otro rápido.
+var _chain: bool = false
+var _follow_up: bool = false
 
 
 func _ready() -> void:
@@ -40,12 +43,23 @@ func _think(delta: float) -> void:
 			_chase(delta)
 		Mode.WINDUP:
 			stop(delta)
-			if _mode_time >= windup_time():
+			if _mode_time >= _current_windup():
 				_strike()
 		Mode.RECOVER:
 			stop(delta)
-			if _mode_time >= recovery_time():
-				_set_mode(Mode.CHASE)
+			if _mode_time >= recovery_time() * (0.35 if _chain else 1.0):
+				if _chain:
+					# Segundo golpe del combo: se da vuelta hacia el objetivo y vuelve a pegar.
+					_chain = false
+					_follow_up = true
+					var target: Node3D = nearest_target()
+					if target != null:
+						facing = flat_direction_to(target.global_position)
+					_start_windup()
+				else:
+					_follow_up = false
+					choose_reposition()
+					_set_mode(Mode.CHASE)
 
 
 func _chase(delta: float) -> void:
@@ -53,23 +67,28 @@ func _chase(delta: float) -> void:
 	if target == null:
 		stop(delta)
 		return
+	if run_tactic(target, delta):
+		return
 	var direction: Vector3 = flat_direction_to(target.global_position)
 	var distance: float = flat_distance_to(target.global_position)
 	if distance <= data.attack_range:
+		if not take_attack_slot(target):
+			start_tactic(&"wait", randf_range(0.4, 0.8))
+			return
 		turn_towards(direction, delta)
 		if facing.angle_to(direction) < deg_to_rad(35.0):
 			_start_windup()
 		else:
 			stop(delta)
 		return
-	steer(direction, data.move_speed * _speed_jitter * speed_multiplier(), delta)
+	steer(approach_direction(target), data.move_speed * _speed_jitter * speed_multiplier(), delta)
 
 
 func _start_windup() -> void:
 	_set_mode(Mode.WINDUP)
 	# El aviso queda fijo hacia donde miraba al empezar: se puede salir esquivando o caminando.
 	telegraph.rotation.y = atan2(-facing.x, -facing.z)
-	telegraph.show_sector(data.attack_radius, data.attack_angle_deg, windup_time())
+	telegraph.show_sector(data.attack_radius, data.attack_angle_deg, _current_windup())
 
 
 func _strike() -> void:
@@ -80,6 +99,7 @@ func _strike() -> void:
 	if Combat.deliver(info, targets) > 0:
 		freeze(Balance.combat.hitstop_light)
 	_swing_stick()
+	_chain = not _follow_up and randf() < data.combo_chance
 	_set_mode(Mode.RECOVER)
 
 
@@ -98,8 +118,14 @@ func _set_mode(new_mode: Mode) -> void:
 
 
 func _on_interrupted() -> void:
+	_chain = false
 	if mode == Mode.WINDUP:
 		_set_mode(Mode.RECOVER)
+
+
+## El segundo golpe del combo avisa más corto (pero avisa).
+func _current_windup() -> float:
+	return windup_time() * (0.65 if _follow_up else 1.0)
 
 
 # --- Placeholder ---

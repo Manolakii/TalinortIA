@@ -73,3 +73,46 @@ func test_dies_and_leaves_the_enemies_group() -> void:
 	assert_true(_enemy.health.is_dead)
 	assert_false(_enemy.is_in_group(&"enemies"))
 	assert_false(_enemy.is_targetable())
+
+
+# --- Táctica (pedido del grupo: IA más natural) ---
+
+func test_only_some_attack_at_once_the_rest_circle() -> void:
+	var others: Array[TalinorteanoCegado] = []
+	for x: float in [-1.0, 1.0]:
+		var other: TalinorteanoCegado = ENEMY_SCENE.instantiate()
+		other.position = Vector3(x, 0, 1.0)
+		add_child_autofree(other)
+		others.append(other)
+	for i: int in 3:
+		_enemy._physics_process(DT)
+		for other: TalinorteanoCegado in others:
+			other._physics_process(DT)
+	var attacking: int = 0
+	var waiting: int = 0
+	for enemy: TalinorteanoCegado in [_enemy, others[0], others[1]]:
+		if enemy.mode == TalinorteanoCegado.Mode.WINDUP:
+			attacking += 1
+		elif enemy.tactic == &"wait":
+			waiting += 1
+	assert_eq(attacking, Balance.difficulty.melee_attackers[RunState.difficulty], "Atacan de a 2")
+	assert_eq(waiting, 1, "El otro rodea esperando su turno")
+
+
+func test_combo_hits_twice_with_shorter_warning() -> void:
+	_enemy.data = _enemy.data.duplicate()
+	_enemy.data.combo_chance = 1.0
+	_step(2)
+	_step(int(_enemy.windup_time() / DT) + 2)
+	assert_eq(_enemy.mode, TalinorteanoCegado.Mode.RECOVER)
+	_step(int(_enemy.recovery_time() * 0.35 / DT) + 2)
+	assert_eq(_enemy.mode, TalinorteanoCegado.Mode.WINDUP, "Segundo golpe enseguida")
+	assert_almost_eq(_enemy._current_windup(), _enemy.windup_time() * 0.65, 0.001, "Avisa más corto")
+
+
+func test_backstep_moves_away_looking_at_the_player() -> void:
+	_enemy.start_tactic(&"backstep", 0.4)
+	var before: float = _enemy.flat_distance_to(_player.global_position)
+	for i: int in 20:
+		_enemy.run_tactic(_player, DT)
+	assert_gt(_enemy.flat_distance_to(_player.global_position), before, "Se tira para atrás")

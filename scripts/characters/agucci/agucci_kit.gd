@@ -61,9 +61,9 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	step_cooldown.tick(delta)
-	bite_cooldown.tick(delta)
-	embrace_cooldown.tick(delta)
+	step_cooldown.tick(cd_delta(delta))
+	bite_cooldown.tick(cd_delta(delta))
+	embrace_cooldown.tick(cd_delta(delta))
 	_since_attack += delta
 	if not player.is_in_action():
 		_combo_idle += delta
@@ -128,13 +128,13 @@ func add_hunger(points: float) -> void:
 
 
 func is_lucid() -> bool:
-	return not possessed and hunger <= kd.lucidity_max
+	return not possessed and hunger <= _lucidity_max()
 
 
 func outgoing_multiplier() -> float:
 	if possessed:
 		return kd.possession_damage_multiplier
-	if hunger > kd.lucidity_max:
+	if hunger > _lucidity_max():
 		return 1.0 + hunger * kd.hunger_damage_per_point
 	return 1.0
 
@@ -162,9 +162,12 @@ func _hit_each(targets: Array[Hurtbox], base: float, setup: Callable = Callable(
 	for hurtbox: Hurtbox in targets:
 		var info: DamageInfo = make_hit(base)
 		info.origin = origin
-		if is_lucid() and _is_behind(hurtbox, origin) and not info.is_crit:
+		var from_behind: bool = _is_behind(hurtbox, origin)
+		if from_behind and has_upgrade(&"agucci_espalda_letal"):
+			info.amount *= 1.3
+		if is_lucid() and from_behind and not info.is_crit:
 			info.is_crit = true
-			info.amount *= data.crit_multiplier
+			info.amount *= player.crit_multiplier()
 			info.hitstop += Balance.combat.hitstop_crit_bonus
 		if setup.is_valid():
 			setup.call(info)
@@ -193,13 +196,13 @@ func _combo_step() -> void:
 	_since_attack = 0.0
 	basic_recovery = false
 	player.face_aim_now()
-	player.start_action(kd.step_durations[index], 0.55)
+	player.start_action(kd.step_durations[index] / attack_speed(), 0.55)
 	if index < 3:
 		schedule(0.06, _cut.bind(index))
 	elif index == 3:
 		schedule(0.1, _kick)
 	else:
-		for i: int in kd.uzi_bullets:
+		for i: int in _uzi_bullets():
 			schedule(0.05 + i * kd.uzi_gap, _uzi_bullet.bind(i))
 
 
@@ -232,7 +235,7 @@ func _setup_kick(info: DamageInfo) -> void:
 
 func _uzi_bullet(i: int) -> void:
 	basic_recovery = true
-	var t: float = float(i) / maxf(kd.uzi_bullets - 1, 1) - 0.5
+	var t: float = float(i) / maxf(_uzi_bullets() - 1, 1) - 0.5
 	var direction: Vector3 = player.aim_direction.rotated(Vector3.UP, deg_to_rad(t * kd.uzi_spread_deg))
 	var info: DamageInfo = make_hit(kd.uzi_damage)
 	info.is_melee = false
@@ -257,7 +260,7 @@ func _throw_kunai() -> void:
 	info.is_melee = false
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5
 	_projectiles.fire(from, player.aim_direction, kd.kunai_speed,
-			_range_until_obstacle(from, player.aim_direction, kd.kunai_range), 0.25, info,
+			_range_until_obstacle(from, player.aim_direction, kd.kunai_range * (1.5 if has_upgrade(&"agucci_kunai_lejano") else 1.0)), 0.25, info,
 			DamageInfo.Team.ENEMIES, _on_kunai_hit, _on_kunai_expire)
 
 
@@ -286,6 +289,9 @@ func _clamp_to_walls(from: Vector3, to: Vector3) -> Vector3:
 
 
 func _on_kunai_hit(target: Node3D, _info: DamageInfo) -> void:
+	if has_upgrade(&"agucci_kunai_veneno"):
+		for i: int in 3:
+			schedule(1.0 + i, _poison_tick.bind(target))
 	var victim := target as Combatant
 	if victim != null and victim.health.is_dead:
 		# Si mata con el kunai, no suma Hambre.
@@ -435,10 +441,10 @@ func _reappear() -> void:
 # --- Noche del Valle sin Luz ---
 
 func _use_ultimate() -> bool:
-	_night_time = kd.night_duration
+	_night_time = _night_duration()
 	_since_attack = 0.0
 	say("Noche del Valle sin Luz", SHADOW_COLOR.lightened(0.45), 1.2)
-	Events.room_tint_requested.emit(SHADOW_COLOR, kd.night_duration)
+	Events.room_tint_requested.emit(SHADOW_COLOR, _night_duration())
 	add_hunger(kd.night_hunger)
 	return true
 
@@ -496,7 +502,8 @@ func _update_possession(delta: float) -> void:
 	if target == null:
 		player.move_override = Vector2.ZERO
 		var drain := DamageInfo.new()
-		drain.amount = player.health.max_health * kd.possession_self_drain * delta
+		drain.amount = player.health.max_health * kd.possession_self_drain * delta \
+				* (0.5 if has_upgrade(&"agucci_sombra_docil") else 1.0)
 		drain.attacker_team = DamageInfo.Team.ENEMIES
 		player.health.apply_damage(drain)
 	else:
@@ -692,10 +699,10 @@ func hud_bar() -> Dictionary:
 	if possessed:
 		return {"label": "POSESIÓN %d s" % ceili(_possession_time), "value": 1.0,
 				"color": SHADOW_COLOR.lightened(0.25), "pulse": true}
-	var lucid: bool = hunger <= kd.lucidity_max
+	var lucid: bool = hunger <= _lucidity_max()
 	return {"label": "Lucidez" if lucid else "Hambre +%d%%" % roundi(hunger * kd.hunger_damage_per_point * 100.0),
 			"value": hunger / 100.0, "color": Color(0.55, 0.62, 0.75) if lucid else SHADOW_COLOR,
-			"pulse": hunger >= 85.0, "marks": [kd.lucidity_max / 100.0]}
+			"pulse": hunger >= 85.0, "marks": [_lucidity_max() / 100.0]}
 
 
 func hud_abilities() -> Array[Dictionary]:
@@ -706,3 +713,34 @@ func hud_abilities() -> Array[Dictionary]:
 	if _kunai_active:
 		step_slot = {"name": "Paso", "ratio": 0.0, "text": "¡Ya!"}
 	return [step_slot, cooldown_slot("Disolverse", dodge_cooldown), ult_slot("Noche")]
+
+
+# --- Mejoras ---
+
+func _lucidity_max() -> float:
+	return 40.0 if has_upgrade(&"agucci_lucidez_amplia") else kd.lucidity_max
+
+
+func _night_duration() -> float:
+	return kd.night_duration + (3.0 if has_upgrade(&"agucci_noche_larga") else 0.0)
+
+
+func _uzi_bullets() -> int:
+	return kd.uzi_bullets + (2 if has_upgrade(&"agucci_uzi_cargador") else 0)
+
+
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	dodge_cooldown.max_charges = kd.dissolve_charges + (1 if has_upgrade(&"agucci_disolverse_extra") else 0)
+	step_cooldown.recharge_time = kd.step_cooldown * (0.75 if has_upgrade(&"agucci_paso_apurado") else 1.0)
+
+
+## Kunai envenenado: 10 de daño por segundo durante 3 s.
+func _poison_tick(target: Node3D) -> void:
+	var victim := target as Combatant
+	if not is_instance_valid(victim) or not victim.is_targetable():
+		return
+	var info: DamageInfo = make_hit(10.0)
+	info.hitstop = 0.0
+	info.is_melee = false
+	info.tags.append(&"tick")
+	victim.receive_hit(info)

@@ -24,11 +24,25 @@ var data: EnemyData
 var health_multiplier: float = -1.0
 var damage_multiplier: float = -1.0
 var is_elite: bool = false
+## Los invocados (por ejemplo, por un boss) no sueltan oro.
+var drops_gold: bool = true
+## Chance de soltar oro siendo común (-1 = la de la economía). El director la baja cuando hay
+## más enemigos que la base, para que el oro de cada uno no dependa de cuántos juegan.
+var gold_chance: float = -1.0
+## Si siendo élite paga el oro de élite (los élites extra pagan como un común).
+var elite_gold: bool = true
 var affixes: Array[StringName] = []
 ## Lleva la Recompensa del Croco (rombo dorado).
 var has_bounty: bool = false
 ## Despertó (Chamán muerto) y se va sin pelear.
 var awake: bool = false
+## Dormido (Laberinto de los Gronks): no hace nada hasta que lo despiertan.
+var asleep: bool = false
+## Si está puesto, va por este objetivo (por ejemplo, la carreta del evento).
+var focus_target: Node3D = null
+## Objetivos que ignora (si no, la carreta se lleva a todos los enemigos).
+var ignored_targets: Array[Node3D] = []
+signal woke_up
 var facing: Vector3 = Vector3.FORWARD
 var visual: Node3D
 var telegraph: Telegraph
@@ -67,10 +81,15 @@ func _ready() -> void:
 	if is_elite:
 		_build_elite_marks()
 	_play_spawn()
+	_maybe_bark()
 
 
 func _physics_process(delta: float) -> void:
 	if health.is_dead or is_controlled:
+		return
+	_age_time += delta
+	if asleep:
+		stop(delta)
 		return
 	if not combat_tick(delta):
 		return
@@ -171,6 +190,8 @@ func _pay_bounty(info: DamageInfo) -> void:
 		return
 	var gold: int = Balance.economy.croco_bounty_gold
 	RunState.add_gold(killer.slot.index, gold)
+	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
+		killer.health.heal(10.0)
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0,
 			"+%d oro" % gold, BOUNTY_COLOR)
 
@@ -197,6 +218,8 @@ func speed_multiplier() -> float:
 		multiplier *= Balance.elite.fast_speed_multiplier
 	if status.has(StatusEffects.SHADOW_HASTE):
 		multiplier *= 1.0 + Balance.get_enemy(&"chaman_sombra").aura_speed_bonus
+	if status.has(StatusEffects.SLOW):
+		multiplier *= 0.8
 	return multiplier
 
 
@@ -256,11 +279,13 @@ func facing_angle() -> float:
 ## El objetivo más cercano del lado de los jugadores (jugadores, compañeros, señuelos), o null.
 ## Los nodos del grupo "enemy_targets" implementan can_be_targeted_by_enemies() y target_priority().
 func nearest_target() -> Node3D:
+	if is_instance_valid(focus_target) and focus_target.can_be_targeted_by_enemies():
+		return focus_target
 	var best: Node3D = null
 	var best_score: float = INF
 	for node: Node in get_tree().get_nodes_in_group(&"enemy_targets"):
 		var target := node as Node3D
-		if target == null or not target.can_be_targeted_by_enemies():
+		if target == null or not target.can_be_targeted_by_enemies() or ignored_targets.has(target):
 			continue
 		var score: float = flat_distance_to(target.global_position) * target.target_priority()
 		if score < best_score:
@@ -318,8 +343,11 @@ func is_targetable() -> bool:
 	return super.is_targetable() and not is_controlled and not awake
 
 
-## Blindado: recibe menos de frente.
+## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.
 func _modify_incoming(info: DamageInfo) -> void:
+	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
+			and not info.has_tag(&"guide"):
+		info.amount *= 1.15
 	if not affixes.has(&"armored") or info.attacker_team != DamageInfo.Team.PLAYERS:
 		return
 	var from := Vector3(info.origin.x - global_position.x, 0.0, info.origin.z - global_position.z)
@@ -349,7 +377,19 @@ func _flee_awake(delta: float) -> void:
 
 
 ## El tercer zarpazo de Tali "levanta un poco" a los enemigos.
+## Se despierta (por ruido o porque le pegaron).
+func wake_up() -> void:
+	if not asleep:
+		return
+	asleep = false
+	visual.rotation.z = 0.0
+	Dialogue.say("gronk_despierto" if enemy_id == &"gronk" else "cegados",
+			global_position + Vector3.UP * 3.0, Color(1.0, 0.6, 0.4))
+	woke_up.emit()
+
+
 func _after_hit(info: DamageInfo) -> void:
+	wake_up()
 	if info.has_tag(&"launch"):
 		var tween: Tween = create_tween()
 		tween.tween_property(visual, "position:y", 0.7, 0.14).set_ease(Tween.EASE_OUT)
@@ -404,7 +444,9 @@ func _play_spawn() -> void:
 
 
 func _on_died(info: DamageInfo) -> void:
+	release_attack_slot()
 	_pay_bounty(info)
+	_drop_gold()
 	if affixes.has(&"explosive"):
 		var blast := EliteExplosion.new()
 		get_parent().add_child(blast)
@@ -424,6 +466,18 @@ func _on_died(info: DamageInfo) -> void:
 	tween.tween_interval(0.35)
 	tween.tween_property(visual, "position:y", -1.2, 0.5)
 	tween.tween_callback(queue_free)
+
+
+## Oro para cada jugador (GDD): común 40% de chance, élite siempre.
+func _drop_gold() -> void:
+	if not drops_gold:
+		return
+	var economy: EconomyConfig = Balance.economy
+	if is_elite and elite_gold:
+		Loot.drop_for_all(get_parent(), global_position, economy.elite_gold)
+	else:
+		var chance: float = gold_chance if gold_chance >= 0.0 else economy.common_drop_chance
+		Loot.drop_for_all(get_parent(), global_position, economy.common_gold, chance)
 
 
 func _build_body() -> void:
@@ -465,3 +519,124 @@ func _make_material(color: Color, with_outline: bool = true) -> StandardMaterial
 		outline.shader = OUTLINE_SHADER
 		material.next_pass = outline
 	return material
+
+
+# --- Táctica cuerpo a cuerpo (pedido del grupo: que no sea solo ir para adelante y pegar) ---
+
+## Cuántos enemigos tienen turno para atacar a cada objetivo (id del objetivo -> cantidad).
+static var _attack_slots: Dictionary = {}
+
+## "" (nada), "backstep" (retrocede), "strafe" (rodea) o "wait" (rodea esperando turno).
+var tactic: StringName = &""
+var _tactic_time: float = 0.0
+var _strafe_sign: float = 1.0
+var _slot_target_id: int = 0
+var _weave_phase: float = randf() * TAU
+var _age_time: float = 0.0
+
+
+func _exit_tree() -> void:
+	release_attack_slot()
+
+
+## Pide turno para atacar a `target`. Los élites no esperan.
+func take_attack_slot(target: Node3D) -> bool:
+	var id: int = target.get_instance_id()
+	if _slot_target_id == id:
+		return true
+	release_attack_slot()
+	if is_elite:
+		return true
+	var used: int = _attack_slots.get(id, 0)
+	if used >= Balance.difficulty.melee_attackers[RunState.difficulty]:
+		return false
+	_attack_slots[id] = used + 1
+	_slot_target_id = id
+	return true
+
+
+func release_attack_slot() -> void:
+	if _slot_target_id == 0:
+		return
+	var used: int = _attack_slots.get(_slot_target_id, 0)
+	if used <= 1:
+		_attack_slots.erase(_slot_target_id)
+	else:
+		_attack_slots[_slot_target_id] = used - 1
+	_slot_target_id = 0
+
+
+## Después de pegar: retrocede un paso, rodea al jugador o vuelve directo a la carga.
+func choose_reposition() -> void:
+	release_attack_slot()
+	var roll: float = randf()
+	if roll < data.backstep_chance:
+		start_tactic(&"backstep", randf_range(0.3, 0.45))
+	elif roll < data.backstep_chance + data.strafe_chance:
+		start_tactic(&"strafe", randf_range(0.5, 1.1))
+	else:
+		tactic = &""
+
+
+func start_tactic(which: StringName, duration: float) -> void:
+	tactic = which
+	_tactic_time = duration
+	_strafe_sign = -1.0 if randf() < 0.5 else 1.0
+
+
+## Hace la táctica actual mirando al objetivo. Devuelve true mientras sigue ocupado.
+func run_tactic(target: Node3D, delta: float) -> bool:
+	if tactic == &"":
+		return false
+	_tactic_time -= delta
+	if _tactic_time <= 0.0:
+		tactic = &""
+		return false
+	var to_target: Vector3 = flat_direction_to(target.global_position)
+	var side := Vector3(-to_target.z, 0.0, to_target.x) * _strafe_sign
+	var speed: float = data.move_speed * speed_multiplier()
+	match tactic:
+		&"backstep":
+			move_looking(-to_target, speed * 1.4, to_target, delta)
+		&"strafe":
+			move_looking((side + to_target * 0.15).normalized(), speed * 0.75, to_target, delta)
+		&"wait":
+			# Rodea a un par de metros, acomodándose a esa distancia, hasta que haya turno.
+			var distance: float = flat_distance_to(target.global_position)
+			var radial: float = clampf((distance - (data.attack_range + 1.6)) * 0.8, -1.0, 1.0)
+			move_looking((side * 0.8 + to_target * radial).normalized(), speed * 0.6, to_target, delta)
+	return true
+
+
+## Hacia dónde ir para acercarse: de lejos zigzaguea un poco en vez de ir en línea recta.
+func approach_direction(target: Node3D) -> Vector3:
+	var to_target: Vector3 = flat_direction_to(target.global_position)
+	if data.weave <= 0.0 or flat_distance_to(target.global_position) < 3.5:
+		return to_target
+	var side := Vector3(-to_target.z, 0.0, to_target.x)
+	return (to_target + side * sin(_age_time * 2.2 + _weave_phase) * data.weave).normalized()
+
+
+## Se mueve hacia `direction` pero mirando hacia `look` (para retroceder o rodear de frente).
+func move_looking(direction: Vector3, speed: float, look: Vector3, delta: float) -> void:
+	var wanted: Vector3 = (direction + _separation() * 1.2).normalized() * speed
+	_move_velocity = _move_velocity.move_toward(wanted, 20.0 * delta)
+	turn_towards(look, delta)
+	move_with_knockback(_move_velocity)
+
+
+## Frases al aparecer (data/texts/dialogos.json): no todos hablan, así no se llena la pantalla.
+const BARKS: Dictionary = {&"talinorteano_cegado": "cegados", &"hondero_cegado": "cegados",
+		&"soldado_agucci": "soldados", &"tirador_agucci": "soldados", &"mimic": "mimic"}
+
+
+func _maybe_bark() -> void:
+	if not BARKS.has(enemy_id) or asleep:
+		return
+	var chance: float = 1.0 if enemy_id == &"mimic" else 0.2
+	if randf() >= chance:
+		return
+	var timer: SceneTreeTimer = get_tree().create_timer(randf_range(0.6, 2.5), false)
+	timer.timeout.connect(func() -> void:
+		if is_instance_valid(self) and not health.is_dead:
+			Dialogue.say(BARKS[enemy_id], global_position + Vector3.UP * 2.6, Color(0.85, 0.8, 0.9)))

@@ -77,7 +77,31 @@ func dodge_direction() -> Vector3:
 
 
 func add_ult(points: float) -> void:
-	ult_charge = clampf(ult_charge + points, 0.0, 100.0)
+	ult_charge = clampf(ult_charge + points * player.modifiers.ult_charge_multiplier(), 0.0, 100.0)
+
+
+## Delta para los cooldowns de habilidades (el Reloj Uwey los acorta).
+func cd_delta(delta: float) -> float:
+	return delta / (1.0 - player.modifiers.cooldown_reduction())
+
+
+## Velocidad de ataque (Guantes de Gronk): los tiempos del golpe común se dividen por esto.
+func attack_speed() -> float:
+	return player.modifiers.attack_speed_multiplier()
+
+
+## Vida base del cuerpo actual (el dúo la cambia según el cuerpo).
+func base_max_health() -> float:
+	return data.max_health
+
+
+## Las mejoras de personaje que suman estadísticas las agregan acá (cada kit las define).
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	pass
+
+
+func has_upgrade(upgrade_id: StringName) -> bool:
+	return RunState.has_upgrade(player.slot.index, upgrade_id)
 
 
 ## Llamado cuando un golpe de este jugador conectó.
@@ -113,8 +137,17 @@ func _tick_scheduled(delta: float) -> void:
 			_scheduled.remove_at(i)
 	due.reverse()
 	for callback: Callable in due:
-		if callback.is_valid():
+		if callback.is_valid() and _bound_objects_alive(callback):
 			callback.call()
+
+
+## Si algo programado usa un enemigo (o un nodo) que ya se borró, no se ejecuta.
+## Por ejemplo, el veneno del kunai cuando el enemigo ya murió y desapareció.
+static func _bound_objects_alive(callback: Callable) -> bool:
+	for argument: Variant in callback.get_bound_arguments():
+		if typeof(argument) == TYPE_OBJECT and not is_instance_valid(argument):
+			return false
+	return true
 
 
 # --- Para sobreescribir en cada kit ---
@@ -159,6 +192,11 @@ func on_blocked_by_invulnerability(_info: DamageInfo) -> void:
 	pass
 
 
+## Multiplicador para que los enemigos lo elijan (menos de 1 = atrae más).
+func target_priority() -> float:
+	return 1.0
+
+
 func move_speed_multiplier() -> float:
 	return 1.0
 
@@ -172,8 +210,8 @@ func outgoing_multiplier() -> float:
 ## `source` es quien pega (por defecto el jugador; el compañero del dúo pega con su cuerpo).
 func make_hit(base_damage: float, source: Node3D = null) -> DamageInfo:
 	var info: DamageInfo = Combat.make_hit(source if source != null else player,
-			DamageInfo.Team.PLAYERS, base_damage * outgoing_multiplier(), data.crit_chance,
-			data.crit_multiplier)
+			DamageInfo.Team.PLAYERS, base_damage * outgoing_multiplier(), player.crit_chance(),
+			player.crit_multiplier())
 	info.hitstop = Balance.combat.hitstop_light
 	if info.is_crit:
 		info.hitstop += Balance.combat.hitstop_crit_bonus

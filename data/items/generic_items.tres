@@ -1,0 +1,104 @@
+[gd_resource type="Resource" script_class="GenericItemList" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/generic_item_list.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/generic_item.gd" id="2"]
+
+[sub_resource type="Resource" id="item_0"]
+script = ExtResource("2")
+id = &"piedra_de_afilar"
+display_name = "Piedra de afilar"
+description = "+8% de daño"
+stat = &"damage"
+amount = 0.08
+
+[sub_resource type="Resource" id="item_1"]
+script = ExtResource("2")
+id = &"guantes_de_gronk"
+display_name = "Guantes de Gronk"
+description = "+8% de velocidad de ataque"
+stat = &"attack_speed"
+amount = 0.08
+
+[sub_resource type="Resource" id="item_2"]
+script = ExtResource("2")
+id = &"corazon_de_gronk"
+display_name = "Corazón de Gronk"
+description = "+12 de vida máxima"
+stat = &"max_health"
+amount = 12.0
+
+[sub_resource type="Resource" id="item_3"]
+script = ExtResource("2")
+id = &"ojo_de_vidrio"
+display_name = "Ojo de vidrio"
+description = "+4% de chance de crítico"
+stat = &"crit_chance"
+amount = 0.04
+
+[sub_resource type="Resource" id="item_4"]
+script = ExtResource("2")
+id = &"colmillo_filoso"
+display_name = "Colmillo filoso"
+description = "+15% de daño crítico"
+stat = &"crit_damage"
+amount = 0.15
+
+[sub_resource type="Resource" id="item_5"]
+script = ExtResource("2")
+id = &"botas_gastadas"
+display_name = "Botas gastadas"
+description = "+5% de velocidad de movimiento"
+stat = &"move_speed"
+amount = 0.05
+
+[sub_resource type="Resource" id="item_6"]
+script = ExtResource("2")
+id = &"reloj_uwey"
+display_name = "Reloj Uwey"
+description = "-6% de cooldown en habilidades"
+stat = &"cooldown_reduction"
+amount = 0.06
+
+[sub_resource type="Resource" id="item_7"]
+script = ExtResource("2")
+id = &"bateria_robada"
+display_name = "Batería robada"
+description = "+10% de velocidad de carga de la definitiva"
+stat = &"ult_charge"
+amount = 0.1
+
+[sub_resource type="Resource" id="item_8"]
+script = ExtResource("2")
+id = &"vendas_bosque_tuerto"
+display_name = "Vendas del Bosque Tuerto"
+description = "Cura 3 de vida al terminar cada oleada"
+stat = &"heal_per_wave"
+amount = 3.0
+
+[sub_resource type="Resource" id="item_9"]
+script = ExtResource("2")
+id = &"escama"
+display_name = "Escama"
+description = "-4% de daño recibido"
+stat = &"damage_reduction"
+amount = 0.04
+
+[sub_resource type="Resource" id="item_10"]
+script = ExtResource("2")
+id = &"moneda_con_agujero"
+display_name = "Moneda con agujero"
+description = "+10% de oro recogido"
+stat = &"gold"
+amount = 0.1
+
+[sub_resource type="Resource" id="item_11"]
+script = ExtResource("2")
+id = &"sanguijuela"
+display_name = "Sanguijuela"
+description = "+1,5% de robo de vida"
+stat = &"lifesteal"
+amount = 0.015
+
+[resource]
+script = ExtResource("1")
+items = Array[ExtResource("2")]([SubResource("item_0"), SubResource("item_1"), SubResource("item_2"), SubResource("item_3"), SubResource("item_4"), SubResource("item_5"), SubResource("item_6"), SubResource("item_7"), SubResource("item_8"), SubResource("item_9"), SubResource("item_10"), SubResource("item_11")])

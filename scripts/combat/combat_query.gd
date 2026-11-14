@@ -59,12 +59,21 @@ static func in_line(tree: SceneTree, team: DamageInfo.Team, from: Vector3, to: V
 	return result
 
 
+## Como hurtboxes(), sin los objetos rompibles: para apuntar y para las IA.
+static func targets(tree: SceneTree, team: DamageInfo.Team) -> Array[Hurtbox]:
+	var result: Array[Hurtbox] = []
+	for hurtbox: Hurtbox in hurtboxes(tree, team):
+		if not hurtbox.is_prop:
+			result.append(hurtbox)
+	return result
+
+
 static func nearest(tree: SceneTree, team: DamageInfo.Team, position: Vector3,
 		max_distance: float = INF) -> Hurtbox:
 	var best: Hurtbox = null
 	var best_distance: float = max_distance
 	var p := _flat(position)
-	for hurtbox: Hurtbox in hurtboxes(tree, team):
+	for hurtbox: Hurtbox in targets(tree, team):
 		var d: float = p.distance_to(hurtbox.flat_position())
 		if d < best_distance:
 			best_distance = d

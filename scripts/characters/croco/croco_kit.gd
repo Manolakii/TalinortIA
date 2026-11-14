@@ -73,7 +73,7 @@ func _setup() -> void:
 
 
 func _tick(delta: float) -> void:
-	contract_cooldown.tick(delta)
+	contract_cooldown.tick(cd_delta(delta))
 	_attack_timer -= delta
 	_overheat = maxf(_overheat - delta, 0.0)
 	_mode_text_cooldown -= delta
@@ -111,7 +111,7 @@ func aimed_enemy() -> Hurtbox:
 	var best: Hurtbox = null
 	var best_angle: float = deg_to_rad(kd.target_cone_deg)
 	var here := Vector3(player.global_position.x, 0.0, player.global_position.z)
-	for hurtbox: Hurtbox in CombatQuery.hurtboxes(player.get_tree(), DamageInfo.Team.ENEMIES):
+	for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
 		var to_enemy: Vector3 = hurtbox.flat_position() - here
 		var distance: float = to_enemy.length()
 		if distance < 0.01 or distance > kd.target_max_distance:
@@ -182,16 +182,17 @@ func _fire() -> void:
 	if not locked:
 		locked = true
 		_lock_target = _aimed
-	var bonus: float = 1.0 + (kd.mode_switch_bonus if switch_bonus_ready else 0.0)
+	var bonus: float = 1.0 + (_switch_bonus() if switch_bonus_ready else 0.0)
 	switch_bonus_ready = false
 	player.face_aim_now()
 	basic_recovery = true
 	match mode:
 		Mode.SHOTGUN:
-			_attack_timer = kd.shotgun_interval
+			_attack_timer = kd.shotgun_interval / attack_speed()
 			player.start_action(0.25, 0.6)
-			for i: int in kd.shotgun_pellets:
-				var t: float = float(i) / maxf(kd.shotgun_pellets - 1, 1) - 0.5
+			var pellets: int = kd.shotgun_pellets + (2 if has_upgrade(&"croco_escopeta_mas") else 0)
+			for i: int in pellets:
+				var t: float = float(i) / maxf(pellets - 1, 1) - 0.5
 				var spread: float = deg_to_rad(t * kd.shotgun_spread_deg
 						+ Combat.rng.randf_range(-3.0, 3.0))
 				var info: DamageInfo = make_hit(kd.shotgun_damage * bonus)
@@ -200,16 +201,17 @@ func _fire() -> void:
 						kd.shotgun_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light)
 		Mode.PISTOL:
-			_attack_timer = kd.pistol_interval
+			_attack_timer = kd.pistol_interval / attack_speed()
 			player.start_action(0.14, 0.8)
 			var shot: DamageInfo = make_hit(kd.pistol_damage * bonus)
 			shot.knockback = kd.pistol_knockback
 			_shoot(shot, player.aim_direction, kd.pistol_speed, kd.pistol_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.6)
 		Mode.RIFLE:
-			_attack_timer = kd.rifle_interval
-			player.start_action(kd.rifle_burst_gap * kd.rifle_burst + 0.1, 0.7)
-			for i: int in kd.rifle_burst:
+			_attack_timer = kd.rifle_interval / attack_speed()
+			var burst: int = kd.rifle_burst + (1 if has_upgrade(&"croco_rafaga_extra") else 0)
+			player.start_action(kd.rifle_burst_gap * burst + 0.1, 0.7)
+			for i: int in burst:
 				schedule(i * kd.rifle_burst_gap, _rifle_bullet.bind(bonus))
 
 
@@ -238,7 +240,7 @@ func _update_charge(delta: float) -> void:
 	player.face_aim_now()
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1
 	Fx.place_beam(_aim_line, from, player.aim_direction, kd.contract_length)
-	var ratio: float = clampf(_charge / kd.contract_full_charge, 0.0, 1.0)
+	var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
 	(_aim_line.material_override as StandardMaterial3D).albedo_color.a = 0.15 + 0.5 * ratio
 	if not player.slot.input.is_held(PlayerInput.Action.ABILITY) or _charge >= kd.contract_max_hold:
 		_fire_contract()
@@ -248,10 +250,10 @@ func _fire_contract() -> void:
 	_charging = false
 	_aim_line.visible = false
 	contract_cooldown.use()
-	var ratio: float = clampf(_charge / kd.contract_full_charge, 0.0, 1.0)
+	var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
 	var stacks: int = RunState.get_bonus(player.slot.index, STACK_KEY)
 	var damage: float = lerpf(kd.contract_min_damage, kd.contract_max_damage, ratio) \
-			* (1.0 + stacks * kd.contract_stack_bonus)
+			* (1.0 + stacks * kd.contract_stack_bonus) * (1.3 if has_upgrade(&"croco_contrato_letal") else 1.0)
 	var info: DamageInfo = make_hit(damage)
 	info.is_melee = false
 	info.knockback = 4.0
@@ -296,6 +298,8 @@ func do_dodge() -> void:
 	decoy.global_position = start
 	decoy.setup(player.slot.color, data.placeholder_height, data.placeholder_radius,
 			kd.decoy_duration, kd.decoy_priority)
+	if has_upgrade(&"croco_senuelo_explota"):
+		decoy.explode_on_expire(player, 30.0, 2.5)
 	var trail := HasteTrail.new()
 	_world().add_child(trail)
 	trail.setup(player, start, start + direction * kd.dodge_distance, kd.trail_width,
@@ -306,7 +310,7 @@ func do_dodge() -> void:
 
 func _use_ultimate() -> bool:
 	_cancel_charge()
-	_rail_time = kd.rail_duration
+	_rail_time = _rail_duration()
 	_rail_direction = player.aim_direction
 	_rail_tick = 0.0
 	_rail_beam.visible = true
@@ -416,7 +420,7 @@ func debug_lines() -> Array[String]:
 	var contract: String = "Contrato " + ("listo" if contract_cooldown.is_ready()
 			else "%.1f s" % contract_cooldown.time_until_ready())
 	if _charging:
-		contract = "Contrato cargando %d%%" % roundi(clampf(_charge / kd.contract_full_charge, 0.0, 1.0) * 100.0)
+		contract = "Contrato cargando %d%%" % roundi(clampf(_charge / _full_charge(), 0.0, 1.0) * 100.0)
 	lines.append(contract + " · bonus +%.1f%%" % (RunState.get_bonus(player.slot.index, STACK_KEY)
 			* kd.contract_stack_bonus * 100.0))
 	lines.append("Ruta de Escape %d/%d · Definitiva %d%%" % [dodge_cooldown.charges,
@@ -436,10 +440,10 @@ func hud_chip_active() -> int:
 
 func hud_bar() -> Dictionary:
 	if _rail_time > 0.0:
-		return {"label": "RIEL %d s" % ceili(_rail_time), "value": _rail_time / kd.rail_duration,
+		return {"label": "RIEL %d s" % ceili(_rail_time), "value": _rail_time / _rail_duration(),
 				"color": Color(0.78, 0.9, 1.0), "pulse": true}
 	if _charging:
-		var ratio: float = clampf(_charge / kd.contract_full_charge, 0.0, 1.0)
+		var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
 		return {"label": "Contrato", "value": ratio, "color": Color(0.85, 0.9, 1.0), "pulse": ratio >= 1.0}
 	return {}
 
@@ -447,3 +451,21 @@ func hud_bar() -> Dictionary:
 func hud_abilities() -> Array[Dictionary]:
 	return [cooldown_slot("Contrato", contract_cooldown), cooldown_slot("Ruta", dodge_cooldown),
 			ult_slot("Riel")]
+
+
+# --- Mejoras ---
+
+func _switch_bonus() -> float:
+	return 0.45 if has_upgrade(&"croco_bonus_cambio") else kd.mode_switch_bonus
+
+
+func _full_charge() -> float:
+	return 1.0 if has_upgrade(&"croco_contrato_rapido") else kd.contract_full_charge
+
+
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	dodge_cooldown.max_charges = kd.dodge_charges + (1 if has_upgrade(&"croco_ruta_extra") else 0)
+
+
+func _rail_duration() -> float:
+	return kd.rail_duration + (1.5 if has_upgrade(&"croco_riel_largo") else 0.0)
