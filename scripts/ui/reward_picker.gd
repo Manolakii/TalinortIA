@@ -109,9 +109,11 @@ func _physics_process(delta: float) -> void:
 		var input: PlayerInput = choice.player.slot.input
 		if input.just_pressed(PlayerInput.Action.UP):
 			choice.selected = wrapi(choice.selected - 1, 0, choice.options.size())
+			Sound.play("ui_move", -6.0, 0.0)
 			_refresh(choice)
 		elif input.just_pressed(PlayerInput.Action.DOWN):
 			choice.selected = wrapi(choice.selected + 1, 0, choice.options.size())
+			Sound.play("ui_move", -6.0, 0.0)
 			_refresh(choice)
 		elif input.just_pressed(PlayerInput.Action.CONFIRM) or input.just_pressed(PlayerInput.Action.INTERACT):
 			_pick(choice)
@@ -132,6 +134,7 @@ func _pick(choice: Choice) -> void:
 		RunState.add_upgrade(choice.player.slot.index, option["id"])
 	else:
 		RunState.add_item(choice.player.slot.index, option["id"])
+	Sound.play("ui_confirm", 0.0, 0.0)
 	_finish_choice(choice, "Elegiste: %s" % option["name"])
 	_check_all_done()
 

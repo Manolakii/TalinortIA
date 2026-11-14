@@ -31,6 +31,7 @@ func _ready() -> void:
 
 ## Abanico hacia -Z del nodo (360 = círculo).
 func show_sector(radius: float, angle_deg: float, duration: float) -> void:
+	Sound.play("warning", -14.0)
 	_plane.size = Vector2.ONE * radius * 2.0
 	_plane.center_offset = Vector3.ZERO
 	_shape = 0
@@ -48,6 +49,7 @@ func show_circle(radius: float, duration: float) -> void:
 
 ## Rectángulo que arranca en el nodo y se extiende `length` hacia -Z.
 func show_rect(length: float, width: float, duration: float) -> void:
+	Sound.play("warning", -14.0)
 	_plane.size = Vector2(width, length)
 	_plane.center_offset = Vector3(0.0, 0.0, -length * 0.5)
 	_shape = 1

@@ -68,6 +68,7 @@ func smash(breaker: PlayerCharacter = null) -> void:
 	if _broken:
 		return
 	_broken = true
+	Sound.play("vase", -3.0)
 	collision_layer = 0
 	_hurtbox.queue_free()
 	if breaker == null:

@@ -110,6 +110,7 @@ func open(by: PlayerCharacter = null) -> void:
 	tween.parallel().tween_property(_glow, "light_energy", 2.5, 0.15)
 	tween.tween_property(_glow, "light_energy", 0.0, 0.8)
 	Events.camera_shake_requested.emit(0.15)
+	Sound.play("chest", 0.0, 0.0)
 	if drops_gold and not is_mimic:
 		Loot.drop_for_all(get_parent(), global_position + Vector3.FORWARD * 0.3,
 				gold_table if not gold_table.is_empty() else Balance.economy.chest_gold)

@@ -51,6 +51,7 @@ func _ready() -> void:
 	_build_fountain()
 	_build_drum()
 	_build_ship()
+	Sound.music("birig_bamba")
 	Fx.prewarm(_camera_focus_node())
 
 

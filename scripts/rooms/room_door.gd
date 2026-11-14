@@ -59,6 +59,7 @@ func _build(text: String) -> void:
 	_prompt.visible = false
 	add_child(_prompt)
 	# Sale del piso.
+	Sound.play("door", -6.0)
 	position.y = -4.5
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "position:y", 0.0, 0.7).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -75,6 +76,7 @@ func _physics_process(delta: float) -> void:
 	if near != null and near.slot.input.just_pressed(PlayerInput.Action.INTERACT):
 		_used = true
 		_prompt.visible = false
+		Sound.play("door", 0.0, 0.0)
 		chosen.emit(self)
 
 

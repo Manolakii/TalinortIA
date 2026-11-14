@@ -71,6 +71,7 @@ func _physics_process(delta: float) -> void:
 func take(player: PlayerCharacter) -> void:
 	_taken = true
 	player.health.heal(heal_amount)
+	Sound.play("heal", -4.0, 0.0)
 	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.2,
 			"+%d" % roundi(heal_amount), CAP_COLOR)
 	Fx.ring_burst(get_parent(), global_position, 0.9, CAP_COLOR, 0.25)

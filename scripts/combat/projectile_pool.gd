@@ -33,6 +33,8 @@ func setup(mesh: Mesh, material: Material, size: int = 16) -> void:
 func fire(from: Vector3, direction: Vector3, speed: float, max_range: float, radius: float,
 		info: DamageInfo, target_team: DamageInfo.Team, on_hit: Callable = Callable(),
 		on_expire: Callable = Callable()) -> void:
+	if target_team == DamageInfo.Team.ENEMIES:
+		Sound.play("shot", -12.0)
 	var shot: Shot = _free_shot()
 	shot.active = true
 	shot.velocity = direction.normalized() * speed

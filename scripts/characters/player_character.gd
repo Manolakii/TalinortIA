@@ -207,6 +207,7 @@ func start_dodge(direction: Vector3, distance: float, duration: float) -> void:
 	_dodge_time = duration
 	_dodge_speed = distance / maxf(duration, 0.01)
 	health.make_invulnerable(Balance.combat.dodge_invulnerability)
+	Sound.play("dodge", -6.0)
 	action_velocity = null
 	_action_time = 0.0
 	state_machine.transition_to(&"Dodge")

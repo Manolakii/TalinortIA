@@ -246,6 +246,7 @@ func _stomp() -> void:
 func _summon() -> void:
 	_set_mode(Mode.ROAR)
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 5.5, "¡GRRROOOOAAAAR!", Color(1.0, 0.7, 0.5))
+	Sound.play("roar", 2.0, 0.0)
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy * 0.6)
 	var count: int = cfg.summon_count + (1 if Scaling.players_for_scaling() >= 3 else 0)
 	for i: int in count:
@@ -311,6 +312,7 @@ func _enter_phase(new_phase: int) -> void:
 	_charges_left = 0
 	_set_mode(Mode.ROAR)
 	health.make_invulnerable(cfg.phase_roar_time)
+	Sound.play("roar", 3.0, 0.0)
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy)
 	Events.room_tint_requested.emit(EYE_SHADOW, 1.6)
 	if new_phase == 2:

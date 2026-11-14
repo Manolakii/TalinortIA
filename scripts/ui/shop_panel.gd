@@ -56,9 +56,11 @@ func _physics_process(delta: float) -> void:
 	var input: PlayerInput = player.slot.input
 	if input.just_pressed(PlayerInput.Action.UP):
 		_selected = wrapi(_selected - 1, 0, _rows.size())
+		Sound.play("ui_move", -6.0, 0.0)
 		_refresh()
 	elif input.just_pressed(PlayerInput.Action.DOWN):
 		_selected = wrapi(_selected + 1, 0, _rows.size())
+		Sound.play("ui_move", -6.0, 0.0)
 		_refresh()
 	elif input.just_pressed(PlayerInput.Action.CONFIRM) or input.just_pressed(PlayerInput.Action.INTERACT):
 		choose(_selected)
@@ -148,7 +150,9 @@ func _buy(row: Dictionary) -> void:
 	var index: int = player.slot.index
 	if RunState.get_gold(index) < row["price"]:
 		_say(Dialogue.line("yole_sin_plata"))
+		Sound.play("ui_error", 0.0, 0.0)
 		return
+	Sound.play("ui_confirm", 0.0, 0.0)
 	RunState.add_gold(index, -row["price"])
 	if row["kind"] == &"special":
 		RunState.add_special(index, row["id"])

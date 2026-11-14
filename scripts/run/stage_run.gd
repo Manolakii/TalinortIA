@@ -75,6 +75,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
+	# La capa de combate de la música entra cuando hay enemigos.
+	Sound.set_combat(not get_tree().get_nodes_in_group(&"enemies").is_empty())
 	if not _failed and not _transitioning and _all_players_down():
 		_failed = true
 		_result_screen.show_result(false)
@@ -190,6 +192,7 @@ func build_room(type: int) -> void:
 		turret.setup(config)
 		turret.position = Vector3(3.5, 0, 8.0)
 		_room_root.add_child(turret)
+	Sound.music("boss" if type == RoomKind.Type.BOSS else "talinorthland_explore")
 	Events.floating_text_requested.emit(Vector3(0, 3.5, 7.0), RoomKind.display_name(type).replace("Evento: ", ""),
 			Color.WHITE)
 	if HINTS.has(type):

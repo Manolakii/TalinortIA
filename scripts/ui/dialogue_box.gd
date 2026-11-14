@@ -118,3 +118,12 @@ func close() -> void:
 
 func _show_line() -> void:
 	_text.text = String(_lines[_index]) if _index < _lines.size() else ""
+	_babble(_text.text.length())
+
+
+## Voz inventada tipo balbuceo (GDD, Audio): unas sílabas al empezar cada línea.
+func _babble(letters: int) -> void:
+	var syllables: int = clampi(letters / 10, 2, 7)
+	for i: int in syllables:
+		var timer: SceneTreeTimer = get_tree().create_timer(i * 0.09)
+		timer.timeout.connect(func() -> void: Sound.play("babble_%d" % randi_range(0, 4), -6.0, 0.05))

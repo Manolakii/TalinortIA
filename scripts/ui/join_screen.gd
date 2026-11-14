@@ -33,6 +33,7 @@ var _starting: bool = false
 
 
 func _ready() -> void:
+	Sound.music("birig_bamba")
 	PlayerManager.reset()
 	if not is_difficulty_unlocked(RunState.difficulty):
 		RunState.difficulty = DifficultyConfig.Level.EASY
