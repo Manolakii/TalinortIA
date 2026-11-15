@@ -149,8 +149,9 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 | Sala | Cómo se pasa | Premio |
 | --- | --- | --- |
 | Combate | Vencer a todos los enemigos, que aparecen en 2 o 3 oleadas | Oro, y en algunas una mejora de personaje (elegir 1 de 3) |
+| Aguante *(2026-11-15, pedido del grupo)* | Aguantar 40 s mientras llegan tandas de enemigos sin parar | Igual que Combate |
 | Élite | Igual, con 1 o 2 élites y menos enemigos comunes | Mejora de personaje asegurada y más oro |
-| Evento | Resolver el evento (abajo) | Un cofre de evento, que puede traer una mejora de personaje |
+| Evento (Desafío) | Resolver el evento (abajo). *2026-11-15, pedido del grupo:* es una puerta extra que aparece cada tanto; se entra, se juega y se vuelve a la misma sala (como una grieta). Solo las salas de combate (normal, élite o aguante) hacen avanzar | Si se gana: cofre de evento y una mejora de lujo (elegir 1 de 4). Si se pierde, nada |
 | Tesoro | Sin pelea, o con un guardia | Un cofre y vasijas |
 | Cabaña del General Pipo | Solo en el Stage 1. Está escondida y se encuentra resolviendo un acertijo | Easter egg si jugás con Pipo. Si no, Pipo te echa, pero te deja una torreta aliada para la sala siguiente |
 | Valles Antiguos | Solo en el Stage 2. Sala pacífica, sin pelea | Una fuente que cura y lore. Diálogos especiales si el Maestro está en el equipo |

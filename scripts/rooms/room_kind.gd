@@ -1,10 +1,12 @@
 class_name RoomKind
 extends RefCounted
 ## Tipos de sala (GDD, Tipos de sala) y premios de las puertas.
-## Las puertas muestran el PREMIO (mejora, oro o desafío) y lo que hay adentro es sorpresa
-## (pedido del grupo). Tesoro y Cabaña de Pipo son salas extra escondidas.
+## Pedido del grupo: se avanza de sala en sala por salas de COMBATE (normal, élite o aguante).
+## Las puertas muestran el PREMIO (mejora u oro) y el tipo de combate es sorpresa. Los eventos son
+## DESAFÍOS: una puerta que aparece cada tanto, se entra, se juega y se vuelve a la misma sala
+## (como una grieta). Tesoro y Cabaña de Pipo son salas extra escondidas.
 
-enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN, ESCORT, MAZE, STAMPEDE, BOSS }
+enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN, ESCORT, MAZE, STAMPEDE, BOSS, SURVIVAL }
 enum Reward { NONE, UPGRADE, GOLD, CHALLENGE }
 
 const NAMES: Dictionary = {
@@ -18,8 +20,9 @@ const NAMES: Dictionary = {
 	Type.MAZE: "Evento: laberinto de los Gronks",
 	Type.STAMPEDE: "Evento: la estampida",
 	Type.BOSS: "Boss: Gronk Gigante",
+	Type.SURVIVAL: "Aguante",
 }
-## Los eventos (no se repite el mismo seguido).
+## Los eventos: ahora son los desafíos de ida y vuelta (no se repite el mismo seguido).
 const EVENTS: Array[int] = [Type.MIMICS, Type.PRISONERS, Type.ESCORT, Type.MAZE, Type.STAMPEDE]
 const REWARD_NAMES: Dictionary = {
 	Reward.NONE: "",
@@ -38,7 +41,7 @@ static func reward_name(reward: int) -> String:
 
 
 static func has_combat(type: int) -> bool:
-	return type in [Type.COMBAT, Type.ELITE, Type.PRISONERS]
+	return type in [Type.COMBAT, Type.ELITE, Type.PRISONERS, Type.SURVIVAL]
 
 
 ## Salas extra: no cuentan como sala del escenario.

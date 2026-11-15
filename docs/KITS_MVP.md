@@ -152,19 +152,20 @@ Detalle de color: Stewie está inspirada en el gato de Manuel. En Birig Bamba ti
 
 *(Agregado por pedido del grupo el 2026-11-14, del documento "Kits de personajes". Números del GDD.)*
 
-Táctico y comandante. Controla la pelea desde atrás: marca enemigos, arma torretas con chatarra de su nave y pide fuego pesado. Lento, pero cada tiro cuenta. Vida 115, velocidad 5,2 m/s, crítico 5% (30% dentro de su cono).
+Táctico y comandante. Controla la pelea desde atrás: encadena tiros certeros, arma torretas con chatarra de su nave y pide fuego pesado. Lento, pero cada tiro cuenta. Vida 115, velocidad 5,2 m/s, crítico 5% (20% dentro de su cono).
 
-**0 · Pasiva — Un Ojo Basta**
-- **Precisión:** los enemigos en el centro de su mira (un cono angosto adelante) tienen 30% de chance de crítico.
+**0 · Pasiva — Racha de Cuartel y Un Ojo Basta** *(2026-11-15, pedido del grupo: reemplaza a la Marca Táctica)*
+- **Racha de Cuartel:** cada tiro del Bláster que acierta suma +5% de daño a los siguientes, hasta +50% del daño base (las mejoras suben el tope). Si un tiro falla, la racha vuelve a 0.
+- **Precisión:** los enemigos en el centro de su mira (un cono angosto adelante) tienen 20% de chance de crítico.
 - **Punto ciego:** los enemigos que lo atacan desde su lado izquierdo hacen 15% más de daño. (El oscurecimiento del borde no entra en esta versión; GDD, Choques.)
 
-**1 · Golpe común — Bláster Reglamentario:** tiro preciso de 32 cada 0,7 s. Cada tercer tiro aplica **Marca Táctica**: el enemigo marcado recibe 20% más de daño de sus torretas y de los aliados (6 s).
+**1 · Golpe común — Bláster Reglamentario:** tiro preciso de 24 cada 0,7 s (bajado de 32 por el grupo), más la Racha.
 
-**2 · Habilidad fuerte — Despliegue de Chatarra (CD 14 s, máximo 2):** arma una torreta (10 por tiro, 2 tiros por segundo) que dispara primero a los marcados y dura 12 s o hasta que la rompan. *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
+**2 · Habilidad fuerte — Despliegue de Chatarra (CD 14 s, máximo 2):** arma una torreta (7 por tiro, 2 tiros por segundo) que le tira primero al enemigo que viene acertando Pipo y dura 12 s o hasta que la rompan. *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
 
 **3 · Esquiva — Repliegue Ordenado (1 carga, CD corto):** salto hacia atrás que deja una mina de proximidad donde estaba parado. *"No es huir, es reposicionarse."*
 
-**4 · Definitiva — Fuego de la Nave Insignia:** marca una zona grande y, después de 1,5 s, la nave la bombardea con 6 impactos de 90. Cada enemigo con Marca Táctica recibe un impacto extra garantizado. Como la nave sigue medio rota, uno de los impactos cae en un lugar al azar.
+**4 · Definitiva — Fuego de la Nave Insignia:** marca una zona grande y, después de 1,5 s, la nave la bombardea con 6 impactos de 90. Como la nave sigue medio rota, uno de los impactos cae en un lugar al azar.
 
 ## Capitán Champaka — El Coloso del Hongo
 
@@ -190,6 +191,6 @@ Tanque y sanador. Lento y enorme: se come los golpes del equipo y los convierte 
 | --- | --- |
 | Champaka → Tali | Abrazo de Oso corta la Furia sin Resaca y lo cura |
 | Tali → Agucci | Cerca de Tali, el Hambre baja sola; Posesión a su lado dura la mitad |
-| Pipo + Croco | Si el objetivo con Recompensa tiene Marca Táctica, el Croco cobra el doble |
+| Pipo + Croco | ~~Si el objetivo con Recompensa tiene Marca Táctica, el Croco cobra el doble~~ (se fue con la Marca Táctica, 2026-11-15) |
 | Maestro (Guía) + cualquiera | Bendición y Lección para Todos funcionan sobre cualquier aliado |
 | Champaka + todos | Los hongos curativos los puede agarrar cualquiera |

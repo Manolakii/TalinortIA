@@ -1,9 +1,11 @@
 extends "res://scripts/rooms/test_room.gd"
 ## Recorrido de un stage (GDD, Estructura de la partida): escenarios X-1 a X-3 con 3 salas
 ## cada uno. Cada sala sale de una plantilla al azar (con la semilla de la partida).
-## Al terminarla se cobra el premio que mostraba la puerta (mejora, oro o curación); al cerrar
-## el escenario, oro y objeto 1 de 3. Después salen dos puertas con su premio, y lo que hay
-## adentro es sorpresa (combate, élite o evento). El Tesoro y la Cabaña de Pipo son escondidos.
+## Al terminarla se cobra el premio que mostraba la puerta (mejora u oro); al cerrar el
+## escenario, oro y objeto 1 de 3. Después salen dos puertas con su premio, y adentro hay
+## una sala de combate sorpresa (normal, élite o aguante). Pedido del grupo: cada tanto aparece
+## además una puerta de DESAFÍO: un evento de ida y vuelta (como una grieta); al terminarlo,
+## ganes o pierdas, se vuelve a la misma sala. El Tesoro y la Cabaña de Pipo son escondidos.
 ##
 ## Los jugadores, la cámara y el HUD quedan; lo de la sala vive en `_room_root` y se cambia
 ## entero al cruzar una puerta.
@@ -22,6 +24,8 @@ const HINTS: Dictionary = {
 	RoomKind.Type.BOSS: "¡El Gronk Gigante! Hacelo chocar contra las columnas: queda aturdido y recibe más daño.",
 	RoomKind.Type.STAMPEDE: "¡Estampida de Gronks! Aguanten sin que caiga nadie: miren los avisos naranjas de cada carril.",
 }
+## Lugar de la puerta de Desafío (a un costado, para no pisar la de la Cabaña).
+const CHALLENGE_DOOR_SPOT := Vector3(14.0, 0, -12.5)
 const ENTRY_SPOTS: Array[Vector3] = [Vector3(-1.5, 0, 10.5), Vector3(1.5, 0, 10.5),
 		Vector3(-1.5, 0, 12.5), Vector3(1.5, 0, 12.5)]
 
@@ -42,6 +46,9 @@ var _doors_shown: bool = false
 var _riddle_solved: bool = false
 var _secret_found: bool = false
 var _cracked_rock: CrackedRock
+## Dentro de un desafío (la sala principal queda guardada en `_main` hasta volver).
+var in_challenge: bool = false
+var _main: Dictionary = {}
 
 
 func _ready() -> void:
@@ -77,6 +84,13 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	# La capa de combate de la música entra cuando hay enemigos.
 	Sound.set_combat(not get_tree().get_nodes_in_group(&"enemies").is_empty())
+	# Sala de aguante: cuenta regresiva arriba.
+	if room_type == RoomKind.Type.SURVIVAL and director != null and not _done and director.time_left > 0.0:
+		if _banner_tween != null:
+			_banner_tween.kill()
+			_banner_tween = null
+		_banner.text = "¡Aguanten! Quedan %d s" % ceili(director.time_left)
+		_banner.modulate.a = 1.0
 	if not _failed and not _transitioning and _all_players_down():
 		_failed = true
 		_result_screen.show_result(false)
@@ -87,6 +101,9 @@ func room_title() -> String:
 	if room_type == RoomKind.Type.BOSS:
 		return config.boss_scenario_name
 	var scenario_name: String = config.scenario_names[mini(RunState.scenario, config.scenario_names.size() - 1)]
+	if in_challenge:
+		var challenge_name: String = RoomKind.display_name(room_type).replace("Evento: ", "")
+		return "%s · Desafío: %s" % [scenario_name, challenge_name.left(1).to_upper() + challenge_name.substr(1)]
 	if RoomKind.is_bonus(room_type):
 		return "%s · %s" % [scenario_name, RoomKind.display_name(room_type)]
 	var text: String = "%s · Sala %d de %d · %s" % [scenario_name, RunState.room_index + 1,
@@ -131,6 +148,12 @@ func build_room(type: int) -> void:
 			_start_director(config.combat_waves[rng.randi_range(0, config.combat_waves.size() - 1)])
 		RoomKind.Type.ELITE:
 			_start_director(config.elite_waves[rng.randi_range(0, config.elite_waves.size() - 1)])
+		RoomKind.Type.SURVIVAL:
+			_start_director(config.survival_waves)
+			director.survival_time = config.survival_time
+			director.survival_interval = config.survival_spawn_interval
+			director.survival_max_alive = config.survival_max_alive
+			director.gold_factor = config.survival_gold_factor
 		RoomKind.Type.TREASURE:
 			_chest = Chest.new()
 			_chest.position = template.chest_spot()
@@ -232,9 +255,6 @@ func _start_director(waves: RoomWaves) -> void:
 	director.name = "CombatDirector"
 	director.waves = waves
 	director.count_multiplier = 1.0 + config.count_bonus_per_scenario * RunState.scenario
-	if RunState.room_reward == RoomKind.Reward.CHALLENGE and not RoomKind.is_bonus(room_type):
-		director.extra_elites = config.challenge_extra_elites
-		director.count_multiplier *= config.challenge_count_multiplier
 	_room_root.add_child(director)
 	director.room_cleared.connect(_on_combat_cleared)
 
@@ -271,6 +291,9 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 	_done = true
 	Events.room_cleared.emit()
 	await get_tree().create_timer(0.8).timeout
+	if in_challenge:
+		await _challenge_done(not event_lost, bonus_item)
+		return
 	var reward: int = RunState.room_reward if not RoomKind.is_bonus(room_type) else RoomKind.Reward.NONE
 	if event_lost:
 		reward = RoomKind.Reward.NONE
@@ -278,11 +301,10 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 	if reward == RoomKind.Reward.GOLD:
 		await _give_gold_reward()
 	var sources: int = 0
-	for source: bool in [reward == RoomKind.Reward.UPGRADE, reward == RoomKind.Reward.CHALLENGE,
-			RoomKind.gives_upgrade(room_type), event_perfect]:
+	for source: bool in [reward == RoomKind.Reward.UPGRADE, RoomKind.gives_upgrade(room_type), event_perfect]:
 		sources += 1 if source else 0
 	if sources > 0:
-		var better: bool = sources >= 2 or reward == RoomKind.Reward.CHALLENGE
+		var better: bool = sources >= 2
 		var heading: String = "¡Mejora de lujo! Elegí entre 4" if better else ""
 		await _pick(RewardPicker.Kind.UPGRADE, heading,
 				config.upgrade_options_bonus if better else config.upgrade_options)
@@ -319,7 +341,7 @@ func _give_gold_reward() -> void:
 
 ## La roca del pasaje escondido: no en las salas extra ni en la última del stage (ahí no hay puertas).
 func _can_hide_treasure(type: int) -> bool:
-	if RoomKind.is_bonus(type) or type in [RoomKind.Type.ESCORT, RoomKind.Type.MAZE, RoomKind.Type.STAMPEDE, RoomKind.Type.BOSS]:
+	if in_challenge or RoomKind.is_bonus(type) or type in RoomKind.EVENTS or type == RoomKind.Type.BOSS:
 		return false
 	var last_of_stage: bool = RunState.scenario >= config.scenario_names.size() - 1 \
 			and RunState.room_index >= config.rooms_per_scenario - 1
@@ -340,7 +362,7 @@ func _secret_door_spot() -> Vector3:
 
 
 func _riddle_here() -> bool:
-	return not RunState.pipo_visited and not RoomKind.is_bonus(room_type) \
+	return not in_challenge and not RunState.pipo_visited and not RoomKind.is_bonus(room_type) \
 			and RunState.stage_room_number(config.rooms_per_scenario) == RunState.riddle_room
 
 
@@ -411,6 +433,10 @@ func _show_doors() -> void:
 		_add_room_door(RoomKind.Type.PIPO_CABIN, Vector3(0, 0, DOOR_Z))
 	if _secret_found:
 		_add_room_door(RoomKind.Type.TREASURE, _secret_door_spot())
+	if _offers_challenge():
+		_add_reward_door(RoomKind.Reward.CHALLENGE, CHALLENGE_DOOR_SPOT, "\n(ida y vuelta)")
+		show_banner("¡Se abrieron las puertas! Y apareció un Desafío: si lo ganan, mejora de lujo, y vuelven acá.", -1.0)
+		return
 	show_banner("¡Se abrieron las puertas! Vayan para arriba y elijan una con E / X.", -1.0)
 
 
@@ -435,12 +461,10 @@ static func pick_distinct(weights: Array[int], count: int, rng: RandomNumberGene
 	return result
 
 
-## Lo que hay detrás de una puerta de premio: sorpresa. No repite el mismo evento seguido,
-## y la primera sala de cada escenario nunca es élite.
+## Lo que hay detrás de una puerta de premio: una sala de combate sorpresa (normal, élite o
+## aguante). La primera sala de cada escenario nunca es élite.
 func roll_room_type(rng: RandomNumberGenerator) -> int:
 	var weights: Array[int] = config.room_weights.duplicate()
-	if room_type in RoomKind.EVENTS:
-		weights[room_type] = 0
 	if RunState.room_index >= config.rooms_per_scenario - 1 and not RoomKind.is_bonus(room_type):
 		weights[RoomKind.Type.ELITE] = 0
 	return pick_distinct(weights, 1, rng)[0]
@@ -462,9 +486,11 @@ func _add_room_door(type: int, at: Vector3) -> void:
 	door.chosen.connect(go_through)
 
 
-## Cruza la puerta: si es de premio, lo de adentro sale al azar.
+## Cruza la puerta: si es de premio, lo de adentro sale al azar. La de Desafío es de ida y vuelta.
 func go_through(door: RoomDoor) -> void:
-	if door.room_type >= 0:
+	if door.room_type < 0 and door.reward == RoomKind.Reward.CHALLENGE:
+		enter_challenge(door)
+	elif door.room_type >= 0:
 		go_to(door.room_type)
 	else:
 		go_to(roll_room_type(RunState.room_rng(&"next_room")), door.reward)
@@ -481,6 +507,115 @@ func go_to(type: int, reward: int = RoomKind.Reward.NONE) -> void:
 	_collect_leftover_coins()
 	RunState.advance_to(type, config.rooms_per_scenario, reward)
 	build_room(type)
+	var back: Tween = create_tween()
+	back.tween_property(_fade, "color:a", 0.0, 0.35)
+	await back.finished
+	_transitioning = false
+
+
+# --- Desafíos de ida y vuelta (pedido del grupo, como las grietas) ---
+
+## ¿Aparece la puerta de Desafío en esta sala? Cada tanto, nunca adentro de otro desafío.
+func _offers_challenge() -> bool:
+	if in_challenge or RoomKind.is_bonus(room_type):
+		return false
+	return RunState.room_rng(&"challenge").randf() < config.challenge_door_chance
+
+
+## Qué desafío sale (no repite el último).
+func roll_challenge_type(rng: RandomNumberGenerator) -> int:
+	var weights: Array[int] = config.challenge_weights.duplicate()
+	if RunState.last_challenge >= 0 and RunState.last_challenge < weights.size():
+		weights[RunState.last_challenge] = 0
+	var picked: Array[int] = pick_distinct(weights, 1, rng)
+	if picked.is_empty():
+		picked = pick_distinct(config.challenge_weights, 1, rng)
+	return picked[0]
+
+
+## Entra al desafío: la sala de ahora queda guardada tal cual (puertas incluidas) para volver.
+func enter_challenge(door: RoomDoor) -> void:
+	if _transitioning or in_challenge:
+		return
+	_transitioning = true
+	var tween: Tween = create_tween()
+	tween.tween_property(_fade, "color:a", 1.0, 0.35)
+	await tween.finished
+	_collect_leftover_coins()
+	var type: int = roll_challenge_type(RunState.room_rng(&"challenge_type"))
+	RunState.last_challenge = type
+	RunState.rift += 1
+	_main = {"root": _room_root, "type": room_type, "template": template, "done": _done,
+			"doors": _doors_shown, "riddle": _riddle_solved, "secret": _secret_found,
+			"rock": _cracked_rock, "back": door.global_position + Vector3(0, 0, 3.5)}
+	door.queue_free()
+	remove_child(_room_root)
+	_room_root = null
+	in_challenge = true
+	build_room(type)
+	var back: Tween = create_tween()
+	back.tween_property(_fade, "color:a", 0.0, 0.35)
+	await back.finished
+	_transitioning = false
+
+
+## Terminó el desafío: si se ganó, mejora de lujo (y objeto si salió perfecto); después se vuelve.
+func _challenge_done(won: bool, bonus_item: bool) -> void:
+	if won:
+		await _pick(RewardPicker.Kind.UPGRADE, "¡Desafío superado! Mejora de lujo: elegí entre 4",
+				config.upgrade_options_bonus)
+		if bonus_item:
+			await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
+		show_banner("¡Desafío superado! Volviendo a la sala...", 3.0)
+	else:
+		show_banner("Perdieron el desafío: esta vez no hay premio. Volviendo a la sala...", 3.0)
+	await get_tree().create_timer(2.0).timeout
+	if _failed:
+		return
+	await return_from_challenge()
+
+
+## Vuelve a la sala de antes, como estaba (con sus puertas), al lado de donde estaba el Desafío.
+func return_from_challenge() -> void:
+	if not in_challenge:
+		return
+	_transitioning = true
+	var tween: Tween = create_tween()
+	tween.tween_property(_fade, "color:a", 1.0, 0.35)
+	await tween.finished
+	_collect_leftover_coins()
+	remove_child(_room_root)
+	_room_root.queue_free()
+	_room_root = _main["root"]
+	add_child(_room_root)
+	room_type = _main["type"]
+	template = _main["template"]
+	_done = _main["done"]
+	_doors_shown = _main["doors"]
+	_riddle_solved = _main["riddle"]
+	_secret_found = _main["secret"]
+	_cracked_rock = _main["rock"]
+	_event = null
+	_chest = null
+	director = null
+	in_challenge = false
+	var back_at: Vector3 = _main["back"]
+	_main = {}
+	for player: PlayerCharacter in players:
+		if not is_instance_valid(player):
+			continue
+		var i: int = player.slot.index
+		player.global_position = back_at + Vector3((i % 2) * 2.0 - 1.0, 0, (i / 2) * 1.6)
+		player.velocity = Vector3.ZERO
+		player.knockback_velocity = Vector3.ZERO
+		player.reset_physics_interpolation()
+		var duo := player.kit as MaestroKit
+		if duo != null and is_instance_valid(duo.companion):
+			duo.companion.global_position = player.global_position + Vector3(1.4, 0, 1.0)
+			duo.companion.reset_physics_interpolation()
+	_camera.snap_to_targets()
+	Sound.music("talinorthland_explore")
+	show_banner("¡Volvieron! Elijan una puerta con E / X.", -1.0)
 	var back: Tween = create_tween()
 	back.tween_property(_fade, "color:a", 0.0, 0.35)
 	await back.finished

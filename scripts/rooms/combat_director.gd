@@ -17,12 +17,24 @@ var wave_index: int = -1
 var rng := RandomNumberGenerator.new()
 ## Multiplica los enemigos comunes (los escenarios más avanzados traen más).
 var count_multiplier: float = 1.0
-## Élites extra por oleada (sala de Desafío).
+## Élites extra por oleada.
 var extra_elites: int = 0
+## Sala de aguante (pedido del grupo): si es > 0, no hay oleadas fijas; llegan tandas sin parar
+## durante este tiempo y al terminar, los que quedan se van corriendo.
+var survival_time: float = 0.0
+var survival_interval: float = 2.2
+var survival_max_alive: int = 12
+## Multiplica la chance de oro de cada enemigo (en el aguante vienen muchos).
+var gold_factor: float = 1.0
+## Tiempo que falta en el aguante.
+var time_left: float = 0.0
 
 var _timer: float = 0.0
 var _pending: Array[Dictionary] = []
 var _bounty_given: bool = false
+var _survival_started: bool = false
+var _group_index: int = 0
+var _gap: float = 0.0
 
 
 func _ready() -> void:
@@ -37,6 +49,9 @@ func _physics_process(delta: float) -> void:
 	if _all_players_down():
 		state = Phase.FAILED
 		room_failed.emit()
+		return
+	if survival_time > 0.0:
+		_survival_tick(delta)
 		return
 	if not _pending.is_empty():
 		_timer -= delta
@@ -59,6 +74,45 @@ func _physics_process(delta: float) -> void:
 				else:
 					state = Phase.WAITING
 					_timer = waves.wave_delay
+
+
+func _survival_tick(delta: float) -> void:
+	if not _survival_started:
+		_survival_started = true
+		time_left = survival_time
+		state = Phase.FIGHTING
+		_timer = 0.3
+		Events.floating_text_requested.emit(_players_center() + Vector3.UP * 4.0,
+				"¡Aguanten %d segundos!" % roundi(survival_time), Color.WHITE)
+	time_left -= delta
+	if time_left <= 0.0:
+		time_left = 0.0
+		stop_and_scatter()
+		room_cleared.emit()
+		return
+	if not _pending.is_empty():
+		_gap -= delta
+		if _gap <= 0.0:
+			_gap = SPAWN_GAP
+			_spawn(_pending.pop_front())
+	_timer -= delta
+	if _timer > 0.0 or alive_enemies() + _pending.size() >= max_alive():
+		return
+	# Hacia el final llegan más seguido.
+	var progress: float = 1.0 - time_left / survival_time
+	_timer = survival_interval * lerpf(1.0, 0.6, progress)
+	var players: int = Scaling.players_for_scaling()
+	for entry: RoomWaves.Entry in RoomWaves.parse_wave(waves.waves[_group_index % waves.waves.size()]):
+		var count: int = Scaling.enemy_count(Balance.difficulty, RunState.difficulty, players,
+				roundi(entry.count * count_multiplier))
+		for i: int in count:
+			_pending.append({"id": entry.enemy_id, "elite": false})
+	_group_index += 1
+
+
+## Máximo de enemigos vivos a la vez en el aguante.
+func max_alive() -> int:
+	return roundi(survival_max_alive * (1.0 + 0.25 * (Scaling.players_for_scaling() - 1)))
 
 
 func alive_enemies() -> int:
@@ -108,7 +162,7 @@ func _spawn(spec: Dictionary) -> void:
 	enemy.position = _pick_position()
 	# Más enemigos que la base (más jugadores, más dificultad o escenario avanzado) = cada uno
 	# suelta oro con menos chance: el oro por jugador queda como en el GDD.
-	enemy.gold_chance = Balance.economy.common_drop_chance 			/ maxf(count_multiplier * Scaling.current_count_multiplier(), 1.0)
+	enemy.gold_chance = Balance.economy.common_drop_chance * gold_factor 			/ maxf(count_multiplier * Scaling.current_count_multiplier(), 1.0)
 	# Los élites extra (dificultad o Desafío) pagan como un común: si no, se llenaba de oro.
 	enemy.elite_gold = not spec.get("extra", false)
 	get_parent().add_child(enemy)

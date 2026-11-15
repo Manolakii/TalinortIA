@@ -335,3 +335,42 @@ func test_a_gronk_in_the_middle_of_a_corridor_blocks_it() -> void:
 	for gronk: Enemy in event._gronks:
 		gronk.free()
 	holder.free()
+
+
+func test_survival_room_keeps_sending_enemies_until_time_runs_out() -> void:
+	var director := CombatDirector.new()
+	director.waves = Balance.stage_rooms(0).survival_waves
+	director.survival_time = 3.0
+	director.survival_interval = 0.5
+	director.survival_max_alive = 30
+	_holder.add_child(director)
+	watch_signals(director)
+	for i: int in 90:  # 1,5 s
+		director._physics_process(1.0 / 60.0)
+	assert_gt(director.alive_enemies(), 3, "Llegan tandas sin esperar a que mueran")
+	assert_eq(director.state, CombatDirector.Phase.FIGHTING)
+	for i: int in 100:
+		director._physics_process(1.0 / 60.0)
+	assert_signal_emitted(director, "room_cleared", "Al terminar el tiempo se gana la sala")
+	assert_eq(director.state, CombatDirector.Phase.CLEARED)
+
+
+func test_survival_respects_max_alive() -> void:
+	var director := CombatDirector.new()
+	director.waves = Balance.stage_rooms(0).survival_waves
+	director.survival_time = 30.0
+	director.survival_interval = 0.1
+	director.survival_max_alive = 5
+	_holder.add_child(director)
+	for i: int in 300:
+		director._physics_process(1.0 / 60.0)
+	assert_lte(director.alive_enemies(), 5 + 3, "No se llena de enemigos (como mucho una tanda de más)")
+
+
+func test_main_path_is_only_combat_and_events_are_challenges() -> void:
+	var config: StageRoomsConfig = Balance.stage_rooms(0)
+	for type: int in RoomKind.EVENTS:
+		assert_eq(config.room_weights[type], 0, "Los eventos no salen detrás de las puertas comunes")
+		assert_gt(config.challenge_weights[type], 0, "Salen como desafíos")
+	assert_gt(config.room_weights[RoomKind.Type.SURVIVAL], 0, "Hay salas de aguante")
+	assert_eq(config.reward_weights[RoomKind.Reward.CHALLENGE], 0, "El desafío es su propia puerta")

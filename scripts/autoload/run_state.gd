@@ -22,6 +22,10 @@ var rooms_played: int = 0
 ## Cabaña del General Pipo: en qué sala aparece el acertijo (-1 = sin elegir) y si ya se visitó.
 var riddle_room: int = -1
 var pipo_visited: bool = false
+## Desafíos (grietas de ida y vuelta): cuántos se entraron (cambia la semilla de la sala del
+## desafío) y cuál fue el último (no se repite seguido).
+var rift: int = 0
+var last_challenge: int = -1
 ## La torreta aliada de Pipo espera a la sala siguiente.
 var turret_pending: bool = false
 ## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
@@ -66,6 +70,8 @@ func start_run(new_seed: int = 0) -> void:
 	rooms_played = 0
 	riddle_room = -1
 	pipo_visited = false
+	rift = 0
+	last_challenge = -1
 	turret_pending = false
 	_bonuses.clear()
 	items.clear()
@@ -144,7 +150,7 @@ func end_run() -> void:
 
 ## Semilla propia de la sala actual: la misma partida (semilla) arma las mismas salas.
 func room_seed(salt: StringName = &"") -> int:
-	return hash([seed_value, stage, scenario, room_index, rooms_played, salt])
+	return hash([seed_value, stage, scenario, room_index, rooms_played, rift, salt])
 
 
 func room_rng(salt: StringName = &"") -> RandomNumberGenerator:

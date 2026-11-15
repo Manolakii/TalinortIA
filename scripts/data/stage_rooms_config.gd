@@ -17,16 +17,33 @@ extends Resource
 
 @export_group("Puertas y premios")
 ## Qué hay detrás de una puerta (sorpresa), en el orden de RoomKind.Type: Combate, Élite,
-## Tesoro (0: es escondido), Mimics, Colonia de presos, Cabaña (0: es escondida), Carreta,
-## Laberinto, Barranco. Pedido del grupo: más eventos (45%).
-@export var room_weights: Array[int] = [40, 15, 0, 9, 9, 0, 9, 9, 9, 0]
-## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío.
-@export var reward_weights: Array[int] = [0, 45, 35, 20]
+## Tesoro, Mimics, Presos, Cabaña, Carreta, Laberinto, Estampida, Boss, Aguante.
+## Pedido del grupo: se avanza solo por salas de combate (normal, élite o aguante); los eventos
+## salen como desafíos de ida y vuelta.
+@export var room_weights: Array[int] = [50, 25, 0, 0, 0, 0, 0, 0, 0, 0, 25]
+## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío
+## (el Desafío ya no es un premio de puerta: es su propia puerta, ver abajo).
+@export var reward_weights: Array[int] = [0, 55, 45, 0]
 ## Premio de Oro: para cada jugador.
 @export var gold_reward: Vector2i = Vector2i(15, 25)
-## Desafío: la sala trae estos élites extra por oleada y más enemigos, y paga una mejora de 4.
-@export var challenge_extra_elites: int = 1
-@export var challenge_count_multiplier: float = 1.25
+
+@export_group("Desafíos (de ida y vuelta, como una grieta)")
+## Chance de que, al terminar una sala, aparezca la puerta de Desafío además de las otras.
+@export var challenge_door_chance: float = 0.45
+## Qué desafío sale, en el orden de RoomKind.Type (solo cuentan los eventos).
+@export var challenge_weights: Array[int] = [0, 0, 0, 20, 20, 0, 20, 20, 20, 0, 0]
+
+@export_group("Sala de aguante")
+## Oleada de cada tanda (se repiten en orden). Formato de RoomWaves.
+@export var survival_waves: RoomWaves
+## Cuánto hay que aguantar.
+@export var survival_time: float = 40.0
+## Cada cuánto llega una tanda (se acorta hasta 60% hacia el final).
+@export var survival_spawn_interval: float = 2.2
+## Máximo de enemigos vivos a la vez (con 1 jugador; +25% por cada jugador más).
+@export var survival_max_alive: int = 12
+## Vienen muchos: cada uno suelta oro con menos chance.
+@export var survival_gold_factor: float = 0.3
 ## Opciones al elegir mejora: normal y "mejorada" (élite, desafío o evento bien hecho).
 @export var upgrade_options: int = 3
 @export var upgrade_options_bonus: int = 4
