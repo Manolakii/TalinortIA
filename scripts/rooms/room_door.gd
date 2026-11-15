@@ -1,6 +1,6 @@
 class_name RoomDoor
 extends Node3D
-## Puerta al final de la sala. Las normales muestran el PREMIO (mejora, oro o curación) y lo
+## Puerta al final de la sala. Las normales muestran el PREMIO (objeto, oro o desafío) y lo
 ## que hay adentro es sorpresa. Las escondidas (Tesoro, Cabaña de Pipo) muestran la sala.
 ## Sale del piso. Cualquier jugador se acerca y aprieta Interactuar (E / X).
 
@@ -9,6 +9,8 @@ signal chosen(door: RoomDoor)
 const STONE: Material = preload("res://assets/materials/rock_material.tres")
 const STEEL := Color(0.82, 0.84, 0.88)
 const GOLD := Color(1.0, 0.78, 0.2)
+## Los objetos se ven plateados (las mejoras, doradas), como en la pantalla de elegir.
+const SILVER := Color(0.78, 0.86, 0.95)
 const WOOD := Color(0.42, 0.26, 0.14)
 const USE_RADIUS := 2.4
 
@@ -26,8 +28,8 @@ func setup_reward(which: int, label_extra: String = "") -> void:
 	reward = which
 	_build(RoomKind.reward_name(which) + label_extra)
 	match which:
-		RoomKind.Reward.UPGRADE:
-			_rhombus(Vector3.ZERO)
+		RoomKind.Reward.ITEM:
+			_rhombus(Vector3.ZERO, SILVER)
 		RoomKind.Reward.GOLD:
 			_coins()
 		RoomKind.Reward.CHALLENGE:
@@ -164,10 +166,10 @@ func _coins() -> void:
 		_icon.add_child(coin)
 
 
-func _rhombus(offset: Vector3) -> void:
+func _rhombus(offset: Vector3, color: Color = GOLD) -> void:
 	var gem := _box(Vector3(0.45, 0.45, 0.12), offset, _icon)
 	gem.rotation.z = PI * 0.25
-	gem.material_override = Fx.flat_material(GOLD, 1.8)
+	gem.material_override = Fx.flat_material(color, 1.8)
 
 
 func _crown() -> void:

@@ -25,6 +25,8 @@ static func drop_for_all(parent: Node, origin: Vector3, table: Array, chance: fl
 
 ## Suelta `amount` de oro (con el multiplicador del jugador) en monedas suyas.
 static func drop(parent: Node, origin: Vector3, player: PlayerCharacter, amount: int) -> void:
+	if RunState.no_gold:
+		return
 	var total: int = roundi(amount * player.modifiers.gold_multiplier())
 	if total <= 0:
 		return

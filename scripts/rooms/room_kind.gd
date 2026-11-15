@@ -2,12 +2,12 @@ class_name RoomKind
 extends RefCounted
 ## Tipos de sala (GDD, Tipos de sala) y premios de las puertas.
 ## Pedido del grupo: se avanza de sala en sala por salas de COMBATE (normal, élite o aguante).
-## Las puertas muestran el PREMIO (mejora u oro) y el tipo de combate es sorpresa. Los eventos son
+## Las puertas muestran el PREMIO (objeto u oro) y el tipo de combate es sorpresa. Los eventos son
 ## DESAFÍOS: una puerta que aparece cada tanto, se entra, se juega y se vuelve a la misma sala
 ## (como una grieta). Tesoro y Cabaña de Pipo son salas extra escondidas.
 
 enum Type { COMBAT, ELITE, TREASURE, MIMICS, PRISONERS, PIPO_CABIN, ESCORT, MAZE, STAMPEDE, BOSS, SURVIVAL }
-enum Reward { NONE, UPGRADE, GOLD, CHALLENGE }
+enum Reward { NONE, ITEM, GOLD, CHALLENGE }
 
 const NAMES: Dictionary = {
 	Type.COMBAT: "Combate",
@@ -26,7 +26,7 @@ const NAMES: Dictionary = {
 const EVENTS: Array[int] = [Type.MIMICS, Type.PRISONERS, Type.ESCORT, Type.MAZE, Type.STAMPEDE]
 const REWARD_NAMES: Dictionary = {
 	Reward.NONE: "",
-	Reward.UPGRADE: "Mejora",
+	Reward.ITEM: "Objeto",
 	Reward.GOLD: "Oro",
 	Reward.CHALLENGE: "Desafío",
 }
@@ -49,6 +49,7 @@ static func is_bonus(type: int) -> bool:
 	return type in [Type.TREASURE, Type.PIPO_CABIN]
 
 
-## Mejora asegurada (GDD: siempre en las de élite). Igual hay una sola mejora por sala.
-static func gives_upgrade(type: int) -> bool:
+## Objeto asegurado en las de élite. Pedido del grupo (2026-11-15): las salas dan objetos y
+## las mejoras de personaje se ganan al cerrar cada escenario y en los desafíos.
+static func gives_item(type: int) -> bool:
 	return type == Type.ELITE

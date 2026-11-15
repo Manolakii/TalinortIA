@@ -1,11 +1,11 @@
 extends "res://scripts/rooms/test_room.gd"
 ## Recorrido de un stage (GDD, Estructura de la partida): escenarios X-1 a X-3 con 3 salas
 ## cada uno. Cada sala sale de una plantilla al azar (con la semilla de la partida).
-## Al terminarla se cobra el premio que mostraba la puerta (mejora u oro); al cerrar el
-## escenario, oro y objeto 1 de 3. Después salen dos puertas con su premio, y adentro hay
+## Al terminarla se cobra el premio que mostraba la puerta (objeto u oro); al cerrar el
+## escenario, oro y una MEJORA de personaje (pedido del grupo, 2026-11-15: antes era al revés). Después salen dos puertas con su premio, y adentro hay
 ## una sala de combate sorpresa (normal, élite o aguante). Pedido del grupo: cada tanto aparece
 ## además una puerta de DESAFÍO: un evento de ida y vuelta (como una grieta); al terminarlo,
-## ganes o pierdas, se vuelve a la misma sala. El Tesoro y la Cabaña de Pipo son escondidos.
+## ganes o pierdas, se vuelve a la misma sala. Los desafíos no dan oro: dan mejora. El Tesoro y la Cabaña de Pipo son escondidos.
 ##
 ## Los jugadores, la cámara y el HUD quedan; lo de la sala vive en `_room_root` y se cambia
 ## entero al cruzar una puerta.
@@ -22,7 +22,7 @@ const HINTS: Dictionary = {
 	RoomKind.Type.ESCORT: "¡Escoltá la carreta hasta la salida! Solo avanza si alguien está cerca empujando.",
 	RoomKind.Type.MAZE: "Shhh... los Gronks duermen. Si peleás o esquivás cerca, se despiertan. El cofre está a la salida.",
 	RoomKind.Type.BOSS: "¡El Gronk Gigante! Hacelo chocar contra las columnas: queda aturdido y recibe más daño.",
-	RoomKind.Type.STAMPEDE: "¡Estampida de Gronks! Aguanten sin que caiga nadie: miren los avisos naranjas de cada carril.",
+	RoomKind.Type.STAMPEDE: "¡Estampida de Gronks! Aguanten sin que caiga nadie: cuando tiembla el piso, ¡muévanse!",
 }
 ## Lugar de la puerta de Desafío (a un costado, para no pisar la de la Cabaña).
 const CHALLENGE_DOOR_SPOT := Vector3(14.0, 0, -12.5)
@@ -122,6 +122,7 @@ func build_room(type: int) -> void:
 	_riddle_solved = false
 	_secret_found = false
 	_cracked_rock = null
+	_clear_leftovers()
 	_event = null
 	_chest = null
 	director = null
@@ -142,7 +143,8 @@ func build_room(type: int) -> void:
 		_cracked_rock.position = spots.pop_at(rng.randi_range(0, spots.size() - 1))
 		_room_root.add_child(_cracked_rock)
 		_cracked_rock.broken.connect(_on_secret_found)
-	_spawn_vases(rng, spots, type == RoomKind.Type.TREASURE)
+	if not in_challenge:
+		_spawn_vases(rng, spots, type == RoomKind.Type.TREASURE)
 	match type:
 		RoomKind.Type.COMBAT:
 			_start_director(config.combat_waves[rng.randi_range(0, config.combat_waves.size() - 1)])
@@ -171,8 +173,17 @@ func build_room(type: int) -> void:
 		RoomKind.Type.PRISONERS:
 			var prisoners := PrisonerEvent.new()
 			_room_root.add_child(prisoners)
-			prisoners.setup(template.feature_spots(), config.prisoner_count, config.cage_open_time,
-					config.prisoner_gold, template.chest_spot(), config.prisoner_time_limit)
+			var avoid: Array[Vector3] = template.rock_spots()
+			avoid.append_array(template.vase_spots())
+			avoid.append(template.chest_spot())
+			prisoners.defense_time = config.prisoner_defense_time
+			prisoners.setup(PrisonerEvent.spread_spots(config.prisoner_count, avoid, config.cage_spacing, rng),
+					config.prisoner_count, config.cage_open_time, config.prisoner_gold, template.chest_spot(),
+					config.prisoner_time_limit)
+			prisoners.defense_started.connect(func(time: float) -> void:
+				if director != null:
+					director.start_defense(time, config.prisoner_defense_burst,
+							config.prisoner_defense_interval, config.prisoner_defense_max_alive))
 			prisoners.resolved.connect(func(won: bool) -> void: _on_event_resolved(won, won))
 			prisoners.ended.connect(func() -> void:
 				if director != null:
@@ -281,9 +292,9 @@ func _on_event_resolved(won: bool, bonus_item: bool = false) -> void:
 		_room_done(false, false, true)
 
 
-## Premios al terminar. Hay UNA mejora por sala como máximo (pedido del grupo: se juntaban
-## demasiadas): la da la puerta "Mejora" o "Desafío", la élite (GDD) o un evento perfecto.
-## Si se juntan dos de esas cosas, en vez de otra mejora se elige entre 4 opciones.
+## Premios al terminar. Hay UN objeto por sala como máximo: lo da la puerta "Objeto", la élite
+## o un evento perfecto. Si se juntan dos de esas cosas, se elige entre 4 opciones.
+## Las mejoras de personaje salen al cerrar el escenario y en los desafíos (pedido del grupo).
 ## `event_perfect`: el evento salió perfecto. `bonus_item`: objeto extra (salvaron a todos).
 func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_lost: bool = false) -> void:
 	if _done or _failed:
@@ -301,12 +312,12 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 	if reward == RoomKind.Reward.GOLD:
 		await _give_gold_reward()
 	var sources: int = 0
-	for source: bool in [reward == RoomKind.Reward.UPGRADE, RoomKind.gives_upgrade(room_type), event_perfect]:
+	for source: bool in [reward == RoomKind.Reward.ITEM, RoomKind.gives_item(room_type), event_perfect]:
 		sources += 1 if source else 0
 	if sources > 0:
 		var better: bool = sources >= 2
-		var heading: String = "¡Mejora de lujo! Elegí entre 4" if better else ""
-		await _pick(RewardPicker.Kind.UPGRADE, heading,
+		var heading: String = "¡Objeto de lujo! Elegí entre 4" if better else ""
+		await _pick(RewardPicker.Kind.ITEM, heading,
 				config.upgrade_options_bonus if better else config.upgrade_options)
 	if bonus_item:
 		await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
@@ -375,7 +386,8 @@ func _finish_scenario() -> void:
 	Events.room_cleared.emit()  # que las monedas del final vuelen solas
 	await get_tree().create_timer(1.2).timeout
 	var scenario_name: String = config.scenario_names[RunState.scenario]
-	await _pick(RewardPicker.Kind.ITEM, "Fin del %s: elegí un objeto" % scenario_name.get_slice(" · ", 0))
+	await _pick(RewardPicker.Kind.UPGRADE, "Fin del %s: elegí una mejora" % scenario_name.get_slice(" · ", 0),
+			config.upgrade_options)
 
 
 ## Terminó el stage (ganaron al boss): vuelven a Birig Bamba.
@@ -522,14 +534,21 @@ func _offers_challenge() -> bool:
 	return RunState.room_rng(&"challenge").randf() < config.challenge_door_chance
 
 
-## Qué desafío sale (no repite el último).
+## Qué desafío sale. Como un mazo: no repite hasta que salieron todos (pedido del grupo: la
+## carreta no salía nunca por pura mala suerte), y al empezar otra vuelta no repite el último.
 func roll_challenge_type(rng: RandomNumberGenerator) -> int:
 	var weights: Array[int] = config.challenge_weights.duplicate()
-	if RunState.last_challenge >= 0 and RunState.last_challenge < weights.size():
-		weights[RunState.last_challenge] = 0
+	for seen: int in RunState.challenges_seen:
+		if seen >= 0 and seen < weights.size():
+			weights[seen] = 0
 	var picked: Array[int] = pick_distinct(weights, 1, rng)
 	if picked.is_empty():
-		picked = pick_distinct(config.challenge_weights, 1, rng)
+		RunState.challenges_seen.clear()
+		weights = config.challenge_weights.duplicate()
+		if RunState.last_challenge >= 0 and RunState.last_challenge < weights.size():
+			weights[RunState.last_challenge] = 0
+		picked = pick_distinct(weights, 1, rng)
+	RunState.challenges_seen.append(picked[0])
 	return picked[0]
 
 
@@ -552,6 +571,8 @@ func enter_challenge(door: RoomDoor) -> void:
 	remove_child(_room_root)
 	_room_root = null
 	in_challenge = true
+	# Los desafíos no dan oro (pedido del grupo): la recompensa es la mejora.
+	RunState.no_gold = true
 	build_room(type)
 	var back: Tween = create_tween()
 	back.tween_property(_fade, "color:a", 0.0, 0.35)
@@ -599,6 +620,8 @@ func return_from_challenge() -> void:
 	_chest = null
 	director = null
 	in_challenge = false
+	RunState.no_gold = false
+	_clear_leftovers()
 	var back_at: Vector3 = _main["back"]
 	_main = {}
 	for player: PlayerCharacter in players:
@@ -620,6 +643,16 @@ func return_from_challenge() -> void:
 	back.tween_property(_fade, "color:a", 0.0, 0.35)
 	await back.finished
 	_transitioning = false
+
+
+## Lo que dejaron los personajes en el piso (minas, torretas, hongos, zonas, señuelos) no pasa
+## a la sala siguiente (pedido del grupo). Viven al lado de los jugadores, no en la sala.
+func _clear_leftovers() -> void:
+	for child: Node in _players_root.get_children():
+		if child is PlayerCharacter or child is DuoCompanion:
+			continue
+		_players_root.remove_child(child)
+		child.queue_free()
 
 
 func _collect_leftover_coins() -> void:

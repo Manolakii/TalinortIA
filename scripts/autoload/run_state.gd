@@ -26,6 +26,10 @@ var pipo_visited: bool = false
 ## desafío) y cuál fue el último (no se repite seguido).
 var rift: int = 0
 var last_challenge: int = -1
+## Desafíos que ya salieron desde la última vuelta (como un mazo: salen todos antes de repetir).
+var challenges_seen: Array[int] = []
+## Adentro de un desafío no cae oro (pedido del grupo: la recompensa es la mejora).
+var no_gold: bool = false
 ## La torreta aliada de Pipo espera a la sala siguiente.
 var turret_pending: bool = false
 ## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
@@ -72,6 +76,8 @@ func start_run(new_seed: int = 0) -> void:
 	pipo_visited = false
 	rift = 0
 	last_challenge = -1
+	challenges_seen.clear()
+	no_gold = false
 	turret_pending = false
 	_bonuses.clear()
 	items.clear()

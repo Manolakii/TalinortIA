@@ -15,6 +15,11 @@ func vase_spots() -> Array[Vector3]:
 	return _markers(&"VaseSpots")
 
 
+## Centro de cada roca (para no poner cosas encima).
+func rock_spots() -> Array[Vector3]:
+	return _markers(&"Rocks")
+
+
 func feature_spots() -> Array[Vector3]:
 	return _markers(&"FeatureSpots")
 

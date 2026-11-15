@@ -110,6 +110,25 @@ func _survival_tick(delta: float) -> void:
 	_group_index += 1
 
 
+## Pasa a modo aguante a mitad de la sala (defensa de los presos): `burst` llega de golpe
+## (una tanda en formato de oleada) y después siguen las tandas durante `time` segundos.
+func start_defense(time: float, burst: String, interval: float, max_alive_base: int) -> void:
+	survival_time = time
+	survival_interval = interval
+	survival_max_alive = max_alive_base
+	_survival_started = false
+	state = Phase.FIGHTING
+	var players: int = Scaling.players_for_scaling()
+	for entry: RoomWaves.Entry in RoomWaves.parse_wave(burst):
+		var count: int = Scaling.enemy_count(Balance.difficulty, RunState.difficulty, players,
+				roundi((entry.count - entry.elites) * count_multiplier))
+		for i: int in count:
+			_pending.append({"id": entry.enemy_id, "elite": false})
+		for i: int in entry.elites:
+			_pending.append({"id": entry.enemy_id, "elite": true, "extra": true})
+	_gap = 0.0
+
+
 ## Máximo de enemigos vivos a la vez en el aguante.
 func max_alive() -> int:
 	return roundi(survival_max_alive * (1.0 + 0.25 * (Scaling.players_for_scaling() - 1)))

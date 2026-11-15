@@ -38,7 +38,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 
 **4 · Definitiva — La Bestia de Talinorthland**
 - **En Normal:** se transforma al instante con un rugido que empuja y asusta a los enemigos cercanos durante 2 s. Entrando así, la Furia dura 8 s más (18 s), como premio por usar la definitiva.
-- **En Furia — Revoleo:** agarra al enemigo más grande (élites incluidos), lo tira contra los demás y extiende la Furia 4 s.
+- **En Furia — Revoleo:** agarra al enemigo más grande (élites incluidos), lo tira contra los demás y extiende la Furia 4 s. *2026-11-15, pedido del grupo:* si se transformó con la definitiva, tiene un Revoleo gratis sin recargar la barra; si la Furia llegó sola, hay que cargarlo.
 
 **Mejoras de personaje (ejemplos):** el Piedrazo rebota a un segundo enemigo; en Furia corre 15% más rápido; el Tropezón da 25 de Furia en lugar de 15. Mejora en la tienda de Birig Bamba, "Ahora sí te entiendo": elegís qué animal sale del Llamado Salvaje.
 
@@ -161,7 +161,7 @@ Táctico y comandante. Controla la pelea desde atrás: encadena tiros certeros, 
 
 **1 · Golpe común — Bláster Reglamentario:** tiro preciso de 24 cada 0,7 s (bajado de 32 por el grupo), más la Racha.
 
-**2 · Habilidad fuerte — Despliegue de Chatarra (CD 14 s, máximo 2):** arma una torreta (7 por tiro, 2 tiros por segundo) que le tira primero al enemigo que viene acertando Pipo y dura 12 s o hasta que la rompan. *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
+**2 · Habilidad fuerte — Despliegue de Chatarra (CD 12 s, máximo 2):** arma una torreta (7 por tiro, 2 tiros por segundo) que le tira primero al enemigo que viene acertando Pipo y dura 26 s o hasta que la rompan (*2026-11-15:* antes CD 14 y 12 s, no llegaba a haber 2). *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
 
 **3 · Esquiva — Repliegue Ordenado (1 carga, CD corto):** salto hacia atrás que deja una mina de proximidad donde estaba parado. *"No es huir, es reposicionarse."*
 
@@ -174,10 +174,10 @@ Táctico y comandante. Controla la pelea desde atrás: encadena tiros certeros, 
 Tanque y sanador. Lento y enorme: se come los golpes del equipo y los convierte en curación con las esporas del hongo. Vida 220, velocidad 4,8 m/s, crítico 5%. Recibe 15% menos de daño siempre.
 
 **0 · Pasiva — Esporas Protectoras**
-- **Esporas:** cada 100 de daño que recibe, brota en el piso un hongo que cura 20 a quien lo pise, sea él o un aliado.
+- **Esporas:** cada 100 de daño que recibe, brota en el piso un hongo que cura 5 (*2026-11-15*, antes 20) a quien lo pise, sea él o un aliado.
 - **Papá del grupo:** los aliados que están a su lado reciben 10% menos de daño.
 
-**1 · Golpe común — Manotazo de Papá:** golpes lentos y anchos que empujan (22 / 22 / 38 cada 1,6 s). El tercero es un golpe al piso que genera una onda corta.
+**1 · Golpe común — Aplauso de Papá** *(2026-11-15, pedido del grupo; antes Manotazo, combo 22 / 22 / 38):* un aplauso fuerte y ancho, un solo golpe de 45 cada 1,25 s, con una onda corta en el piso que empuja.
 
 **2 · Habilidad fuerte — Abrazo de Oso (CD 12 s):** agarra a un enemigo, lo inmoviliza y lo aplasta contra el piso (80). A los élites los retiene 2 s. Si lo usa sobre Tali en Furia, le corta la Furia sin Resaca y le cura 20% de la vida.
 

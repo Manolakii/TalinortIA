@@ -71,6 +71,15 @@ extends Resource
 @export var cage_open_time: float = 1.5
 ## Tiempo para liberarlos antes de que se los lleven.
 @export var prisoner_time_limit: float = 45.0
+## Distancia mínima entre jaulas (pedido del grupo: bien separadas, en distintos lugares).
+@export var cage_spacing: float = 14.0
+## Pedido del grupo: liberados todos, hay que defenderse de una súper oleada durante este tiempo
+## y recién ahí se gana. Arranca con `prisoner_defense_burst` de golpe y después siguen
+## llegando tandas de `prisoner_waves` cada `prisoner_defense_interval` s.
+@export var prisoner_defense_time: float = 20.0
+@export var prisoner_defense_burst: String = "soldado_agucci:5, tirador_agucci:3, chaman_sombra:1"
+@export var prisoner_defense_interval: float = 2.5
+@export var prisoner_defense_max_alive: int = 16
 ## Escoltá la carreta: vida, velocidad (m/s; ~45 s de viaje si la empujan siempre), y cada
 ## cuánto llegan enemigos (de a cuántos, en Normal y 1 jugador) con un máximo vivos a la vez.
 @export var cart_health: float = 500.0
@@ -91,15 +100,23 @@ extends Resource
 @export var maze_guillotines: int = 6
 @export var maze_spikes: int = 4
 @export var maze_trap_damage: float = 25.0
-## La estampida: cuánto dura, cada cuánto pasa una manada (al principio y al final), aviso,
-## velocidad, ancho del carril y daño (en Normal).
+## La estampida: cuánto dura, cada cuánto pasa una manada (al principio y al final),
+## velocidad, ancho del carril y daño (en Normal). Pedido del grupo (2026-11-15): sin aviso
+## naranja (aparecen directo corriendo), más Gronks por manada, más manadas dobles y carriles
+## que cubren toda la sala (antes las esquinas eran un refugio).
 @export var stampede_duration: float = 40.0
-@export var stampede_interval_start: float = 3.0
-@export var stampede_interval_end: float = 1.4
-@export var stampede_warning: float = 1.2
+@export var stampede_interval_start: float = 2.4
+@export var stampede_interval_end: float = 1.0
 @export var stampede_speed: float = 22.0
 @export var stampede_width: float = 3.2
 @export var stampede_damage: float = 30.0
+## Gronks por manada, chance de que salga otra manada a la vez, y chance de que el carril
+## pase justo por donde está un jugador.
+@export var stampede_herd_size: int = 5
+@export var stampede_double_chance: float = 0.45
+@export var stampede_aim_chance: float = 0.45
+## Cuánto antes de entrar a la sala arranca la manada (se escucha y tiembla antes de verla).
+@export var stampede_lead: float = 8.0
 ## En qué escenario puede aparecer el acertijo de Pipo (2 = X-3, el Bosque Tuerto).
 @export var riddle_scenario: int = 2
 

@@ -120,6 +120,7 @@ Cada boss tiene 3 fases, marcadas en su barra. La vida está pensada para una pe
 - **Fase 2 (66% a 33%):** la sombra toma el control y los ojos se le ponen violetas. Encadena dos cargas, tira rocas (con círculos de aviso) y deja charcos de sombra que ralentizan.
 - **Fase 3 (menos de 33%):** rompe las columnas, así que hay menos cobertura. Carga tres veces seguidas y lanza una onda de sombra en círculo con un hueco para pasar (o se atraviesa con la invulnerabilidad de la esquiva).
 - **Detalles:** el Llamado Salvaje de Tali puede hacerlo dudar y aturdirlo (está en su kit). Al morir, la sombra sale de su cuerpo y se escapa: el Gronk queda libre.
+- *2026-11-15, pedido del grupo (que tenga más presencia):* solo el Gronk del Llamado lo hace dudar; nada más lo aturde (ni el tiro o el tropezón de suerte, ni los pájaros, ni el Aplastón, ni la Piedra de la suerte), salvo las columnas y las paredes. Ruge y llama enemigos en todas las fases, más seguido. El pisotón sale más rápido. En la fase 3 aparece un **cristal de sombra** (500 de vida) que lo cura de a poco mientras esté en pie; la cura no lo devuelve a otra fase.
 
 ### Fadied (2-4)
 
@@ -148,10 +149,10 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 
 | Sala | Cómo se pasa | Premio |
 | --- | --- | --- |
-| Combate | Vencer a todos los enemigos, que aparecen en 2 o 3 oleadas | Oro, y en algunas una mejora de personaje (elegir 1 de 3) |
+| Combate | Vencer a todos los enemigos, que aparecen en 2 o 3 oleadas | Oro, y en algunas un objeto (elegir 1 de 3). *2026-11-15, pedido del grupo: antes era una mejora* |
 | Aguante *(2026-11-15, pedido del grupo)* | Aguantar 40 s mientras llegan tandas de enemigos sin parar | Igual que Combate |
-| Élite | Igual, con 1 o 2 élites y menos enemigos comunes | Mejora de personaje asegurada y más oro |
-| Evento (Desafío) | Resolver el evento (abajo). *2026-11-15, pedido del grupo:* es una puerta extra que aparece cada tanto; se entra, se juega y se vuelve a la misma sala (como una grieta). Solo las salas de combate (normal, élite o aguante) hacen avanzar | Si se gana: cofre de evento y una mejora de lujo (elegir 1 de 4). Si se pierde, nada |
+| Élite | Igual, con 1 o 2 élites y menos enemigos comunes | Objeto asegurado y más oro *(2026-11-15: antes, mejora)* |
+| Evento (Desafío) | Resolver el evento (abajo). *2026-11-15, pedido del grupo:* es una puerta extra que aparece cada tanto; se entra, se juega y se vuelve a la misma sala (como una grieta). Solo las salas de combate (normal, élite o aguante) hacen avanzar | Si se gana: una mejora de lujo (elegir 1 de 4). *2026-11-15:* los desafíos no dan oro (ni cofre con oro, ni enemigos, ni vasijas). Si se pierde, nada |
 | Tesoro | Sin pelea, o con un guardia | Un cofre y vasijas |
 | Cabaña del General Pipo | Solo en el Stage 1. Está escondida y se encuentra resolviendo un acertijo | Easter egg si jugás con Pipo. Si no, Pipo te echa, pero te deja una torreta aliada para la sala siguiente |
 | Valles Antiguos | Solo en el Stage 2. Sala pacífica, sin pelea | Una fuente que cura y lore. Diálogos especiales si el Maestro está en el equipo |
@@ -159,7 +160,7 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 ### Ideas de eventos
 
 - **Mimics:** tres cofres o vasijas iguales y uno es un mimic que ataca. Hay pistas para adivinar (uno respira, otro tiene marcas de dientes).
-- **Colonia de presos:** jaulas con Talinorteanos conscientes mientras los Aguccis atacan. Cada preso liberado da oro, y si salvás a todos, un objeto extra. En el Stage 1 conecta con el lore.
+- **Colonia de presos:** jaulas con Talinorteanos conscientes mientras los Aguccis atacan. Cada preso liberado da oro, y si salvás a todos, un objeto extra. En el Stage 1 conecta con el lore. *2026-11-15, pedido del grupo:* las jaulas van bien separadas por la sala y, liberados todos, hay que aguantar 20 s una súper oleada; recién ahí se gana.
 - **El enemigo correcto:** entre un grupo de Talinorteanos cegados hay uno que está consciente y finge. Si lo matás perdés el premio; si lo encontrás, te da un objeto.
 - **Laberinto de los Gronks:** un laberinto con Gronks dormidos. Si hacés ruido (pelear, esquivar cerca), se despiertan y cargan.
 - **Braseros de sombra:** apagar 4 braseros en el orden correcto para romper la ceguera de la sala. El orden se deduce de unos dibujos en las paredes.
@@ -168,7 +169,7 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 
 ### Mejoras de personaje: elegir 1 de 3 (decidido)
 
-Son beneficios propios de cada personaje, no objetos. Salen en algunas salas de combate (la puerta lo muestra con un ícono), siempre en las de élite y en los cofres de evento. Cada jugador elige la suya en su panel. Las Sendas del Maestro y Stewie funcionan como sus mejoras.
+Son beneficios propios de cada personaje, no objetos. *2026-11-15, pedido del grupo (cambia lo decidido: las mejoras pesaban mucho más que los objetos y salían todo el tiempo):* salen al cerrar cada escenario y al ganar un Desafío (de lujo, 1 de 4). Las salas de combate y las de élite dan objetos. Cada jugador elige la suya en su panel. Las Sendas del Maestro y Stewie funcionan como sus mejoras.
 
 | Personaje | Ejemplos de mejoras |
 | --- | --- |
@@ -181,7 +182,7 @@ Son beneficios propios de cada personaje, no objetos. Salen en algunas salas de 
 
 ### Objeto al terminar un escenario: elegir 1 de 3 (decidido)
 
-Al pasar de un escenario al siguiente (del 1-1 al 1-2, por ejemplo), cada jugador elige 1 de 3 **objetos genéricos**, que se apilan y suben estadísticas. Son 3 por stage y 9 por partida, más lo que se compre en Birig Bamba.
+Al pasar de un escenario al siguiente (del 1-1 al 1-2, por ejemplo), cada jugador elige 1 de 3 **objetos genéricos**, que se apilan y suben estadísticas. Son 3 por stage y 9 por partida, más lo que se compre en Birig Bamba. *2026-11-15, pedido del grupo:* al revés: al pasar de escenario se elige una **mejora**, y los objetos salen de las puertas "Objeto" y de las salas de élite.
 
 | Objeto genérico | Efecto por copia |
 | --- | --- |

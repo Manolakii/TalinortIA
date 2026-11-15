@@ -114,19 +114,42 @@ func test_maze_lost_when_too_many_gronks_wake() -> void:
 
 # --- Estampida ---
 
-func test_stampede_warns_then_tramples() -> void:
+func test_stampede_comes_without_warning_and_tramples() -> void:
 	var event := StampedeEvent.new()
 	_holder.add_child(event)
 	event.setup(_config, _rng())
 	event._launch_herd(false)
 	var herd: Dictionary = event._herds[0]
-	assert_true((herd["warning"] as Telegraph).visible, "Primero el aviso naranja")
+	assert_false(herd.has("warning"), "Sin aviso naranja")
+	assert_eq((herd["bodies"] as Array).size(), _config.stampede_herd_size, "Ya vienen corriendo")
+	for child: Node in event.get_children():
+		assert_false(child is Telegraph, "Nada de avisos naranjas")
 	# Ponemos al jugador en el carril.
 	_player.global_position = (herd["from"] + herd["to"]) * 0.5
 	var before: float = _player.health.current
 	for i: int in int(3.5 / DT):
 		event._move_herds(DT)
 	assert_lt(_player.health.current, before, "La manada lo pisa")
+
+
+func test_stampede_lanes_reach_the_corners() -> void:
+	var event := StampedeEvent.new()
+	_holder.add_child(event)
+	var config: StageRoomsConfig = _config.duplicate()
+	config.stampede_aim_chance = 1.0
+	event.setup(config, _rng())
+	# Escondido en una esquina: la manada que apunta pasa justo por ahí.
+	_player.global_position = Vector3(23.0, 0, -15.0)
+	for i: int in 6:
+		event._launch_herd(true)
+	var covered: bool = false
+	for herd: Dictionary in event._herds:
+		var from: Vector3 = herd["from"]
+		var to: Vector3 = herd["to"]
+		var closest: Vector3 = Geometry3D.get_closest_point_to_segment(_player.global_position, from, to)
+		if closest.distance_to(_player.global_position) < 0.5:
+			covered = true
+	assert_true(covered, "Las esquinas ya no son un refugio")
 
 
 func test_stampede_is_won_by_surviving() -> void:
@@ -197,6 +220,47 @@ func test_prisoners_are_lost_when_time_runs_out() -> void:
 		event._physics_process(DT)
 	assert_true(event._cages[1].is_lost, "Se acabó el tiempo: se lo llevaron")
 	assert_eq(event.saved_count(), 1)
+
+
+func test_cages_are_spread_apart() -> void:
+	var claro: RoomTemplate = load("res://scenes/rooms/templates/talinorthland_claro.tscn").instantiate()
+	_holder.add_child(claro)
+	var rocks: Array[Vector3] = claro.rock_spots()
+	assert_gt(rocks.size(), 0)
+	var spots: Array[Vector3] = PrisonerEvent.spread_spots(4, rocks, _config.cage_spacing, _rng())
+	assert_eq(spots.size(), 4)
+	for i: int in spots.size():
+		for rock: Vector3 in rocks:
+			assert_gte(Vector2(spots[i].x - rock.x, spots[i].z - rock.z).length(), PrisonerEvent.ROCK_CLEARANCE,
+					"No van encima de una roca")
+		for j: int in range(i + 1, spots.size()):
+			assert_gte(spots[i].distance_to(spots[j]), _config.cage_spacing, "Bien separadas")
+
+
+func test_freeing_everyone_starts_the_defense() -> void:
+	var event := PrisonerEvent.new()
+	_holder.add_child(event)
+	event.defense_time = 20.0
+	var spots: Array[Vector3] = [Vector3(-10, 0, -2), Vector3(10, 0, -2)]
+	event.setup(spots, 2, 2.5, 4, Vector3(0, 0, -3), 30.0)
+	watch_signals(event)
+	event._cages[0].free_prisoner()
+	event._cages[1].free_prisoner()
+	event._physics_process(DT)
+	assert_signal_emitted_with_parameters(event, "defense_started", [20.0])
+	assert_signal_not_emitted(event, "ended", "Todavía no termina: hay que aguantar")
+	assert_true(event.is_defending())
+	var director := CombatDirector.new()
+	director.waves = Balance.stage_rooms(0).prisoner_waves
+	_holder.add_child(director)
+	director.start_defense(1.0, "soldado_agucci:5", 0.5, 16)
+	watch_signals(director)
+	for i: int in int(0.6 / DT):
+		director._physics_process(DT)
+	assert_gt(get_tree().get_nodes_in_group(&"enemies").size(), 3, "Llega la súper oleada")
+	for i: int in int(0.6 / DT):
+		director._physics_process(DT)
+	assert_signal_emitted(director, "room_cleared", "Pasado el tiempo, se gana")
 
 
 func test_gronk_is_stunned_if_it_crashes_into_a_rock() -> void:
@@ -374,3 +438,30 @@ func test_main_path_is_only_combat_and_events_are_challenges() -> void:
 		assert_gt(config.challenge_weights[type], 0, "Salen como desafíos")
 	assert_gt(config.room_weights[RoomKind.Type.SURVIVAL], 0, "Hay salas de aguante")
 	assert_eq(config.reward_weights[RoomKind.Reward.CHALLENGE], 0, "El desafío es su propia puerta")
+
+
+func test_challenges_come_like_a_deck() -> void:
+	var run = load("res://scripts/run/stage_run.gd").new()
+	run.config = Balance.stage_rooms(0)
+	RunState.challenges_seen.clear()
+	var seen: Array[int] = []
+	for i: int in RoomKind.EVENTS.size():
+		var type: int = run.roll_challenge_type(_rng())
+		RunState.last_challenge = type
+		assert_false(seen.has(type), "No repite hasta que salieron todos")
+		seen.append(type)
+	assert_true(seen.has(RoomKind.Type.ESCORT), "La carreta sale sí o sí")
+	var next: int = run.roll_challenge_type(_rng())
+	assert_ne(next, seen[-1], "Al empezar otra vuelta no repite el último")
+	run.free()
+
+
+func test_no_gold_inside_challenges() -> void:
+	RunState.no_gold = true
+	Loot.drop(_holder, Vector3.ZERO, _player, 50)
+	RunState.no_gold = false
+	var coins: int = 0
+	for child: Node in _holder.get_children():
+		if child is GoldCoin:
+			coins += 1
+	assert_eq(coins, 0, "Adentro de un desafío no cae oro")
