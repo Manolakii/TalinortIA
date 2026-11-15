@@ -87,10 +87,10 @@ Barra de Hambre de 0 a 100. Las habilidades de sombra la llenan y los golpes com
 - **Sinergia con Tali:** cerca de Tali, el Hambre baja sola. Si entra en Posesión al lado de Tali, dura la mitad.
 
 **1 · Golpe común — Katana y Plomo**
-Tres cortes rápidos que van subiendo (9 / 12 / 16), una patada que empuja un poco (20) y después vacía la UZI en abanico (5 balas de 5). Lo fuerte está al final del combo: cortarlo seguido no rinde (pedido del grupo). Combo completo en ~1,4 s.
+Tres cortes rápidos que van subiendo (9 / 12 / 16), una patada que empuja un poco (20) y después vacía la UZI en abanico (5 balas de 5). Lo fuerte está al final del combo: cortarlo seguido no rinde (pedido del grupo). Combo completo en ~1,8 s (*2026-11-15, pedido del grupo: antes ~1,4 s*).
 
-**2 · Habilidad fuerte — Paso de Sombra (CD 8 s, +20 de Hambre)**
-Tira un kunai (40 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino (90 por enemigo). Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
+**2 · Habilidad fuerte — Paso de Sombra (CD 6 s, +20 de Hambre)**
+*2026-11-15, pedido del grupo: es una habilidad para moverse, no para pegar fuerte.* Tira un kunai (12 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino: 20 + 3 por metro recorrido, hasta 55 por enemigo. Al llegar, **Impulso de sombra**: +30% de velocidad por 2 s. Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
 
 **3 · Esquiva — Disolverse (2 cargas, +6 de Hambre)**
 Se hunde en su sombra y reaparece unos metros más adelante, intangible durante el trayecto. Mejora en la tienda de Birig Bamba: deja atrás 3 shurikens que salen disparados hacia los enemigos cercanos.
@@ -121,11 +121,11 @@ Un personaje que en realidad son dos. El jugador maneja a uno y el otro actúa s
 | 2 · Habilidad fuerte (CD 10 s) | Refugio: se mete en el caparazón 2 s y bloquea todo | Fortaleza: Refugio que provoca a los enemigos cercanos y devuelve 30% del daño | Caparazón Bala: sale girando y rebota entre hasta 5 enemigos | Manantial: charco que cura a los aliados durante 5 s |
 | 3 · Esquiva (2 cargas) | Rodar: rueda dentro del caparazón | Rodar Blindado: nada la frena y empuja lo que toca | Rodar Filoso: daña todo lo que atraviesa | Estela: rastro que acelera y cura de a poco |
 
-| Hueco del Maestro | Base | Guía (apoyo) | Combate (daño) | Niebla (control) |
-| --- | --- | --- | --- | --- |
-| 1 · Golpe común | Bastón de Caminante: combo de 3 (18 / 18 / 34); el tercero planta el bastón y suelta una onda corta | Golpe Guía: cada golpe marca; Stewie y los aliados hacen +15% a los marcados | Bastón Danzante: suma un cuarto y un quinto golpe giratorio | Bastón Nublado: los golpes ralentizan 20% |
-| 2 · Habilidad fuerte (CD 10 s) | Bastonazo: golpe al piso que lanza una onda de chi en línea, de 60 a 120 según la carga | Bendición: escudo y +20% de daño por 6 s a Stewie o a un aliado | Torbellino: gira el bastón 2 s y le pega a todo alrededor | Niebla de los Valles: zona donde los enemigos van lentos y fallan más |
-| 3 · Esquiva (2 cargas) | Garrocha: salta apoyado en el bastón por encima de los enemigos | Garrocha al Rescate: si apunta a Stewie o a un aliado, cae a su lado y le da escudo | Garrocha Caída: golpe en área al caer | Garrocha de Niebla: deja una nube que oculta a los aliados |
+| Hueco del Maestro              | Base                                                                                                | Guía (apoyo)                                                                        | Combate (daño)                                              | Niebla (control)                                                      |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------- |
+| 1 · Golpe común                | Bastón de Caminante: combo de 3 (18 / 18 / 34); el tercero planta el bastón y suelta una onda corta | Golpe Guía: cada golpe marca; Stewie y los aliados hacen +15% a los marcados        | Bastón Danzante: suma un cuarto y un quinto golpe giratorio | Bastón Nublado: los golpes ralentizan 20%                             |
+| 2 · Habilidad fuerte (CD 10 s) | Bastonazo: golpe al piso que lanza una onda de chi en línea, de 60 a 120 según la carga             | Bendición: escudo y +20% de daño por 6 s a Stewie o a un aliado                     | Torbellino: gira el bastón 2 s y le pega a todo alrededor   | Niebla de los Valles: zona donde los enemigos van lentos y fallan más |
+| 3 · Esquiva (2 cargas)         | Garrocha: salta apoyado en el bastón por encima de los enemigos                                     | Garrocha al Rescate: si apunta a Stewie o a un aliado, cae a su lado y le da escudo | Garrocha Caída: golpe en área al caer                       | Garrocha de Niebla: deja una nube que oculta a los aliados            |
 
 **Qué hace el que no controlás:** se comporta según la Senda de su habilidad fuerte. Caparazón se pone adelante y junta enemigos; Embestida va al más cercano; Espíritu se queda cerca de los aliados heridos; Guía se queda atrás apoyando; Combate pelea al lado; Niebla tira zonas donde hay grupos de enemigos.
 

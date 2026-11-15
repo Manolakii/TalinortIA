@@ -20,7 +20,7 @@ extends Resource
 @export var uzi_bullets: int = 5
 @export var uzi_damage: float = 6.0
 ## Duración de cada paso del combo: 3 cortes, patada y UZI (suman ~1,4 s).
-@export var step_durations: Array[float] = [0.2, 0.2, 0.2, 0.3, 0.5]
+@export var step_durations: Array[float] = [0.27, 0.27, 0.27, 0.38, 0.62]
 @export var cut_range: float = 2.2
 @export var cut_angle_deg: float = 110.0
 @export var kick_range: float = 1.9
@@ -33,14 +33,21 @@ extends Resource
 @export var combo_reset: float = 0.6
 
 @export_group("Paso de Sombra")
-@export var step_cooldown: float = 8.0
+@export var step_cooldown: float = 6.0
 @export var step_hunger: float = 20.0
-@export var kunai_damage: float = 40.0
+## Pedido del grupo (2026-11-15): el Paso de Sombra es para moverse, no para pegar fuerte.
+@export var kunai_damage: float = 12.0
 @export var kunai_speed: float = 30.0
 @export var kunai_range: float = 12.0
 ## Tiempo para reactivar (viajar al kunai) antes de que desaparezca.
 @export var kunai_window: float = 4.0
-@export var dash_damage: float = 110.0
+## Daño del corte del viaje: base + por cada metro recorrido, con tope (premia ir lejos).
+@export var dash_damage: float = 20.0
+@export var dash_damage_per_meter: float = 3.0
+@export var dash_damage_max: float = 55.0
+## Al llegar, Impulso de sombra: más velocidad por un rato.
+@export var dash_speed_bonus: float = 0.3
+@export var dash_speed_time: float = 2.0
 @export var dash_width: float = 1.8
 @export var dash_time: float = 0.15
 ## Si mata con el corte, recupera esta parte del cooldown.

@@ -35,6 +35,8 @@ var _embrace_time: float = 0.0
 var _embrace_tick: float = 0.0
 var _night_time: float = 0.0
 var _since_attack: float = 99.0
+## Impulso de sombra (después del viaje al kunai).
+var _dash_boost_time: float = 0.0
 var _kunai_active: bool = false
 var _kunai_time: float = 0.0
 var _kunai_position: Vector3 = Vector3.ZERO
@@ -65,6 +67,7 @@ func _tick(delta: float) -> void:
 	bite_cooldown.tick(cd_delta(delta))
 	embrace_cooldown.tick(cd_delta(delta))
 	_since_attack += delta
+	_dash_boost_time = maxf(_dash_boost_time - delta, 0.0)
 	if not player.is_in_action():
 		_combo_idle += delta
 		if _combo_idle > kd.combo_reset:
@@ -140,7 +143,9 @@ func outgoing_multiplier() -> float:
 
 
 func move_speed_multiplier() -> float:
-	return kd.possession_speed_multiplier if possessed else 1.0
+	if possessed:
+		return kd.possession_speed_multiplier
+	return 1.0 + (kd.dash_speed_bonus if _dash_boost_time > 0.0 else 0.0)
 
 
 func _tali_nearby() -> bool:
@@ -343,11 +348,18 @@ func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
 	Fx.ring_burst(_world(), to, 1.4, SHADOW_COLOR)
 	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
 			from, to, kd.dash_width)
-	_hit_each(targets, kd.dash_damage * (1.0 + 0.1 * hero(&"agucci_paso")), _setup_dash, false, from)
+	_hit_each(targets, dash_damage_for(from.distance_to(to)) * (1.0 + 0.1 * hero(&"agucci_paso")), _setup_dash,
+			false, from)
+	_dash_boost_time = kd.dash_speed_time
 	if _any_dead(targets):
 		step_cooldown.reduce(kd.step_cooldown * kd.dash_kill_refund)
 	if not targets.is_empty():
 		player.freeze(Balance.combat.hitstop_heavy)
+
+
+## Cuanto más lejos viaja, más pega (pedido del grupo: que premie la movilidad).
+func dash_damage_for(distance: float) -> float:
+	return minf(kd.dash_damage + kd.dash_damage_per_meter * distance, kd.dash_damage_max)
 
 
 func _setup_dash(info: DamageInfo) -> void:

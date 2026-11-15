@@ -28,7 +28,7 @@ func test_hunger_zones() -> void:
 func test_full_combo_damage() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
-	_pump(int(1.6 / DT))
+	_pump(int(1.95 / DT))
 	assert_almost_eq(1000.0 - enemy.health.current, 9.0 + 12.0 + 16.0 + 20.0 + 5 * 5.0, 0.01,
 			"Cortes 9/12/16, patada 20, UZI 5 × 5")
 
@@ -56,7 +56,7 @@ func test_shadow_step_kunai_then_dash() -> void:
 	_pump(1)
 	release(PlayerInput.Action.ABILITY)
 	_pump(20)
-	assert_almost_eq(1000.0 - enemy.health.current, 40.0, 0.01, "Kunai: 40")
+	assert_almost_eq(1000.0 - enemy.health.current, 12.0, 0.01, "Kunai: 12 (es para moverse)")
 	assert_eq(_kit.hunger, 20.0, "+20 de Hambre")
 	assert_true(_kit._kunai_active, "El kunai queda marcado para reactivar")
 	press(PlayerInput.Action.ABILITY)
@@ -64,12 +64,18 @@ func test_shadow_step_kunai_then_dash() -> void:
 	release(PlayerInput.Action.ABILITY)
 	_pump(20)
 	assert_false(_kit._kunai_active)
-	assert_almost_eq(1000.0 - enemy.health.current, 40.0 + 90.0, 0.5,
-			"Corte de sombra: 90 (con 20 de Hambre sigue en Lucidez, sin bonus)")
+	assert_almost_eq(1000.0 - enemy.health.current, 12.0 + 20.0 + 3.0 * 6.0, 0.5,
+			"Corte de sombra: 20 + 3 por metro (viajó 6 m)")
+	assert_almost_eq(_kit.move_speed_multiplier(), 1.3, 0.001, "Impulso de sombra al llegar")
+
+
+func test_dash_damage_grows_with_distance_and_caps() -> void:
+	assert_almost_eq(_kit.dash_damage_for(2.0), 26.0, 0.01)
+	assert_almost_eq(_kit.dash_damage_for(30.0), 55.0, 0.01, "Tope de 55")
 
 
 func test_kunai_kill_does_not_add_hunger() -> void:
-	enemy_at(Vector3(0, 0, -6), 30.0)
+	enemy_at(Vector3(0, 0, -6), 10.0)
 	press(PlayerInput.Action.ABILITY)
 	_pump(20)
 	assert_eq(_kit.hunger, 0.0, "Si mata con el kunai, no suma Hambre")
