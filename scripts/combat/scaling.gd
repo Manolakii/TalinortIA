@@ -31,13 +31,15 @@ static func current_count_multiplier() -> float:
 	return config.enemy_count[RunState.difficulty] * (1.0 + extra * config.extra_player_count[RunState.difficulty])
 
 
-## Lo que usan los enemigos en la partida en curso.
+## Lo que usan los enemigos en la partida en curso. Suma la dificultad del escenario (pedido del
+## grupo: cuanto más avanzás, más complicado); al boss no, que ya tiene sus números.
 static func current_health_multiplier(is_boss: bool = false) -> float:
-	return enemy_health(Balance.difficulty, RunState.difficulty, players_for_scaling(), is_boss)
+	var scenario: float = 1.0 if is_boss else 1.0 + RunState.enemy_health_bonus
+	return enemy_health(Balance.difficulty, RunState.difficulty, players_for_scaling(), is_boss) * scenario
 
 
 static func current_damage_multiplier() -> float:
-	return enemy_damage(Balance.difficulty, RunState.difficulty)
+	return enemy_damage(Balance.difficulty, RunState.difficulty) * (1.0 + RunState.enemy_damage_bonus)
 
 
 ## Agresividad de los enemigos según la dificultad.

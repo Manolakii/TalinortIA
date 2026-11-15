@@ -30,6 +30,11 @@ var last_challenge: int = -1
 var challenges_seen: Array[int] = []
 ## Adentro de un desafío no cae oro (pedido del grupo: la recompensa es la mejora).
 var no_gold: bool = false
+## Dificultad que sube por escenario (pedido del grupo). La pone StageRun al armar cada sala.
+var enemy_health_bonus: float = 0.0
+var enemy_damage_bonus: float = 0.0
+var enemy_shield_chance: float = 0.0
+var enemy_shield_ratio: float = 0.0
 ## La torreta aliada de Pipo espera a la sala siguiente.
 var turret_pending: bool = false
 ## Dificultad elegida en la pantalla de unión (DifficultyConfig.Level).
@@ -79,6 +84,7 @@ func start_run(new_seed: int = 0) -> void:
 	challenges_seen.clear()
 	no_gold = false
 	turret_pending = false
+	set_scenario_scaling(0.0, 0.0, 0.0, 0.0)
 	_bonuses.clear()
 	items.clear()
 	upgrades.clear()
@@ -221,7 +227,16 @@ func save_party(players: Array) -> void:
 
 ## Vuelve de un stage a Birig Bamba: nueva visita (stock nuevo, fuente disponible) y el
 ## recorrido vuelve al principio para el stage que sigue.
+func set_scenario_scaling(health_bonus: float, damage_bonus: float, shield_chance: float,
+		shield_ratio: float) -> void:
+	enemy_health_bonus = health_bonus
+	enemy_damage_bonus = damage_bonus
+	enemy_shield_chance = shield_chance
+	enemy_shield_ratio = shield_ratio
+
+
 func return_to_hub() -> void:
+	set_scenario_scaling(0.0, 0.0, 0.0, 0.0)
 	visit += 1
 	shop_state.clear()
 	fountain_used.clear()

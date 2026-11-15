@@ -129,6 +129,7 @@ func build_room(type: int) -> void:
 	if _room_root != null:
 		remove_child(_room_root)
 		_room_root.queue_free()
+	_apply_scenario_scaling()
 	_room_root = Node3D.new()
 	_room_root.name = "Room"
 	add_child(_room_root)
@@ -259,6 +260,21 @@ func _spawn_vases(rng: RandomNumberGenerator, spots: Array[Vector3], all_spots: 
 		var vase := Vase.new()
 		vase.position = spots.pop_at(rng.randi_range(0, spots.size() - 1))
 		_room_root.add_child(vase)
+
+
+## Dificultad del escenario actual para todos los enemigos que aparezcan en esta sala.
+func _apply_scenario_scaling() -> void:
+	var i: int = RunState.scenario
+	RunState.set_scenario_scaling(_scenario_value(config.scenario_health_bonus, i),
+			_scenario_value(config.scenario_damage_bonus, i), _scenario_value(config.scenario_shield_chance, i),
+			config.scenario_shield_ratio)
+	if i > 0 and i < config.scenario_names.size() and RunState.room_index == 0 and not in_challenge:
+		show_banner("Los enemigos de acá son más bravos: +%d%% de vida, +%d%% de daño y algunos con escudo" % [
+				roundi(RunState.enemy_health_bonus * 100.0), roundi(RunState.enemy_damage_bonus * 100.0)], 4.0)
+
+
+func _scenario_value(values: PackedFloat32Array, index: int) -> float:
+	return values[clampi(index, 0, values.size() - 1)] if not values.is_empty() else 0.0
 
 
 func _start_director(waves: RoomWaves) -> void:

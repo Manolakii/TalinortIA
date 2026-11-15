@@ -59,6 +59,13 @@ extends Resource
 @export var prisoner_waves: RoomWaves
 ## Enemigos comunes extra por escenario (0,15 = +15% en X-2 y +30% en X-3).
 @export var count_bonus_per_scenario: float = 0.15
+## Dificultad por escenario (pedido del grupo: que se vaya complicando). Un valor por escenario
+## (1-1, 1-2, 1-3; el boss usa el último). Vida y daño de los enemigos: +X. Escudo: chance de que
+## un enemigo (no el boss) aparezca con un escudo de esa parte de su vida.
+@export var scenario_health_bonus: PackedFloat32Array = PackedFloat32Array([0.0, 0.3, 0.6])
+@export var scenario_damage_bonus: PackedFloat32Array = PackedFloat32Array([0.0, 0.15, 0.3])
+@export var scenario_shield_chance: PackedFloat32Array = PackedFloat32Array([0.0, 0.2, 0.35])
+@export var scenario_shield_ratio: float = 0.35
 
 @export_group("Salas")
 @export var vases_min: int = 2

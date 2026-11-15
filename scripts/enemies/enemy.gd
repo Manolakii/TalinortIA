@@ -73,6 +73,7 @@ func _ready() -> void:
 	setup_combatant(DamageInfo.Team.ENEMIES, data.max_health * health_multiplier,
 			data.body_radius, data.body_height, visual)
 	register_flash_material(_body_material)
+	_maybe_scenario_shield()
 	telegraph = Telegraph.new()
 	telegraph.name = "Telegraph"
 	add_child(telegraph)
@@ -343,6 +344,14 @@ func _separation() -> Vector3:
 
 func is_targetable() -> bool:
 	return super.is_targetable() and not is_controlled and not awake
+
+
+## Escenarios avanzados: a veces aparece con escudo (pedido del grupo). El boss no.
+func _maybe_scenario_shield() -> void:
+	if is_in_group(&"boss") or self is GronkGigante or RunState.enemy_shield_chance <= 0.0:
+		return
+	if Combat.rng.randf() < RunState.enemy_shield_chance:
+		health.add_shield(health.max_health * RunState.enemy_shield_ratio)
 
 
 ## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.

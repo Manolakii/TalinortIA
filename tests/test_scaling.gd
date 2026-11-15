@@ -37,3 +37,22 @@ func test_easy_and_hard() -> void:
 func test_enemy_damage_does_not_scale_with_players() -> void:
 	# "El daño de los enemigos no escala con los jugadores"
 	assert_eq(Scaling.enemy_damage(_config, DifficultyConfig.Level.NORMAL), 1.0)
+
+
+func test_scenario_scaling_raises_health_damage_but_not_boss() -> void:
+	var base_health: float = Scaling.current_health_multiplier()
+	var base_damage: float = Scaling.current_damage_multiplier()
+	var base_boss: float = Scaling.current_health_multiplier(true)
+	RunState.set_scenario_scaling(0.3, 0.15, 0.0, 0.0)
+	assert_almost_eq(Scaling.current_health_multiplier(), base_health * 1.3, 0.001, "1-2: +30% de vida")
+	assert_almost_eq(Scaling.current_damage_multiplier(), base_damage * 1.15, 0.001, "+15% de daño")
+	assert_almost_eq(Scaling.current_health_multiplier(true), base_boss, 0.001, "Al boss no")
+	RunState.set_scenario_scaling(0.0, 0.0, 0.0, 0.0)
+
+
+func test_scenario_shield_chance_gives_shields() -> void:
+	RunState.set_scenario_scaling(0.0, 0.0, 1.0, 0.35)
+	var enemy: Enemy = load("res://scenes/enemies/talinorteano_cegado.tscn").instantiate()
+	add_child_autofree(enemy)
+	assert_almost_eq(enemy.health.shield, enemy.health.max_health * 0.35, 0.01, "Aparece con escudo")
+	RunState.set_scenario_scaling(0.0, 0.0, 0.0, 0.0)

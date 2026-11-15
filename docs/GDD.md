@@ -334,6 +334,14 @@ Antes de cada partida se elige la dificultad base. **Desbloqueo (aprobado):** F�
 | Normal | ×1 | ×1 | — |
 | Difícil | ×1,5 | ×1,7 | Los élites tienen 2 afijos y los bosses agregan un ataque por fase. Además (pedido del grupo, para que sea difícil de verdad): 30% más de enemigos, 15% más rápidos, avisos 20% más cortos, atacan 25% más seguido y 1 élite extra por oleada |
 
+**Escalado por escenario** (*2026-11-15, pedido del grupo: que se vaya complicando a medida que avanzás*). Se suma a la dificultad y al escalado por jugador. El boss no escala por escenario (los enemigos que llama usan los números del 1-3):
+
+| Escenario | Vida de enemigos | Daño de enemigos | Con escudo (35% de su vida) | Cantidad |
+| --- | --- | --- | --- | --- |
+| X-1 | — | — | — | — |
+| X-2 | +30% | +15% | 20% de los enemigos | +15% |
+| X-3 | +60% | +30% | 35% de los enemigos | +30% |
+
 **Escalado por jugador extra**, según la dificultad elegida:
 
 | Dificultad | Vida de enemigos comunes | Cantidad de enemigos | Vida de bosses |
