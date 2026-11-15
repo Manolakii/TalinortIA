@@ -48,6 +48,7 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 ## NPCs del MVP
 
 - **Yole Sajor:** mapache que habla, transa del mercado negro de Birig Bamba (cambio de lore del grupo, 2026-11-14). Vende los objetos especiales "que se cayeron de un camión". Berretinero, chamuyero, tira chistes bien argentinos, te descansa y te vende hasta lo que no tiene.
+- **Agucci tenebroso** *(2026-11-15)*: un Agucci que anda suelto por Talinorthland haciendo "negocios": media vida por un objeto. Si lo tocás dos veces, se pudre el queso.
 - **Consejo del Bombo:** los neutrales de Birig Bamba.
 - **Birigbambenses:** el público de la cantina.
 
@@ -55,6 +56,7 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 
 - **Talinorteanos cegados:** atacan aunque juegues con Tali. Si matás al Chamán de la Sombra, se aturden y algunos despiertan y se escapan.
 - **Aguccis invasores:** soldados, tiradores y chamanes.
+- **Cobrador Agucci** *(2026-11-15)*: junta "impuestos" en Talinorthland para pagarle a Fadied el crédito de la tecnología Uwey. Si no lo agarrás a tiempo, se va con la plata.
 - **Gronks:** bestias salvajes.
 - **Gronk Gigante:** el boss, controlado por la sombra. Al morir, la sombra sale de su cuerpo y el Gronk queda libre.
 

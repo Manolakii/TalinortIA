@@ -12,6 +12,7 @@ extends "res://scripts/rooms/test_room.gd"
 
 const HUB_SCENE := "res://scenes/hub/birig_bamba.tscn"
 const THIEF_SCENE: PackedScene = preload("res://scenes/enemies/cobrador_agucci.tscn")
+const SHADE_SCENE: PackedScene = preload("res://scenes/enemies/agucci_tenebroso.tscn")
 const DOOR_Z := -12.5
 const DOOR_X := 7.0
 ## Qué hay que hacer en cada tipo de sala (cartel en pantalla al entrar).
@@ -77,6 +78,11 @@ func _ready() -> void:
 		var rng: RandomNumberGenerator = RunState.room_rng(&"riddle")
 		RunState.riddle_room = config.riddle_scenario * config.rooms_per_scenario \
 				+ rng.randi_range(0, config.rooms_per_scenario - 2)
+	if RunState.shade_room < 0:
+		# Agucci tenebroso: en alguna sala de combate después del primer escenario.
+		var shade_rng: RandomNumberGenerator = RunState.room_rng(&"shade")
+		RunState.shade_room = shade_rng.randi_range(config.rooms_per_scenario,
+				config.scenario_names.size() * config.rooms_per_scenario - 1)
 	build_room(RunState.room_type)
 	Fx.prewarm(_camera_focus_node())
 
@@ -375,6 +381,8 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 				config.upgrade_options_bonus if better else config.upgrade_options)
 	if bonus_item:
 		await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")
+	if _shade_here():
+		spawn_shade()
 	if room_type == RoomKind.Type.BOSS:
 		_finish_stage()
 		return
@@ -424,6 +432,22 @@ func _on_secret_found() -> void:
 func _secret_door_spot() -> Vector3:
 	var at: Vector3 = _cracked_rock.global_position if is_instance_valid(_cracked_rock) else Vector3(0, 0, -6)
 	return Vector3(at.x, 0, at.z)
+
+
+## Agucci tenebroso: una sola vez en el stage, en la sala elegida (combate, élite o aguante).
+func _shade_here() -> bool:
+	return not in_challenge and not RunState.shade_seen 			and room_type in [RoomKind.Type.COMBAT, RoomKind.Type.ELITE, RoomKind.Type.SURVIVAL] 			and RunState.stage_room_number(config.rooms_per_scenario) >= RunState.shade_room
+
+
+func spawn_shade() -> AgucciTenebroso:
+	RunState.shade_seen = true
+	var shade: AgucciTenebroso = SHADE_SCENE.instantiate()
+	shade.position = Vector3(-6.0, 0.0, -3.0)
+	shade.facing = Vector3.BACK
+	_room_root.add_child(shade)
+	Fx.ring_burst(_room_root, shade.position, 2.5, Color(0.45, 0.2, 0.72), 0.5)
+	show_banner("Apareció un Agucci medio tenebroso... dice que quiere hacer negocios.", 4.0)
+	return shade
 
 
 func _riddle_here() -> bool:

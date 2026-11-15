@@ -21,6 +21,9 @@ var room_reward: int = 1
 var rooms_played: int = 0
 ## Cabaña del General Pipo: en qué sala aparece el acertijo (-1 = sin elegir) y si ya se visitó.
 var riddle_room: int = -1
+## Sala del stage donde aparece el Agucci tenebroso (una vez por stage, después del primer escenario).
+var shade_room: int = -1
+var shade_seen: bool = false
 var pipo_visited: bool = false
 ## Desafíos (grietas de ida y vuelta): cuántos se entraron (cambia la semilla de la sala del
 ## desafío) y cuál fue el último (no se repite seguido).
@@ -78,6 +81,8 @@ func start_run(new_seed: int = 0) -> void:
 	room_reward = 1
 	rooms_played = 0
 	riddle_room = -1
+	shade_room = -1
+	shade_seen = false
 	pipo_visited = false
 	rift = 0
 	last_challenge = -1

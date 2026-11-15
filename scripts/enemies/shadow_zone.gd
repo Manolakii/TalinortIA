@@ -18,6 +18,8 @@ var lifetime: float = 0.0
 var follow: Node3D
 var source: Node3D
 var damage_multiplier: float = 1.0
+## Color de la zona (violeta = sombra; las bombas de veneno del Agucci tenebroso usan otro).
+var tint: Color = SHADOW_COLOR
 
 var _tick: float = 0.0
 var _age: float = 0.0
@@ -33,7 +35,7 @@ func _ready() -> void:
 	disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_material = ShaderMaterial.new()
 	_material.shader = RING_SHADER
-	_material.set_shader_parameter("ring_color", Color(SHADOW_COLOR.lightened(0.3), 0.9))
+	_material.set_shader_parameter("ring_color", Color(tint.lightened(0.3), 0.9))
 	_material.set_shader_parameter("inner_radius", 0.86)
 	_material.set_shader_parameter("fill_alpha", 0.35)
 	disc.material_override = _material
@@ -50,7 +52,7 @@ func _physics_process(delta: float) -> void:
 		global_position = Vector3(follow.global_position.x, 0.0, follow.global_position.z)
 	if lifetime > 0.0:
 		var fade: float = clampf((lifetime - _age) / 0.6, 0.0, 1.0)
-		_material.set_shader_parameter("ring_color", Color(SHADOW_COLOR.lightened(0.3), 0.9 * fade))
+		_material.set_shader_parameter("ring_color", Color(tint.lightened(0.3), 0.9 * fade))
 		if _age >= lifetime:
 			queue_free()
 			return

@@ -180,3 +180,48 @@ func test_thief_drops_the_bag_when_killed() -> void:
 			coins += 1
 			child.queue_free()
 	assert_gt(coins, 0, "Suelta la bolsa de oro")
+
+
+# --- Agucci tenebroso (NPC de Talinorthland) ---
+
+func test_shade_offer_takes_half_life_for_an_item() -> void:
+	RunState.start_run(4)
+	var shade: AgucciTenebroso = _spawn(&"agucci_tenebroso", Vector3(0, 0, -2)) as AgucciTenebroso
+	assert_false(shade.is_in_group(&"enemies"), "Tranquilo no es una pelea")
+	_player.health.current = 100.0
+	var items_before: int = RunState.get_items(0).size()
+	shade.make_offer(_player)
+	assert_eq(_player.health.current, 50.0, "La mitad de la vida actual")
+	assert_eq(RunState.get_items(0).size(), items_before + 1, "Un objeto al azar")
+	shade.make_offer(_player)
+	assert_eq(_player.health.current, 50.0, "Una sola vez por jugador")
+
+
+func test_shade_warns_then_fights() -> void:
+	var shade: AgucciTenebroso = _spawn(&"agucci_tenebroso", Vector3(0, 0, -2)) as AgucciTenebroso
+	var hp: float = shade.health.current
+	shade.receive_hit(_player.kit.make_hit(30.0))
+	assert_true(shade.is_peaceful(), "Primer toque: avisa")
+	assert_eq(shade.health.current, hp, "Tranquilo no recibe daño")
+	_run([shade], int(AgucciTenebroso.TOUCH_GAP / DT) + 2)
+	shade.receive_hit(_player.kit.make_hit(30.0))
+	assert_false(shade.is_peaceful(), "Segundo toque: pelea")
+	assert_true(shade.is_in_group(&"enemies"))
+
+
+func test_shade_drops_two_chests_one_mimic() -> void:
+	RunState.start_run(4)
+	var shade: AgucciTenebroso = _spawn(&"agucci_tenebroso", Vector3(0, 0, -4)) as AgucciTenebroso
+	shade.turn_hostile()
+	shade.receive_hit(_player.kit.make_hit(99999.0))
+	var chests: Array[Chest] = []
+	for child: Node in get_children():
+		if child is ShadeChests:
+			chests = (child as ShadeChests).chests
+			autofree(child)
+	assert_eq(chests.size(), 2, "Dos cofres")
+	assert_eq(chests.filter(func(c: Chest) -> bool: return c.is_mimic).size(), 1, "Uno muerde")
+	var good: Chest = chests[0] if not chests[0].is_mimic else chests[1]
+	var specials_before: int = RunState.get_specials(0).size()
+	good.open(_player)
+	assert_eq(RunState.get_specials(0).size(), specials_before + 1, "Objeto de la tienda de Yole")

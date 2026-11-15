@@ -221,6 +221,15 @@ El oro es individual. Para que nadie se pelee por las monedas, **cada jugador ve
 
 **Chequeo de los precios:** como ahora hay varias salas por escenario, el oro por fuente es más bajo. Una sala de combate del Stage 1 deja unos 22, y todo el Stage 1 unos 400. Al volver a Birig Bamba después del Gronk, cada jugador debería tener entre 350 y 400: alcanza para un épico, o un raro y un común, pero no para un legendario sin ahorrar desde el principio. Los precios que propusieron (70, 150, 250 y 470) siguen funcionando.
 
+### El Agucci tenebroso (*2026-11-15, pedido del grupo*)
+
+Un Agucci medio tenebroso que aparece **una sola vez por stage** en Talinorthland, después de cruzar el primer escenario: al terminar una sala de combate del X-2 o del X-3 (sea de oro o de objeto), queda parado en la sala.
+
+- **Ofrenda:** a cada jugador le ofrece una vez la mitad de su vida actual por un objeto al azar (Interactuar al lado suyo).
+- **Si le pegás una vez:** "Ey. Si me volvés a tocar, se pudre el queso." Si le pegás otra vez, pelea.
+- **Peleando:** muy picado y fuerte (1.500 de vida, escala como los demás). Se mueve para todos lados (rodea, cambia de lado y hace saltos de sombra cortos), pega rápido de cerca (aviso de 0,3 s), tira cada 5 s un rayo de sombra de 24 m (aviso naranja de 0,85 s, ×2,4 de daño) y cada 6 s tres bombas de veneno (una a cada jugador) que dejan un charco 4 s.
+- **Si lo matás:** deja dos cofres; uno es un mimic (sin pistas) y el otro tiene un objeto de la tienda de Yole para cada jugador. Se abre uno solo. Si sale el mimic y lo matan, suelta 40 de oro de consuelo.
+
 ### Yole Sajor y Birig Bamba
 
 **Yole Sajor** es un mapache que habla y es el transa del mercado negro de Birig Bamba, con su puesto en el Salón Beláustegui (cambio de lore del grupo, 2026-11-14): berretinero, chamuyero, te tira chistes, te descansa y te vende todo "que se cayó de un camión". Hay que hablarle para ver su mercadería.
