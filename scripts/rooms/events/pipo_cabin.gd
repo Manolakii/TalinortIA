@@ -20,6 +20,7 @@ const LEADER_LINES: Array[String] = [
 	"¿Ya terminó la guerra? ...¿No? Bueno, yo de acá no salgo.",
 	"Te juro que era un chiste. UNO. Sobre la hermana. Ya sé, ya sé.",
 	"Tomá, llevate la corona. Total, acá adentro no la uso para nada.",
+	"Es mágica, eh: si te voltean, te levanta una vez. A mí acá nadie me pega.",
 ]
 const GOLD := Color(1.0, 0.82, 0.3)
 const LINE_TIME := 3.2
@@ -183,7 +184,8 @@ func give_crown() -> void:
 		if not RunState.has_special(index, &"corona_lider"):
 			RunState.add_special(index, &"corona_lider")
 			Events.floating_text_requested.emit(_pipo_player.global_position + Vector3.UP * 3.0,
-					"¡Corona del Líder Supremo!", GOLD)
+					"¡Corona del Líder Supremo!
+Si caés, te levanta una vez", GOLD)
 		else:
 			# Ya la tenía (de la tienda): se lleva la torreta de siempre.
 			RunState.turret_pending = true

@@ -68,6 +68,7 @@ class PlayerPanel:
 	var root: PanelContainer
 	var name_label: Label
 	var gold_label: Label
+	var crown_label: Label
 	var health: Bar
 	var special: Bar
 	var chips: HBoxContainer
@@ -175,6 +176,15 @@ func _make_panel(player: PlayerCharacter) -> PlayerPanel:
 	panel.name_label.add_theme_font_size_override("font_size", 15)
 	panel.name_label.add_theme_color_override("font_color", color.lightened(0.35))
 	top.add_child(panel.name_label)
+	# Corona del Líder Supremo (reportado por el grupo: no se sabía qué hacía): se ve mientras
+	# esté sin usar, para saber que te va a levantar una vez.
+	panel.crown_label = Label.new()
+	panel.crown_label.text = "Corona lista "
+	panel.crown_label.tooltip_text = "Si caés, te levantás solo con el 40% de la vida (una vez)"
+	panel.crown_label.add_theme_font_size_override("font_size", 13)
+	panel.crown_label.add_theme_color_override("font_color", GOLD_COLOR)
+	panel.crown_label.visible = false
+	top.add_child(panel.crown_label)
 	panel.gold_label = Label.new()
 	panel.gold_label.add_theme_font_size_override("font_size", 15)
 	panel.gold_label.add_theme_color_override("font_color", GOLD_COLOR)
@@ -228,6 +238,7 @@ func _update_panel(panel: PlayerPanel) -> void:
 	var player: PlayerCharacter = panel.player
 	var kit: CharacterKit = player.kit
 	panel.gold_label.text = "● %d" % RunState.get_gold(player.slot.index)
+	panel.crown_label.visible = RunState.has_special(player.slot.index, &"corona_lider") 			and RunState.get_bonus(player.slot.index, &"corona_used") == 0
 	panel.health.value = player.health.ratio()
 	panel.health.label = "%d / %d" % [roundi(player.health.current), roundi(player.health.max_health)]
 
