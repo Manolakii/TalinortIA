@@ -147,3 +147,36 @@ func test_shaman_death_reaches_far_blinded() -> void:
 	kill.amount = 99999.0
 	shaman.receive_hit(kill)
 	assert_true(far.status.has(StatusEffects.STUN), "Aturde también a los que pelean lejos del Chamán")
+
+
+# --- Cobrador Agucci (ladrón con la bolsa de oro) ---
+
+func test_thief_runs_away_and_does_not_block_the_room() -> void:
+	var thief: CobradorAgucci = _spawn(&"cobrador_agucci", Vector3(0, 0, -3)) as CobradorAgucci
+	assert_false(thief.is_in_group(&"enemies"), "No cuenta para terminar la sala")
+	_run([thief], 60)
+	assert_gt(thief.global_position.distance_to(_player.global_position), 3.0, "Se aleja")
+
+
+func test_thief_escapes_when_time_runs_out() -> void:
+	var thief: CobradorAgucci = _spawn(&"cobrador_agucci", Vector3(0, 0, -8)) as CobradorAgucci
+	thief.time_left = 0.5
+	watch_signals(thief)
+	_run([thief], 40)
+	assert_signal_emitted(thief, "escaped")
+	assert_false(thief.is_targetable(), "Ya no se lo puede bajar")
+
+
+func test_thief_drops_the_bag_when_killed() -> void:
+	RunState.start_run(3)
+	var thief: CobradorAgucci = _spawn(&"cobrador_agucci", Vector3(0, 0, -3)) as CobradorAgucci
+	watch_signals(thief)
+	var hit: DamageInfo = _player.kit.make_hit(5000.0)
+	thief.receive_hit(hit)
+	assert_signal_emitted(thief, "robbed")
+	var coins: int = 0
+	for child: Node in get_children():
+		if child is GoldCoin:
+			coins += 1
+			child.queue_free()
+	assert_gt(coins, 0, "Suelta la bolsa de oro")

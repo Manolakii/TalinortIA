@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Cobrador Agucci"
+max_health = 420.0
+damage = 0.0
+move_speed = 4.4
+turn_speed = 5.0
+size_rank = 1
+attack_range = 1.7
+windup = 0.6
+recovery = 0.9
+attack_radius = 2.0
+attack_angle_deg = 100.0
+attack_knockback = 4.0
+preferred_distance = 0.0
+attack_interval = 2.0
+projectile_speed = 16.0
+projectile_count = 1
+spread_deg = 0.0
+projectile_range = 14.0
+flight_time = 1.0
+impact_radius = 1.3
+dash_distance = 0.0
+charge_speed = 0.0
+charge_max_distance = 0.0
+charge_width = 1.6
+wall_stun = 0.0
+zone_radius = 0.0
+zone_dps = 0.0
+aura_radius = 0.0
+aura_speed_bonus = 0.0
+death_stun = 0.0
+wake_chance = 0.0
+backstep_chance = 0.0
+strafe_chance = 0.0
+combo_chance = 0.0
+weave = 0.35
+separation_radius = 1.1
+body_height = 1.7
+body_radius = 0.42
+body_color = Color(0.4, 0.36, 0.5, 1)
+id = &"cobrador_agucci"

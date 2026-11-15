@@ -11,6 +11,7 @@ extends "res://scripts/rooms/test_room.gd"
 ## entero al cruzar una puerta.
 
 const HUB_SCENE := "res://scenes/hub/birig_bamba.tscn"
+const THIEF_SCENE: PackedScene = preload("res://scenes/enemies/cobrador_agucci.tscn")
 const DOOR_Z := -12.5
 const DOOR_X := 7.0
 ## Qué hay que hacer en cada tipo de sala (cartel en pantalla al entrar).
@@ -284,6 +285,41 @@ func _start_director(waves: RoomWaves) -> void:
 	director.count_multiplier = 1.0 + config.count_bonus_per_scenario * RunState.scenario
 	_room_root.add_child(director)
 	director.room_cleared.connect(_on_combat_cleared)
+	if _thief_here():
+		_schedule_thief()
+
+
+## Cobrador Agucci: en algunas salas de combate (no en desafíos ni en el boss).
+func _thief_here() -> bool:
+	if in_challenge or not room_type in [RoomKind.Type.COMBAT, RoomKind.Type.ELITE, RoomKind.Type.SURVIVAL]:
+		return false
+	return RunState.room_rng(&"thief").randf() < config.thief_chance
+
+
+func _schedule_thief() -> void:
+	var room: Node3D = _room_root
+	get_tree().create_timer(config.thief_delay, false).timeout.connect(func() -> void:
+		if _room_root != room or not is_instance_valid(room) or _failed:
+			return
+		spawn_thief())
+
+
+func spawn_thief() -> CobradorAgucci:
+	var thief: CobradorAgucci = THIEF_SCENE.instantiate()
+	thief.time_left = config.thief_time
+	thief.bag_gold = config.thief_gold
+	var rng: RandomNumberGenerator = RunState.room_rng(&"thief_spot")
+	var center: Vector3 = _players_center()
+	var best := Vector3.ZERO
+	for attempt: int in 12:
+		var candidate := Vector3(rng.randf_range(-16.0, 16.0), 0.0, rng.randf_range(-9.0, 7.0))
+		if candidate.distance_to(center) > best.distance_to(center):
+			best = candidate
+	thief.position = best
+	_room_root.add_child(thief)
+	Fx.ring_burst(_room_root, best, 1.6, Color(1.0, 0.82, 0.3), 0.4)
+	show_banner("¡Un Cobrador Agucci se lleva una bolsa de oro! Bájenlo en %d s" % roundi(config.thief_time), 4.0)
+	return thief
 
 
 func _on_combat_cleared() -> void:

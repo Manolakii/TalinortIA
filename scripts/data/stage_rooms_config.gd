@@ -58,6 +58,13 @@ extends Resource
 @export var treasure_guard_waves: RoomWaves
 @export var prisoner_waves: RoomWaves
 ## Enemigos comunes extra por escenario (0,15 = +15% en X-2 y +30% en X-3).
+## Cobrador Agucci (pedido del grupo): en algunas salas de combate aparece un enemigo con una
+## bolsa de oro que se escapa si no lo bajan a tiempo. Chance por sala, cuándo aparece, tiempo
+## para bajarlo y oro de la bolsa (para cada jugador).
+@export var thief_chance: float = 0.3
+@export var thief_delay: float = 6.0
+@export var thief_time: float = 20.0
+@export var thief_gold: int = 30
 @export var count_bonus_per_scenario: float = 0.15
 ## Dificultad por escenario (pedido del grupo: que se vaya complicando). Un valor por escenario
 ## (1-1, 1-2, 1-3; el boss usa el último). Vida y daño de los enemigos: +X. Escudo: chance de que

@@ -80,6 +80,7 @@ Cada stage tiene enemigos cuerpo a cuerpo, a distancia y de apoyo, más uno espe
 | Soldado Agucci | Cuerpo a cuerpo | 260 | 16 | Se acerca de a poco y hace un corte con dash corto, marcado en el piso |
 | Tirador Agucci | Distancia | 200 | 6 × 3 balas | Se mueve de costado y dispara ráfagas de UZI en abanico |
 | Chamán de la Sombra | Apoyo | 220 | 4 por segundo en su zona | Mantiene ciegos a los Talinorteanos y los acelera un 20%. **Si lo matás, los cegados cercanos se aturden 3 s y algunos despiertan y huyen** (dan oro sin pelear) |
+| Cobrador Agucci *(2026-11-15, pedido del grupo)* | Misión aparte | 420 | No pega | Aparece en el 30% de las salas de combate, a los 6 s, con una bolsa de oro (los "impuestos" para pagarle a Fadied). Se escapa zigzagueando; tenés 20 s para bajarlo (se ven arriba de su cabeza, con un aro dorado en el piso). Si lo bajás, 30 de oro para cada uno; si no, se va con la plata. No cuenta para terminar la sala |
 | Gronk | Bestia | 700 | 25 | Carga en línea recta con aviso. Si choca contra una pared queda aturdido 2 s. Atropella también a otros enemigos |
 
 ### Stage 2: Ciudades Flotantes de Uwey
