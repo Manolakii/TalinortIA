@@ -22,7 +22,7 @@ func setup(owner_kit: PipoKit) -> void:
 	collision_layer = 0
 	collision_mask = 0
 	_build(kit.player.slot.color)
-	setup_combatant(DamageInfo.Team.PLAYERS, kit.kd.turret_health, 0.45, 1.2, _visual)
+	setup_combatant(DamageInfo.Team.PLAYERS, kit.turret_health(), 0.45, 1.2, _visual)
 	add_to_group(&"enemy_targets")
 	health.died.connect(func(_info: DamageInfo) -> void: dismantle())
 
@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 		_head.rotation.y = lerp_angle(_head.rotation.y, atan2(-direction.x, -direction.z), minf(delta * 12.0, 1.0))
 	if _cooldown > 0.0:
 		return
-	_cooldown = 1.0 / kit.kd.turret_shots_per_second
+	_cooldown = 1.0 / kit.turret_fire_rate()
 	var info: DamageInfo = kit.make_hit(kit.kd.turret_damage)
 	info.is_melee = false
 	info.knockback = 0.5

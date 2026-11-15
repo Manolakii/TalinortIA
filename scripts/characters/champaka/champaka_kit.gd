@@ -67,9 +67,9 @@ func _swipe() -> void:
 	if heavy:
 		info.hitstop = Balance.combat.hitstop_heavy
 		info.shake = Balance.combat.shake_heavy * 0.4
-	Fx.slash(_world(), player.global_position, direction, kd.swipe_range, kd.swipe_angle_deg, player.slot.color)
+	Fx.slash(_world(), player.global_position, direction, swipe_range(), kd.swipe_angle_deg, player.slot.color)
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(), DamageInfo.Team.ENEMIES,
-			player.global_position, direction, kd.swipe_range, kd.swipe_angle_deg)
+			player.global_position, direction, swipe_range(), kd.swipe_angle_deg)
 	var landed: bool = Combat.deliver(info, targets) > 0
 	if heavy:
 		_ground_wave(player.global_position + direction * 1.2)
@@ -85,7 +85,15 @@ func _swipe() -> void:
 		_consecutive_hits = 0
 
 
+func swipe_range() -> float:
+	return kd.swipe_range * (1.25 if has_upgrade(&"champaka_manos_oso") else 1.0)
+
+
 func _ground_wave(center: Vector3) -> void:
+	if has_upgrade(&"champaka_onda_fuerte"):
+		var info: DamageInfo = make_hit(30.0)
+		info.origin = center
+		Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, center, kd.wave_radius))
 	for hurtbox: Hurtbox in CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, center, kd.wave_radius):
 		var enemy := hurtbox.receiver as Combatant
 		if enemy == null:
@@ -108,10 +116,14 @@ func modify_incoming(info: DamageInfo) -> void:
 
 func _on_damage_taken(info: DamageInfo) -> void:
 	spores += info.final_amount
-	while spores >= kd.spores_per_mushroom:
-		spores -= kd.spores_per_mushroom
+	while spores >= spores_per_mushroom():
+		spores -= spores_per_mushroom()
 		var angle: float = randf() * TAU
 		spawn_mushroom(player.global_position + Vector3(cos(angle), 0.0, sin(angle)) * 1.6)
+
+
+func spores_per_mushroom() -> float:
+	return 70.0 if has_upgrade(&"champaka_esporulacion") else kd.spores_per_mushroom
 
 
 func spawn_mushroom(at: Vector3) -> void:
@@ -122,7 +134,26 @@ func spawn_mushroom(at: Vector3) -> void:
 
 
 func mushroom_heal() -> float:
-	return kd.mushroom_heal * (1.0 + 0.1 * hero(&"champaka_hongos"))
+	var base: float = 30.0 if has_upgrade(&"champaka_hongos_gorditos") else kd.mushroom_heal
+	return base * (1.0 + 0.1 * hero(&"champaka_hongos"))
+
+
+## Papá del grupo (lo usa PlayerCharacter para los aliados cerca).
+func dad_radius() -> float:
+	return 5.0 if has_upgrade(&"champaka_papa_presente") else kd.dad_radius
+
+
+func dad_reduction() -> float:
+	return 0.15 if has_upgrade(&"champaka_papa_presente") else kd.dad_reduction
+
+
+func bloom_radius() -> float:
+	return kd.bloom_radius * (1.4 if has_upgrade(&"champaka_micelio") else 1.0)
+
+
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	dodge_cooldown.max_charges = 1 + (1 if has_upgrade(&"champaka_panzazo_doble") else 0)
+	hug_cooldown.recharge_time = kd.hug_cooldown * (0.75 if has_upgrade(&"champaka_abrazador_serial") else 1.0)
 
 
 # --- Abrazo de Oso ---
@@ -282,8 +313,8 @@ func _world() -> Node:
 # --- HUD ---
 
 func hud_bar() -> Dictionary:
-	return {"label": "Esporas %d/%d" % [roundi(spores), roundi(kd.spores_per_mushroom)],
-			"value": spores / kd.spores_per_mushroom, "color": SPORE_COLOR, "pulse": false}
+	return {"label": "Esporas %d/%d" % [roundi(spores), roundi(spores_per_mushroom())],
+			"value": spores / spores_per_mushroom(), "color": SPORE_COLOR, "pulse": false}
 
 
 func hud_abilities() -> Array[Dictionary]:

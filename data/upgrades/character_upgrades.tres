@@ -545,6 +545,366 @@ exclusive_group = &""
 
 [sub_resource type="Resource" id="u_36"]
 script = ExtResource("2")
+id = &"pipo_torreta_extra"
+character = &"pipo"
+display_name = "Otra torreta"
+description = "Podés tener 3 torretas a la vez"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_37"]
+script = ExtResource("2")
+id = &"pipo_marca_rapida"
+character = &"pipo"
+display_name = "Marca rápida"
+description = "La Marca Táctica sale cada 2 tiros en vez de 3"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_38"]
+script = ExtResource("2")
+id = &"pipo_bombardeo_mas"
+character = &"pipo"
+display_name = "Nave bien cargada"
+description = "El Fuego de la Nave Insignia tira 2 impactos más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_39"]
+script = ExtResource("2")
+id = &"pipo_ojo_bueno"
+character = &"pipo"
+display_name = "El ojo bueno"
+description = "+6% de chance de crítico (se puede tomar 2 veces)"
+stat = &"crit_chance"
+amount = 0.06
+max_stacks = 2
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_40"]
+script = ExtResource("2")
+id = &"pipo_blaster_reglamentado"
+character = &"pipo"
+display_name = "Bláster reglamentado"
+description = "El Bláster pega 20% más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_41"]
+script = ExtResource("2")
+id = &"pipo_repliegue_doble"
+character = &"pipo"
+display_name = "Repliegue en dos tiempos"
+description = "+1 carga de Repliegue Ordenado"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_42"]
+script = ExtResource("2")
+id = &"pipo_torreta_blindada"
+character = &"pipo"
+display_name = "Chatarra blindada"
+description = "Las torretas tienen 50% más de vida"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_43"]
+script = ExtResource("2")
+id = &"pipo_marca_larga"
+character = &"pipo"
+display_name = "Marca indeleble"
+description = "La Marca Táctica dura 4 s más"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_44"]
+script = ExtResource("2")
+id = &"pipo_cubrime"
+character = &"pipo"
+display_name = "Cubrime la izquierda"
+description = "Ya no te pegan más fuerte por el punto ciego"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_45"]
+script = ExtResource("2")
+id = &"pipo_cadencia"
+character = &"pipo"
+display_name = "Cadencia de cuartel"
+description = "+10% de velocidad de ataque (se puede tomar 3 veces)"
+stat = &"attack_speed"
+amount = 0.1
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_46"]
+script = ExtResource("2")
+id = &"pipo_torreta_aceitada"
+character = &"pipo"
+display_name = "Torretas aceitadas"
+description = "Las torretas disparan 30% más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_47"]
+script = ExtResource("2")
+id = &"pipo_uniforme"
+character = &"pipo"
+display_name = "Uniforme de gala"
+description = "+15 de vida máxima (se puede tomar 3 veces)"
+stat = &"max_health"
+amount = 15.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_48"]
+script = ExtResource("2")
+id = &"champaka_escudo"
+character = &"champaka"
+display_name = "Tres al hilo"
+description = "El tercer golpe seguido que conecta te da 15 de escudo"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_49"]
+script = ExtResource("2")
+id = &"champaka_abrazo_cura"
+character = &"champaka"
+display_name = "Abrazo grupal"
+description = "El Abrazo de Oso cura 10 a los aliados cerca"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_50"]
+script = ExtResource("2")
+id = &"champaka_panzazo_hongo"
+character = &"champaka"
+display_name = "Panza fértil"
+description = "El Panzazo deja un hongo al caer"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_51"]
+script = ExtResource("2")
+id = &"champaka_hongos_gorditos"
+character = &"champaka"
+display_name = "Hongos gorditos"
+description = "Los hongos de las Esporas curan 30 en vez de 20"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_52"]
+script = ExtResource("2")
+id = &"champaka_esporulacion"
+character = &"champaka"
+display_name = "Esporulación"
+description = "Brota un hongo cada 70 de daño recibido en vez de 100"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_53"]
+script = ExtResource("2")
+id = &"champaka_papa_presente"
+character = &"champaka"
+display_name = "Papá presente"
+description = "Papá del grupo llega a 5 m y quita 15% del daño"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_54"]
+script = ExtResource("2")
+id = &"champaka_manos_oso"
+character = &"champaka"
+display_name = "Manos de oso"
+description = "El Manotazo llega 25% más lejos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_55"]
+script = ExtResource("2")
+id = &"champaka_onda_fuerte"
+character = &"champaka"
+display_name = "Onda expansiva"
+description = "La onda del tercer Manotazo también hace 30 de daño"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_56"]
+script = ExtResource("2")
+id = &"champaka_panzazo_doble"
+character = &"champaka"
+display_name = "Doble panza"
+description = "+1 carga de Panzazo"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_57"]
+script = ExtResource("2")
+id = &"champaka_abrazador_serial"
+character = &"champaka"
+display_name = "Abrazador serial"
+description = "El Abrazo de Oso recarga 25% más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_58"]
+script = ExtResource("2")
+id = &"champaka_sombrero"
+character = &"champaka"
+display_name = "Sombrero de hongo"
+description = "+25 de vida máxima (se puede tomar 3 veces)"
+stat = &"max_health"
+amount = 25.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_59"]
+script = ExtResource("2")
+id = &"champaka_brazo_papa"
+character = &"champaka"
+display_name = "Brazo de papá"
+description = "+8% de daño (se puede tomar 3 veces)"
+stat = &"damage"
+amount = 0.08
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_60"]
+script = ExtResource("2")
 id = &"duo_rompe_vasijas"
 character = &"maestro"
 display_name = "Ojo para las vasijas"
@@ -558,7 +918,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_37"]
+[sub_resource type="Resource" id="u_61"]
 script = ExtResource("2")
 id = &"duo_te_valles"
 character = &"maestro"
@@ -573,7 +933,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_38"]
+[sub_resource type="Resource" id="u_62"]
 script = ExtResource("2")
 id = &"duo_baston_templado"
 character = &"maestro"
@@ -588,7 +948,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_39"]
+[sub_resource type="Resource" id="u_63"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_caparazon"
 character = &"maestro"
@@ -603,7 +963,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_40"]
+[sub_resource type="Resource" id="u_64"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_embestida"
 character = &"maestro"
@@ -618,7 +978,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_41"]
+[sub_resource type="Resource" id="u_65"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_espiritu"
 character = &"maestro"
@@ -633,7 +993,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_42"]
+[sub_resource type="Resource" id="u_66"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_caparazon"
 character = &"maestro"
@@ -648,7 +1008,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_43"]
+[sub_resource type="Resource" id="u_67"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_embestida"
 character = &"maestro"
@@ -663,7 +1023,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_44"]
+[sub_resource type="Resource" id="u_68"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_espiritu"
 character = &"maestro"
@@ -678,7 +1038,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_45"]
+[sub_resource type="Resource" id="u_69"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_caparazon"
 character = &"maestro"
@@ -693,7 +1053,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_46"]
+[sub_resource type="Resource" id="u_70"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_embestida"
 character = &"maestro"
@@ -708,7 +1068,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_47"]
+[sub_resource type="Resource" id="u_71"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_espiritu"
 character = &"maestro"
@@ -723,7 +1083,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_48"]
+[sub_resource type="Resource" id="u_72"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_guia"
 character = &"maestro"
@@ -738,7 +1098,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_49"]
+[sub_resource type="Resource" id="u_73"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_combate"
 character = &"maestro"
@@ -753,7 +1113,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_50"]
+[sub_resource type="Resource" id="u_74"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_niebla"
 character = &"maestro"
@@ -768,7 +1128,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_51"]
+[sub_resource type="Resource" id="u_75"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_guia"
 character = &"maestro"
@@ -783,7 +1143,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_52"]
+[sub_resource type="Resource" id="u_76"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_combate"
 character = &"maestro"
@@ -798,7 +1158,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_53"]
+[sub_resource type="Resource" id="u_77"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_niebla"
 character = &"maestro"
@@ -813,7 +1173,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_54"]
+[sub_resource type="Resource" id="u_78"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_guia"
 character = &"maestro"
@@ -828,7 +1188,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_55"]
+[sub_resource type="Resource" id="u_79"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_combate"
 character = &"maestro"
@@ -843,7 +1203,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_56"]
+[sub_resource type="Resource" id="u_80"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_niebla"
 character = &"maestro"
@@ -858,7 +1218,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_57"]
+[sub_resource type="Resource" id="u_81"]
 script = ExtResource("2")
 id = &"tali_entiende_pajaros"
 character = &"tali"
@@ -873,7 +1233,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &"tali_entiende"
 
-[sub_resource type="Resource" id="u_58"]
+[sub_resource type="Resource" id="u_82"]
 script = ExtResource("2")
 id = &"tali_entiende_bichos"
 character = &"tali"
@@ -888,7 +1248,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &"tali_entiende"
 
-[sub_resource type="Resource" id="u_59"]
+[sub_resource type="Resource" id="u_83"]
 script = ExtResource("2")
 id = &"tali_entiende_gronk"
 character = &"tali"
@@ -903,7 +1263,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &"tali_entiende"
 
-[sub_resource type="Resource" id="u_60"]
+[sub_resource type="Resource" id="u_84"]
 script = ExtResource("2")
 id = &"croco_contrato_doble"
 character = &"croco"
@@ -918,7 +1278,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_61"]
+[sub_resource type="Resource" id="u_85"]
 script = ExtResource("2")
 id = &"agucci_shurikens"
 character = &"agucci"
@@ -933,7 +1293,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_62"]
+[sub_resource type="Resource" id="u_86"]
 script = ExtResource("2")
 id = &"duo_vinculo_eterno"
 character = &"maestro"
@@ -948,6 +1308,36 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
+[sub_resource type="Resource" id="u_87"]
+script = ExtResource("2")
+id = &"pipo_refugio"
+character = &"pipo"
+display_name = "Refugio del Bosque Tuerto"
+description = "Los aliados al lado de una torreta quedan ocultos para los enemigos lejanos"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &""
+
+[sub_resource type="Resource" id="u_88"]
+script = ExtResource("2")
+id = &"champaka_micelio"
+character = &"champaka"
+display_name = "Micelio por todos lados"
+description = "La Floración del Hongo cubre un área 40% más grande"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = true
+exclusive_group = &""
+
 [resource]
 script = ExtResource("1")
-upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56"), SubResource("u_57"), SubResource("u_58"), SubResource("u_59"), SubResource("u_60"), SubResource("u_61"), SubResource("u_62")])
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56"), SubResource("u_57"), SubResource("u_58"), SubResource("u_59"), SubResource("u_60"), SubResource("u_61"), SubResource("u_62"), SubResource("u_63"), SubResource("u_64"), SubResource("u_65"), SubResource("u_66"), SubResource("u_67"), SubResource("u_68"), SubResource("u_69"), SubResource("u_70"), SubResource("u_71"), SubResource("u_72"), SubResource("u_73"), SubResource("u_74"), SubResource("u_75"), SubResource("u_76"), SubResource("u_77"), SubResource("u_78"), SubResource("u_79"), SubResource("u_80"), SubResource("u_81"), SubResource("u_82"), SubResource("u_83"), SubResource("u_84"), SubResource("u_85"), SubResource("u_86"), SubResource("u_87"), SubResource("u_88")])

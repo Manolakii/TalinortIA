@@ -17,6 +17,8 @@ const PANELS: Array[Dictionary] = [
 	{"title": "El Especial Superviviente", "text": "El Mercenario Croco, cazarrecompensas, rescata a Tali y lo deja en la Tierra con el Capitán Champaka.", "face": "Cr", "color": Color(0.35, 0.6, 0.35)},
 	{"title": "Tali", "text": "Vuelve para liberar su planeta. Y para revolearle una piedra a alguien.", "face": "T", "color": Color(0.8, 0.55, 0.3)},
 	{"title": "Agucci", "text": "Quiere dejar de servir al Alto Mando. Su sombra no está tan de acuerdo.", "face": "A", "color": Color(0.45, 0.3, 0.6)},
+	{"title": "Capitán Champaka", "text": "El tutor de Tali en la Tierra. Va porque es el papá del grupo: abraza fuerte y cura con hongos.", "face": "CC", "color": Color(0.35, 0.8, 0.7)},
+	{"title": "General Pipo", "text": "Quiere ayudar a Talinorthland en secreto. Muy en secreto. No pregunten qué tiene en la cabaña.", "face": "GP", "color": Color(0.5, 0.58, 0.4)},
 	{"title": "Maestro Uwey y Stewie", "text": "No quieren ver ganar a Fadied. Stewie, además, quiere comer.", "face": "MS", "color": Color(0.8, 0.72, 0.5)},
 	{"title": "El Croco", "text": "Junta al equipo. Dice que es por Talinorthland. Igual lo cobra doble.", "face": "Cr", "color": Color(0.35, 0.6, 0.35)},
 	{"title": "Primera parada: Birig Bamba", "text": "Territorio neutral: ahí no se pelea, se compra.\nTalinorthland, donde la supervivencia es un éxito.", "face": "BB", "color": Color(0.9, 0.3, 0.65)},

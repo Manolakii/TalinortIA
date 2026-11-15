@@ -183,6 +183,54 @@ costs = Array[int]([15, 35, 60])
 amount = 1.0
 stat = &""
 
+[sub_resource type="Resource" id="m_18"]
+script = ExtResource("2")
+id = &"pipo_torretas"
+character = &"pipo"
+display_name = "Torretas de repuesto"
+description = "Las torretas duran +2 s por nivel"
+costs = Array[int]([15, 35, 60])
+
+[sub_resource type="Resource" id="m_19"]
+script = ExtResource("2")
+id = &"pipo_marca"
+character = &"pipo"
+display_name = "Tinta reglamentaria"
+description = "La Marca Táctica dura +1 s por nivel"
+costs = Array[int]([15, 35, 60])
+
+[sub_resource type="Resource" id="m_20"]
+script = ExtResource("2")
+id = &"pipo_mina"
+character = &"pipo"
+display_name = "Minas caseras"
+description = "La mina del Repliegue pega +15% por nivel"
+costs = Array[int]([15, 35, 60])
+
+[sub_resource type="Resource" id="m_21"]
+script = ExtResource("2")
+id = &"champaka_hongos"
+character = &"champaka"
+display_name = "Abono de papá"
+description = "Los hongos de las Esporas curan +10% por nivel"
+costs = Array[int]([15, 35, 60])
+
+[sub_resource type="Resource" id="m_22"]
+script = ExtResource("2")
+id = &"champaka_abrazo"
+character = &"champaka"
+display_name = "Abrazo largo"
+description = "El Abrazo de Oso retiene +0,5 s por nivel"
+costs = Array[int]([15, 35, 60])
+
+[sub_resource type="Resource" id="m_23"]
+script = ExtResource("2")
+id = &"champaka_floracion"
+character = &"champaka"
+display_name = "Floración tardía"
+description = "La Floración del Hongo dura +1 s por nivel"
+costs = Array[int]([15, 35, 60])
+
 [resource]
 script = ExtResource("1")
 per_scenario = 1
@@ -190,4 +238,4 @@ per_elite = 2
 per_boss = 8
 win_bonus = 15
 difficulty_multipliers = Array[float]([1.0, 1.5, 2.0])
-upgrades = Array[ExtResource("2")]([SubResource("m_0"), SubResource("m_1"), SubResource("m_2"), SubResource("m_3"), SubResource("m_4"), SubResource("m_5"), SubResource("m_6"), SubResource("m_7"), SubResource("m_8"), SubResource("m_9"), SubResource("m_10"), SubResource("m_11"), SubResource("m_12"), SubResource("m_13"), SubResource("m_14"), SubResource("m_15"), SubResource("m_16"), SubResource("m_17")])
+upgrades = Array[ExtResource("2")]([SubResource("m_0"), SubResource("m_1"), SubResource("m_2"), SubResource("m_3"), SubResource("m_4"), SubResource("m_5"), SubResource("m_6"), SubResource("m_7"), SubResource("m_8"), SubResource("m_9"), SubResource("m_10"), SubResource("m_11"), SubResource("m_12"), SubResource("m_13"), SubResource("m_14"), SubResource("m_15"), SubResource("m_16"), SubResource("m_17"), SubResource("m_18"), SubResource("m_19"), SubResource("m_20"), SubResource("m_21"), SubResource("m_22"), SubResource("m_23")])

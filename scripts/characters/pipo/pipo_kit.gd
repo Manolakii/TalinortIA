@@ -57,7 +57,7 @@ func _fire() -> void:
 	player.start_action(0.16, 0.7)
 	basic_recovery = true
 	_shots += 1
-	var info: DamageInfo = make_hit(kd.blaster_damage)
+	var info: DamageInfo = make_hit(kd.blaster_damage * (1.2 if has_upgrade(&"pipo_blaster_reglamentado") else 1.0))
 	# Precisión: en el cono angosto de la mira, más chance de crítico.
 	if not info.is_crit and _enemy_in_cone() and Combat.roll(cone_crit_chance() - player.crit_chance()):
 		info.is_crit = true
@@ -76,7 +76,7 @@ func _on_bolt_hit(target: Node3D, info: DamageInfo) -> void:
 		return
 	var enemy := target as Combatant
 	if enemy != null and is_instance_valid(enemy):
-		enemy.status.apply(StatusEffects.TACTICAL_MARK, kd.mark_duration)
+		enemy.status.apply(StatusEffects.TACTICAL_MARK, mark_duration())
 		Fx.ring_burst(_world(), enemy.global_position, 0.9, player.slot.color, 0.2)
 
 
@@ -94,12 +94,18 @@ func cone_crit_chance() -> float:
 	return kd.cone_crit_chance + player.modifiers.crit_chance_bonus()
 
 
+func mark_duration() -> float:
+	return kd.mark_duration + (4.0 if has_upgrade(&"pipo_marca_larga") else 0.0) + hero(&"pipo_marca")
+
+
 func mark_every() -> int:
 	return 2 if has_upgrade(&"pipo_marca_rapida") else kd.mark_every
 
 
 ## Punto ciego: los que le pegan desde su izquierda hacen +15%.
 func modify_incoming(info: DamageInfo) -> void:
+	if has_upgrade(&"pipo_cubrime"):
+		return
 	var to_attacker := Vector3(info.origin.x - player.global_position.x, 0.0,
 			info.origin.z - player.global_position.z)
 	if to_attacker.length_squared() < 0.01:
@@ -126,6 +132,18 @@ func _deploy_turret() -> void:
 	turrets.append(turret)
 	player.start_action(0.3, 0.3)
 	say("¡Despliegue!", Color(0.85, 1.0, 0.75))
+
+
+func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	dodge_cooldown.max_charges = 1 + (1 if has_upgrade(&"pipo_repliegue_doble") else 0)
+
+
+func turret_health() -> float:
+	return kd.turret_health * (1.5 if has_upgrade(&"pipo_torreta_blindada") else 1.0)
+
+
+func turret_fire_rate() -> float:
+	return kd.turret_shots_per_second * (1.3 if has_upgrade(&"pipo_torreta_aceitada") else 1.0)
 
 
 func max_turrets() -> int:

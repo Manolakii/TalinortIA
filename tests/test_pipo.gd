@@ -98,3 +98,24 @@ func test_bombard_impact() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -8), 1000.0)
 	_kit._impact(Vector3(0, 0, -8))
 	assert_almost_eq(1000.0 - enemy.health.current, 90.0, 0.01, "Cada impacto: 90")
+
+
+func test_cabin_easter_egg_gives_crown_to_pipo() -> void:
+	var cabin := PipoCabin.new()
+	add_child_autofree(cabin)
+	cabin._physics_process(DT)
+	assert_false(cabin._pipo.visible, "Con Pipo en el equipo, el Pipo de la cabaña no está")
+	watch_signals(cabin)
+	cabin.open_secret_door()
+	assert_not_null(cabin._leader, "Adentro está el Líder Supremo")
+	cabin.give_crown()
+	assert_true(RunState.has_special(0, &"corona_lider"), "Le da la corona al jugador Pipo")
+	assert_signal_emitted(cabin, "resolved")
+
+
+func test_upgrades_change_numbers() -> void:
+	assert_eq(_kit.max_turrets(), 2)
+	RunState.add_upgrade(0, &"pipo_torreta_extra")
+	RunState.add_upgrade(0, &"pipo_marca_rapida")
+	assert_eq(_kit.max_turrets(), 3)
+	assert_eq(_kit.mark_every(), 2)

@@ -401,8 +401,8 @@ func _modify_incoming(info: DamageInfo) -> void:
 	for node: Node in get_tree().get_nodes_in_group(&"players"):
 		var ally := node as PlayerCharacter
 		if ally != null and ally != self and not ally.health.is_dead and ally.kit is ChampakaKit \
-				and ally.global_position.distance_to(global_position) <= (ally.kit as ChampakaKit).kd.dad_radius:
-			info.amount *= 1.0 - (ally.kit as ChampakaKit).kd.dad_reduction
+				and ally.global_position.distance_to(global_position) <= (ally.kit as ChampakaKit).dad_radius():
+			info.amount *= 1.0 - (ally.kit as ChampakaKit).dad_reduction()
 			break
 
 

@@ -30,7 +30,7 @@ func _physics_process(delta: float) -> void:
 	if _pulse > 0.0:
 		return
 	_pulse = PULSE
-	var radius: float = kit.kd.bloom_radius
+	var radius: float = kit.bloom_radius()
 	for node: Node in get_tree().get_nodes_in_group(&"players"):
 		var ally := node as PlayerCharacter
 		if ally == null or _flat_distance(ally.global_position) > radius:
@@ -62,7 +62,7 @@ func _finish() -> void:
 func _build() -> void:
 	_visual = Node3D.new()
 	add_child(_visual)
-	var radius: float = kit.kd.bloom_radius
+	var radius: float = kit.bloom_radius()
 	var disc := MeshInstance3D.new()
 	var disc_mesh := CylinderMesh.new()
 	disc_mesh.top_radius = radius
@@ -75,6 +75,10 @@ func _build() -> void:
 	disc.material_override = disc_material
 	disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_visual.add_child(disc)
+	# El hongo gigante va atrás (al norte) para no tapar a Champaka con la cámara de 3/4.
+	var mushroom := Node3D.new()
+	mushroom.position = Vector3(0, 0, -2.6)
+	_visual.add_child(mushroom)
 	var stem := MeshInstance3D.new()
 	var stem_mesh := CylinderMesh.new()
 	stem_mesh.top_radius = 0.35
@@ -83,7 +87,7 @@ func _build() -> void:
 	stem.mesh = stem_mesh
 	stem.position.y = 1.3
 	stem.material_override = Fx.flat_material(Color(0.92, 0.9, 0.82))
-	_visual.add_child(stem)
+	mushroom.add_child(stem)
 	var cap := MeshInstance3D.new()
 	var dome := SphereMesh.new()
 	dome.radius = 1.8
@@ -92,7 +96,7 @@ func _build() -> void:
 	cap.mesh = dome
 	cap.position.y = 2.5
 	cap.material_override = Fx.flat_material(COLOR.darkened(0.15), 1.0)
-	_visual.add_child(cap)
+	mushroom.add_child(cap)
 	_visual.scale = Vector3.ONE * 0.1
 	var tween: Tween = create_tween()
 	tween.tween_property(_visual, "scale", Vector3.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

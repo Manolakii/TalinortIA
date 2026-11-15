@@ -117,3 +117,11 @@ func test_bloom_revives_and_confuses() -> void:
 	assert_false(ally.is_downed(), "Revive al caído")
 	assert_true(enemy.status.has(StatusEffects.CONFUSED), "Confunde")
 	assert_true(enemy.status.has(StatusEffects.SLOW), "Enreda")
+
+
+func test_upgrades_change_numbers() -> void:
+	RunState.add_upgrade(0, &"champaka_esporulacion")
+	RunState.add_upgrade(0, &"champaka_papa_presente")
+	assert_eq(_kit.spores_per_mushroom(), 70.0)
+	assert_eq(_kit.dad_radius(), 5.0)
+	assert_eq(_kit.dad_reduction(), 0.15)
