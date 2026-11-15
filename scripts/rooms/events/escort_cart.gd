@@ -12,6 +12,9 @@ const PEOPLE := Color(0.62, 0.52, 0.4)
 
 var path_from: Vector3
 var path_to: Vector3
+## Camino con curvas (pedido del grupo: el recto era corto). Si está vacío, va de from a to.
+var path: PackedVector3Array = PackedVector3Array()
+var _length: float = 0.0
 var speed: float = 0.45
 var push_radius: float = 6.0
 ## Menos de 1: los enemigos la prefieren antes que a los jugadores a la misma distancia.
@@ -29,11 +32,16 @@ var _visual: Node3D
 var _wheels: Array[Node3D] = []
 
 
-func setup(from: Vector3, to: Vector3, max_health: float, move_speed: float) -> void:
-	path_from = from
-	path_to = to
+func setup(from: Vector3, to: Vector3, max_health: float, move_speed: float,
+		waypoints: PackedVector3Array = PackedVector3Array()) -> void:
+	path = waypoints if waypoints.size() >= 2 else PackedVector3Array([from, to])
+	path_from = path[0]
+	path_to = path[path.size() - 1]
+	_length = 0.0
+	for i: int in path.size() - 1:
+		_length += path[i].distance_to(path[i + 1])
 	speed = move_speed
-	position = from
+	position = path_from
 	_build()
 	setup_combatant(DamageInfo.Team.PLAYERS, max_health, 1.3, 1.8, _visual)
 	add_to_group(&"enemy_targets")
@@ -70,9 +78,12 @@ func _physics_process(delta: float) -> void:
 	if pushing:
 		_stopped_time = 0.0
 		_complained = false
-		var length: float = path_from.distance_to(path_to)
-		_progress = minf(_progress + speed * delta / maxf(length, 0.1), 1.0)
-		global_position = path_from.lerp(path_to, _progress)
+		_progress = minf(_progress + speed * delta / maxf(_length, 0.1), 1.0)
+		var before: Vector3 = global_position
+		global_position = point_at(_progress)
+		var moved: Vector3 = global_position - before
+		if moved.length_squared() > 0.000001:
+			_visual.rotation.y = lerp_angle(_visual.rotation.y, atan2(-moved.x, -moved.z), minf(delta * 4.0, 1.0))
 		for wheel: Node3D in _wheels:
 			wheel.rotation.x -= delta * speed * 3.0
 		if _progress >= 1.0:
@@ -92,6 +103,21 @@ func _physics_process(delta: float) -> void:
 
 func progress() -> float:
 	return _progress
+
+
+func path_length() -> float:
+	return _length
+
+
+## Punto del camino a esa fracción (0 = salida, 1 = llegada).
+func point_at(fraction: float) -> Vector3:
+	var remaining: float = clampf(fraction, 0.0, 1.0) * _length
+	for i: int in path.size() - 1:
+		var segment: float = path[i].distance_to(path[i + 1])
+		if remaining <= segment or i == path.size() - 2:
+			return path[i].lerp(path[i + 1], clampf(remaining / maxf(segment, 0.001), 0.0, 1.0))
+		remaining -= segment
+	return path_to
 
 
 func _someone_near() -> bool:

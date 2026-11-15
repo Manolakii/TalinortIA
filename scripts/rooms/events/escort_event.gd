@@ -24,12 +24,18 @@ var _focus_timers: Dictionary = {}
 func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerator) -> void:
 	_config = config
 	_rng = rng
-	var from := Vector3(0, 0, 9.0)
-	var to := Vector3(0, 0, -11.0)
-	_clear_path(template, from, to)
+	# Camino en zigzag (pedido del grupo: el recto era corto). A veces espejado.
+	var flip: float = -1.0 if rng.randf() < 0.5 else 1.0
+	var waypoints := PackedVector3Array()
+	for point: Vector3 in config.cart_path:
+		waypoints.append(Vector3(point.x * flip, 0.0, point.z))
+	var to: Vector3 = waypoints[waypoints.size() - 1]
+	for i: int in waypoints.size() - 1:
+		_clear_path(template, waypoints[i], waypoints[i + 1])
+	_draw_path(waypoints)
 	cart = EscortCart.new()
 	add_child(cart)
-	cart.setup(from + Vector3(0, 0, -2.5), to, config.cart_health, config.cart_speed)
+	cart.setup(waypoints[0], to, config.cart_health, config.cart_speed, waypoints)
 	cart.arrived.connect(_on_arrived)
 	cart.destroyed.connect(_on_destroyed)
 	var exit_mark := MeshInstance3D.new()
@@ -103,6 +109,28 @@ func _on_destroyed() -> void:
 				enemy.wake_and_flee()
 		_finished = true
 		resolved.emit(false))
+
+
+## Huellas de ruedas en el piso para que se vea por dónde va a ir.
+func _draw_path(waypoints: PackedVector3Array) -> void:
+	var material := Fx.flat_material(Color(0.85, 0.8, 0.7, 0.45))
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	for i: int in waypoints.size() - 1:
+		var a: Vector3 = waypoints[i]
+		var b: Vector3 = waypoints[i + 1]
+		var steps: int = maxi(int(a.distance_to(b) / 1.6), 1)
+		for s: int in steps:
+			var dot := MeshInstance3D.new()
+			var mesh := BoxMesh.new()
+			mesh.size = Vector3(0.35, 0.02, 0.7)
+			dot.mesh = mesh
+			dot.material_override = material
+			dot.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(dot)
+			var direction: Vector3 = (b - a).normalized()
+			dot.position = a.lerp(b, (s + 0.5) / steps) + Vector3.UP * 0.03
+			dot.rotation.y = atan2(-direction.x, -direction.z)
 
 
 ## Saca rocas, vasijas y rocas agrietadas del camino de la carreta.

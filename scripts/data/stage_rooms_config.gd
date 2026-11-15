@@ -83,7 +83,10 @@ extends Resource
 ## Escoltá la carreta: vida, velocidad (m/s; ~45 s de viaje si la empujan siempre), y cada
 ## cuánto llegan enemigos (de a cuántos, en Normal y 1 jugador) con un máximo vivos a la vez.
 @export var cart_health: float = 500.0
-@export var cart_speed: float = 0.45
+@export var cart_speed: float = 0.65
+## Camino de la carreta (zigzag por la sala; se espeja al azar). Pedido del grupo: más largo.
+@export var cart_path: PackedVector3Array = PackedVector3Array([Vector3(0, 0, 6.5), Vector3(-12, 0, 6.5),
+		Vector3(-12, 0, -2), Vector3(10, 0, -2), Vector3(10, 0, -11)])
 @export var cart_spawn_interval: float = 5.5
 @export var cart_spawn_group: int = 2
 @export var cart_max_enemies: int = 10

@@ -49,6 +49,18 @@ func test_cart_only_moves_when_someone_pushes() -> void:
 	assert_gt(cart.progress(), 0.0, "Con alguien cerca, avanza")
 
 
+func test_cart_path_is_long_and_winding() -> void:
+	var event := EscortEvent.new()
+	_holder.add_child(event)
+	event.setup(_config, _template, _rng())
+	var cart: EscortCart = event.cart
+	assert_gt(cart.path_length(), 40.0, "Camino largo (el recto tenía ~18 m)")
+	assert_gt(cart.path.size(), 3, "Con curvas")
+	assert_almost_eq(cart.point_at(1.0).distance_to(cart.path_to), 0.0, 0.01)
+	var mid: Vector3 = cart.point_at(0.5)
+	assert_gt(absf(mid.x), 1.0, "A mitad de camino no está en el centro: dobla")
+
+
 func test_enemies_like_the_cart() -> void:
 	var event := EscortEvent.new()
 	_holder.add_child(event)
