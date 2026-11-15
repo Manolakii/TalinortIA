@@ -22,6 +22,9 @@ var call_cooldown: AbilityCooldown
 var slam_cooldown: AbilityCooldown
 
 var _fury_time: float = 0.0
+## Pedido del grupo: si se transformó con la definitiva, tiene un Revoleo gratis (sin recargar
+## la barra). Si la Furia llegó sola (por pegar o recibir), el Revoleo hay que cargarlo.
+var free_toss: bool = false
 var _lockout: float = 0.0
 var _attack_timer: float = 0.0
 var _combo_index: int = 0
@@ -215,6 +218,7 @@ func _enter_fury(bonus: float = 0.0) -> void:
 
 func _exit_fury() -> void:
 	in_fury = false
+	free_toss = false
 	fury = 0.0
 	_charging = false
 	cancel_scheduled()
@@ -393,7 +397,19 @@ func _use_ultimate() -> bool:
 		return _toss()
 	_roar()
 	_enter_fury(kd.ult_fury_bonus)
+	free_toss = true
 	return true
+
+
+## El Revoleo gratis (después de transformarse con la definitiva) no pide la barra llena.
+func _handle_ultimate() -> void:
+	if in_fury and free_toss and player.has_buffered(PlayerInput.Action.ULTIMATE) and can_start_skill():
+		player.consume_buffered(PlayerInput.Action.ULTIMATE)
+		player.end_action()
+		if _toss():
+			free_toss = false
+		return
+	super._handle_ultimate()
 
 
 ## En Normal: rugido que empuja y asusta a los cercanos durante 2 s.
@@ -586,8 +602,8 @@ func hud_bar() -> Dictionary:
 
 func hud_abilities() -> Array[Dictionary]:
 	if in_fury:
-		return [cooldown_slot("Aplastón", slam_cooldown), cooldown_slot("Embestida", dodge_cooldown),
-				ult_slot("Revoleo")]
+		var toss: Dictionary = {"name": "Revoleo", "ratio": 0.0, "text": "¡Lista!"} if free_toss 				else ult_slot("Revoleo")
+		return [cooldown_slot("Aplastón", slam_cooldown), cooldown_slot("Embestida", dodge_cooldown), toss]
 	return [cooldown_slot("Llamado", call_cooldown), cooldown_slot("Tropezón", dodge_cooldown),
 			ult_slot("La Bestia")]
 

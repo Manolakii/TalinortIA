@@ -215,6 +215,28 @@ func test_ult_in_fury_tosses_biggest_enemy_and_extends_fury() -> void:
 	assert_lt(enemy.health.current, 160.0, "Le dolió el revoleo")
 
 
+func test_ult_transform_keeps_a_free_toss() -> void:
+	var enemy: TalinorteanoCegado = _enemy_at(Vector3(0, 0, -2))
+	_kit.ult_charge = 100.0
+	_press(PlayerInput.Action.ULTIMATE)
+	_step(1)
+	assert_true(_kit.in_fury)
+	assert_true(_kit.free_toss, "Transformado con la definitiva: Revoleo gratis")
+	_release(PlayerInput.Action.ULTIMATE)
+	_step(1)
+	_kit.player.end_action()
+	_press(PlayerInput.Action.ULTIMATE)
+	_step(1)
+	assert_true(enemy.is_controlled, "Revolea sin tener la barra llena")
+	assert_false(_kit.free_toss)
+
+
+func test_passive_fury_has_no_free_toss() -> void:
+	_kit.add_fury(100.0)
+	assert_true(_kit.in_fury)
+	assert_false(_kit.free_toss, "La Furia que llega sola no trae Revoleo gratis")
+
+
 func test_ult_in_fury_without_targets_keeps_the_bar() -> void:
 	_kit._enter_fury()
 	_kit.ult_charge = 100.0
