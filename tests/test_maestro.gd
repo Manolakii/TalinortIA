@@ -195,6 +195,18 @@ func test_ai_defends_itself() -> void:
 	assert_eq(_kit._choose_ai_target(body, DT), biter, "Se defiende del que tiene al lado")
 
 
+func test_ai_ignores_sleeping_enemies() -> void:
+	_pump(1)
+	_kit._player_target = null
+	var body: DuoCompanion = _kit.companion
+	var sleeper := enemy_at(body.global_position + Vector3(1.0, 0, 0), 1000.0)
+	sleeper.asleep = true
+	assert_null(_kit._choose_ai_target(body, DT), "No va por un dormido del laberinto")
+	_kit._strike(body, Vector3.RIGHT, 2.5, 120.0, 20.0, 0.0)
+	assert_eq(sleeper.health.current, 1000.0, "Si pega al lado, al dormido no lo toca")
+	assert_true(sleeper.asleep)
+
+
 func test_ai_steps_out_of_shadow_zones() -> void:
 	_pump(1)
 	var zone := ShadowZone.new()

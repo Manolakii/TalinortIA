@@ -260,6 +260,11 @@ func _strike(source: Node3D, direction: Vector3, reach: float, angle: float, dam
 				kd.staff_wave_width):
 			if not targets.has(hurtbox):
 				targets.append(hurtbox)
+	if source != player:
+		# El que va solo no despierta a los dormidos del laberinto (reportado por el grupo).
+		for i: int in range(targets.size() - 1, -1, -1):
+			if targets[i].receiver is Enemy and (targets[i].receiver as Enemy).asleep:
+				targets.remove_at(i)
 	var info: DamageInfo = _hit(source, damage)
 	info.knockback = knockback
 	Fx.slash(_world(), source.global_position, direction, reach, angle, player.slot.color, 0.1)
@@ -668,6 +673,9 @@ func _is_valid_ai_target(target: Node3D) -> bool:
 	if not is_instance_valid(target):
 		return false
 	var enemy := target as Combatant
+	# A los dormidos del laberinto no se les pega (despiertan y se pierde el desafío).
+	if enemy is Enemy and (enemy as Enemy).asleep:
+		return false
 	return enemy != null and enemy.is_targetable() \
 			and enemy.global_position.distance_to(player.global_position) <= kd.companion_target_range
 
@@ -713,7 +721,7 @@ func _companion_target() -> Node3D:
 		_player_target = null
 		return null
 	var target := _player_target as Combatant
-	if target == null or not target.is_targetable():
+	if target == null or not target.is_targetable() or (target is Enemy and (target as Enemy).asleep):
 		return null
 	if target.global_position.distance_to(player.global_position) > kd.companion_target_range:
 		return null

@@ -60,11 +60,17 @@ static func in_line(tree: SceneTree, team: DamageInfo.Team, from: Vector3, to: V
 
 
 ## Como hurtboxes(), sin los objetos rompibles: para apuntar y para las IA.
+## Tampoco los enemigos dormidos (laberinto): la IA de Stewie / el Maestro y las torretas les
+## pegaban al pasar y se perdía el desafío (reportado por el grupo).
 static func targets(tree: SceneTree, team: DamageInfo.Team) -> Array[Hurtbox]:
 	var result: Array[Hurtbox] = []
 	for hurtbox: Hurtbox in hurtboxes(tree, team):
-		if not hurtbox.is_prop:
-			result.append(hurtbox)
+		if hurtbox.is_prop:
+			continue
+		var enemy := hurtbox.receiver as Enemy
+		if enemy != null and enemy.asleep:
+			continue
+		result.append(hurtbox)
 	return result
 
 
