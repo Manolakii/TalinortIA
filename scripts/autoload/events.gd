@@ -19,6 +19,8 @@ signal loadout_changed(slot_index: int)
 signal wave_cleared(index: int)
 ## Se terminó la sala (todas las oleadas).
 signal room_cleared
+## Se terminó la sala o el desafío (una vez por sala; el Mate de Birig Bamba cura acá).
+signal room_finished
 
 # --- Combate ---
 ## Un golpe conectó (para números de daño, barras de Furia y de definitiva, etc.).

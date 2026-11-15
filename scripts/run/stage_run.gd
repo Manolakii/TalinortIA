@@ -317,6 +317,8 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 		return
 	_done = true
 	Events.room_cleared.emit()
+	if not event_lost:
+		Events.room_finished.emit()
 	await get_tree().create_timer(0.8).timeout
 	if in_challenge:
 		await _challenge_done(not event_lost, bonus_item)

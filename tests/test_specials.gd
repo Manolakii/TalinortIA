@@ -142,3 +142,56 @@ func test_bombito_hastes_allies_on_ultimate() -> void:
 	Events.ultimate_used.emit(_player)
 	assert_true(ally.status.has(StatusEffects.BOMBITO))
 	assert_true(_player.status.has(StatusEffects.BOMBITO))
+
+
+# --- Objetos nuevos (pedido del grupo, 2026-11-15) ---
+
+func test_mailman_boots_speed_after_dodge() -> void:
+	_give(&"botas_cartero")
+	_player.start_dodge(Vector3.RIGHT, 2.0, 0.2)
+	_player.specials._physics_process(DT)
+	assert_true(_player.status.has(StatusEffects.MAILMAN))
+
+
+func test_clover_sometimes_dodges() -> void:
+	_give(&"trebol_gronk")
+	var avoided: int = 0
+	for i: int in 400:
+		if _player._try_avoid(DamageInfo.new()) != "":
+			avoided += 1
+	assert_between(avoided, 15, 70, "Más o menos 10%")
+
+
+func test_mate_heals_when_the_room_ends() -> void:
+	_give(&"mate_birig")
+	_player.health.current = 50.0
+	Events.room_finished.emit()
+	assert_almost_eq(_player.health.current, 50.0 + _player.health.max_health * 0.15, 0.5)
+
+
+func test_gronk_tooth_hits_elites_harder() -> void:
+	_give(&"diente_gronk")
+	var common := enemy_at(Vector3(0, 0, -2), 1000.0)
+	var elite := enemy_at(Vector3(2, 0, -2), 1000.0)
+	elite.is_elite = true
+	var hit: DamageInfo = _player.kit.make_hit(50.0)
+	hit.is_crit = false
+	common.receive_hit(hit.clone())
+	elite.receive_hit(hit.clone())
+	assert_almost_eq((1000.0 - elite.health.current) / (1000.0 - common.health.current), 1.2, 0.01)
+
+
+func test_yole_cape_shields_once_per_room() -> void:
+	_give(&"capa_yole")
+	var hit := DamageInfo.new()
+	hit.amount = _player.health.max_health * 0.75
+	hit.attacker_team = DamageInfo.Team.ENEMIES
+	_player.receive_hit(hit)
+	assert_almost_eq(_player.health.shield, _player.health.max_health * 0.3, 0.5, "Escudo al bajar del 30%")
+	_player.health.clear_shield()
+	_player.health.make_invulnerable(0.0)
+	var small := DamageInfo.new()
+	small.amount = 1.0
+	small.attacker_team = DamageInfo.Team.ENEMIES
+	_player.receive_hit(small)
+	assert_eq(_player.health.shield, 0.0, "Una sola vez por sala")

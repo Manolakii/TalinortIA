@@ -262,6 +262,11 @@ A diferencia de los genéricos, no suben números: agregan un efecto nuevo.
 | Espora errante | Épico | Los enemigos que matás tienen 10% de chance de dejar un hongo que cura |
 | Fragmento del Crepúsculo | Legendario | Los críticos dejan un eco de sombra que repite el golpe al 50% |
 | Corona del Líder Supremo | Legendario | Una vez por partida, si caés, te levantás solo con el 40% de la vida |
+| Botas de Cartero *(2026-11-15)* | Común | Después de esquivar, vas 25% más rápido por 1,5 s |
+| Trébol de cuatro Gronks *(2026-11-15)* | Raro | 10% de chance de que un golpe enemigo no te toque |
+| Mate de Birig Bamba *(2026-11-15)* | Raro | Al terminar cada sala te curás 15% de la vida |
+| Diente del Gronk Gigante *(2026-11-15)* | Épico | +20% de daño a los élites y a los bosses |
+| Capa de Yole *(2026-11-15)* | Legendario | Si bajás del 30% de vida, escudo de 30% de tu vida (una vez por sala) |
 
 ## Progresión entre partidas
 

@@ -163,6 +163,8 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 		speed *= Balance.combat.slow_multiplier
 	if status.has(StatusEffects.BOMBITO):
 		speed *= 1.15
+	if status.has(StatusEffects.MAILMAN):
+		speed *= 1.25
 	speed *= modifiers.move_speed_multiplier()
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
@@ -303,6 +305,9 @@ func _try_avoid(info: DamageInfo) -> String:
 	var attacker := info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.status.has(StatusEffects.FOGGED) and Combat.roll(0.3):
 		return "¡Se perdió en la niebla!"
+	# Trébol de cuatro Gronks (objeto especial): a veces el golpe no te toca.
+	if slot != null and RunState.has_special(slot.index, &"trebol_gronk") and Combat.roll(0.1):
+		return "¡Zafaste de casualidad!"
 	return kit.try_avoid(info)
 
 

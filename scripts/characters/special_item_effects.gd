@@ -2,7 +2,8 @@ class_name SpecialItemEffects
 extends Node
 ## Efectos de los objetos especiales de Yole Sajor (GDD, "Objetos especiales") para UN jugador.
 ## Algunos efectos viven en otros lados porque necesitan saber algo de ahí:
-##   Vasija sin fondo → Vase; Espora errante → Enemy; Corona del Líder Supremo → PlayerCharacter.
+##   Vasija sin fondo → Vase; Espora errante → Enemy; Corona del Líder Supremo → PlayerCharacter;
+##   Trébol de cuatro Gronks → PlayerCharacter; Diente del Gronk Gigante → Enemy.
 
 const STATIK_PER_METER := 4.0
 const STATIK_CHAIN_DAMAGE := 30.0
@@ -19,6 +20,8 @@ var _was_dodging: bool = false
 var _last_position: Vector3
 var _ability_charges: Dictionary = {}  # AbilityCooldown -> cargas del frame anterior
 var _abilities_used: int = 0
+## Capa de Yole: en qué sala se usó por última vez (una vez por sala).
+var _cape_room: int = -1
 
 
 func setup(owner_player: PlayerCharacter) -> void:
@@ -27,6 +30,7 @@ func setup(owner_player: PlayerCharacter) -> void:
 	Events.hit_landed.connect(_on_hit_landed)
 	Events.ultimate_used.connect(_on_ultimate_used)
 	player.hit_taken.connect(_on_hit_taken)
+	Events.room_finished.connect(_on_room_finished)
 
 
 func has(item_id: StringName) -> bool:
@@ -54,6 +58,9 @@ func _physics_process(delta: float) -> void:
 	var dodging: bool = player.is_dodging()
 	if dodging and not _was_dodging and has(&"kunai_repuesto"):
 		_drop_kunai(player.global_position)
+	# Botas de Cartero: después de esquivar, más rápido un rato.
+	if dodging and not _was_dodging and has(&"botas_cartero"):
+		player.status.apply(StatusEffects.MAILMAN, 1.5)
 	_was_dodging = dodging
 	# Núcleo Uwey: cuenta las habilidades usadas (una carga que se gastó).
 	if has(&"nucleo_uwey"):
@@ -96,8 +103,28 @@ func _on_ultimate_used(user: Node3D) -> void:
 	Fx.ring_burst(player.get_parent(), player.global_position, 7.0, Color(1.0, 0.82, 0.3), 0.4)
 
 
+## Mate de Birig Bamba: al terminar cada sala, te curás 15% de la vida.
+func _on_room_finished() -> void:
+	if player == null or not is_instance_valid(player) or not has(&"mate_birig") or player.health.is_dead:
+		return
+	player.health.heal(player.health.max_health * 0.15)
+	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.6, "¡Un matecito!",
+			Color(0.35, 0.95, 0.85))
+
+
+## Capa de Yole: si bajás del 30%, escudo de 30% de tu vida (una vez por sala).
+func _check_cape() -> void:
+	if not has(&"capa_yole") or player.health.is_dead or player.health.ratio() >= 0.3 			or _cape_room == RunState.rooms_played:
+		return
+	_cape_room = RunState.rooms_played
+	player.health.add_shield(player.health.max_health * 0.3)
+	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.6, "¡La Capa de Yole!",
+			Color(0.72, 0.88, 1.0))
+
+
 ## Escama de Gronk: un golpe cuerpo a cuerpo le devuelve 20 al que pegó.
 func _on_hit_taken(info: DamageInfo) -> void:
+	_check_cape()
 	if not has(&"escama_gronk") or not info.is_melee or info.has_tag(&"reflect"):
 		return
 	var attacker := info.attacker as Combatant

@@ -356,6 +356,10 @@ func _maybe_scenario_shield() -> void:
 
 ## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.
 func _modify_incoming(info: DamageInfo) -> void:
+	# Diente del Gronk Gigante (objeto especial): +20% contra élites y bosses.
+	var hitter := info.attacker as PlayerCharacter if is_instance_valid(info.attacker) else null
+	if hitter != null and hitter.slot != null and (is_elite or is_in_group(&"boss")) 			and RunState.has_special(hitter.slot.index, &"diente_gronk"):
+		info.amount *= 1.2
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15

@@ -19,6 +19,8 @@ const FOGGED: StringName = &"fogged"
 const HIDDEN: StringName = &"hidden"
 ## Bombito de Birig Bamba: +15% de velocidad.
 const BOMBITO: StringName = &"bombito"
+## Botas de Cartero: +25% de velocidad después de esquivar.
+const MAILMAN: StringName = &"mailman"
 ## Esporas de la Floración: el enemigo se confunde y les pega a los suyos.
 const CONFUSED: StringName = &"confused"
 
