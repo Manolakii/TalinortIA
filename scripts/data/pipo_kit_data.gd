@@ -22,9 +22,11 @@ extends Resource
 @export var blaster_range: float = 17.0
 
 @export_group("Despliegue de Chatarra")
-@export var turret_cooldown: float = 14.0
+## Pedido del grupo (2026-11-15): cada torreta dura más que dos recargas, así se llega a
+## tener 2 (y 3 con la mejora "Otra torreta") a la vez.
+@export var turret_cooldown: float = 12.0
 @export var turret_max: int = 2
-@export var turret_duration: float = 12.0
+@export var turret_duration: float = 26.0
 @export var turret_health: float = 60.0
 @export var turret_damage: float = 7.0
 @export var turret_shots_per_second: float = 2.0
