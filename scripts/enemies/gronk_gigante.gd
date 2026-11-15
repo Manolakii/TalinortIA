@@ -366,10 +366,10 @@ func _crystal_heal(delta: float) -> void:
 	var cap: float = health.max_health * cfg.crystal_heal_cap
 	if health.current >= cap:
 		return
-	var amount: float = minf(cfg.crystal_heal_per_second * delta, cap - health.current)
+	var amount: float = minf(health.max_health * cfg.crystal_heal_ratio * delta, cap - health.current)
 	health.heal(amount)
 	_heal_shown += amount
-	if _heal_shown >= 40.0:
+	if _heal_shown >= health.max_health * cfg.crystal_heal_ratio:
 		Events.floating_text_requested.emit(global_position + Vector3.UP * 5.0, "+%d" % roundi(_heal_shown), HEAL_COLOR)
 		_heal_shown = 0.0
 

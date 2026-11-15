@@ -38,5 +38,5 @@ idle_time = 1.4
 wild_call_stun = 2.5
 wild_call_cooldown = 12.0
 crystal_health = 500.0
-crystal_heal_per_second = 40.0
+crystal_heal_ratio = 0.012
 crystal_heal_cap = 0.5

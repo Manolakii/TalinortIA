@@ -58,9 +58,11 @@ extends Resource
 
 @export_group("Cristal de sombra (fase 3)")
 ## Pedido del grupo: en la fase 3 aparece un cristal que cura al boss hasta que lo rompen.
-## Cura `crystal_heal_per_second` sin pasar de `crystal_heal_cap` de la vida (no vuelve de fase).
+## Cura `crystal_heal_ratio` de la vida máxima por segundo, sin pasar de `crystal_heal_cap` de la
+## vida (no vuelve de fase). Pedido del grupo: que romperlo sea casi obligatorio. Como es una
+## parte de la vida máxima, escala sola con los jugadores (6.000 de vida: 72 por segundo).
 @export var crystal_health: float = 500.0
-@export var crystal_heal_per_second: float = 40.0
+@export var crystal_heal_ratio: float = 0.012
 @export var crystal_heal_cap: float = 0.5
 ## Dónde aparece (el más lejos del boss de estos lugares).
 @export var crystal_spots: Array[Vector3] = [Vector3(-15, 0, -9), Vector3(15, 0, -9), Vector3(-15, 0, 9), Vector3(15, 0, 9)]

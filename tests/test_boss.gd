@@ -103,7 +103,7 @@ func test_phase_three_crystal_heals_until_broken() -> void:
 	assert_eq(_boss.crystal.max_health, 500.0)
 	var before: float = _boss.health.current
 	_boss._crystal_heal(1.0)
-	assert_almost_eq(_boss.health.current - before, 40.0, 0.01, "Cura 40 por segundo")
+	assert_almost_eq(_boss.health.current - before, 72.0, 0.01, "Cura 1,2% de la vida por segundo (72)")
 	_boss.health.current = _boss.health.max_health * 0.5
 	_boss._crystal_heal(1.0)
 	assert_almost_eq(_boss.health.ratio(), 0.5, 0.001, "No pasa del tope")

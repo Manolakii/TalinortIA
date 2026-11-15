@@ -120,7 +120,7 @@ Cada boss tiene 3 fases, marcadas en su barra. La vida está pensada para una pe
 - **Fase 2 (66% a 33%):** la sombra toma el control y los ojos se le ponen violetas. Encadena dos cargas, tira rocas (con círculos de aviso) y deja charcos de sombra que ralentizan.
 - **Fase 3 (menos de 33%):** rompe las columnas, así que hay menos cobertura. Carga tres veces seguidas y lanza una onda de sombra en círculo con un hueco para pasar (o se atraviesa con la invulnerabilidad de la esquiva).
 - **Detalles:** el Llamado Salvaje de Tali puede hacerlo dudar y aturdirlo (está en su kit). Al morir, la sombra sale de su cuerpo y se escapa: el Gronk queda libre.
-- *2026-11-15, pedido del grupo (que tenga más presencia):* solo el Gronk del Llamado lo hace dudar; nada más lo aturde (ni el tiro o el tropezón de suerte, ni los pájaros, ni el Aplastón, ni la Piedra de la suerte), salvo las columnas y las paredes. Ruge y llama enemigos en todas las fases, más seguido. El pisotón sale más rápido. En la fase 3 aparece un **cristal de sombra** (500 de vida) que lo cura de a poco mientras esté en pie; la cura no lo devuelve a otra fase.
+- *2026-11-15, pedido del grupo (que tenga más presencia):* solo el Gronk del Llamado lo hace dudar; nada más lo aturde (ni el tiro o el tropezón de suerte, ni los pájaros, ni el Aplastón, ni la Piedra de la suerte), salvo las columnas y las paredes. Ruge y llama enemigos en todas las fases, más seguido. El pisotón sale más rápido. En la fase 3 aparece un **cristal de sombra** (500 de vida) que lo cura mientras esté en pie (1,2% de su vida por segundo, más de lo que pega un jugador solo: hay que romperlo); la cura no lo devuelve a otra fase.
 
 ### Fadied (2-4)
 

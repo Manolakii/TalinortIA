@@ -31,10 +31,14 @@ func setup(target: GronkGigante) -> void:
 	var back := ColorRect.new()
 	back.color = BG
 	back.custom_minimum_size = Vector2(WIDTH, 22)
+	# Ancho fijo: con 2+ jugadores el texto de arriba es más ancho y estiraba el fondo, así que
+	# la barra arrancaba "sin llenar" (reportado por el grupo: parecía que el boss ya tenía daño).
+	back.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(back)
 	_fill = ColorRect.new()
 	_fill.color = FILL
-	_fill.size = Vector2(WIDTH, 22)
+	_fill.anchor_bottom = 1.0
+	_fill.anchor_right = 1.0
 	back.add_child(_fill)
 	# Marcas de las fases.
 	for at: float in [boss.cfg.phase_two_at, boss.cfg.phase_three_at]:
@@ -52,7 +56,8 @@ func _refresh() -> void:
 	if not is_instance_valid(boss):
 		return
 	var ratio: float = boss.health.ratio()
-	_fill.size.x = WIDTH * ratio
+	_fill.anchor_right = ratio
+	_fill.offset_right = 0.0
 	_fill.color = FILL if boss.phase == 1 else FILL_SHADOW
 	var players: int = Scaling.players_for_scaling()
 	var scaling: String = "" if players <= 1 else " · vida x%.1f por %d jugadores" % [boss.health_multiplier, players]
