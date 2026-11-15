@@ -189,6 +189,9 @@ func _pay_bounty(info: DamageInfo) -> void:
 	if killer == null or not (killer.kit is CrocoKit):
 		return
 	var gold: int = roundi(Balance.economy.croco_bounty_gold * (1.0 + 0.15 * MetaProgress.level(&"croco_recompensa")))
+	# Sinergia Pipo + Croco (Kits): si tenía Marca Táctica, cobra el doble.
+	if status.has(StatusEffects.TACTICAL_MARK):
+		gold *= 2
 	RunState.add_gold(killer.slot.index, gold)
 	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
 		killer.health.heal(10.0)
@@ -279,6 +282,8 @@ func facing_angle() -> float:
 ## El objetivo más cercano del lado de los jugadores (jugadores, compañeros, señuelos), o null.
 ## Los nodos del grupo "enemy_targets" implementan can_be_targeted_by_enemies() y target_priority().
 func nearest_target() -> Node3D:
+	if status.has(StatusEffects.CONFUSED):
+		return _nearest_other_enemy()
 	if is_instance_valid(focus_target) and focus_target.can_be_targeted_by_enemies():
 		return focus_target
 	var best: Node3D = null
@@ -345,6 +350,8 @@ func is_targetable() -> bool:
 
 ## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.
 func _modify_incoming(info: DamageInfo) -> void:
+	if status.has(StatusEffects.TACTICAL_MARK) and info.attacker_team == DamageInfo.Team.PLAYERS:
+		info.amount *= 1.0 + Balance.get_character(&"pipo").kit_data.mark_bonus
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15
@@ -646,3 +653,33 @@ func _maybe_bark() -> void:
 	timer.timeout.connect(func() -> void:
 		if is_instance_valid(self) and not health.is_dead:
 			Dialogue.say(BARKS[enemy_id], global_position + Vector3.UP * 2.6, Color(0.85, 0.8, 0.9)))
+
+
+# --- Confusión (Floración de Champaka): se pegan entre ellos ---
+
+## A quién le pegan sus ataques: a los jugadores, o a los suyos si está confundido.
+func attack_team() -> DamageInfo.Team:
+	return DamageInfo.Team.ENEMIES if status.has(StatusEffects.CONFUSED) else DamageInfo.Team.PLAYERS
+
+
+func _nearest_other_enemy() -> Node3D:
+	var best: Node3D = null
+	var best_distance: float = INF
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var other := node as Enemy
+		if other == null or other == self or not other.is_targetable():
+			continue
+		var d: float = flat_distance_to(other.global_position)
+		if d < best_distance:
+			best_distance = d
+			best = other
+	return best
+
+
+## Para que un enemigo confundido pueda apuntarle a otro como a un jugador.
+func can_be_targeted_by_enemies() -> bool:
+	return is_targetable()
+
+
+func target_priority() -> float:
+	return 1.0

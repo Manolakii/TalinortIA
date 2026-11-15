@@ -94,7 +94,7 @@ func _start_windup() -> void:
 func _strike() -> void:
 	telegraph.hide_telegraph()
 	var info: DamageInfo = make_attack()
-	var targets: Array[Hurtbox] = CombatQuery.in_sector(get_tree(), DamageInfo.Team.PLAYERS,
+	var targets: Array[Hurtbox] = CombatQuery.in_sector(get_tree(), attack_team(),
 			global_position, facing, data.attack_radius, data.attack_angle_deg)
 	if Combat.deliver(info, targets) > 0:
 		freeze(Balance.combat.hitstop_light)

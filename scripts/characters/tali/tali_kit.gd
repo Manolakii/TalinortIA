@@ -625,3 +625,18 @@ func _fury_gain() -> float:
 
 func ability_cooldowns() -> Array[AbilityCooldown]:
 	return [call_cooldown, slam_cooldown]
+
+
+## Sinergia con Champaka: el Abrazo de Oso le corta la Furia sin Resaca (Kits).
+func calm_fury() -> void:
+	if not in_fury:
+		return
+	in_fury = false
+	fury = 0.0
+	cancel_scheduled()
+	_cancel_slam()
+	player.end_action()
+	player.health.damage_taken_multiplier = 1.0
+	_lockout = 0.0
+	_tween_scale(1.0)
+	_say("Tranqui...", Color(0.75, 0.9, 0.8))

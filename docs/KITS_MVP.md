@@ -145,3 +145,51 @@ Un personaje que en realidad son dos. El jugador maneja a uno y el otro actúa s
 | Maestro | Niebla | Silencio de los Valles: niebla en toda la sala que apaga escudos y tecnología enemiga |
 
 Detalle de color: Stewie está inspirada en el gato de Manuel. En Birig Bamba tira cosas de las mesas, se sienta arriba de las cajas y a veces ignora al Maestro.
+
+---
+
+## General Pipo — El Tuerto del Bosque
+
+*(Agregado por pedido del grupo el 2026-11-14, del documento "Kits de personajes". Números del GDD.)*
+
+Táctico y comandante. Controla la pelea desde atrás: marca enemigos, arma torretas con chatarra de su nave y pide fuego pesado. Lento, pero cada tiro cuenta. Vida 115, velocidad 5,2 m/s, crítico 5% (30% dentro de su cono).
+
+**0 · Pasiva — Un Ojo Basta**
+- **Precisión:** los enemigos en el centro de su mira (un cono angosto adelante) tienen 30% de chance de crítico.
+- **Punto ciego:** los enemigos que lo atacan desde su lado izquierdo hacen 15% más de daño. (El oscurecimiento del borde no entra en esta versión; GDD, Choques.)
+
+**1 · Golpe común — Bláster Reglamentario:** tiro preciso de 32 cada 0,7 s. Cada tercer tiro aplica **Marca Táctica**: el enemigo marcado recibe 20% más de daño de sus torretas y de los aliados (6 s).
+
+**2 · Habilidad fuerte — Despliegue de Chatarra (CD 14 s, máximo 2):** arma una torreta (10 por tiro, 2 tiros por segundo) que dispara primero a los marcados y dura 12 s o hasta que la rompan. *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
+
+**3 · Esquiva — Repliegue Ordenado (1 carga, CD corto):** salto hacia atrás que deja una mina de proximidad donde estaba parado. *"No es huir, es reposicionarse."*
+
+**4 · Definitiva — Fuego de la Nave Insignia:** marca una zona grande y, después de 1,5 s, la nave la bombardea con 6 impactos de 90. Cada enemigo con Marca Táctica recibe un impacto extra garantizado. Como la nave sigue medio rota, uno de los impactos cae en un lugar al azar.
+
+## Capitán Champaka — El Coloso del Hongo
+
+*(Agregado por pedido del grupo el 2026-11-14, del documento "Kits de personajes". Números del GDD.)*
+
+Tanque y sanador. Lento y enorme: se come los golpes del equipo y los convierte en curación con las esporas del hongo. Vida 220, velocidad 4,8 m/s, crítico 5%. Recibe 15% menos de daño siempre.
+
+**0 · Pasiva — Esporas Protectoras**
+- **Esporas:** cada 100 de daño que recibe, brota en el piso un hongo que cura 20 a quien lo pise, sea él o un aliado.
+- **Papá del grupo:** los aliados que están a su lado reciben 10% menos de daño.
+
+**1 · Golpe común — Manotazo de Papá:** golpes lentos y anchos que empujan (22 / 22 / 38 cada 1,6 s). El tercero es un golpe al piso que genera una onda corta.
+
+**2 · Habilidad fuerte — Abrazo de Oso (CD 12 s):** agarra a un enemigo, lo inmoviliza y lo aplasta contra el piso (80). A los élites los retiene 2 s. Si lo usa sobre Tali en Furia, le corta la Furia sin Resaca y le cura 20% de la vida.
+
+**3 · Esquiva — Panzazo (1 carga):** se tira de panza una distancia corta. No da invulnerabilidad (recibe 40% menos de daño durante el trayecto, GDD Choques), nada lo frena y empuja todo lo que toca. Al caer suelta esporas que curan un poco alrededor.
+
+**4 · Definitiva — Floración del Hongo:** brota un hongo gigante a su alrededor durante 8 s. Dentro de la zona los aliados se curan todo el tiempo, un aliado caído revive y los enemigos quedan enredados en micelio (lentos) y confundidos por las esporas (pueden pegarse entre ellos).
+
+## Sinergias (documento "Kits de personajes")
+
+| Personajes | Qué pasa |
+| --- | --- |
+| Champaka → Tali | Abrazo de Oso corta la Furia sin Resaca y lo cura |
+| Tali → Agucci | Cerca de Tali, el Hambre baja sola; Posesión a su lado dura la mitad |
+| Pipo + Croco | Si el objetivo con Recompensa tiene Marca Táctica, el Croco cobra el doble |
+| Maestro (Guía) + cualquiera | Bendición y Lección para Todos funcionan sobre cualquier aliado |
+| Champaka + todos | Los hongos curativos los puede agarrar cualquiera |

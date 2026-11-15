@@ -396,6 +396,14 @@ func outgoing_damage_multiplier() -> float:
 ## Daño recibido con objetos (Escama), con tope.
 func _modify_incoming(info: DamageInfo) -> void:
 	info.amount *= modifiers.damage_taken_multiplier()
+	kit.modify_incoming(info)
+	# Papá del grupo (Champaka): a su lado se recibe menos daño.
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var ally := node as PlayerCharacter
+		if ally != null and ally != self and not ally.health.is_dead and ally.kit is ChampakaKit \
+				and ally.global_position.distance_to(global_position) <= (ally.kit as ChampakaKit).kd.dad_radius:
+			info.amount *= 1.0 - (ally.kit as ChampakaKit).kd.dad_reduction
+			break
 
 
 func _on_loadout_changed(slot_index: int) -> void:

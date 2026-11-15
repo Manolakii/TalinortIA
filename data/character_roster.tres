@@ -6,7 +6,9 @@
 [ext_resource type="Resource" path="res://data/characters/croco.tres" id="4"]
 [ext_resource type="Resource" path="res://data/characters/agucci.tres" id="5"]
 [ext_resource type="Resource" path="res://data/characters/maestro.tres" id="6"]
+[ext_resource type="Resource" path="res://data/characters/pipo.tres" id="7"]
+[ext_resource type="Resource" path="res://data/characters/champaka.tres" id="8"]
 
 [resource]
 script = ExtResource("1")
-characters = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
+characters = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8")])

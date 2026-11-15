@@ -10,7 +10,7 @@ TalinortIA es un roguelike de acción en 3D para 1 a 4 jugadores en cooperativo 
 
 - **Personajes:** Tali, Mercenario Croco, Agucci, y el Maestro Uwey con Stewie.
 - **Lugares:** Birig Bamba (hub) y el Stage 1 completo en Talinorthland, del 1-1 al 1-4 con el Gronk Gigante.
-- **Queda para después:** General Pipo, Capitán Champaka, los Stages 2 y 3, y el online.
+- **Queda para después:** los Stages 2 y 3, y el online. (General Pipo y Capitán Champaka se sumaron al MVP por pedido del grupo, 2026-11-14.)
 
 ## Controles
 

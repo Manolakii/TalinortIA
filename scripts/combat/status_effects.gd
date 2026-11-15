@@ -19,6 +19,10 @@ const FOGGED: StringName = &"fogged"
 const HIDDEN: StringName = &"hidden"
 ## Bombito de Birig Bamba: +15% de velocidad.
 const BOMBITO: StringName = &"bombito"
+## Marca Táctica del General Pipo: recibe más daño de sus torretas y de los aliados.
+const TACTICAL_MARK: StringName = &"tactical_mark"
+## Esporas de la Floración: el enemigo se confunde y les pega a los suyos.
+const CONFUSED: StringName = &"confused"
 
 signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)

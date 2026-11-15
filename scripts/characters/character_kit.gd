@@ -202,6 +202,11 @@ func hero(id: StringName) -> int:
 	return MetaProgress.level(id)
 
 
+## Para que el kit cambie el daño que recibe su personaje (Champaka, punto ciego de Pipo).
+func modify_incoming(_info: DamageInfo) -> void:
+	pass
+
+
 ## Los cooldowns de la habilidad fuerte (para el Núcleo Uwey).
 func ability_cooldowns() -> Array[AbilityCooldown]:
 	return []

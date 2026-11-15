@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ChampakaKitData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/champaka_kit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+damage_reduction = 0.15
+spores_per_mushroom = 100.0
+mushroom_heal = 20.0
+dad_radius = 3.0
+dad_reduction = 0.1
+swipe_damage = Array[float]([22.0, 22.0, 38.0])
+combo_time = 1.6
+swipe_range = 2.7
+swipe_angle_deg = 140.0
+swipe_knockback = 5.0
+wave_radius = 3.0
+wave_knockback = 7.0
+hug_cooldown = 12.0
+hug_range = 2.8
+hug_damage = 80.0
+hug_hold = 1.0
+hug_hold_elite = 2.0
+hug_tali_heal = 0.2
+belly_distance = 4.0
+belly_duration = 0.38
+belly_recharge = 5.0
+belly_damage_reduction = 0.4
+belly_damage = 15.0
+belly_knockback = 8.0
+belly_heal = 8.0
+belly_heal_radius = 3.0
+bloom_duration = 8.0
+bloom_radius = 6.0
+bloom_heal_per_second = 8.0

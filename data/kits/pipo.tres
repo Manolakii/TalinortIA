@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="PipoKitData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/pipo_kit_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+cone_half_deg = 12.0
+cone_crit_chance = 0.3
+blind_spot_damage = 0.15
+blaster_damage = 32.0
+blaster_interval = 0.7
+blaster_speed = 34.0
+blaster_range = 17.0
+mark_every = 3
+mark_bonus = 0.2
+mark_duration = 6.0
+turret_cooldown = 14.0
+turret_max = 2
+turret_duration = 12.0
+turret_health = 60.0
+turret_damage = 10.0
+turret_shots_per_second = 2.0
+turret_range = 12.0
+retreat_distance = 4.5
+retreat_duration = 0.3
+retreat_cooldown = 3.0
+mine_damage = 50.0
+mine_radius = 2.5
+mine_trigger = 1.6
+mine_lifetime = 15.0
+bomb_range = 14.0
+bomb_radius = 7.0
+bomb_delay = 1.5
+bomb_impacts = 6
+bomb_damage = 90.0
+bomb_impact_radius = 2.5

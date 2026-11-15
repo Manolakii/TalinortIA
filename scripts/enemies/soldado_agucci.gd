@@ -92,7 +92,7 @@ func _start_dash() -> void:
 
 func _hit_along(from: Vector3, to: Vector3) -> void:
 	var reach: Vector3 = to + _dash_direction * 1.0
-	for hurtbox: Hurtbox in CombatQuery.in_line(get_tree(), DamageInfo.Team.PLAYERS, from, reach,
+	for hurtbox: Hurtbox in CombatQuery.in_line(get_tree(), attack_team(), from, reach,
 			data.charge_width):
 		if _hit.has(hurtbox.receiver):
 			continue

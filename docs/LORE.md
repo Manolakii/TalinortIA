@@ -57,3 +57,12 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 - **Aguccis invasores:** soldados, tiradores y chamanes.
 - **Gronks:** bestias salvajes.
 - **Gronk Gigante:** el boss, controlado por la sombra. Al morir, la sombra sale de su cuerpo y el Gronk queda libre.
+
+
+## Agregados de la biblia (2026-11-14)
+
+- **Mercenario Croco:** nació en Birig Bamba y se fue porque la estación es un quilombo (aunque él también es medio quilombero). Busca al General Pipo por la recompensa de los Pipos, pero hay un chantaje en el medio y terminan colaborando.
+- **General Pipo:** les arregló la nave a los Talinorteanos a cambio de que no lo molesten. Durante la Guerra de Beláustegui escondió refugiados en el Bosque Tuerto sin decírselo a nadie. **Su secreto:** rescató al Líder Supremo Talinorteano y lo tiene escondido en su cabaña (easter egg: si jugás con Pipo, entrás a la cabaña y lo ves).
+- **Líder Supremo Talinorteano:** el bocón que empezó la guerra. Está triste y débil por la derrota.
+- **Capitán Champaka:** humano de la Tierra que resurgió de un hongo extraño y se volvió superhumano. Padre adoptivo del grupo y tutor de Tali. [GANCHO] el hongo podría venir de restos de la nave Pipo.
+- **Agucci:** después de la guerra deserta para siempre del gobierno de Gucci.

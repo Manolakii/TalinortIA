@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/champaka/champaka_kit.gd" id="2"]
+[ext_resource type="Resource" path="res://data/kits/champaka.tres" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"champaka"
+initials = "CC"
+display_name = "Capitán Champaka"
+blurb = "El papá del grupo. Se come los golpes y los convierte en hongos que curan."
+max_health = 220.0
+move_speed = 4.8
+crit_chance = 0.05
+crit_multiplier = 1.5
+placeholder_height = 2.2
+placeholder_radius = 0.55
+ult_per_damage_dealt = 0.05
+ult_per_damage_taken = 0.25
+kit_script = ExtResource("2")
+kit_data = ExtResource("3")
