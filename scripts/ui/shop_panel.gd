@@ -64,7 +64,7 @@ func _physics_process(delta: float) -> void:
 		_refresh()
 	elif input.just_pressed(PlayerInput.Action.CONFIRM) or input.just_pressed(PlayerInput.Action.INTERACT):
 		choose(_selected)
-	elif input.just_pressed(PlayerInput.Action.BACK):
+	elif (input.just_pressed(PlayerInput.Action.BACK) or input.just_pressed(PlayerInput.Action.PAUSE)):
 		close()
 
 

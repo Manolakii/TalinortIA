@@ -85,3 +85,15 @@ func test_panel_has_general_and_hero_columns() -> void:
 	assert_eq((panel._columns[1] as Array).size(), 3, "Héroe del Agucci")
 	assert_true(panel.buy(1, 0))
 	assert_eq(MetaProgress.level(&"agucci_lucidez"), 1)
+
+
+func test_escape_closes_the_menu_instead_of_pausing() -> void:
+	make_player(&"tali")
+	var panel := McoiniaPanel.new()
+	add_child(panel)
+	panel.open(_player)
+	panel._wait = 0.0
+	press(PlayerInput.Action.PAUSE)
+	panel._physics_process(DT)
+	assert_false(_player.menu_locked, "Esc / Start cierra el menú")
+	assert_false(get_tree().paused)

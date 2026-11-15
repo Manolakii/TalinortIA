@@ -104,7 +104,7 @@ func _physics_process(delta: float) -> void:
 			close()
 		else:
 			_show_line()
-	elif input.just_pressed(PlayerInput.Action.BACK):
+	elif (input.just_pressed(PlayerInput.Action.BACK) or input.just_pressed(PlayerInput.Action.PAUSE)):
 		close()
 
 

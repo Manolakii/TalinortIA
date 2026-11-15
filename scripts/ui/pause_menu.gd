@@ -26,6 +26,10 @@ func _physics_process(_delta: float) -> void:
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		var input: PlayerInput = slot.input
 		if input.just_pressed(PlayerInput.Action.PAUSE):
+			# Si ese jugador está en un menú (tienda, McoinIA, elegir mejora...), Esc / Start
+			# cierra el menú y no pausa (antes se trababa: reportado por el grupo).
+			if not get_tree().paused and _in_menu(slot):
+				continue
 			if get_tree().paused:
 				_try_resume()
 			else:
@@ -34,6 +38,14 @@ func _physics_process(_delta: float) -> void:
 		if get_tree().paused and _wants_exit(slot):
 			_exit_to_join_screen()
 			return
+
+
+func _in_menu(slot: PlayerSlot) -> bool:
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var player := node as PlayerCharacter
+		if player != null and player.slot == slot and player.menu_locked:
+			return true
+	return false
 
 
 func _wants_exit(slot: PlayerSlot) -> bool:

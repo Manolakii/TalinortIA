@@ -69,8 +69,14 @@ func open(by: PlayerCharacter) -> void:
 	_message = Label.new()
 	_message.add_theme_font_size_override("font_size", 16)
 	_message.add_theme_color_override("font_color", Color(0.8, 0.8, 0.85))
-	_message.text = "W/S: elegir · A/D: columna · Enter/E o A/X: comprar · Esc/B: salir"
+	_message.text = "W/S: elegir · A/D: columna · Enter/E o A/X: comprar · Esc, Start o B: salir"
 	box.add_child(_message)
+	var leave := Label.new()
+	leave.text = "[ Salir: Esc / Start / B ]"
+	leave.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	leave.add_theme_font_size_override("font_size", 18)
+	leave.add_theme_color_override("font_color", GOLD)
+	box.add_child(leave)
 	_refresh()
 
 
@@ -95,7 +101,7 @@ func _physics_process(delta: float) -> void:
 		_refresh()
 	elif input.just_pressed(PlayerInput.Action.CONFIRM) or input.just_pressed(PlayerInput.Action.INTERACT):
 		buy(_column, _row)
-	elif input.just_pressed(PlayerInput.Action.BACK):
+	elif (input.just_pressed(PlayerInput.Action.BACK) or input.just_pressed(PlayerInput.Action.PAUSE)):
 		close()
 
 
