@@ -7,15 +7,16 @@ extends Resource
 @export var damage_reduction: float = 0.15
 ## Cada cuánto daño recibido brota un hongo, y cuánto cura.
 @export var spores_per_mushroom: float = 100.0
-@export var mushroom_heal: float = 20.0
+@export var mushroom_heal: float = 5.0
 ## Papá del grupo: los aliados a esta distancia reciben menos daño.
 @export var dad_radius: float = 3.0
 @export var dad_reduction: float = 0.1
 
-@export_group("Manotazo de Papá")
-@export var swipe_damage: Array[float] = [22.0, 22.0, 38.0]
-## Duración del combo completo (GDD: cada 1,6 s).
-@export var combo_time: float = 1.6
+@export_group("Aplauso de Papá")
+## Pedido del grupo (2026-11-15): en vez del combo de 3, un aplauso fuerte que recarga lento.
+## Cada aplauso suma la onda en el piso que empuja.
+@export var clap_damage: float = 45.0
+@export var clap_interval: float = 1.25
 @export var swipe_range: float = 2.7
 @export var swipe_angle_deg: float = 140.0
 @export var swipe_knockback: float = 5.0

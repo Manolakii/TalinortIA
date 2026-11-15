@@ -45,12 +45,30 @@ func test_spores_grow_a_mushroom_every_100_damage() -> void:
 	assert_almost_eq(_kit.spores, 10.5, 0.01)
 
 
-func test_combo_damage() -> void:
+func test_clap_is_one_slow_strong_hit() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
-	step(75)
+	step(40)
 	_slot.input._held[PlayerInput.Action.ATTACK] = false
-	assert_almost_eq(1000.0 - enemy.health.current, 22.0 + 22.0 + 38.0, 0.01, "22 / 22 / 38")
+	assert_almost_eq(1000.0 - enemy.health.current, 45.0, 0.01, "Un solo aplauso de 45 en 0,66 s")
+
+
+func test_mushrooms_heal_five() -> void:
+	assert_eq(_kit.mushroom_heal(), 5.0)
+	RunState.add_upgrade(0, &"champaka_hongos_gorditos")
+	assert_eq(_kit.mushroom_heal(), 10.0)
+
+
+func test_belly_mushroom_only_in_combat() -> void:
+	RunState.add_upgrade(0, &"champaka_panzazo_hongo")
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		node.remove_from_group(&"enemies")
+	var before: int = _count_mushrooms()
+	_kit._land()
+	assert_eq(_count_mushrooms(), before, "Sin enemigos no suelta hongos")
+	enemy_at(Vector3(8, 0, 8), 1000.0)
+	_kit._land()
+	assert_eq(_count_mushrooms(), before + 1, "Con pelea, sí")
 
 
 func test_belly_slide_is_not_invulnerable_but_reduces_damage() -> void:

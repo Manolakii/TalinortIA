@@ -6,11 +6,11 @@
 script = ExtResource("1")
 damage_reduction = 0.15
 spores_per_mushroom = 100.0
-mushroom_heal = 20.0
+mushroom_heal = 5.0
 dad_radius = 3.0
 dad_reduction = 0.1
-swipe_damage = Array[float]([22.0, 22.0, 38.0])
-combo_time = 1.6
+clap_damage = 45.0
+clap_interval = 1.25
 swipe_range = 2.7
 swipe_angle_deg = 140.0
 swipe_knockback = 5.0
