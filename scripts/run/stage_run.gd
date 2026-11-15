@@ -293,7 +293,7 @@ func _on_event_resolved(won: bool, bonus_item: bool = false) -> void:
 
 
 ## Premios al terminar. Hay UN objeto por sala como máximo: lo da la puerta "Objeto", la élite
-## o un evento perfecto. Si se juntan dos de esas cosas, se elige entre 4 opciones.
+## o un evento perfecto. Si se juntan dos de esas cosas, se elige entre más opciones (lujo).
 ## Las mejoras de personaje salen al cerrar el escenario y en los desafíos (pedido del grupo).
 ## `event_perfect`: el evento salió perfecto. `bonus_item`: objeto extra (salvaron a todos).
 func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_lost: bool = false) -> void:
@@ -316,7 +316,7 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 		sources += 1 if source else 0
 	if sources > 0:
 		var better: bool = sources >= 2
-		var heading: String = "¡Objeto de lujo! Elegí entre 4" if better else ""
+		var heading: String = "¡Objeto de lujo! Elegí entre %d" % config.upgrade_options_bonus if better else ""
 		await _pick(RewardPicker.Kind.ITEM, heading,
 				config.upgrade_options_bonus if better else config.upgrade_options)
 	if bonus_item:
@@ -404,7 +404,9 @@ func _finish_stage() -> void:
 	get_tree().change_scene_to_file(HUB_SCENE)
 
 
-func _pick(kind: RewardPicker.Kind, heading: String = "", option_count: int = 3) -> void:
+func _pick(kind: RewardPicker.Kind, heading: String = "", option_count: int = -1) -> void:
+	if option_count <= 0:
+		option_count = config.upgrade_options
 	var eligible: Array[PlayerCharacter] = []
 	for player: PlayerCharacter in players:
 		if is_instance_valid(player) and not player.is_out():
@@ -583,7 +585,7 @@ func enter_challenge(door: RoomDoor) -> void:
 ## Terminó el desafío: si se ganó, mejora de lujo (y objeto si salió perfecto); después se vuelve.
 func _challenge_done(won: bool, bonus_item: bool) -> void:
 	if won:
-		await _pick(RewardPicker.Kind.UPGRADE, "¡Desafío superado! Mejora de lujo: elegí entre 4",
+		await _pick(RewardPicker.Kind.UPGRADE, "¡Desafío superado! Mejora de lujo: elegí entre %d" % config.upgrade_options_bonus,
 				config.upgrade_options_bonus)
 		if bonus_item:
 			await _pick(RewardPicker.Kind.ITEM, "¡Salvaron a todos! Un objeto de regalo")

@@ -149,10 +149,10 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 
 | Sala | Cómo se pasa | Premio |
 | --- | --- | --- |
-| Combate | Vencer a todos los enemigos, que aparecen en 2 o 3 oleadas | Oro, y en algunas un objeto (elegir 1 de 3). *2026-11-15, pedido del grupo: antes era una mejora* |
+| Combate | Vencer a todos los enemigos, que aparecen en 2 o 3 oleadas | Oro, y en algunas un objeto (elegir 1 de 2). *2026-11-15, pedido del grupo: antes era una mejora, y se elegía entre 3* |
 | Aguante *(2026-11-15, pedido del grupo)* | Aguantar 40 s mientras llegan tandas de enemigos sin parar | Igual que Combate |
 | Élite | Igual, con 1 o 2 élites y menos enemigos comunes | Objeto asegurado y más oro *(2026-11-15: antes, mejora)* |
-| Evento (Desafío) | Resolver el evento (abajo). *2026-11-15, pedido del grupo:* es una puerta extra que aparece cada tanto; se entra, se juega y se vuelve a la misma sala (como una grieta). Solo las salas de combate (normal, élite o aguante) hacen avanzar | Si se gana: una mejora de lujo (elegir 1 de 4). *2026-11-15:* los desafíos no dan oro (ni cofre con oro, ni enemigos, ni vasijas). Si se pierde, nada |
+| Evento (Desafío) | Resolver el evento (abajo). *2026-11-15, pedido del grupo:* es una puerta extra que aparece cada tanto; se entra, se juega y se vuelve a la misma sala (como una grieta). Solo las salas de combate (normal, élite o aguante) hacen avanzar | Si se gana: una mejora de lujo (elegir 1 de 3; antes 1 de 4). *2026-11-15:* los desafíos no dan oro (ni cofre con oro, ni enemigos, ni vasijas). Si se pierde, nada |
 | Tesoro | Sin pelea, o con un guardia | Un cofre y vasijas |
 | Cabaña del General Pipo | Solo en el Stage 1. Está escondida y se encuentra resolviendo un acertijo | Easter egg si jugás con Pipo. Si no, Pipo te echa, pero te deja una torreta aliada para la sala siguiente |
 | Valles Antiguos | Solo en el Stage 2. Sala pacífica, sin pelea | Una fuente que cura y lore. Diálogos especiales si el Maestro está en el equipo |
@@ -167,9 +167,9 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 - **Ritmo del Bombo:** pisar baldosas al ritmo de un tambor de Birig Bamba, como un Simon dice. Sirve en cualquier stage.
 - **La apuesta del Croco:** un Birigbambense te ofrece apostar oro a qué vasija tiene el premio.
 
-### Mejoras de personaje: elegir 1 de 3 (decidido)
+### Mejoras de personaje: elegir 1 de 3 (decidido; *2026-11-15, pedido del grupo: ahora 1 de 2, y 1 de 3 las de lujo*)
 
-Son beneficios propios de cada personaje, no objetos. *2026-11-15, pedido del grupo (cambia lo decidido: las mejoras pesaban mucho más que los objetos y salían todo el tiempo):* salen al cerrar cada escenario y al ganar un Desafío (de lujo, 1 de 4). Las salas de combate y las de élite dan objetos. Cada jugador elige la suya en su panel. Las Sendas del Maestro y Stewie funcionan como sus mejoras.
+Son beneficios propios de cada personaje, no objetos. *2026-11-15, pedido del grupo (cambia lo decidido: las mejoras pesaban mucho más que los objetos y salían todo el tiempo):* salen al cerrar cada escenario y al ganar un Desafío (de lujo, 1 de 3). Las salas de combate y las de élite dan objetos. Cada jugador elige la suya en su panel. Las Sendas del Maestro y Stewie funcionan como sus mejoras.
 
 | Personaje | Ejemplos de mejoras |
 | --- | --- |
@@ -180,7 +180,7 @@ Son beneficios propios de cada personaje, no objetos. *2026-11-15, pedido del gr
 | General Pipo | +1 torreta como máximo · Marca Táctica cada 2 tiros · el bombardeo suma 2 impactos |
 | Capitán Champaka | El tercer golpe seguido da un escudo de 15 · Abrazo de Oso cura 10 a los aliados cercanos · el Panzazo deja un hongo |
 
-### Objeto al terminar un escenario: elegir 1 de 3 (decidido)
+### Objeto al terminar un escenario: elegir 1 de 3 (decidido; *2026-11-15: ahora 1 de 2, y 1 de 3 los de lujo*)
 
 Al pasar de un escenario al siguiente (del 1-1 al 1-2, por ejemplo), cada jugador elige 1 de 3 **objetos genéricos**, que se apilan y suben estadísticas. Son 3 por stage y 9 por partida, más lo que se compre en Birig Bamba. *2026-11-15, pedido del grupo:* al revés: al pasar de escenario se elige una **mejora**, y los objetos salen de las puertas "Objeto" y de las salas de élite.
 

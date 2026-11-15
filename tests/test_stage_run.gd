@@ -46,7 +46,7 @@ func test_upgrade_picker_gives_the_chosen_one() -> void:
 	picker.start(RewardPicker.Kind.UPGRADE, [_player] as Array[PlayerCharacter])
 	assert_true(_player.menu_locked, "Mientras elige no se mueve")
 	var options: Array = picker._choices[0].options
-	assert_eq(options.size(), 3)
+	assert_eq(options.size(), 2)
 	picker.pick(0, 1)
 	assert_true(RunState.has_upgrade(0, options[1]["id"]))
 	assert_false(_player.menu_locked)
@@ -58,7 +58,7 @@ func test_item_picker_adds_an_item() -> void:
 	add_child(picker)
 	picker.start(RewardPicker.Kind.ITEM, [_player] as Array[PlayerCharacter])
 	var options: Array = picker._choices[0].options
-	assert_eq(options.size(), 3)
+	assert_eq(options.size(), 2)
 	picker.pick(0, 0)
 	assert_eq(RunState.get_items(0), [options[0]["id"]])
 
@@ -73,7 +73,7 @@ func test_menu_navigation_with_up_and_down() -> void:
 	release(PlayerInput.Action.DOWN)
 	press(PlayerInput.Action.DOWN)
 	picker._physics_process(DT)
-	assert_eq(picker._choices[0].selected, 2)
+	assert_eq(picker._choices[0].selected, 0, "Con 2 opciones, bajar dos veces vuelve a la primera")
 	release(PlayerInput.Action.DOWN)
 	press(PlayerInput.Action.CONFIRM)
 	picker._physics_process(DT)

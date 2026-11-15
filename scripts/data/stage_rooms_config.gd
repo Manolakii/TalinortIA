@@ -45,8 +45,8 @@ extends Resource
 ## Vienen muchos: cada uno suelta oro con menos chance.
 @export var survival_gold_factor: float = 0.3
 ## Opciones al elegir mejora: normal y "mejorada" (élite, desafío o evento bien hecho).
-@export var upgrade_options: int = 3
-@export var upgrade_options_bonus: int = 4
+@export var upgrade_options: int = 2
+@export var upgrade_options_bonus: int = 3
 ## Chance de que una sala tenga una roca agrietada con un pasaje al Tesoro escondido.
 @export var hidden_treasure_chance: float = 0.15
 ## Golpes para romper la roca agrietada.

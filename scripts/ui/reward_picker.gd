@@ -1,6 +1,6 @@
 class_name RewardPicker
 extends CanvasLayer
-## Elegir 1 de 3 (GDD: mejoras de personaje y objetos genéricos). Cada jugador elige en su
+## Elegir 1 entre 2 (3 si es de lujo) (GDD: mejoras de personaje y objetos genéricos). Cada jugador elige en su
 ## propio panel, arriba de su panel del HUD: W/S o la cruceta para moverse, Enter/E o A/X
 ## para elegir. Mientras elige no se mueve. Cuando eligieron todos, emite `finished`.
 
@@ -33,11 +33,11 @@ class Choice:
 var kind: Kind = Kind.UPGRADE
 var _choices: Array[Choice] = []
 var _wait: float = 0.35
-var _option_count: int = 3
+var _option_count: int = 2
 
 
-## `option_count`: cuántas opciones (3, o 4 si es una mejora "mejorada").
-func start(which: Kind, players: Array[PlayerCharacter], heading: String = "", option_count: int = 3) -> void:
+## `option_count`: cuántas opciones (2, o 3 si es de lujo).
+func start(which: Kind, players: Array[PlayerCharacter], heading: String = "", option_count: int = 2) -> void:
 	kind = which
 	_option_count = option_count
 	layer = 35
