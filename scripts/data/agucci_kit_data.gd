@@ -31,6 +31,11 @@ extends Resource
 @export var uzi_range: float = 10.0
 @export var uzi_gap: float = 0.08
 @export var combo_reset: float = 0.6
+## Kit de Yole "Katana de Yole Sajor": el cuarto golpe es un Tajo de sombra (dash) con el daño
+## de toda la ráfaga de la UZI.
+@export var katana_dash_distance: float = 4.5
+@export var katana_dash_time: float = 0.14
+@export var katana_dash_width: float = 1.8
 
 @export_group("Paso de Sombra")
 @export var step_cooldown: float = 6.0

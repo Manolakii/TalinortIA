@@ -183,3 +183,20 @@ func test_range_rings_show_with_a_target() -> void:
 	_pump(20)
 	assert_true(_kit._rings.visible, "Se ven los aros de alcance")
 	assert_true(_kit._marker.visible, "Y la marca en el enemigo apuntado")
+
+
+func test_yole_gunslinger_decoy_shoots() -> void:
+	RunState.add_upgrade(0, &"croco_senuelo_pistolero")
+	var enemy := enemy_at(Vector3(4, 0, -6), 1000.0)
+	press(PlayerInput.Action.DODGE)
+	_pump(1)
+	release(PlayerInput.Action.DODGE)
+	var decoy: Decoy = null
+	for node: Node in get_tree().get_nodes_in_group(&"enemy_targets"):
+		if node is Decoy:
+			decoy = node
+	assert_not_null(decoy)
+	assert_almost_eq(decoy._time_left, _kit.kd.decoy_duration * 2.0, 0.05, "Dura el doble")
+	step(int(1.5 / DT), [_kit._bullets, decoy])
+	assert_lt(enemy.health.current, 1000.0, "El señuelo le disparó")
+	autofree(decoy)

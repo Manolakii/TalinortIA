@@ -255,6 +255,8 @@ func _throw_rock() -> void:
 	player.start_action(0.18, 0.75)
 	basic_recovery = true
 	var spread: float = deg_to_rad(Combat.rng.randf_range(-kd.rock_spread_deg, kd.rock_spread_deg))
+	if has_upgrade(&"tali_piedra_bumeran"):
+		spread = 0.0  # Kit de Yole: sale derecha
 	var direction: Vector3 = player.aim_direction.rotated(Vector3.UP, spread)
 	var lucky: bool = Combat.roll(kd.lucky_shot_chance)
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.rock_damage,
@@ -270,10 +272,36 @@ func _throw_rock() -> void:
 		info.tags.append(&"lucky_shot")
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + direction * 0.5
 	_rocks.fire(from, direction, kd.rock_speed, kd.rock_range, kd.rock_radius, info,
+			DamageInfo.Team.ENEMIES, _on_rock_hit, _on_rock_expire.bind(info))
+
+
+## Piedra bumerán (kit de Yole): al llegar al final, vuelve a las manos de Tali pegando de nuevo.
+func _on_rock_expire(at: Vector3, info: DamageInfo) -> void:
+	_boomerang_back(at, info)
+
+
+func _boomerang_back(at: Vector3, info: DamageInfo) -> void:
+	if not has_upgrade(&"tali_piedra_bumeran") or info.has_tag(&"boomerang") or not is_instance_valid(player):
+		return
+	var back: DamageInfo = info.clone()
+	back.tags.append(&"boomerang")
+	back.stun = 0.0
+	var from := Vector3(at.x, player.global_position.y + 1.1, at.z)
+	var to: Vector3 = player.global_position + Vector3.UP * 1.1
+	var direction: Vector3 = to - from
+	direction.y = 0.0
+	if direction.length() < 2.0:
+		return
+	# Arranca un poco más adelante para no volver a pegarle al mismo apenas sale.
+	var start: Vector3 = from + direction.normalized() * 1.2
+	_rocks.fire(start, direction.normalized(), kd.rock_speed, direction.length() - 1.2, kd.rock_radius, back,
 			DamageInfo.Team.ENEMIES, _on_rock_hit)
 
 
 func _on_rock_hit(target: Node3D, info: DamageInfo) -> void:
+	# Bumerán: si le pegó a alguien a la ida, vuelve desde ahí.
+	if not info.has_tag(&"bounced"):
+		_boomerang_back(target.global_position, info)
 	# Piedra que rebota: sigue hacia otro enemigo cercano (una sola vez).
 	if has_upgrade(&"tali_piedrazo_rebota") and not info.has_tag(&"bounced"):
 		var next: Hurtbox = _nearest_other_enemy(target, 7.0)

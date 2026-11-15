@@ -26,6 +26,9 @@ extends Resource
 ## tener 2 (y 3 con la mejora "Otra torreta") a la vez.
 @export var turret_cooldown: float = 12.0
 @export var turret_max: int = 2
+## Kit de Yole "Torretas con patas": a qué distancia y qué tan rápido siguen a Pipo.
+@export var legs_follow_distance: float = 2.6
+@export var legs_speed: float = 7.0
 @export var turret_duration: float = 26.0
 @export var turret_health: float = 60.0
 @export var turret_damage: float = 7.0

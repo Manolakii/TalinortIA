@@ -24,7 +24,10 @@ func test_shop_has_four_specials_kit_upgrade_reroll_and_leave() -> void:
 	var shop := _shop()
 	var kinds: Array = shop.rows().map(func(r: Dictionary) -> StringName: return r["kind"])
 	assert_eq(kinds.count(&"special"), 4)
-	assert_eq(kinds.count(&"kit"), 1, "Croco: Contrato doble")
+	assert_eq(kinds.count(&"kit"), 2, "Croco: Contrato doble y el kit de Yole (Señuelo pistolero)")
+	var yole: Dictionary = shop.rows()[kinds.find(&"kit")]
+	assert_eq(yole["id"], &"croco_senuelo_pistolero")
+	assert_eq(yole["price"], 220, "Los kits de Yole cuestan más")
 	assert_true(kinds.has(&"reroll"))
 	assert_true(kinds.has(&"leave"))
 	assert_true(_player.menu_locked, "Mientras compra no se mueve")

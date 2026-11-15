@@ -9,6 +9,11 @@ var _material: StandardMaterial3D
 var _explode_owner: Node3D
 var _explode_damage: float = 0.0
 var _explode_radius: float = 0.0
+## Kit de Yole "Señuelo pistolero": dispara solo. `_shoot` recibe el objetivo (Hurtbox).
+var _shoot: Callable
+var _shoot_interval: float = 0.5
+var _shoot_range: float = 12.0
+var _shoot_timer: float = 0.25
 
 
 func setup(color: Color, height: float, radius: float, duration: float, priority: float) -> void:
@@ -36,8 +41,23 @@ func setup(color: Color, height: float, radius: float, duration: float, priority
 	add_child(hurtbox)
 
 
+## Señuelo pistolero: cada `interval` le dispara al enemigo más cercano a `max_range`.
+func shoot_with(shoot: Callable, interval: float, max_range: float) -> void:
+	_shoot = shoot
+	_shoot_interval = interval
+	_shoot_range = max_range
+
+
 func _physics_process(delta: float) -> void:
 	_time_left -= delta
+	if _shoot.is_valid() and _time_left > 0.0:
+		_shoot_timer -= delta
+		if _shoot_timer <= 0.0:
+			_shoot_timer = _shoot_interval
+			var target: Hurtbox = CombatQuery.nearest(get_tree(), DamageInfo.Team.ENEMIES,
+					global_position, _shoot_range)
+			if target != null:
+				_shoot.call(self, target)
 	# Parpadeo de holograma.
 	_material.albedo_color.a = 0.3 + 0.2 * absf(sin(_time_left * 18.0))
 	if _time_left <= 0.0:

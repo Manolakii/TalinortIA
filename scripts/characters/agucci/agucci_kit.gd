@@ -116,6 +116,8 @@ func _handle_input() -> void:
 func _start_skill() -> void:
 	cancel_scheduled()
 	player.end_action()
+	if _in_shadow:
+		_exit_shadow(Vector3.ZERO)  # cortó un Tajo de sombra a la mitad
 	basic_recovery = false
 	_since_attack = 0.0
 
@@ -196,7 +198,9 @@ func _is_behind(hurtbox: Hurtbox, origin: Vector3) -> bool:
 
 func _combo_step() -> void:
 	var index: int = _combo_index
-	_combo_index = (index + 1) % kd.step_durations.size()
+	var katana: bool = has_upgrade(&"agucci_katana_yole")
+	# Con la Katana de Yole el combo es de 4: tres cortes y el Tajo de sombra (sin UZI).
+	_combo_index = (index + 1) % (4 if katana else kd.step_durations.size())
 	_combo_idle = 0.0
 	_since_attack = 0.0
 	basic_recovery = false
@@ -204,6 +208,8 @@ func _combo_step() -> void:
 	player.start_action(kd.step_durations[index] / attack_speed(), 0.55)
 	if index < 3:
 		schedule(0.06, _cut.bind(index))
+	elif index == 3 and katana:
+		schedule(0.05, _katana_dash)
 	elif index == 3:
 		schedule(0.1, _kick)
 	else:
@@ -232,6 +238,37 @@ func _kick() -> void:
 			player.global_position, player.aim_direction, kd.kick_range, kd.kick_angle_deg)
 	if _hit_each(targets, kd.kick_damage, _setup_kick) > 0:
 		player.freeze(Balance.combat.hitstop_light)
+
+
+## Tajo de sombra (Katana de Yole): dash corto hacia donde apunta; corta a todo lo que cruza
+## con el daño que haría la ráfaga entera de la UZI.
+func _katana_dash() -> void:
+	basic_recovery = false
+	var direction: Vector3 = player.aim_direction
+	var from := Vector3(player.global_position.x, 0.0, player.global_position.z)
+	var to: Vector3 = _clamp_to_walls(from, from + direction * kd.katana_dash_distance)
+	player.start_action(kd.katana_dash_time + 0.12, 0.0)
+	player.action_velocity = (to - from) / kd.katana_dash_time
+	_enter_shadow()
+	Fx.ring_burst(_world(), from, 1.0, SHADOW_COLOR, 0.15)
+	schedule(kd.katana_dash_time, _katana_dash_end.bind(from, to))
+
+
+func _katana_dash_end(from: Vector3, to: Vector3) -> void:
+	basic_recovery = true
+	player.action_velocity = null
+	_exit_shadow(to - from)
+	var direction: Vector3 = (to - from).normalized() if from.distance_to(to) > 0.01 else player.aim_direction
+	Fx.beam(_world(), from + Vector3.UP * 0.9, direction, from.distance_to(to), 0.25,
+			player.slot.color.lightened(0.3), 0.15)
+	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
+			from, to, kd.katana_dash_width)
+	if _hit_each(targets, katana_dash_damage(), _setup_cut, true, from) > 0:
+		player.freeze(Balance.combat.hitstop_heavy)
+
+
+func katana_dash_damage() -> float:
+	return _uzi_bullets() * kd.uzi_damage
 
 
 func _setup_kick(info: DamageInfo) -> void:

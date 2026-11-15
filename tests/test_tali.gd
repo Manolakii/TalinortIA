@@ -263,3 +263,20 @@ func test_ultimate_fury_lasts_longer() -> void:
 	assert_true(_kit.in_fury)
 	assert_almost_eq(_kit._fury_time, _kit.kd.fury_duration + _kit.kd.ult_fury_bonus, 0.01,
 			"Con la definitiva: 10 + 8 s")
+
+
+func test_yole_boomerang_rock_comes_back_hitting() -> void:
+	RunState.add_upgrade(0, &"tali_piedra_bumeran")
+	_kit.kd.lucky_shot_chance = 0.0
+	_slot.character = _slot.character.duplicate()
+	_player.data.crit_chance = 0.0
+	_player.aim_direction = Vector3.FORWARD
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_step(1)
+	_slot.input._held[PlayerInput.Action.ATTACK] = false
+	# La piedra va derecho hasta el final sin pegarle a nadie...
+	_step(int(_kit.kd.rock_range / _kit.kd.rock_speed / DT) + 3)
+	# ...y a la vuelta le pega al que se metió en el camino.
+	var enemy: TalinorteanoCegado = _enemy_at(Vector3(0, 0, -3))
+	_step(60)
+	assert_eq(enemy.health.current, 160.0 - 18.0, "La vuelta también pega")

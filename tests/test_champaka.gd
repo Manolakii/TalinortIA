@@ -143,3 +143,12 @@ func test_upgrades_change_numbers() -> void:
 	assert_eq(_kit.spores_per_mushroom(), 70.0)
 	assert_eq(_kit.dad_radius(), 5.0)
 	assert_eq(_kit.dad_reduction(), 0.15)
+
+
+func test_yole_seismic_clap_hits_all_around() -> void:
+	RunState.add_upgrade(0, &"champaka_aplauso_sismico")
+	var behind := enemy_at(Vector3(0, 0, 2.0), 1000.0)
+	var front := enemy_at(Vector3(0, 0, -2.0), 1000.0)
+	_kit._swipe()
+	assert_lt(behind.health.current, 1000.0, "Le pega también al de atrás")
+	assert_almost_eq(1000.0 - front.health.current, 45.0 * 0.8, 1.0, "Un poco menos fuerte (80%)")

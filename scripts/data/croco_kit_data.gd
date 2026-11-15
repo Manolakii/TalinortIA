@@ -68,6 +68,10 @@ extends Resource
 @export var dodge_duration: float = 0.3
 @export var dodge_charges: int = 2
 @export var dodge_recharge: float = 4.0
+## Kit de Yole "Señuelo pistolero": el señuelo dura más y dispara la pistola.
+@export var gunslinger_duration_multiplier: float = 2.0
+@export var gunslinger_interval: float = 0.5
+@export var gunslinger_damage_ratio: float = 0.6
 @export var decoy_duration: float = 1.5
 ## Menos de 1: los enemigos lo prefieren antes que a un jugador a la misma distancia.
 @export var decoy_priority: float = 0.35

@@ -86,6 +86,18 @@ func test_turret_shoots_what_pipo_is_hitting() -> void:
 	assert_lt(marked.health.current, 1000.0, "Le tira al que viene acertando Pipo")
 
 
+func test_yole_walking_turrets_follow_pipo() -> void:
+	RunState.add_upgrade(0, &"pipo_torretas_patas")
+	press(PlayerInput.Action.ABILITY)
+	_pump(1)
+	release(PlayerInput.Action.ABILITY)
+	var turret: PipoTurret = _kit.turrets[0]
+	_player.global_position = Vector3(10, 0, 0)
+	for i: int in 120:
+		turret._physics_process(DT)
+	assert_lt(turret.global_position.distance_to(_player.global_position), 3.5, "Lo sigue")
+
+
 func test_retreat_leaves_mine_that_explodes() -> void:
 	press(PlayerInput.Action.DODGE)
 	_pump(1)

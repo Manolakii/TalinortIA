@@ -225,6 +225,16 @@ El oro es individual. Para que nadie se pelee por las monedas, **cada jugador ve
 **Yole Sajor** es un mapache que habla y es el transa del mercado negro de Birig Bamba, con su puesto en el Salón Beláustegui (cambio de lore del grupo, 2026-11-14): berretinero, chamuyero, te tira chistes, te descansa y te vende todo "que se cayó de un camión". Hay que hablarle para ver su mercadería.
 
 - **Stock:** cada jugador ve sus propios 4 objetos especiales, sacados al azar, más 1 mejora de kit de su personaje (las "Mejora en Birig Bamba" de los kits), a 120.
+- **Kits de Yole** (*2026-11-15, pedido del grupo: mejoras únicas, más especiales, que no salen como premio*): además, cada jugador ve el kit transformador de su personaje, a 220. Cambian cómo se juega una habilidad:
+
+| Personaje | Kit de Yole | Qué hace |
+| --- | --- | --- |
+| Agucci | Katana de Yole Sajor | Adiós UZI: el combo son 3 cortes y un Tajo de sombra (dash de 4,5 m que corta a todo lo que cruza con el daño de la ráfaga entera) |
+| Tali | Piedra bumerán | El Piedrazo sale derecho (sin desvío) y vuelve a sus manos, pegando de nuevo en el camino |
+| Croco | Señuelo pistolero | El señuelo dura el doble y dispara con la pistola (60% del daño, 2 por segundo) al enemigo más cercano |
+| Maestro y Stewie | Bastonazo en abanico | La onda de chi sale de a tres, en abanico de ±22° (cada enemigo recibe una sola) |
+| General Pipo | Torretas con patas | Las torretas caminan detrás de Pipo y disparan mientras lo siguen |
+| Capitán Champaka | Aplauso sísmico | El Aplauso pega a todo alrededor (30% más de alcance, 80% del daño) |
 - **Volver a tirar el stock:** 25 de oro, y sube 25 cada vez.
 - **Fuente:** cura toda la vida gratis, una vez por visita.
 

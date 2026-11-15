@@ -385,9 +385,19 @@ func _fire_bastonazo(source: Node3D, direction: Vector3, ratio: float) -> void:
 	info.knockback = 6.0
 	info.hitstop = Balance.combat.hitstop_heavy
 	info.shake = Balance.combat.shake_heavy * 0.4
-	Combat.deliver(info, _bastonazo_targets(from, direction))
-	Fx.beam(_world(), from + Vector3.UP * 0.3, direction, kd.bastonazo_length,
-			kd.bastonazo_width * 0.6, Color(player.slot.color.lightened(0.5), 0.6), 0.25)
+	# Kit de Yole "Bastonazo en abanico": salen tres ondas (cada enemigo recibe una sola).
+	var directions: Array[Vector3] = [direction]
+	if has_upgrade(&"maestro_bastonazo_triple"):
+		for angle: float in [-kd.fan_angle_deg, kd.fan_angle_deg]:
+			directions.append(direction.rotated(Vector3.UP, deg_to_rad(angle)))
+	var targets: Array[Hurtbox] = []
+	for wave: Vector3 in directions:
+		for hurtbox: Hurtbox in _bastonazo_targets(from, wave):
+			if not targets.has(hurtbox):
+				targets.append(hurtbox)
+		Fx.beam(_world(), from + Vector3.UP * 0.3, wave, kd.bastonazo_length,
+				kd.bastonazo_width * 0.6, Color(player.slot.color.lightened(0.5), 0.6), 0.25)
+	Combat.deliver(info, targets)
 
 
 func _bastonazo_targets(from: Vector3, direction: Vector3) -> Array[Hurtbox]:

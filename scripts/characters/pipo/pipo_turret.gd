@@ -50,6 +50,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if kit.has_upgrade(&"pipo_refugio"):
 		_camouflage()
+	if kit.has_upgrade(&"pipo_torretas_patas"):
+		_follow(delta)
 	_cooldown -= delta
 	var target: Hurtbox = _pick_target()
 	if target == null:
@@ -70,6 +72,28 @@ func _physics_process(delta: float) -> void:
 	var from: Vector3 = _head.global_position
 	var to: Vector3 = target.global_position + Vector3.UP * 0.9
 	Fx.beam(get_parent(), from, (to - from).normalized(), from.distance_to(to), 0.06, SHOT_COLOR, 0.08)
+
+
+## Kit de Yole "Torretas con patas": caminan detrás de Pipo, cada una en su lugar.
+func _follow(delta: float) -> void:
+	var owner_player: PlayerCharacter = kit.player
+	if not is_instance_valid(owner_player) or owner_player.health.is_dead:
+		return
+	var index: int = maxi(kit.turrets.find(self), 0)
+	var count: int = maxi(kit.turrets.size(), 1)
+	# Detrás de Pipo (según hacia dónde apunta), repartidas en abanico.
+	var back: Vector3 = -owner_player.aim_direction
+	back.y = 0.0
+	back = back.normalized() if back.length_squared() > 0.01 else Vector3.BACK
+	var spread: float = 0.0 if count == 1 else lerpf(-0.9, 0.9, float(index) / (count - 1))
+	var goal: Vector3 = owner_player.global_position + back.rotated(Vector3.UP, spread) * kit.kd.legs_follow_distance
+	var to_goal: Vector3 = goal - global_position
+	to_goal.y = 0.0
+	if to_goal.length() < 0.3:
+		return
+	var step: float = minf(kit.kd.legs_speed * delta, to_goal.length())
+	global_position += to_goal.normalized() * step
+	_visual.rotation.z = sin(Time.get_ticks_msec() * 0.03) * 0.08  # caminadito
 
 
 ## Primero al último enemigo que acertó Pipo; si no, el más cercano.

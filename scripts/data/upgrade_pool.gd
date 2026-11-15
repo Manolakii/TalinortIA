@@ -50,10 +50,12 @@ func _slot_taken_by_other(upgrade: CharacterUpgrade, owned: Array) -> bool:
 
 ## La mejora de tienda de un personaje que todavía puede comprar (o null). Si tiene variantes
 ## (exclusive_group), sale una al azar y desaparecen todas cuando compra una.
-func shop_upgrade_for(character: StringName, owned: Array, rng: RandomNumberGenerator) -> CharacterUpgrade:
+## `yole`: los kits de Yole transformadores (los que tienen precio propio) van aparte.
+func shop_upgrade_for(character: StringName, owned: Array, rng: RandomNumberGenerator,
+		yole: bool = false) -> CharacterUpgrade:
 	var options: Array[CharacterUpgrade] = []
 	for upgrade: CharacterUpgrade in upgrades:
-		if upgrade.character != character or not upgrade.shop_only:
+		if upgrade.character != character or not upgrade.shop_only or (upgrade.price > 0) != yole:
 			continue
 		if owned.has(upgrade.id) or _group_owned(upgrade, owned):
 			continue

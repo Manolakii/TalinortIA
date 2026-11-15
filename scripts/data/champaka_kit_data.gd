@@ -16,6 +16,9 @@ extends Resource
 ## Pedido del grupo (2026-11-15): en vez del combo de 3, un aplauso fuerte que recarga lento.
 ## Cada aplauso suma la onda en el piso que empuja.
 @export var clap_damage: float = 45.0
+## Kit de Yole "Aplauso sísmico": pega en círculo alrededor (alcance y daño relativos al Aplauso).
+@export var seismic_range_ratio: float = 1.3
+@export var seismic_damage_ratio: float = 0.8
 @export var clap_interval: float = 1.25
 @export var swipe_range: float = 2.7
 @export var swipe_angle_deg: float = 140.0

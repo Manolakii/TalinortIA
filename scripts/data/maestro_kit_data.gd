@@ -10,6 +10,8 @@ extends Resource
 @export var maestro_radius: float = 0.4
 @export var staff_damage: Array[float] = [18.0, 18.0, 34.0]
 ## Duración de cada golpe del combo (suman 1,4 s).
+## Kit de Yole "Bastonazo en abanico": ángulo de las ondas de los costados.
+@export var fan_angle_deg: float = 22.0
 @export var staff_step_durations: Array[float] = [0.4, 0.4, 0.6]
 @export var staff_range: float = 2.3
 @export var staff_angle_deg: float = 100.0

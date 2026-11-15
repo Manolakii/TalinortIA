@@ -231,3 +231,16 @@ func test_poison_on_an_enemy_that_disappears_does_not_break() -> void:
 		_kit.tick(DT)
 	RunState.upgrades.clear()
 	assert_true(true, "El veneno sobre un enemigo borrado no da error")
+
+
+func test_yole_katana_replaces_uzi_with_a_dash() -> void:
+	RunState.add_upgrade(0, &"agucci_katana_yole")
+	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
+	_slot.input._held[PlayerInput.Action.ATTACK] = true
+	_pump(int(1.22 / DT))
+	_slot.input._held[PlayerInput.Action.ATTACK] = false
+	_pump(10)
+	assert_almost_eq(1000.0 - enemy.health.current, 9.0 + 12.0 + 16.0 + 5 * 5.0, 0.5,
+			"3 cortes y el Tajo con el daño de la ráfaga (5 × 5)")
+	assert_lt(_player.global_position.z, -3.0, "El Tajo lo lleva para adelante")
+	assert_false(_kit._in_shadow, "Vuelve a chocar con todo")

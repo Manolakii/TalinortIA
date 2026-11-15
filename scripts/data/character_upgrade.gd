@@ -18,5 +18,8 @@ extends Resource
 @export var senda_path: StringName = &""
 ## Solo se compra en la tienda de Yole Sajor (la "Mejora en Birig Bamba" de cada kit).
 @export var shop_only: bool = false
+## Precio en la tienda de Yole (0 = el precio de siempre de la mejora de kit). Los "kits de
+## Yole" transformadores cuestan más (pedido del grupo: que sean más especiales).
+@export var price: int = 0
 ## Mejoras que se excluyen entre sí (por ejemplo, las variantes de "Ahora sí te entiendo").
 @export var exclusive_group: StringName = &""

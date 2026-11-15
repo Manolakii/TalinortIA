@@ -255,3 +255,17 @@ func test_when_both_fall_nobody_gets_up_alone() -> void:
 	assert_true(_player.health.is_dead, "Pasados 15 s no se levanta solo")
 	assert_almost_eq(_kit.companion.downed_time, frozen_time, 0.01, "El reloj del compañero se frenó")
 	GameSettings.auto_revive_players = true
+
+
+func test_yole_fan_bastonazo_hits_three_lanes_once_each() -> void:
+	_pump(1)
+	RunState.add_upgrade(0, &"maestro_bastonazo_triple")
+	var center := enemy_at(Vector3(0, 0, -6), 1000.0)
+	var side_dir: Vector3 = Vector3.FORWARD.rotated(Vector3.UP, deg_to_rad(_kit.kd.fan_angle_deg))
+	var side := enemy_at(side_dir * 6.0, 1000.0)
+	var near := enemy_at(Vector3(0, 0, -1.0), 1000.0)
+	_kit._fire_bastonazo(_player, Vector3.FORWARD, 0.0)
+	assert_lt(center.health.current, 1000.0)
+	assert_lt(side.health.current, 1000.0, "La onda del costado también pega")
+	assert_almost_eq(1000.0 - near.health.current, 1000.0 - center.health.current, 0.5,
+			"El que está pegado (lo tocan las tres) recibe una sola")

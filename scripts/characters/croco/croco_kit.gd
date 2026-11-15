@@ -296,14 +296,31 @@ func do_dodge() -> void:
 	var decoy := Decoy.new()
 	_world().add_child(decoy)
 	decoy.global_position = start
+	var gunslinger: bool = has_upgrade(&"croco_senuelo_pistolero")
 	decoy.setup(player.slot.color, data.placeholder_height, data.placeholder_radius,
-			kd.decoy_duration, kd.decoy_priority)
+			kd.decoy_duration * (kd.gunslinger_duration_multiplier if gunslinger else 1.0), kd.decoy_priority)
+	if gunslinger:
+		decoy.shoot_with(_decoy_shot, kd.gunslinger_interval, kd.pistol_range)
 	if has_upgrade(&"croco_senuelo_explota"):
 		decoy.explode_on_expire(player, 30.0, 2.5)
 	var trail := HasteTrail.new()
 	_world().add_child(trail)
 	trail.setup(player, start, start + direction * kd.dodge_distance, kd.trail_width,
 			kd.trail_duration, kd.haste_duration, player.slot.color)
+
+
+## Señuelo pistolero (kit de Yole): un tiro de pistola desde el señuelo.
+func _decoy_shot(decoy: Node3D, target: Hurtbox) -> void:
+	if not is_instance_valid(player):
+		return
+	var info: DamageInfo = make_hit(kd.pistol_damage * kd.gunslinger_damage_ratio)
+	info.is_melee = false
+	info.knockback = kd.pistol_knockback * 0.5
+	var direction: Vector3 = target.global_position - decoy.global_position
+	direction.y = 0.0
+	direction = direction.normalized()
+	_bullets.fire(decoy.global_position + Vector3.UP * 1.1 + direction * 0.5, direction, kd.pistol_speed,
+			kd.pistol_range, kd.bullet_radius, info, DamageInfo.Team.ENEMIES)
 
 
 # --- Riel ---

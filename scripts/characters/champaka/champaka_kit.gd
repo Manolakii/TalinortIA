@@ -51,16 +51,26 @@ func _swipe() -> void:
 	player.start_action(0.4 / attack_speed(), 0.3)
 	basic_recovery = true
 	var direction: Vector3 = player.aim_direction
-	var info: DamageInfo = make_hit(kd.clap_damage)
+	# Kit de Yole "Aplauso sísmico": pega a todo alrededor, un poco menos fuerte.
+	var seismic: bool = has_upgrade(&"champaka_aplauso_sismico")
+	var info: DamageInfo = make_hit(kd.clap_damage * (kd.seismic_damage_ratio if seismic else 1.0))
 	info.knockback = kd.swipe_knockback
 	info.hitstop = Balance.combat.hitstop_heavy
 	info.shake = Balance.combat.shake_heavy * 0.4
-	Fx.slash(_world(), player.global_position, direction, swipe_range(), kd.swipe_angle_deg, player.slot.color)
 	Sound.play("hit_heavy", -8.0)
-	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(), DamageInfo.Team.ENEMIES,
-			player.global_position, direction, swipe_range(), kd.swipe_angle_deg)
+	var targets: Array[Hurtbox]
+	if seismic:
+		targets = CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, player.global_position,
+				swipe_range() * kd.seismic_range_ratio)
+		Fx.ring_burst(_world(), player.global_position, swipe_range() * kd.seismic_range_ratio,
+				player.slot.color, 0.3)
+		Events.camera_shake_requested.emit(Balance.combat.shake_light)
+	else:
+		Fx.slash(_world(), player.global_position, direction, swipe_range(), kd.swipe_angle_deg, player.slot.color)
+		targets = CombatQuery.in_sector(player.get_tree(), DamageInfo.Team.ENEMIES,
+				player.global_position, direction, swipe_range(), kd.swipe_angle_deg)
 	var landed: bool = Combat.deliver(info, targets) > 0
-	_ground_wave(player.global_position + direction * 1.2)
+	_ground_wave(player.global_position + (Vector3.ZERO if seismic else direction * 1.2))
 	if landed:
 		player.freeze(info.hitstop)
 		_consecutive_hits += 1

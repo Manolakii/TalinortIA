@@ -113,6 +113,9 @@ func _roll() -> void:
 	var kit: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(player.data.id,
 			RunState.get_upgrades(player.slot.index), RunState.rng)
 	state["kit"] = kit.id if kit != null else &""
+	var yole: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(player.data.id,
+			RunState.get_upgrades(player.slot.index), RunState.rng, true)
+	state["yole"] = yole.id if yole != null else &""
 	state["sold"] = []
 	_build_rows()
 
@@ -132,10 +135,15 @@ func _build_rows() -> void:
 		_rows.append({"kind": &"special", "id": item.id, "price": Balance.shop.price_of(item),
 				"label": "[%s] %s" % [Balance.shop.rarity_names[item.rarity], item.display_name],
 				"desc": item.description, "color": RARITY_COLORS[item.rarity], "sold": sold.has(item.id)})
-	if state.get("kit", &"") != &"":
-		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(state["kit"])
-		_rows.append({"kind": &"kit", "id": upgrade.id, "price": Balance.shop.kit_upgrade_price,
-				"label": "[Mejora de kit] %s" % upgrade.display_name, "desc": upgrade.description,
+	for key: String in ["yole", "kit"]:
+		if state.get(key, &"") == &"":
+			continue
+		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(state[key])
+		var kit_price: int = upgrade.price if upgrade.price > 0 else Balance.shop.kit_upgrade_price
+		# Pedido del grupo: que se note que son únicas y que no salen como premio.
+		_rows.append({"kind": &"kit", "id": upgrade.id, "price": kit_price,
+				"label": ("[Kit de Yole · único] %s" if key == "yole" else "[Mejora de kit · única] %s") % upgrade.display_name,
+				"desc": upgrade.description + " (solo se consigue acá)",
 				"color": KIT_COLOR, "sold": sold.has(upgrade.id)})
 	_rows.append({"kind": &"reroll", "id": &"", "price": reroll_price(), "label": "Volver a tirar el stock",
 			"desc": "Yole busca otra cosa en el fondo del puesto", "color": Color(0.8, 0.8, 0.85), "sold": false})
