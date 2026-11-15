@@ -72,16 +72,50 @@ func test_normal_hits_do_not_stun_or_push_it() -> void:
 	assert_eq(_boss.knockback_velocity, Vector3.ZERO)
 
 
-func test_tali_wild_call_makes_it_doubt() -> void:
+func test_only_the_wild_call_gronk_makes_it_doubt() -> void:
+	var birds: DamageInfo = _hit(10.0)
+	birds.tags.append(&"wild_call")
+	_boss.receive_hit(birds)
+	assert_false(_boss.status.has(StatusEffects.STUN), "Los pájaros ya no lo aturden")
 	var info: DamageInfo = _hit(10.0)
 	info.tags.append(&"wild_call")
+	info.tags.append(&"wild_call_gronk")
 	_boss.receive_hit(info)
-	assert_true(_boss.status.has(StatusEffects.STUN), "El Llamado lo aturde")
+	assert_true(_boss.status.has(StatusEffects.STUN), "El Gronk del Llamado sí")
 	_boss.status.clear(StatusEffects.STUN)
 	var again: DamageInfo = _hit(10.0)
-	again.tags.append(&"wild_call")
+	again.tags.append(&"wild_call_gronk")
 	_boss.receive_hit(again)
 	assert_false(_boss.status.has(StatusEffects.STUN), "Con cooldown")
+
+
+func test_direct_stuns_do_not_work() -> void:
+	_boss.status.apply(StatusEffects.STUN, 2.0)  # tropezón de suerte de Tali
+	assert_false(_boss.status.has(StatusEffects.STUN))
+
+
+func test_phase_three_crystal_heals_until_broken() -> void:
+	_boss.health.current = _boss.health.max_health * 0.3
+	_boss._check_phase()
+	_boss._check_phase()
+	assert_eq(_boss.phase, 3)
+	assert_true(is_instance_valid(_boss.crystal), "Aparece el cristal")
+	assert_eq(_boss.crystal.max_health, 500.0)
+	var before: float = _boss.health.current
+	_boss._crystal_heal(1.0)
+	assert_almost_eq(_boss.health.current - before, 40.0, 0.01, "Cura 40 por segundo")
+	_boss.health.current = _boss.health.max_health * 0.5
+	_boss._crystal_heal(1.0)
+	assert_almost_eq(_boss.health.ratio(), 0.5, 0.001, "No pasa del tope")
+	_boss._check_phase()
+	assert_eq(_boss.phase, 3, "No vuelve de fase")
+	var hit: DamageInfo = _hit(600.0)
+	_boss.crystal.receive_hit(hit)
+	assert_true(_boss.crystal.is_broken())
+	_boss.health.current = _boss.health.max_health * 0.3
+	before = _boss.health.current
+	_boss._crystal_heal(1.0)
+	assert_eq(_boss.health.current, before, "Roto, ya no cura")
 
 
 func test_phases_change_with_health_and_phase_three_breaks_columns() -> void:

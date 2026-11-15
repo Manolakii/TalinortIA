@@ -26,11 +26,16 @@ signal effect_started(effect: StringName)
 signal effect_ended(effect: StringName)
 
 var _timers: Dictionary[StringName, float] = {}
+## Efectos que no le entran (el Gronk Gigante no se deja aturdir por los jugadores).
+## `forced` los aplica igual (el boss se aturde solo contra una columna).
+var immune: Array[StringName] = []
 
 
 ## Aplica un efecto. Si ya estaba, se queda con la duración más larga.
-func apply(effect: StringName, duration: float) -> void:
+func apply(effect: StringName, duration: float, forced: bool = false) -> void:
 	if duration <= 0.0:
+		return
+	if not forced and immune.has(effect):
 		return
 	var was_active: bool = has(effect)
 	_timers[effect] = maxf(_timers.get(effect, 0.0), duration)

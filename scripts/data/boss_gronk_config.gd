@@ -24,15 +24,20 @@ extends Resource
 ## Cargas seguidas en cada fase (GDD: 1, 2 y 3).
 @export var charges_per_phase: Array[int] = [1, 2, 3]
 
-@export_group("Pisotón y rugido (fase 1)")
+@export_group("Pisotón y rugido")
 @export var stomp_radius: float = 5.0
-@export var stomp_windup: float = 0.9
+## Pedido del grupo: el aplastamiento sale más rápido (era 0,9 y se esquivaba fácil).
+@export var stomp_windup: float = 0.55
 @export var stomp_damage: float = 30.0
 ## Espera entre pisotones (si no, pelear cuerpo a cuerpo era imposible).
 @export var stomp_cooldown: float = 4.0
-## Cada cuánto ruge y llama Talinorteanos cegados, y cuántos (GDD: 3 o 4; 4 con 3 o más jugadores).
-@export var roar_interval: float = 16.0
-@export var summon_count: int = 3
+## Cada cuánto ruge y llama Talinorteanos cegados, y cuántos (+1 con 3 o más jugadores).
+## Pedido del grupo: llama en todas las fases, más seguido y más; desde la fase 2 también
+## vienen Honderos. No llama si ya hay `summon_max_alive` enemigos chicos.
+@export var roar_interval: float = 12.0
+@export var summon_count: int = 4
+@export var summon_max_alive: int = 8
+@export var summon_ids_phase_two: Array[StringName] = [&"talinorteano_cegado", &"talinorteano_cegado", &"hondero_cegado"]
 
 @export_group("Sombra (fase 2 en adelante)")
 ## Rocas con círculo de aviso: cada cuánto, daño, radio y tiempo de vuelo.
@@ -50,6 +55,15 @@ extends Resource
 @export var wave_speed: float = 10.0
 @export var wave_damage: float = 30.0
 @export var wave_gap_deg: float = 60.0
+
+@export_group("Cristal de sombra (fase 3)")
+## Pedido del grupo: en la fase 3 aparece un cristal que cura al boss hasta que lo rompen.
+## Cura `crystal_heal_per_second` sin pasar de `crystal_heal_cap` de la vida (no vuelve de fase).
+@export var crystal_health: float = 500.0
+@export var crystal_heal_per_second: float = 40.0
+@export var crystal_heal_cap: float = 0.5
+## Dónde aparece (el más lejos del boss de estos lugares).
+@export var crystal_spots: Array[Vector3] = [Vector3(-15, 0, -9), Vector3(15, 0, -9), Vector3(-15, 0, 9), Vector3(15, 0, 9)]
 
 @export_group("Otros")
 ## Pausa entre ataques (se acorta en Difícil con el ritmo de ataque).

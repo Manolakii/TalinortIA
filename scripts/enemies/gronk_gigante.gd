@@ -6,10 +6,12 @@ extends Enemy
 ##   Fase 2 (66% a 33%): la sombra toma el control (ojos violetas). Dos cargas seguidas, rocas
 ##     con aviso y charcos de sombra que ralentizan.
 ##   Fase 3 (menos de 33%): rompe las columnas. Tres cargas seguidas y onda de sombra en círculo
-##     con un hueco para pasar (o se atraviesa con la invulnerabilidad de la esquiva).
-## El Llamado Salvaje de Tali lo hace dudar y lo aturde. Al "morir", la sombra se le escapa y
-## el Gronk queda libre.
-## No lo empujan ni lo aturden los golpes comunes.
+##     con un hueco para pasar (o se atraviesa con la invulnerabilidad de la esquiva). Aparece un
+##     cristal de sombra (500) que lo cura hasta que lo rompen (pedido del grupo).
+##   En todas las fases ruge y llama enemigos (pedido del grupo: que moleste más).
+## Solo el Gronk del Llamado Salvaje de Tali lo hace dudar (pedido del grupo: los pájaros, el
+## tiro de suerte, el tropezón y el Aplastón ya no lo aturden). Al "morir", la sombra se le
+## escapa y el Gronk queda libre. No lo empujan ni lo aturden los golpes de los jugadores.
 
 signal phase_changed(phase: int)
 signal defeated
@@ -18,6 +20,7 @@ enum Mode { IDLE, CHARGE_WINDUP, CHARGE, RECOVER, STOMP_WINDUP, ROAR, WAVE_WINDU
 
 const CONFIG: BossGronkConfig = preload("res://data/bosses/gronk_gigante.tres")
 const CEGADO_SCENE: PackedScene = preload("res://scenes/enemies/talinorteano_cegado.tscn")
+const HEAL_COLOR := Color(0.35, 0.95, 0.85)  # verde agua = curación
 const EYE_NORMAL := Color(0.95, 0.85, 0.4)
 const EYE_SHADOW := Color(0.6, 0.25, 0.95)
 
@@ -39,6 +42,9 @@ var _eyes: Array[MeshInstance3D] = []
 var _beaten: bool = false
 var _stomp_timer: float = 0.0
 var _last_flash: int = 0
+## Cristal de la fase 3: mientras esté, se cura.
+var crystal: BossCrystal
+var _heal_shown: float = 0.0
 
 
 func _ready() -> void:
@@ -48,6 +54,7 @@ func _ready() -> void:
 		health_multiplier = Scaling.current_health_multiplier(true)
 	super._ready()
 	add_to_group(&"boss")
+	status.immune.append(StatusEffects.STUN)
 
 
 func is_vulnerable() -> bool:
@@ -56,6 +63,7 @@ func is_vulnerable() -> bool:
 
 func _think(delta: float) -> void:
 	_vulnerable_time = maxf(_vulnerable_time - delta, 0.0)
+	_crystal_heal(delta)
 	_wild_call_cooldown = maxf(_wild_call_cooldown - delta, 0.0)
 	_roar_timer -= delta
 	_rocks_timer -= delta
@@ -117,7 +125,7 @@ func _pick_attack(target: Node3D) -> void:
 		telegraph.show_circle(6.0, cfg.wave_windup * Scaling.current_windup())
 		Events.floating_text_requested.emit(global_position + Vector3.UP * 5.5, "¡Onda de sombra!", EYE_SHADOW)
 		return
-	if phase == 1 and _roar_timer <= 0.0 and get_tree().get_nodes_in_group(&"enemies").size() < 4:
+	if _roar_timer <= 0.0 and get_tree().get_nodes_in_group(&"enemies").size() <= cfg.summon_max_alive - 2:
 		_roar_timer = cfg.roar_interval
 		_summon()
 		return
@@ -154,7 +162,7 @@ func _charge_step(_delta: float) -> void:
 		_hit_column()
 		return
 	if get_slide_collision_count() > 0 and _collided_static():
-		status.apply(StatusEffects.STUN, cfg.wall_stun)
+		status.apply(StatusEffects.STUN, cfg.wall_stun, true)
 		Events.floating_text_requested.emit(global_position + Vector3.UP * 5.0, "¡PUM!", Color.WHITE)
 		Events.camera_shake_requested.emit(Balance.combat.shake_heavy * 0.5)
 		_charges_left = 0
@@ -177,7 +185,7 @@ func _end_charge() -> void:
 ## GDD: si choca contra una columna queda aturdido 3 s y recibe 50% más de daño.
 func _hit_column() -> void:
 	_charges_left = 0
-	status.apply(StatusEffects.STUN, cfg.column_stun)
+	status.apply(StatusEffects.STUN, cfg.column_stun, true)
 	_vulnerable_time = cfg.column_stun
 	if phase >= 2:
 		_drop_puddle()
@@ -251,6 +259,10 @@ func _summon() -> void:
 	var count: int = cfg.summon_count + (1 if Scaling.players_for_scaling() >= 3 else 0)
 	for i: int in count:
 		var cegado: Enemy = CEGADO_SCENE.instantiate()
+		if phase >= 2 and not cfg.summon_ids_phase_two.is_empty():
+			var id: StringName = cfg.summon_ids_phase_two[i % cfg.summon_ids_phase_two.size()]
+			cegado.free()
+			cegado = load("res://scenes/enemies/%s.tscn" % id).instantiate()
 		var angle: float = TAU * i / count + randf() * 0.5
 		cegado.position = Vector3(cos(angle) * 19.0, 0, sin(angle) * 11.0)
 		cegado.gold_chance = Balance.economy.common_drop_chance / maxf(Scaling.current_count_multiplier(), 1.0)
@@ -325,7 +337,41 @@ func _enter_phase(new_phase: int) -> void:
 				"¡Rompió las columnas!", EYE_SHADOW)
 		for column: Node in get_tree().get_nodes_in_group(&"boss_columns"):
 			_crumble(column as Node3D)
+		_spawn_crystal()
 	phase_changed.emit(new_phase)
+
+
+## Fase 3: aparece el cristal de sombra lejos del boss.
+func _spawn_crystal() -> void:
+	if is_instance_valid(crystal) or cfg.crystal_spots.is_empty():
+		return
+	var spot: Vector3 = cfg.crystal_spots[0]
+	for candidate: Vector3 in cfg.crystal_spots:
+		if flat_distance_to(candidate) > flat_distance_to(spot):
+			spot = candidate
+	crystal = BossCrystal.new()
+	# Con más jugadores aguanta un poco más.
+	crystal.setup(cfg.crystal_health * (1.0 + 0.25 * (Scaling.players_for_scaling() - 1)))
+	crystal.linked = self
+	crystal.position = spot
+	get_parent().add_child(crystal)
+	Events.floating_text_requested.emit(spot + Vector3.UP * 4.0,
+			"¡Un cristal de sombra lo está curando! ¡Rómpanlo!", BossCrystal.CRYSTAL_COLOR.lightened(0.3))
+
+
+## Mientras el cristal esté, se cura de a poco (sin pasar del tope ni volver de fase).
+func _crystal_heal(delta: float) -> void:
+	if not is_instance_valid(crystal) or crystal.is_broken() or health.is_dead:
+		return
+	var cap: float = health.max_health * cfg.crystal_heal_cap
+	if health.current >= cap:
+		return
+	var amount: float = minf(cfg.crystal_heal_per_second * delta, cap - health.current)
+	health.heal(amount)
+	_heal_shown += amount
+	if _heal_shown >= 40.0:
+		Events.floating_text_requested.emit(global_position + Vector3.UP * 5.0, "+%d" % roundi(_heal_shown), HEAL_COLOR)
+		_heal_shown = 0.0
 
 
 func _crumble(column: Node3D) -> void:
@@ -347,13 +393,12 @@ func _crumble(column: Node3D) -> void:
 func _modify_incoming(info: DamageInfo) -> void:
 	super._modify_incoming(info)
 	info.knockback = 0.0
-	if info.has_tag(&"wild_call") and _wild_call_cooldown <= 0.0:
+	info.stun = 0.0
+	if info.has_tag(&"wild_call_gronk") and _wild_call_cooldown <= 0.0:
 		_wild_call_cooldown = cfg.wild_call_cooldown
-		info.stun = cfg.wild_call_stun
+		status.apply(StatusEffects.STUN, cfg.wild_call_stun, true)
 		Events.floating_text_requested.emit(global_position + Vector3.UP * 5.5,
 				"¡El Gronk duda!", Color(0.75, 0.9, 1.0))
-	else:
-		info.stun = 0.0
 	if is_vulnerable():
 		info.amount *= cfg.vulnerable_multiplier
 
