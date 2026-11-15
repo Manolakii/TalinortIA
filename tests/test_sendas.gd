@@ -82,6 +82,23 @@ func test_shields_absorb_damage_first() -> void:
 			"El escudo se come los primeros 30")
 
 
+func test_shield_is_visible_until_it_breaks() -> void:
+	_player.health.add_shield(30.0)
+	assert_not_null(_player._shield_bubble, "Aparece la burbuja del escudo")
+	assert_true(_player._shield_bubble.visible)
+	watch_signals(_player.health)
+	var hit := DamageInfo.new()
+	hit.amount = 10.0
+	hit.attacker_team = DamageInfo.Team.ENEMIES
+	_player.health.apply_damage(hit)
+	assert_true(_player._shield_bubble.visible, "Con escudo restante sigue")
+	assert_between(_player.health.shield_ratio(), 0.5, 0.9, "Bajó un poco")
+	hit.amount = 40.0
+	_player.health.apply_damage(hit)
+	assert_signal_emitted(_player.health, "shield_broken")
+	assert_false(_player._shield_bubble.visible, "Roto, desaparece")
+
+
 func test_blessing_gives_shield_and_damage() -> void:
 	_take("senda_maestro_ability_guia")
 	_kit.companion.set_downed(false, 0.0)

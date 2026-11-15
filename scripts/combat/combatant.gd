@@ -23,6 +23,10 @@ var _flash_materials: Array[StandardMaterial3D] = []
 var _flash_tween: Tween
 var _jitter_node: Node3D
 var _jitter_base: Vector3 = Vector3.ZERO
+## Burbuja del escudo (pedido del grupo: no se notaba quién tenía escudo).
+var _shield_bubble: MeshInstance3D
+var _shield_material: StandardMaterial3D
+const SHIELD_COLOR := Color(0.72, 0.88, 1.0)
 
 
 func setup_combatant(which_team: DamageInfo.Team, max_health: float, radius: float,
@@ -42,6 +46,8 @@ func setup_combatant(which_team: DamageInfo.Team, max_health: float, radius: flo
 		hurtbox.name = "Hurtbox"
 		hurtbox.team = which_team
 		add_child(hurtbox)
+		health.shield_changed.connect(_on_shield_changed)
+		health.shield_broken.connect(_on_shield_broken)
 	health.setup(max_health)
 	hurtbox.radius = radius
 	hurtbox.height = height
@@ -107,6 +113,57 @@ func receive_hit(info: DamageInfo) -> bool:
 	hit_taken.emit(info)
 	Events.hit_landed.emit(info, self)
 	return true
+
+
+# --- Escudo visible ---
+
+func _on_shield_changed(amount: float, maximum: float) -> void:
+	if amount <= 0.0:
+		if _shield_bubble != null:
+			_shield_bubble.visible = false
+		return
+	if _shield_bubble == null:
+		_build_shield_bubble()
+	var was_visible: bool = _shield_bubble.visible
+	_shield_bubble.visible = true
+	var ratio: float = clampf(amount / maxf(maximum, 0.01), 0.0, 1.0)
+	# Más lleno, más opaco. Cada vez que absorbe un golpe, destella.
+	_shield_material.albedo_color.a = 0.12 + 0.18 * ratio
+	_shield_material.emission_energy_multiplier = 2.5 if was_visible else 1.6
+	var tween: Tween = _shield_bubble.create_tween()
+	tween.tween_property(_shield_material, "emission_energy_multiplier", 0.6, 0.25)
+	if not was_visible:
+		_shield_bubble.scale = Vector3.ONE * 0.6
+		tween.parallel().tween_property(_shield_bubble, "scale", Vector3.ONE, 0.15)
+
+
+func _on_shield_broken() -> void:
+	if _shield_bubble != null:
+		_shield_bubble.visible = false
+	if is_inside_tree():
+		Fx.ring_burst(get_parent(), global_position, hurtbox.radius * 2.2, SHIELD_COLOR, 0.25)
+		Events.floating_text_requested.emit(global_position + Vector3.UP * (hurtbox.height + 0.9),
+				"¡Escudo roto!", SHIELD_COLOR)
+
+
+func _build_shield_bubble() -> void:
+	_shield_bubble = MeshInstance3D.new()
+	var sphere := SphereMesh.new()
+	var size: float = maxf(hurtbox.radius * 1.7, hurtbox.height * 0.62)
+	sphere.radius = size
+	sphere.height = size * 2.0
+	_shield_bubble.mesh = sphere
+	_shield_material = StandardMaterial3D.new()
+	_shield_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_shield_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_shield_material.albedo_color = Color(SHIELD_COLOR, 0.25)
+	_shield_material.emission_enabled = true
+	_shield_material.emission = SHIELD_COLOR
+	_shield_material.cull_mode = BaseMaterial3D.CULL_BACK
+	_shield_bubble.material_override = _shield_material
+	_shield_bubble.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_shield_bubble.position.y = hurtbox.height * 0.5
+	add_child(_shield_bubble)
 
 
 func clear_flash_materials() -> void:

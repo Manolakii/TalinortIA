@@ -9,6 +9,8 @@ const VISIBLE_TIME := 2.0
 
 var _target: Combatant
 var _fill: MeshInstance3D
+## Escudo: tramo celeste arriba de la vida.
+var _shield: MeshInstance3D
 var _time_left: float = 0.0
 var _always: bool = false
 
@@ -24,6 +26,11 @@ func setup(target: Combatant) -> void:
 	_fill = _quad(Vector2(WIDTH, HEIGHT), fill_color)
 	_fill.position.z = 0.01
 	add_child(_fill)
+	_shield = _quad(Vector2(WIDTH, HEIGHT * 0.55), Color(0.72, 0.88, 1.0))
+	_shield.position = Vector3(0, HEIGHT * 0.22, 0.02)
+	_shield.visible = false
+	add_child(_shield)
+	target.health.shield_changed.connect(func(_a: float, _m: float) -> void: reveal())
 	position.y = target.hurtbox.height + 0.55
 	visible = _always
 
@@ -38,7 +45,7 @@ func _process(delta: float) -> void:
 		visible = false
 		return
 	_time_left -= delta
-	if not _always and _time_left <= 0.0:
+	if not _always and _time_left <= 0.0 and _target.health.shield <= 0.0:
 		visible = false
 		return
 	var camera: Camera3D = get_viewport().get_camera_3d()
@@ -47,6 +54,11 @@ func _process(delta: float) -> void:
 	var ratio: float = _target.health.ratio()
 	_fill.scale.x = maxf(ratio, 0.001)
 	_fill.position.x = -(1.0 - ratio) * WIDTH * 0.5
+	var shield: float = clampf(_target.health.shield / maxf(_target.health.max_health, 1.0), 0.0, 1.0)
+	_shield.visible = shield > 0.0
+	if _shield.visible:
+		_shield.scale.x = shield
+		_shield.position.x = -(1.0 - shield) * WIDTH * 0.5
 
 
 func _quad(size: Vector2, color: Color) -> MeshInstance3D:

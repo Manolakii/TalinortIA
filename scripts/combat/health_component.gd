@@ -6,6 +6,9 @@ signal damaged(info: DamageInfo)
 signal died(info: DamageInfo)
 signal healed(amount: float)
 signal changed(current: float, maximum: float)
+## El escudo cambió (para dibujarlo). `maximum` es lo que tenía al ponérselo.
+signal shield_changed(amount: float, maximum: float)
+signal shield_broken
 
 var max_health: float = 100.0
 var current: float = 100.0
@@ -14,6 +17,7 @@ var damage_taken_multiplier: float = 1.0
 var is_dead: bool = false
 ## Escudo: absorbe daño antes que la vida (Bendición, Garrocha al Rescate).
 var shield: float = 0.0
+var shield_max: float = 0.0
 var _invulnerable_left: float = 0.0
 
 
@@ -46,6 +50,10 @@ func apply_damage(info: DamageInfo) -> float:
 		var absorbed: float = minf(shield, final_amount)
 		shield -= absorbed
 		final_amount -= absorbed
+		shield_changed.emit(shield, shield_max)
+		if shield <= 0.0:
+			shield = 0.0
+			shield_broken.emit()
 	current = maxf(current - final_amount, 0.0)
 	info.final_amount = final_amount
 	damaged.emit(info)
@@ -65,7 +73,22 @@ func heal(amount: float) -> void:
 
 
 func add_shield(amount: float) -> void:
-	shield = maxf(shield, amount)
+	if amount <= shield:
+		return
+	shield = amount
+	shield_max = amount
+	shield_changed.emit(shield, shield_max)
+
+
+func clear_shield() -> void:
+	if shield <= 0.0:
+		return
+	shield = 0.0
+	shield_changed.emit(0.0, shield_max)
+
+
+func shield_ratio() -> float:
+	return clampf(shield / shield_max, 0.0, 1.0) if shield_max > 0.0 else 0.0
 
 
 func restore_full() -> void:

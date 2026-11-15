@@ -67,7 +67,7 @@ func _swipe() -> void:
 		# Mejora: el tercer aplauso seguido que conecta da un escudito.
 		if _consecutive_hits >= 3 and has_upgrade(&"champaka_escudo"):
 			_consecutive_hits = 0
-			player.health.shield = maxf(player.health.shield, 15.0)
+			player.health.add_shield(15.0)
 			say("Escudo", SPORE_COLOR, 0.8)
 	else:
 		_consecutive_hits = 0

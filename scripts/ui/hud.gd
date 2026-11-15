@@ -41,6 +41,8 @@ class Bar:
 	var label: String = ""
 	var pulse: bool = false
 	var marks: Array = []
+	## Escudo (0 a 1 de la barra), se dibuja celeste arriba de la vida.
+	var shield: float = 0.0
 
 	func _init() -> void:
 		custom_minimum_size = Vector2(0, 18)
@@ -55,6 +57,10 @@ class Bar:
 		if pulse:
 			fill_color = color.lightened(0.25 * (0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)))
 		draw_rect(Rect2(0, 0, size.x * clampf(value, 0.0, 1.0), size.y), fill_color)
+		if shield > 0.0:
+			var w: float = size.x * clampf(shield, 0.0, 1.0)
+			draw_rect(Rect2(0, 0, w, size.y * 0.4), Color(0.72, 0.88, 1.0, 0.95))
+			draw_rect(Rect2(0, 0, w, size.y), Color(0.72, 0.88, 1.0), false, 2.0)
 		for mark: float in marks:
 			draw_line(Vector2(size.x * mark, 0), Vector2(size.x * mark, size.y), Color(1, 1, 1, 0.7), 2.0)
 		var font: Font = get_theme_default_font()
@@ -241,6 +247,9 @@ func _update_panel(panel: PlayerPanel) -> void:
 	panel.crown_label.visible = RunState.has_special(player.slot.index, &"corona_lider") 			and RunState.get_bonus(player.slot.index, &"corona_used") == 0
 	panel.health.value = player.health.ratio()
 	panel.health.label = "%d / %d" % [roundi(player.health.current), roundi(player.health.max_health)]
+	panel.health.shield = player.health.shield / maxf(player.health.max_health, 1.0)
+	if player.health.shield > 0.0:
+		panel.health.label += "  +%d escudo" % ceili(player.health.shield)
 
 	var active: int = kit.hud_chip_active()
 	for i: int in panel.chips.get_child_count():
