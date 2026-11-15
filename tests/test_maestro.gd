@@ -162,6 +162,17 @@ func test_stewie_ai_shells_up_inside_a_warning() -> void:
 	assert_true(_kit.companion.invulnerable_shell, "Stewie se mete en el caparazón")
 
 
+func test_bastonazo_charge_shows_a_line() -> void:
+	_pump(1)
+	press(PlayerInput.Action.ABILITY)
+	_pump(int(0.5 / DT))
+	assert_true(_kit._charging)
+	assert_true(_kit._chi_line.visible, "Mientras carga se ve por dónde va a salir")
+	release(PlayerInput.Action.ABILITY)
+	_pump(2)
+	assert_false(_kit._chi_line.visible, "Al soltar se apaga")
+
+
 func test_maestro_ai_uses_bastonazo_on_lined_up_enemies() -> void:
 	_pump(1)
 	_kit.switch_cooldown.refill()

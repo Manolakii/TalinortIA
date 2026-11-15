@@ -121,6 +121,15 @@ func register_flash_material(material: StandardMaterial3D) -> void:
 	_flash_materials.append(material)
 
 
+## Brillo sostenido de un color (por ejemplo, mientras carga un golpe). energy 0 = apagado.
+func glow(color: Color, energy: float) -> void:
+	if _flash_tween != null and _flash_tween.is_valid():
+		return  # el destello de daño tiene prioridad
+	for material: StandardMaterial3D in _flash_materials:
+		material.emission = color if energy > 0.0 else Color.WHITE
+		material.emission_energy_multiplier = energy
+
+
 func flash() -> void:
 	if _flash_materials.is_empty():
 		return

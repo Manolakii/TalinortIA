@@ -19,6 +19,8 @@ const BODY_NAMES: Array[String] = ["Maestro", "Stewie"]
 const FORM_NAMES: Array[String] = ["Cría", "Joven", "Sabia"]
 const SHELL_COLOR := Color(0.42, 0.32, 0.2)
 const STAFF_COLOR := Color(0.45, 0.32, 0.18)
+## Chi del Bastonazo: celeste claro (no choca con los colores reservados).
+const CHI_COLOR := Color(0.7, 0.92, 1.0)
 const COMPANION_SCRIPT := preload("res://scripts/characters/maestro/duo_companion.gd")
 
 var kd: MaestroKitData
@@ -42,6 +44,7 @@ var _relay_time: float = 0.0
 var _relay_effect: StringName = &""
 var _player_target: Node3D
 var _bond_line: MeshInstance3D
+var _chi_line: MeshInstance3D
 var _extras: Node3D
 var _bonded: bool = false
 var _bite_count: int = 0
@@ -72,6 +75,10 @@ func _setup() -> void:
 	_bond_line = Fx.make_beam_mesh(Color(player.slot.color.lightened(0.5), 0.35), 0.06)
 	_bond_line.top_level = true
 	add_child(_bond_line)
+	_chi_line = Fx.make_beam_mesh(Color(CHI_COLOR, 0.2), kd.bastonazo_width * 0.6)
+	_chi_line.top_level = true
+	_chi_line.visible = false
+	add_child(_chi_line)
 	_apply_controlled_body()
 	_spawn_companion.call_deferred()
 
@@ -334,15 +341,41 @@ func _controlled_headbutt_hit() -> void:
 
 
 func _update_charge(delta: float) -> void:
+	var was_full: bool = _charge >= kd.bastonazo_full_charge
 	_charge += delta
 	player.start_action(0.1, 0.0)
 	player.face_aim_now()
+	_show_chi_charge(was_full)
 	if not player.slot.input.is_held(PlayerInput.Action.ABILITY) or _charge >= kd.bastonazo_max_hold:
 		_charging = false
+		_hide_chi_charge()
 		_ability_cd[Body.MAESTRO].use()
 		var ratio: float = clampf(_charge / kd.bastonazo_full_charge, 0.0, 1.0)
 		_fire_bastonazo(player, player.aim_direction, ratio)
 		player.start_action(0.25, 0.3)
+
+
+## Mientras carga (pedido del grupo: no se veía nada): una línea de chi marca por dónde va a
+## salir la onda y se pone más fuerte con la carga, y el Maestro titila del color del chi.
+## Al llegar a la carga completa, un destello y un "pling".
+func _show_chi_charge(was_full: bool) -> void:
+	var ratio: float = clampf(_charge / kd.bastonazo_full_charge, 0.0, 1.0)
+	_chi_line.visible = true
+	Fx.place_beam(_chi_line, player.global_position + Vector3.UP * 0.15, player.aim_direction,
+			kd.bastonazo_length)
+	var material := _chi_line.material_override as StandardMaterial3D
+	material.albedo_color.a = 0.15 + 0.55 * ratio
+	_chi_line.scale.x = 0.4 + 0.6 * ratio
+	var speed: float = 6.0 + 10.0 * ratio
+	player.glow(CHI_COLOR, (0.4 + 1.6 * ratio) * (0.5 + 0.5 * sin(_charge * speed)))
+	if ratio >= 1.0 and not was_full:
+		Fx.ring_burst(_world(), player.global_position, 1.6, CHI_COLOR, 0.25)
+		Sound.play("ui_confirm", -6.0)
+
+
+func _hide_chi_charge() -> void:
+	_chi_line.visible = false
+	player.glow(CHI_COLOR, 0.0)
 
 
 ## Golpe al piso que lanza una onda de chi en línea (60 a 120 según la carga).
@@ -375,6 +408,7 @@ func _refuge() -> void:
 
 func do_dodge() -> void:
 	_charging = false
+	_hide_chi_charge()
 	dodge_cooldown.use()
 	cancel_scheduled()
 	var direction: Vector3 = dodge_direction()
@@ -778,6 +812,7 @@ func _mirror(slot_kind: Slot, direction: Vector3 = Vector3.ZERO) -> void:
 func _switch(total: bool) -> void:
 	cancel_scheduled()
 	_charging = false
+	_hide_chi_charge()
 	player.end_action()
 	_end_relay()
 	var old_controlled: Body = controlled
