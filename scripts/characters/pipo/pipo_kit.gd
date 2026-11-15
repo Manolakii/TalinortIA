@@ -36,7 +36,10 @@ func _setup() -> void:
 func _tick(delta: float) -> void:
 	turret_cooldown.tick(cd_delta(delta))
 	_attack_timer -= delta
-	turrets = turrets.filter(func(t: PipoTurret) -> bool: return is_instance_valid(t) and not t.is_queued_for_deletion())
+	# Saca las torretas que ya se desarmaron (sin filter(): devuelve un Array sin tipo).
+	for i: int in range(turrets.size() - 1, -1, -1):
+		if not is_instance_valid(turrets[i]) or turrets[i].is_queued_for_deletion():
+			turrets.remove_at(i)
 
 
 func _handle_input() -> void:

@@ -1155,9 +1155,10 @@ func _stewie_senda_ability(source: Node3D) -> void:
 			for i: int in 5:
 				var next: Hurtbox = CombatQuery.nearest(player.get_tree(), DamageInfo.Team.ENEMIES, from, 7.0)
 				if next == null or hit.has(next.receiver):
-					var candidates: Array[Hurtbox] = CombatQuery.in_circle(player.get_tree(),
-							DamageInfo.Team.ENEMIES, from, 7.0).filter(func(h: Hurtbox) -> bool:
-								return not hit.has(h.receiver))
+					var candidates: Array[Hurtbox] = []
+					for h: Hurtbox in CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, from, 7.0):
+						if not hit.has(h.receiver):
+							candidates.append(h)
 					if candidates.is_empty():
 						break
 					next = candidates[0]
