@@ -1,6 +1,6 @@
 class_name PipoTurret
 extends Combatant
-## Torreta de chatarra del General Pipo: dispara primero a los enemigos con Marca Táctica.
+## Torreta de chatarra del General Pipo: le tira a lo mismo que viene acertando Pipo (si no, al más cercano).
 ## Dura un rato o hasta que la rompan (los enemigos la pueden atacar).
 ## Mejora de la tienda "Refugio del Bosque Tuerto": los aliados cerca quedan ocultos para los
 ## enemigos lejanos.
@@ -72,7 +72,7 @@ func _physics_process(delta: float) -> void:
 	Fx.beam(get_parent(), from, (to - from).normalized(), from.distance_to(to), 0.06, SHOT_COLOR, 0.08)
 
 
-## Primero los marcados; si no, el más cercano.
+## Primero al último enemigo que acertó Pipo; si no, el más cercano.
 func _pick_target() -> Hurtbox:
 	var best: Hurtbox = null
 	var best_score: float = INF
@@ -80,8 +80,7 @@ func _pick_target() -> Hurtbox:
 		var d: float = hurtbox.global_position.distance_to(global_position)
 		if d > kit.kd.turret_range:
 			continue
-		var enemy := hurtbox.receiver as Combatant
-		var score: float = d - (100.0 if enemy != null and enemy.status.has(StatusEffects.TACTICAL_MARK) else 0.0)
+		var score: float = d - (100.0 if hurtbox.receiver == kit.last_target else 0.0)
 		if score < best_score:
 			best_score = score
 			best = hurtbox

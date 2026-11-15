@@ -292,3 +292,46 @@ func test_maze_path_always_has_traps_and_gronks() -> void:
 		for gronk: Enemy in event._gronks:
 			gronk.free()
 		holder.free()
+
+
+func test_maze_gronks_always_leave_a_way_past() -> void:
+	for seed_value: int in [1, 2, 3, 4, 5, 6, 7, 8]:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = seed_value
+		var holder := Node3D.new()
+		_holder.add_child(holder)
+		var template := Node3D.new()
+		holder.add_child(template)
+		var event := MazeEvent.new()
+		holder.add_child(event)
+		event.setup(_config, template, rng)
+		assert_gte(event.gronk_spots.size(), 3, "Hay Gronks (semilla %d)" % seed_value)
+		for spot: Dictionary in event.gronk_spots:
+			assert_true(event.is_passable(spot["cell"], spot["offset"]),
+					"Se puede pasar al lado del Gronk sin despertarlo (semilla %d)" % seed_value)
+		for child: Node in event.get_children():
+			if child is MazeTrap:
+				assert_eq(child.find_children("*", "Telegraph", true, false).size(), 0,
+						"Las trampas del laberinto no avisan en naranja")
+		for gronk: Enemy in event._gronks:
+			gronk.free()
+		holder.free()
+
+
+func test_a_gronk_in_the_middle_of_a_corridor_blocks_it() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	var holder := Node3D.new()
+	_holder.add_child(holder)
+	var template := Node3D.new()
+	holder.add_child(template)
+	var event := MazeEvent.new()
+	holder.add_child(event)
+	event.setup(_config, template, rng)
+	# En una celda con dos o más entradas, el centro exacto nunca deja pasar (la celda mide 4,5 m).
+	for cell: Vector2i in event.path_cells():
+		if event._openings(cell).size() >= 2 and event._openings(cell).has(&"west") and event._openings(cell).has(&"east"):
+			assert_false(event.is_passable(cell, Vector3.ZERO))
+	for gronk: Enemy in event._gronks:
+		gronk.free()
+	holder.free()

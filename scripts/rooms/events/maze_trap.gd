@@ -3,7 +3,8 @@ extends Node3D
 ## Trampas del Laberinto de los Gronks (pedido del grupo: era demasiado fácil).
 ##   GUILLOTINE: una cuchilla que cae sobre un pasillo, cada tanto y con su ritmo.
 ##   SPIKES: pinchos que salen del piso de una celda.
-## Las dos avisan antes con el naranja de siempre. Si te pegan, hace ruido (puede despertar Gronks).
+## Pedido del grupo: en el laberinto NO hay aviso naranja (más difícil). Solo una pista chiquita:
+## la cuchilla tiembla y los pinchos asoman la punta. Si te pegan, hace ruido (puede despertar Gronks).
 
 enum Kind { GUILLOTINE, SPIKES }
 
@@ -24,7 +25,6 @@ var _phase: int = 0  # 0 quieta, 1 aviso, 2 pegando
 var _timer: float = 0.0
 var _hit: Array[Node] = []
 var _blade: Node3D
-var _telegraph: Telegraph
 
 
 ## `along`: dirección de la cuchilla (a lo ancho del pasillo). `offset`: para que no caigan todas juntas.
@@ -49,14 +49,12 @@ func _physics_process(delta: float) -> void:
 			if _timer <= 0.0:
 				_phase = 1
 				_timer = warn_time * Scaling.current_windup()
-				_telegraph.position = Vector3(0, 0.05, length * 0.5)
-				_telegraph.show_rect(length, width + 0.4, _timer)
+				_hint()
 		1:
 			if _timer <= 0.0:
 				_phase = 2
 				_timer = active_time
 				_hit.clear()
-				_telegraph.hide_telegraph()
 				_animate(true)
 		2:
 			_strike()
@@ -85,6 +83,18 @@ func _strike() -> void:
 		hurtbox.take_hit(info)
 
 
+## Pista sin naranja: la cuchilla tiembla arriba / los pinchos asoman la punta.
+func _hint() -> void:
+	var tween: Tween = create_tween()
+	if kind == Kind.GUILLOTINE:
+		for i: int in 3:
+			tween.tween_property(_blade, "position:x", 0.06, 0.05)
+			tween.tween_property(_blade, "position:x", -0.06, 0.05)
+		tween.tween_property(_blade, "position:x", 0.0, 0.05)
+	else:
+		tween.tween_property(_blade, "position:y", -0.42, 0.15)
+
+
 func _animate(down: bool) -> void:
 	var tween: Tween = create_tween()
 	if kind == Kind.GUILLOTINE:
@@ -97,9 +107,6 @@ func _animate(down: bool) -> void:
 
 
 func _build() -> void:
-	_telegraph = Telegraph.new()
-	add_child(_telegraph)
-	_telegraph.rotation.y = 0.0
 	_blade = Node3D.new()
 	add_child(_blade)
 	if kind == Kind.GUILLOTINE:

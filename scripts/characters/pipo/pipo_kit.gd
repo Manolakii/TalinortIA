@@ -1,10 +1,12 @@
 class_name PipoKit
 extends CharacterKit
 ## General Pipo, el Tuerto del Bosque (KITS_MVP).
-##   Un Ojo Basta: en el cono angosto de su mira, 30% de crítico; desde su izquierda (punto
+##   Racha de Cuartel (pasiva, pedido del grupo en vez de la Marca Táctica): cada tiro seguido
+##     que acierta le suma +5% de daño al Bláster, hasta +50%. Si un tiro falla, vuelve a 0.
+##   Un Ojo Basta: en el cono angosto de su mira, 20% de crítico; desde su izquierda (punto
 ##     ciego) le pegan +15%.
-##   Bláster Reglamentario: tiro preciso y lento; cada tercer tiro pone Marca Táctica (+20%).
-##   Despliegue de Chatarra: torreta que dispara primero a los marcados (máximo 2).
+##   Bláster Reglamentario: tiro preciso y lento.
+##   Despliegue de Chatarra: torreta que le tira a lo que viene acertando Pipo (máximo 2).
 ##   Repliegue Ordenado: salto hacia atrás que deja una mina.
 ##   Fuego de la Nave Insignia: marca una zona y la bombardea con 6 impactos (uno cae al azar).
 
@@ -16,6 +18,10 @@ var kd: PipoKitData
 var turret_cooldown: AbilityCooldown
 var turrets: Array[PipoTurret] = []
 var _shots: int = 0
+## Tiros seguidos que acertaron (la racha).
+var streak: int = 0
+## Último enemigo que acertó (las torretas le tiran a ese).
+var last_target: Node3D
 var _attack_timer: float = 0.0
 var _bolts: ProjectilePool
 
@@ -52,7 +58,7 @@ func _handle_input() -> void:
 		_fire()
 
 
-# --- Bláster y Marca Táctica ---
+# --- Bláster y Racha de Cuartel ---
 
 func _fire() -> void:
 	_attack_timer = kd.blaster_interval / attack_speed()
@@ -60,27 +66,48 @@ func _fire() -> void:
 	player.start_action(0.16, 0.7)
 	basic_recovery = true
 	_shots += 1
-	var info: DamageInfo = make_hit(kd.blaster_damage * (1.2 if has_upgrade(&"pipo_blaster_reglamentado") else 1.0))
+	var base: float = kd.blaster_damage * (1.2 if has_upgrade(&"pipo_blaster_reglamentado") else 1.0)
+	var info: DamageInfo = make_hit(base * (1.0 + streak_bonus()))
 	# Precisión: en el cono angosto de la mira, más chance de crítico.
 	if not info.is_crit and _enemy_in_cone() and Combat.roll(cone_crit_chance() - player.crit_chance()):
 		info.is_crit = true
 		info.amount *= player.crit_multiplier()
 	info.is_melee = false
 	info.knockback = 2.0
-	if _shots % mark_every() == 0:
-		info.tags.append(&"tactical_mark")
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5
 	_bolts.fire(from, player.aim_direction, kd.blaster_speed, kd.blaster_range, 0.25, info,
-			DamageInfo.Team.ENEMIES, _on_bolt_hit)
+			DamageInfo.Team.ENEMIES, _on_bolt_hit, _on_bolt_missed)
 
 
-func _on_bolt_hit(target: Node3D, info: DamageInfo) -> void:
-	if not info.has_tag(&"tactical_mark"):
+## Acertó: la racha sube (las vasijas no cuentan, ni para sumar ni para cortar).
+func _on_bolt_hit(target: Node3D, _info: DamageInfo) -> void:
+	if not (target is Enemy):
 		return
-	var enemy := target as Combatant
-	if enemy != null and is_instance_valid(enemy):
-		enemy.status.apply(StatusEffects.TACTICAL_MARK, mark_duration())
-		Fx.ring_burst(_world(), enemy.global_position, 0.9, player.slot.color, 0.2)
+	last_target = target
+	var was_full: bool = streak_bonus() >= streak_cap()
+	streak += 1
+	if not was_full and streak_bonus() >= streak_cap():
+		say("¡Racha completa!", BOLT_COLOR, 0.9)
+		Fx.ring_burst(_world(), player.global_position, 1.4, player.slot.color, 0.25)
+
+
+## Falló (el tiro llegó al final sin pegarle a nada): la racha vuelve a 0.
+func _on_bolt_missed(_at: Vector3) -> void:
+	if streak > 0 and streak_bonus() >= streak_cap() * 0.5:
+		say("Se cortó la racha", Color(0.8, 0.8, 0.85), 0.7)
+	if has_upgrade(&"pipo_racha_firme"):
+		streak = streak / 2
+	else:
+		streak = 0
+
+
+## Bonus de daño del Bláster por la racha (0,05 por tiro seguido, con tope).
+func streak_bonus() -> float:
+	return minf(streak * kd.streak_per_hit, streak_cap())
+
+
+func streak_cap() -> float:
+	return kd.streak_cap + (0.25 if has_upgrade(&"pipo_racha_alta") else 0.0) + 0.05 * hero(&"pipo_racha")
 
 
 func _enemy_in_cone() -> bool:
@@ -97,12 +124,6 @@ func cone_crit_chance() -> float:
 	return kd.cone_crit_chance + player.modifiers.crit_chance_bonus()
 
 
-func mark_duration() -> float:
-	return kd.mark_duration + (4.0 if has_upgrade(&"pipo_marca_larga") else 0.0) + hero(&"pipo_marca")
-
-
-func mark_every() -> int:
-	return 2 if has_upgrade(&"pipo_marca_rapida") else kd.mark_every
 
 
 ## Punto ciego: los que le pegan desde su izquierda hacen +15%.
@@ -221,11 +242,6 @@ func _bombard(center: Vector3) -> void:
 		spots.append(center + Vector3(cos(angle) * radius, 0, sin(angle) * radius))
 	# La nave sigue medio rota: uno cae en cualquier lado.
 	spots.append(Vector3(randf_range(-20, 20), 0, randf_range(-13, 13)))
-	# Impacto extra garantizado sobre cada marcado de la zona.
-	for hurtbox: Hurtbox in CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, center, kd.bomb_radius):
-		var enemy := hurtbox.receiver as Combatant
-		if enemy != null and enemy.status.has(StatusEffects.TACTICAL_MARK):
-			spots.append(hurtbox.flat_position())
 	for i: int in spots.size():
 		var timer: SceneTreeTimer = player.get_tree().create_timer(i * 0.12, false)
 		timer.timeout.connect(_impact.bind(spots[i]))
@@ -253,9 +269,9 @@ func _world() -> Node:
 # --- HUD y otros ---
 
 func hud_bar() -> Dictionary:
-	var progress: int = _shots % mark_every()
-	return {"label": "Marca Táctica %d/%d" % [progress, mark_every()],
-			"value": float(progress) / mark_every(), "color": Color(0.85, 1.0, 0.75), "pulse": false}
+	var bonus: float = streak_bonus()
+	return {"label": "Racha +%d%%" % roundi(bonus * 100.0), "value": bonus / streak_cap(),
+			"color": Color(0.85, 1.0, 0.75), "pulse": bonus >= streak_cap()}
 
 
 func hud_abilities() -> Array[Dictionary]:
@@ -268,4 +284,4 @@ func ability_cooldowns() -> Array[AbilityCooldown]:
 
 
 func debug_lines() -> Array[String]:
-	return ["Torretas: %d/%d" % [turrets.size(), max_turrets()], "Tiros: %d" % _shots]
+	return ["Torretas: %d/%d" % [turrets.size(), max_turrets()], "Racha: %d tiros" % streak]

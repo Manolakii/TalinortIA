@@ -193,10 +193,10 @@ costs = Array[int]([15, 35, 60])
 
 [sub_resource type="Resource" id="m_19"]
 script = ExtResource("2")
-id = &"pipo_marca"
+id = &"pipo_racha"
 character = &"pipo"
-display_name = "Tinta reglamentaria"
-description = "La Marca Táctica dura +1 s por nivel"
+display_name = "Disciplina de cuartel"
+description = "El tope de la Racha de Cuartel sube +5% por nivel"
 costs = Array[int]([15, 35, 60])
 
 [sub_resource type="Resource" id="m_20"]

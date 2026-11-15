@@ -5,20 +5,19 @@
 [resource]
 script = ExtResource("1")
 cone_half_deg = 12.0
-cone_crit_chance = 0.3
+cone_crit_chance = 0.2
 blind_spot_damage = 0.15
-blaster_damage = 32.0
+streak_per_hit = 0.05
+streak_cap = 0.5
+blaster_damage = 24.0
 blaster_interval = 0.7
 blaster_speed = 34.0
 blaster_range = 17.0
-mark_every = 3
-mark_bonus = 0.2
-mark_duration = 6.0
 turret_cooldown = 14.0
 turret_max = 2
 turret_duration = 12.0
 turret_health = 60.0
-turret_damage = 10.0
+turret_damage = 7.0
 turret_shots_per_second = 2.0
 turret_range = 12.0
 retreat_distance = 4.5

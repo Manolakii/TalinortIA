@@ -560,10 +560,10 @@ exclusive_group = &""
 
 [sub_resource type="Resource" id="u_37"]
 script = ExtResource("2")
-id = &"pipo_marca_rapida"
+id = &"pipo_racha_alta"
 character = &"pipo"
-display_name = "Marca rápida"
-description = "La Marca Táctica sale cada 2 tiros en vez de 3"
+display_name = "Racha de veterano"
+description = "La Racha de Cuartel llega hasta +75% (en vez de +50%)"
 stat = &""
 amount = 0.0
 max_stacks = 1
@@ -650,10 +650,10 @@ exclusive_group = &""
 
 [sub_resource type="Resource" id="u_43"]
 script = ExtResource("2")
-id = &"pipo_marca_larga"
+id = &"pipo_racha_firme"
 character = &"pipo"
-display_name = "Marca indeleble"
-description = "La Marca Táctica dura 4 s más"
+display_name = "Pulso firme"
+description = "Si fallás un tiro, la racha baja a la mitad en vez de volver a 0"
 stat = &""
 amount = 0.0
 max_stacks = 1

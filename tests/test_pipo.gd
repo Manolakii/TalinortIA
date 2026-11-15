@@ -25,23 +25,31 @@ func _enemy_hit(amount: float, from: Vector3) -> DamageInfo:
 	return info
 
 
-func test_blaster_damage_and_third_shot_marks() -> void:
+func test_streak_grows_with_hits_and_resets_on_miss() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -6), 1000.0)
 	_slot.input._held[PlayerInput.Action.ATTACK] = true
 	_pump(30)
-	assert_almost_eq(1000.0 - enemy.health.current, 32.0, 0.01, "Un tiro de 32")
-	assert_false(enemy.status.has(StatusEffects.TACTICAL_MARK))
-	_pump(90)  # tiros a los 0,7 y 1,4 s
-	assert_true(enemy.status.has(StatusEffects.TACTICAL_MARK), "El tercer tiro marca")
+	assert_almost_eq(1000.0 - enemy.health.current, 24.0, 0.01, "Primer tiro: 24, sin racha")
+	assert_eq(_kit.streak, 1)
+	_pump(42)
+	assert_almost_eq(1000.0 - enemy.health.current, 24.0 + 24.0 * 1.05, 0.01, "Segundo tiro: +5%")
+	_slot.input._held[PlayerInput.Action.ATTACK] = false
+	_kit._on_bolt_missed(Vector3.ZERO)
+	assert_eq(_kit.streak, 0, "Un tiro que falla corta la racha")
 
 
-func test_mark_adds_twenty_percent() -> void:
-	var enemy := enemy_at(Vector3(0, 0, -6), 1000.0)
-	enemy.status.apply(StatusEffects.TACTICAL_MARK, 6.0)
-	var info: DamageInfo = _kit.make_hit(100.0)
-	info.hitstop = 0.0
-	enemy.hurtbox.take_hit(info)
-	assert_almost_eq(1000.0 - enemy.health.current, 120.0, 0.01, "Marca Táctica: +20%")
+func test_streak_has_a_cap() -> void:
+	_kit.streak = 40
+	assert_almost_eq(_kit.streak_bonus(), 0.5, 0.001, "Tope: +50% del daño base")
+	RunState.add_upgrade(0, &"pipo_racha_alta")
+	assert_almost_eq(_kit.streak_bonus(), 0.75, 0.001, "Con la mejora: +75%")
+
+
+func test_missing_with_steady_pulse_halves_the_streak() -> void:
+	RunState.add_upgrade(0, &"pipo_racha_firme")
+	_kit.streak = 8
+	_kit._on_bolt_missed(Vector3.ZERO)
+	assert_eq(_kit.streak, 4)
 
 
 func test_blind_spot_on_the_left() -> void:
@@ -65,17 +73,17 @@ func test_turret_deploys_and_caps_at_two() -> void:
 	assert_eq(_kit.turrets.size(), 2, "Máximo 2 torretas: la más vieja se desarma")
 
 
-func test_turret_prefers_marked_enemy() -> void:
+func test_turret_shoots_what_pipo_is_hitting() -> void:
 	var near := enemy_at(Vector3(0, 0, -3), 1000.0)
 	var marked := enemy_at(Vector3(4, 0, -6), 1000.0)
-	marked.status.apply(StatusEffects.TACTICAL_MARK, 6.0)
+	_kit.last_target = marked
 	press(PlayerInput.Action.ABILITY)
 	_pump(1)
 	var turret: PipoTurret = _kit.turrets[0]
 	for i: int in 40:
 		turret._physics_process(DT)
 	assert_eq(near.health.current, 1000.0, "No le tira al más cercano")
-	assert_lt(marked.health.current, 1000.0, "Le tira al marcado")
+	assert_lt(marked.health.current, 1000.0, "Le tira al que viene acertando Pipo")
 
 
 func test_retreat_leaves_mine_that_explodes() -> void:
@@ -116,6 +124,4 @@ func test_cabin_easter_egg_gives_crown_to_pipo() -> void:
 func test_upgrades_change_numbers() -> void:
 	assert_eq(_kit.max_turrets(), 2)
 	RunState.add_upgrade(0, &"pipo_torreta_extra")
-	RunState.add_upgrade(0, &"pipo_marca_rapida")
 	assert_eq(_kit.max_turrets(), 3)
-	assert_eq(_kit.mark_every(), 2)

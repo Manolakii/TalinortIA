@@ -52,7 +52,7 @@ func _on_opened(_by: PlayerCharacter, chest: Chest) -> void:
 		_mimic.position = chest.position
 		add_child(_mimic)
 		_mimic.died.connect(_on_mimic_died)
-		Events.floating_text_requested.emit(chest.global_position + Vector3.UP * 2.0, "¡Era un mimic!",
+		Events.floating_text_requested.emit(chest.global_position + Vector3.UP * 2.0, "¡Era un mimic! ¡Y es ENORME!",
 				Color(1.0, 0.55, 0.2))
 		Events.camera_shake_requested.emit(0.4)
 		chest.queue_free()

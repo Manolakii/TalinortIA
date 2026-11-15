@@ -189,9 +189,6 @@ func _pay_bounty(info: DamageInfo) -> void:
 	if killer == null or not (killer.kit is CrocoKit):
 		return
 	var gold: int = roundi(Balance.economy.croco_bounty_gold * (1.0 + 0.15 * MetaProgress.level(&"croco_recompensa")))
-	# Sinergia Pipo + Croco (Kits): si tenía Marca Táctica, cobra el doble.
-	if status.has(StatusEffects.TACTICAL_MARK):
-		gold *= 2
 	RunState.add_gold(killer.slot.index, gold)
 	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
 		killer.health.heal(10.0)
@@ -350,8 +347,6 @@ func is_targetable() -> bool:
 
 ## Blindado: recibe menos de frente. Marcado (Golpe Guía): recibe más.
 func _modify_incoming(info: DamageInfo) -> void:
-	if status.has(StatusEffects.TACTICAL_MARK) and info.attacker_team == DamageInfo.Team.PLAYERS:
-		info.amount *= 1.0 + Balance.get_character(&"pipo").kit_data.mark_bonus
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15

@@ -19,6 +19,13 @@ const COLS := 7
 const ROWS := 4
 const WALL_HEIGHT := 1.5
 const WALL_THICKNESS := 0.7
+## Para ubicar a los Gronks dejando siempre un paso (pedido del grupo: a veces no se podía pasar
+## al lado de un Gronk sin despertarlo y no había otro camino).
+const GRONK_RADIUS := 1.0
+const PLAYER_RADIUS := 0.45
+## Distancia extra al radio de "pasar pegado", para que se pueda pasar sin rozarlo de casualidad.
+const PASS_MARGIN := 0.35
+const GRID_STEP := 0.25
 
 var _config: StageRoomsConfig
 var _gronks: Array[Enemy] = []
@@ -33,6 +40,10 @@ var _path: Array[Vector2i] = []
 var _right_walls: Array = []
 var _bottom_walls: Array = []
 var _label: Label
+var _entrance_col: int = 0
+var _exit_col: int = 0
+## Celda y lugar (respecto del centro de la celda) de cada Gronk.
+var gronk_spots: Array[Dictionary] = []
 
 
 func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerator) -> void:
@@ -43,6 +54,8 @@ func setup(config: StageRoomsConfig, template: Node3D, rng: RandomNumberGenerato
 		if node is RockProp or node is Vase or node is CrackedRock:
 			node.queue_free()
 	var exit_col: int = rng.randi_range(0, COLS - 1)
+	_entrance_col = COLS / 2
+	_exit_col = exit_col
 	_build_maze(rng, COLS / 2, exit_col)
 	_place_gronks(rng)
 	_place_traps(rng)
@@ -184,12 +197,19 @@ func _place_traps(rng: RandomNumberGenerator) -> void:
 		trap.setup(MazeTrap.Kind.SPIKES, Vector3.BACK, 2.6, _config.maze_trap_damage * 0.8, rng.randf())
 
 func _place_gronks(rng: RandomNumberGenerator) -> void:
-	var cells: Array[Vector2i] = _ordered_cells(rng, 2)
-	for i: int in mini(_config.maze_gronks, cells.size()):
-		var cell: Vector2i = cells[i]
+	var cells: Array[Vector2i] = _ordered_cells(rng, 3)
+	for cell: Vector2i in cells:
+		if _gronks.size() >= _config.maze_gronks:
+			break
+		# Solo donde quede un paso libre entre todas las entradas de la celda.
+		var spots: Array[Vector3] = passable_spots(cell)
+		if spots.is_empty():
+			continue
+		var offset: Vector3 = spots[rng.randi_range(0, spots.size() - 1)]
+		gronk_spots.append({"cell": cell, "offset": offset})
 		var gronk: Enemy = GRONK_SCENE.instantiate()
 		gronk.asleep = true
-		gronk.position = _cell_center(cell.x, cell.y)
+		gronk.position = _cell_center(cell.x, cell.y) + offset
 		var angle: float = rng.randf() * TAU
 		gronk.facing = Vector3(cos(angle), 0, sin(angle))
 		gronk.gold_chance = 0.0
@@ -197,6 +217,93 @@ func _place_gronks(rng: RandomNumberGenerator) -> void:
 		get_parent().add_child(gronk)
 		gronk.visual.rotation.z = 0.25  # echado, durmiendo
 		_gronks.append(gronk)
+
+
+## Lugares de la celda (respecto de su centro) donde un Gronk dormido deja pasar.
+func passable_spots(cell: Vector2i) -> Array[Vector3]:
+	var half_w: float = (MAX_X - MIN_X) / COLS * 0.5 - WALL_THICKNESS * 0.5 - GRONK_RADIUS
+	var half_h: float = (MAX_Z - MIN_Z) / ROWS * 0.5 - WALL_THICKNESS * 0.5 - GRONK_RADIUS
+	var result: Array[Vector3] = []
+	var x: float = -half_w
+	while x <= half_w + 0.001:
+		var z: float = -half_h
+		while z <= half_h + 0.001:
+			if is_passable(cell, Vector3(x, 0, z)):
+				result.append(Vector3(x, 0, z))
+			z += 0.3
+		x += 0.5
+	return result
+
+
+## ¿Con un Gronk en `offset`, se puede ir de cualquier entrada de la celda a cualquier otra sin
+## pasar a menos de `maze_touch_radius` (+ margen)? Recorre una grilla de la celda.
+func is_passable(cell: Vector2i, offset: Vector3) -> bool:
+	var openings: Array[StringName] = _openings(cell)
+	if openings.size() <= 1:
+		return true
+	var half_w: float = (MAX_X - MIN_X) / COLS * 0.5 - WALL_THICKNESS * 0.5 - PLAYER_RADIUS
+	var half_h: float = (MAX_Z - MIN_Z) / ROWS * 0.5 - WALL_THICKNESS * 0.5 - PLAYER_RADIUS
+	var nx: int = int(half_w * 2.0 / GRID_STEP) + 1
+	var nz: int = int(half_h * 2.0 / GRID_STEP) + 1
+	var safe: float = _config.maze_touch_radius + PASS_MARGIN
+	var free: Dictionary = {}
+	for i: int in nx:
+		for j: int in nz:
+			var p := Vector3(-half_w + i * GRID_STEP, 0, -half_h + j * GRID_STEP)
+			if p.distance_to(offset) > safe:
+				free[Vector2i(i, j)] = true
+	# Desde un punto libre del borde de la primera entrada, ¿se llega al borde de todas las otras?
+	var start: Variant = null
+	for key: Vector2i in free:
+		if _on_side(key, openings[0], nx, nz):
+			start = key
+			break
+	if start == null:
+		return false
+	var seen: Dictionary = {start: true}
+	var queue: Array[Vector2i] = [start]
+	while not queue.is_empty():
+		var here: Vector2i = queue.pop_back()
+		for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var next: Vector2i = here + step
+			if free.has(next) and not seen.has(next):
+				seen[next] = true
+				queue.append(next)
+	for side: StringName in openings:
+		var reached: bool = false
+		for key: Vector2i in seen:
+			if _on_side(key, side, nx, nz):
+				reached = true
+				break
+		if not reached:
+			return false
+	return true
+
+
+func _on_side(key: Vector2i, side: StringName, nx: int, nz: int) -> bool:
+	match side:
+		&"west":
+			return key.x == 0
+		&"east":
+			return key.x == nx - 1
+		&"north":
+			return key.y == 0
+		_:
+			return key.y == nz - 1
+
+
+## Lados abiertos de la celda (pasillos, más la entrada y la salida del laberinto).
+func _openings(cell: Vector2i) -> Array[StringName]:
+	var result: Array[StringName] = []
+	if cell.x > 0 and not _right_walls[cell.x - 1][cell.y]:
+		result.append(&"west")
+	if cell.x < COLS - 1 and not _right_walls[cell.x][cell.y]:
+		result.append(&"east")
+	if (cell.y > 0 and not _bottom_walls[cell.x][cell.y - 1]) or (cell.y == 0 and cell.x == _exit_col):
+		result.append(&"north")
+	if (cell.y < ROWS - 1 and not _bottom_walls[cell.x][cell.y]) 			or (cell.y == ROWS - 1 and cell.x == _entrance_col):
+		result.append(&"south")
+	return result
 
 
 ## Laberinto "perfecto" por búsqueda en profundidad: siempre hay un solo camino entre dos celdas.
