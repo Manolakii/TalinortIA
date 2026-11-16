@@ -36,10 +36,10 @@ func test_amounts_follow_the_stage_tables() -> void:
 	var economy: EconomyConfig = Balance.economy
 	for i: int in 30:
 		var value: int = Loot.amount_for(economy.common_gold, 0)
-		assert_between(value, 2, 4)
-	assert_eq(Loot.amount_for(economy.elite_gold, 0), 20)
-	assert_eq(Loot.amount_for(economy.elite_gold, 2), 55, "Stage 3")
-	assert_between(Loot.amount_for(economy.chest_gold, 0), 50, 80)
+		assert_between(value, 1, 3)
+	assert_eq(Loot.amount_for(economy.elite_gold, 0), 14)
+	assert_eq(Loot.amount_for(economy.elite_gold, 2), 38, "Stage 3")
+	assert_between(Loot.amount_for(economy.chest_gold, 0), 35, 55)
 
 
 func test_drop_splits_into_coins_of_the_owner() -> void:
@@ -86,8 +86,8 @@ func test_each_player_gets_their_own_gold() -> void:
 	var per_player: Dictionary = {}
 	for coin: GoldCoin in _coins():
 		per_player[coin.slot_index] = per_player.get(coin.slot_index, 0) + coin.value
-	assert_eq(per_player.get(0, 0), 20)
-	assert_eq(per_player.get(1, 0), 20, "Cada uno sus 20, no se reparten")
+	assert_eq(per_player.get(0, 0), 14)
+	assert_eq(per_player.get(1, 0), 14, "Cada uno sus 14, no se reparten")
 	assert_not_null(p2)
 
 
@@ -103,7 +103,7 @@ func test_vase_breaks_with_a_hit_and_drops_gold() -> void:
 			Vector3.FORWARD, 2.0, 90.0))
 	Balance.economy.vase_drop_chance = chance
 	assert_true(vase._broken, "Se rompe de un golpe")
-	assert_between(_coin_total(), 2, 6)
+	assert_between(_coin_total(), 1, 4)
 
 
 func test_vases_do_not_always_have_gold() -> void:
@@ -149,14 +149,14 @@ func test_chest_opens_with_interact() -> void:
 	press(PlayerInput.Action.INTERACT)
 	chest._physics_process(DT)
 	assert_true(chest.is_open)
-	assert_between(_coin_total(), 50, 80)
+	assert_between(_coin_total(), 35, 55)
 
 
 func test_elite_always_drops_gold() -> void:
 	var enemy := enemy_at(Vector3(0, 0, -3), 10.0)
 	enemy.is_elite = true
 	enemy._drop_gold()
-	assert_eq(_coin_total(), 20)
+	assert_eq(_coin_total(), 14)
 
 
 func test_vases_sometimes_drop_a_healing_mushroom() -> void:

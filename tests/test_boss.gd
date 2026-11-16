@@ -162,4 +162,4 @@ func test_defeat_frees_the_gronk_and_pays_gold() -> void:
 	for child: Node in _holder.get_children():
 		if child is GoldCoin:
 			gold += (child as GoldCoin).value
-	assert_eq(gold, 60, "60 de oro (GDD, boss del Stage 1)")
+	assert_eq(gold, 45, "45 de oro (boss del Stage 1, bajado de 60 por el grupo)")

@@ -219,7 +219,7 @@ El oro es individual. Para que nadie se pelee por las monedas, **cada jugador ve
 
 **Oro inicial:** 150, suficiente para un objeto raro o dos comunes antes del Stage 1.
 
-**Chequeo de los precios:** como ahora hay varias salas por escenario, el oro por fuente es más bajo. Una sala de combate del Stage 1 deja unos 22, y todo el Stage 1 unos 400. Al volver a Birig Bamba después del Gronk, cada jugador debería tener entre 350 y 400: alcanza para un épico, o un raro y un común, pero no para un legendario sin ahorrar desde el principio. Los precios que propusieron (70, 150, 250 y 470) siguen funcionando.
+**Chequeo de los precios:** como ahora hay varias salas por escenario, el oro por fuente es más bajo. Una sala de combate del Stage 1 deja unos 22, y todo el Stage 1 unos 400. Al volver a Birig Bamba después del Gronk, cada jugador debería tener entre 350 y 400: alcanza para un épico, o un raro y un común, pero no para un legendario sin ahorrar desde el principio. Los precios que propusieron (70, 150, 250 y 470) siguen funcionando. *2026-11-16, pedido del grupo (en el playtest sobraba oro, ~690 por jugador):* todo el oro del Stage 1 baja ~30%: enemigos 1-3, élites 14, vasijas 1-4, cofre del tesoro 35-55, bolsa de oro 10-18, fin de escenario 20, boss 45 y Cobrador 20.
 
 ### El Agucci tenebroso (*2026-11-15, pedido del grupo*)
 
@@ -387,6 +387,8 @@ Antes de cada partida se elige la dificultad base. **Desbloqueo (aprobado):** F�
 | X-1 | — | — | — | — |
 | X-2 | +30% | +15% | 20% de los enemigos | +15% |
 | X-3 | +60% | +30% | 35% de los enemigos | +30% |
+
+*2026-11-16, pedido del grupo (solo era muy fácil):* jugando solo (o con el dúo), los enemigos pegan además +10% en el X-2 y +20% en el X-3.
 
 **Escalado por jugador extra**, según la dificultad elegida:
 

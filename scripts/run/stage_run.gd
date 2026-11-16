@@ -290,9 +290,11 @@ func _decorate(type: int, free_spots: Array[Vector3]) -> void:
 ## Dificultad del escenario actual para todos los enemigos que aparezcan en esta sala.
 func _apply_scenario_scaling() -> void:
 	var i: int = RunState.scenario
-	RunState.set_scenario_scaling(_scenario_value(config.scenario_health_bonus, i),
-			_scenario_value(config.scenario_damage_bonus, i), _scenario_value(config.scenario_shield_chance, i),
-			config.scenario_shield_ratio)
+	var damage_bonus: float = _scenario_value(config.scenario_damage_bonus, i)
+	if Scaling.players_for_scaling() == 1:
+		damage_bonus += _scenario_value(config.scenario_solo_damage_bonus, i)
+	RunState.set_scenario_scaling(_scenario_value(config.scenario_health_bonus, i), damage_bonus,
+			_scenario_value(config.scenario_shield_chance, i), config.scenario_shield_ratio)
 	if i > 0 and i < config.scenario_names.size() and RunState.room_index == 0 and not in_challenge:
 		show_banner("Los enemigos de acá son más bravos: +%d%% de vida, +%d%% de daño y algunos con escudo" % [
 				roundi(RunState.enemy_health_bonus * 100.0), roundi(RunState.enemy_damage_bonus * 100.0)], 4.0)

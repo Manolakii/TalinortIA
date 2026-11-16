@@ -56,3 +56,10 @@ func test_scenario_shield_chance_gives_shields() -> void:
 	add_child_autofree(enemy)
 	assert_almost_eq(enemy.health.shield, enemy.health.max_health * 0.35, 0.01, "Aparece con escudo")
 	RunState.set_scenario_scaling(0.0, 0.0, 0.0, 0.0)
+
+
+func test_solo_players_get_extra_enemy_damage_from_scenario_two() -> void:
+	var config: StageRoomsConfig = load("res://data/rooms/stage1.tres")
+	assert_almost_eq(config.scenario_solo_damage_bonus[1], 0.1, 0.001)
+	assert_almost_eq(config.scenario_solo_damage_bonus[2], 0.2, 0.001)
+	assert_eq(config.scenario_solo_damage_bonus[0], 0.0, "En el 1-1 no cambia nada")

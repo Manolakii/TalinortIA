@@ -25,7 +25,7 @@ extends Resource
 ## (el Desafío ya no es un premio de puerta: es su propia puerta, ver abajo).
 @export var reward_weights: Array[int] = [0, 55, 45, 0]
 ## Premio de Oro: para cada jugador.
-@export var gold_reward: Vector2i = Vector2i(15, 25)
+@export var gold_reward: Vector2i = Vector2i(10, 18)
 
 @export_group("Desafíos (de ida y vuelta, como una grieta)")
 ## Chance de que, al terminar una sala, aparezca la puerta de Desafío además de las otras.
@@ -64,7 +64,7 @@ extends Resource
 @export var thief_chance: float = 0.3
 @export var thief_delay: float = 6.0
 @export var thief_time: float = 20.0
-@export var thief_gold: int = 30
+@export var thief_gold: int = 20
 @export var count_bonus_per_scenario: float = 0.15
 ## Dificultad por escenario (pedido del grupo: que se vaya complicando). Un valor por escenario
 ## (1-1, 1-2, 1-3; el boss usa el último). Vida y daño de los enemigos: +X. Escudo: chance de que
@@ -73,6 +73,9 @@ extends Resource
 @export var scenario_damage_bonus: PackedFloat32Array = PackedFloat32Array([0.0, 0.15, 0.3])
 @export var scenario_shield_chance: PackedFloat32Array = PackedFloat32Array([0.0, 0.2, 0.35])
 @export var scenario_shield_ratio: float = 0.35
+## Jugando solo (o con el dúo), los enemigos pegan esto más, encima de lo del escenario
+## (pedido del grupo 2026-11-16: solo era muy fácil).
+@export var scenario_solo_damage_bonus: PackedFloat32Array = PackedFloat32Array([0.0, 0.1, 0.2])
 
 @export_group("Salas")
 @export var vases_min: int = 2
