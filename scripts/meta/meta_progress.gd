@@ -65,6 +65,7 @@ static func buy(upgrade: McoiniaUpgrade) -> bool:
 
 ## Para los tests.
 static func reset_for_tests() -> void:
+	Achievements.reset_for_tests()
 	_loaded = true
 	save_enabled = false
 	balance = 0

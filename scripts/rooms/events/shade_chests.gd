@@ -48,6 +48,7 @@ func _on_opened(_by: PlayerCharacter, chest: Chest) -> void:
 
 ## El cofre bueno: un objeto de la tienda de Yole para cada jugador (uno que no tenga).
 func give_shop_items(at: Vector3) -> void:
+	Achievements.unlock("ojo_clinico")
 	var row: int = 0
 	for node: Node in get_tree().get_nodes_in_group(&"players"):
 		var player := node as PlayerCharacter

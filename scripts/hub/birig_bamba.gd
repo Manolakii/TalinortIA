@@ -52,6 +52,7 @@ func _ready() -> void:
 	_build_drum()
 	_build_ship()
 	_build_mcoinia_booth()
+	_build_achievements_board()
 	Sound.music("birig_bamba")
 	Fx.prewarm(_camera_focus_node())
 
@@ -344,6 +345,31 @@ func _build_mcoinia_booth() -> void:
 	spot.used.connect(func(by: PlayerCharacter) -> void:
 		spot.busy = true
 		var panel := McoiniaPanel.new()
+		add_child(panel)
+		panel.open(by)
+		panel.closed.connect(func() -> void: spot.busy = false))
+
+
+## Cartelera de logros (pedido del grupo): un pizarrón al lado de la entrada.
+func _build_achievements_board() -> void:
+	var center := Vector3(-8, 0, 10.5)
+	var board := _box(Vector3(3.2, 2.0, 0.15), center + Vector3(0, 1.6, -0.4), Fx.flat_material(WOOD.darkened(0.2)))
+	_solid(board, Vector3(3.2, 2.0, 0.4))
+	for x: float in [-1.3, 1.3]:
+		_box(Vector3(0.15, 1.2, 0.15), center + Vector3(x, 0.6, -0.4), Fx.flat_material(WOOD))
+	var sign := _label("Logros del grupo
+%d de %d" % [Achievements.unlocked_count(), Achievements.all_ids().size()],
+			44, Color(1.0, 0.82, 0.3))
+	sign.position = center + Vector3(0, 3.3, 0)
+	add_child(sign)
+	_light(center + Vector3(0, 2.4, 1.0), NEON_BLUE, 1.5, 6.0)
+	var spot := HubInteractable.new()
+	spot.position = center + Vector3(0, 0, 1.2)
+	add_child(spot)
+	spot.setup("Ver logros (E / X)", 2.4, 2.4)
+	spot.used.connect(func(by: PlayerCharacter) -> void:
+		spot.busy = true
+		var panel := AchievementsPanel.new()
 		add_child(panel)
 		panel.open(by)
 		panel.closed.connect(func() -> void: spot.busy = false))

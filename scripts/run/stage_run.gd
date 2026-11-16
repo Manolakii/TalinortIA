@@ -361,6 +361,7 @@ func _room_done(event_perfect: bool = false, bonus_item: bool = false, event_los
 	Events.room_cleared.emit()
 	if not event_lost:
 		Events.room_finished.emit()
+		_room_achievements(event_perfect, bonus_item)
 	await get_tree().create_timer(0.8).timeout
 	if in_challenge:
 		await _challenge_done(not event_lost, bonus_item)
@@ -432,6 +433,30 @@ func _on_secret_found() -> void:
 func _secret_door_spot() -> Vector3:
 	var at: Vector3 = _cracked_rock.global_position if is_instance_valid(_cracked_rock) else Vector3(0, 0, -6)
 	return Vector3(at.x, 0, at.z)
+
+
+## Logros que se ganan al terminar una sala o un desafío.
+func _room_achievements(event_perfect: bool, bonus_item: bool) -> void:
+	if room_type in [RoomKind.Type.COMBAT, RoomKind.Type.ELITE, RoomKind.Type.SURVIVAL]:
+		Achievements.unlock("primera_sala")
+	match room_type:
+		RoomKind.Type.PRISONERS:
+			if bonus_item:
+				Achievements.unlock("nadie_atras")
+		RoomKind.Type.MAZE:
+			if event_perfect and _event is MazeEvent and (_event as MazeEvent)._woken == 0:
+				Achievements.unlock("sigilo_gronk")
+		RoomKind.Type.MIMICS:
+			if event_perfect:
+				Achievements.unlock("no_muerde")
+		RoomKind.Type.ESCORT:
+			if event_perfect:
+				Achievements.unlock("carreta_llego")
+		RoomKind.Type.STAMPEDE:
+			if event_perfect:
+				Achievements.unlock("estampida")
+		RoomKind.Type.BOSS:
+			Achievements.unlock("gronk_libre")
 
 
 ## Agucci tenebroso: una sola vez en el stage, en la sala elegida (combate, élite o aguante).

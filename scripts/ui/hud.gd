@@ -85,6 +85,7 @@ class PlayerPanel:
 var _panels: Array[PlayerPanel] = []
 var _row: HBoxContainer
 var _room_label: Label
+var _toast_box: VBoxContainer
 
 
 func _ready() -> void:
@@ -106,6 +107,7 @@ func _ready() -> void:
 	_room_label.add_theme_constant_override("outline_size", 6)
 	add_child(_room_label)
 	Events.hit_landed.connect(_on_hit_landed)
+	Events.achievement_unlocked.connect(_show_achievement)
 	Events.player_revived.connect(func(p: Node3D) -> void: _show_name(p as PlayerCharacter))
 
 
@@ -346,6 +348,41 @@ func _show_name(player: PlayerCharacter) -> void:
 	tween.tween_interval(NAME_TIME)
 	tween.tween_property(label, "modulate:a", 0.0, 0.5)
 	tween.tween_callback(label.queue_free)
+
+
+## Cartelito de logro desbloqueado, arriba a la derecha.
+func _show_achievement(title: String, how: String) -> void:
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.06, 0.1, 0.92)
+	style.border_color = GOLD_COLOR
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(8)
+	style.set_content_margin_all(10)
+	panel.add_theme_stylebox_override("panel", style)
+	panel.custom_minimum_size = Vector2(440, 0)
+	if _toast_box == null:
+		# Los cartelitos se apilan uno abajo del otro, arriba a la derecha.
+		_toast_box = VBoxContainer.new()
+		_toast_box.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		_toast_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		_toast_box.offset_right = -20.0
+		_toast_box.offset_top = 70.0
+		_toast_box.add_theme_constant_override("separation", 8)
+		add_child(_toast_box)
+	var text := Label.new()
+	text.text = "★ ¡Logro! %s
+%s" % [title, how]
+	text.add_theme_font_size_override("font_size", 18)
+	text.add_theme_color_override("font_color", GOLD_COLOR)
+	panel.add_child(text)
+	_toast_box.add_child(panel)
+	var tween: Tween = panel.create_tween()
+	panel.modulate.a = 0.0
+	tween.tween_property(panel, "modulate:a", 1.0, 0.25)
+	tween.tween_interval(3.5)
+	tween.tween_property(panel, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(panel.queue_free)
 
 
 func _on_hit_landed(_info: DamageInfo, target: Node3D) -> void:

@@ -1,0 +1,20 @@
+{
+	"_nota": "Logros (pedido del grupo, 2026-11-16). Se guardan en la compu (user://logros.cfg), son del grupo como la McoinIA. Cada uno: nombre y cómo se consigue.",
+	"primera_sala": {"nombre": "Primer paso", "como": "Ganá tu primera sala en Talinorthland"},
+	"gronk_libre": {"nombre": "Talinorthland liberado", "como": "Vencé al Gronk Gigante"},
+	"cristal_roto": {"nombre": "Sin curita", "como": "Rompé el cristal de sombra del Gronk Gigante"},
+	"negocios_turbios": {"nombre": "Negocios turbios", "como": "Aceptá la ofrenda del Agucci tenebroso"},
+	"queso_podrido": {"nombre": "Se pudrió el queso", "como": "Vencé al Agucci tenebroso"},
+	"ojo_clinico": {"nombre": "Ojo clínico", "como": "Abrí el cofre bueno del Agucci tenebroso"},
+	"recaudacion": {"nombre": "Evasión fiscal", "como": "Bajá a un Cobrador Agucci antes de que se escape"},
+	"nadie_atras": {"nombre": "Nadie queda atrás", "como": "Salvá a todos los presos de la Colonia"},
+	"sigilo_gronk": {"nombre": "Pasito a pasito", "como": "Cruzá el Laberinto de los Gronks sin despertar a ninguno"},
+	"no_muerde": {"nombre": "Ese no muerde", "como": "Elegí el cofre bueno en Cofres sospechosos"},
+	"carreta_llego": {"nombre": "Delivery", "como": "Llevá la carreta hasta el final"},
+	"estampida": {"nombre": "Torero", "como": "Aguantá la Estampida sin que caiga nadie"},
+	"coleccionista": {"nombre": "Coleccionista", "como": "Juntá 10 objetos en una sola partida"},
+	"cliente_vip": {"nombre": "Cliente VIP", "como": "Comprale un kit de Yole a Yole Sajor"},
+	"corona": {"nombre": "Larga vida al Líder", "como": "Conseguí la Corona del Líder Supremo"},
+	"rata_del_oro": {"nombre": "Rata del oro", "como": "Juntá 500 de oro en una sola partida"},
+	"el_mas_torpe": {"nombre": "El más torpe", "como": "Caé 3 veces en una sola partida"}
+}

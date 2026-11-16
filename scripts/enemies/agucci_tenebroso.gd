@@ -92,6 +92,7 @@ func make_offer(player: PlayerCharacter) -> void:
 	if not is_peaceful() or offered.has(player.slot.index):
 		return
 	offered.append(player.slot.index)
+	Achievements.unlock("negocios_turbios")
 	player.health.current = maxf(player.health.current * 0.5, 1.0)
 	player.health.changed.emit(player.health.current, player.health.max_health)
 	player.flash()
@@ -285,6 +286,7 @@ func _on_interrupted() -> void:
 func _drop_gold() -> void:
 	_say("Esto... no... termina acá...", 2.5)
 	var center := Vector3(clampf(global_position.x, -17.0, 17.0), 0.0, clampf(global_position.z, -9.0, 9.0))
+	Achievements.unlock("queso_podrido")
 	var reward := ShadeChests.new()
 	reward.consolation_gold = consolation_gold
 	get_parent().add_child(reward)

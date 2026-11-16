@@ -166,6 +166,9 @@ func _buy(row: Dictionary) -> void:
 		RunState.add_special(index, row["id"])
 	else:
 		RunState.add_upgrade(index, row["id"])
+		var bought: CharacterUpgrade = Balance.upgrades.get_upgrade(row["id"])
+		if bought != null and bought.price > 0:
+			Achievements.unlock("cliente_vip")
 	(_state()["sold"] as Array).append(row["id"])
 	_say(Dialogue.line("yole_compra"))
 	_build_rows()

@@ -183,6 +183,7 @@ func give_crown() -> void:
 		var index: int = _pipo_player.slot.index
 		if not RunState.has_special(index, &"corona_lider"):
 			RunState.add_special(index, &"corona_lider")
+			Achievements.unlock("corona")
 			Events.floating_text_requested.emit(_pipo_player.global_position + Vector3.UP * 3.0,
 					"¡Corona del Líder Supremo!
 Si caés, te levanta una vez", GOLD)

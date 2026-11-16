@@ -128,6 +128,7 @@ func smash() -> void:
 	if _broken:
 		return
 	_broken = true
+	Achievements.unlock("cristal_roto")
 	collision_layer = 0
 	_hurtbox.queue_free()
 	_label.visible = false

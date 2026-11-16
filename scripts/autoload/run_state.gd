@@ -144,6 +144,8 @@ func add_item(slot_index: int, item_id: StringName) -> void:
 	if not items.has(slot_index):
 		items[slot_index] = []
 	items[slot_index].append(item_id)
+	if in_run and items[slot_index].size() >= 10:
+		Achievements.unlock("coleccionista")
 	Events.loadout_changed.emit(slot_index)
 
 
@@ -278,6 +280,10 @@ func add_stat(slot_index: int, key: StringName, amount: float) -> void:
 	if not stats.has(slot_index):
 		stats[slot_index] = {}
 	stats[slot_index][key] = stats[slot_index].get(key, 0.0) + amount
+	if key == &"gold" and stats[slot_index][key] >= 500.0:
+		Achievements.unlock("rata_del_oro")
+	elif key == &"downs" and stats[slot_index][key] >= 3.0:
+		Achievements.unlock("el_mas_torpe")
 
 
 ## El jugador de un golpe (o de su compañero, como Stewie), o -1.

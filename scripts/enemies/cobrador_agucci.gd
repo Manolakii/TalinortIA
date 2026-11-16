@@ -72,6 +72,7 @@ func _drop_gold() -> void:
 	if _gone:
 		return
 	Loot.drop_for_all(get_parent(), global_position, [bag_gold])
+	Achievements.unlock("recaudacion")
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0, "¡Recuperaron la bolsa!", BAG_COLOR)
 	if _label != null:
 		_label.visible = false
