@@ -437,9 +437,92 @@ func do_dodge() -> void:
 	_mirror(Slot.DODGE, direction)
 
 
+# --- En Birig Bamba: el que no manejás anda suelto (pedido del grupo) ---
+
+## Lugares que le gustan: la tienda de Yole, la fuente, el bombo, la barra, las mesas.
+const HUB_SPOTS: Array[Vector3] = [Vector3(-13.5, 0, -3), Vector3(12, 0, 3), Vector3(0, 0, 3),
+		Vector3(-2, 0, -8.3), Vector3(5, 0, -4.5), Vector3(-6, 0, 2), Vector3(8, 0, 8), Vector3(-9, 0, 7)]
+const HUB_BITS: Dictionary = {
+	"stewie": {"dance": ["*baila*", "*baila re mal*", "¡Bombo!"], "nap": ["Zzz...", "Zzz... lechuga..."],
+			"look": ["¿Eh?", "...", "¡Lechuga!", "*mira a Yole con sospecha*"]},
+	"maestro": {"dance": ["*baila como en los Valles*", "Ritmo... ancestral..."],
+			"nap": ["*medita*", "Zzz... la tecnología... Zzz..."],
+			"look": ["Mmm.", "Demasiado neón.", "*mira el bombo con desconfianza*"]},
+}
+
+enum HubMood { WALK, LOOK, DANCE, NAP }
+
+var _hub_mood: HubMood = HubMood.LOOK
+var _hub_time: float = 2.0
+var _hub_goal: Vector3 = Vector3.ZERO
+
+
+func _hub_idle(body: DuoCompanion, delta: float) -> void:
+	_hub_time -= delta
+	var bits: Dictionary = HUB_BITS["stewie" if body.identity == Body.STEWIE else "maestro"]
+	match _hub_mood:
+		HubMood.WALK:
+			var to_goal: Vector3 = _hub_goal - body.global_position
+			to_goal.y = 0.0
+			if to_goal.length() < 0.6 or _hub_time <= 0.0:
+				_next_hub_mood(body, bits)
+			else:
+				body.steer(to_goal.normalized(), body.move_speed * 0.45, delta)
+		HubMood.DANCE:
+			body.stop(delta)
+			body.facing = body.facing.rotated(Vector3.UP, delta * 7.0)
+			body.visual.position.y = absf(sin(_hub_time * 9.0)) * 0.35
+			if _hub_time <= 0.0:
+				body.visual.position.y = 0.0
+				_next_hub_mood(body, bits)
+		HubMood.NAP:
+			body.stop(delta)
+			body.visual.scale = Vector3(1.15, 0.7, 1.15)
+			if _hub_time <= 0.0:
+				body.visual.scale = Vector3.ONE * _companion_scale()
+				_next_hub_mood(body, bits)
+		_:
+			body.stop(delta)
+			if _hub_time <= 0.0:
+				_next_hub_mood(body, bits)
+
+
+func _next_hub_mood(body: DuoCompanion, bits: Dictionary) -> void:
+	var roll: float = randf()
+	if roll < 0.5:
+		_hub_mood = HubMood.WALK
+		_hub_goal = HUB_SPOTS.pick_random() + Vector3(randf_range(-1.5, 1.5), 0, randf_range(-1.0, 1.0))
+		_hub_time = 8.0
+		return
+	if roll < 0.7:
+		_hub_mood = HubMood.DANCE
+		_hub_time = randf_range(2.5, 4.0)
+		_hub_say(body, bits["dance"].pick_random())
+	elif roll < 0.82:
+		_hub_mood = HubMood.NAP
+		_hub_time = randf_range(4.0, 7.0)
+		_hub_say(body, bits["nap"].pick_random())
+	else:
+		_hub_mood = HubMood.LOOK
+		_hub_time = randf_range(1.5, 3.0)
+		if randf() < 0.5:
+			_hub_say(body, bits["look"].pick_random())
+
+
+func _hub_say(body: DuoCompanion, text: String) -> void:
+	Events.floating_text_requested.emit(body.global_position + Vector3.UP * 2.0, text, Color(0.85, 0.95, 0.85))
+
+
+func _companion_scale() -> float:
+	return 1.0  # el tamaño de la forma va en el cuerpo, no en la escala del visual
+
+
 # --- IA del compañero ---
 
 func companion_think(body: DuoCompanion, delta: float) -> void:
+	if player.peaceful:
+		_hub_idle(body, delta)
+		return
 	if _relay_time > 0.0:
 		_relay_companion_think(body, delta)
 		return

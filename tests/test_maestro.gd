@@ -269,3 +269,15 @@ func test_yole_fan_bastonazo_hits_three_lanes_once_each() -> void:
 	assert_lt(side.health.current, 1000.0, "La onda del costado también pega")
 	assert_almost_eq(1000.0 - near.health.current, 1000.0 - center.health.current, 0.5,
 			"El que está pegado (lo tocan las tres) recibe una sola")
+
+
+func test_in_birig_bamba_the_companion_wanders_on_its_own() -> void:
+	_pump(1)
+	_player.peaceful = true
+	var start: Vector3 = _kit.companion.global_position
+	_kit._hub_mood = MaestroKit.HubMood.WALK
+	_kit._hub_goal = start + Vector3(6, 0, 0)
+	_kit._hub_time = 8.0
+	_pump(int(1.5 / DT))
+	assert_gt(_kit.companion.global_position.x, start.x + 1.5, "Va solo para otro lado, no detrás del Maestro")
+	_player.peaceful = false
