@@ -225,3 +225,12 @@ func test_shade_drops_two_chests_one_mimic() -> void:
 	var specials_before: int = RunState.get_specials(0).size()
 	good.open(_player)
 	assert_eq(RunState.get_specials(0).size(), specials_before + 1, "Objeto de la tienda de Yole")
+
+
+func test_elite_with_model_gets_rim_and_animations() -> void:
+	var enemy: Enemy = load("res://scenes/enemies/soldado_agucci.tscn").instantiate()
+	enemy.make_elite(1)
+	enemy.position = Vector3(0, 0, -4)
+	add_child_autofree(enemy)
+	assert_true(enemy.has_model(), "El soldado tiene modelo")
+	assert_true(enemy.model.materials[0].rim_enabled, "El élite brilla en el borde")

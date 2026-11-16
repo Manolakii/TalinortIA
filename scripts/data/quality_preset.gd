@@ -21,6 +21,8 @@ extends Resource
 @export_group("Escena")
 ## 0 a 1: proporción de briznas de pasto que se dibujan.
 @export_range(0.0, 1.0) var grass_density: float = 1.0
+## Cuánta decoración se pone en las salas (árboles, rocas, cajas).
+@export_range(0.0, 1.0) var decor_density: float = 1.0
 ## Escala de render 3D (1 = nativo).
 @export_range(0.5, 1.0) var render_scale: float = 1.0
 ## 0 = sin MSAA, 1 = 2x, 2 = 4x (Viewport.MSAA).

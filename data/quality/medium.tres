@@ -12,6 +12,7 @@ glow = true
 fog = true
 shadow_atlas_size = 4096
 soft_shadow_quality = 2
+decor_density = 0.8
 grass_density = 0.7
 render_scale = 0.9
 msaa_3d = 1

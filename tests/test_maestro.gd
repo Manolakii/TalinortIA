@@ -5,6 +5,7 @@ var _kit: MaestroKit
 
 
 func before_each() -> void:
+	RunState.start_run(1)  # sin objetos que hayan quedado de otros tests
 	make_player(&"maestro")
 	_kit = _player.kit as MaestroKit
 	_kit.kd = _kit.kd.duplicate()

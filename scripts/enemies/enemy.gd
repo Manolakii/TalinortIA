@@ -52,6 +52,8 @@ var is_controlled: bool = false
 var fear_origin: Vector3 = Vector3.ZERO
 
 var _body_material: StandardMaterial3D
+## Modelo 3D (si los datos tienen uno). Si no, la forma simple de siempre.
+var model: EnemyModel
 var _move_velocity: Vector3 = Vector3.ZERO
 var _puddle_timer: float = 0.0
 var _bounty_marker: MeshInstance3D
@@ -77,6 +79,9 @@ func _ready() -> void:
 	telegraph = Telegraph.new()
 	telegraph.name = "Telegraph"
 	add_child(telegraph)
+	if model != null:
+		telegraph.started.connect(model.play_attack)
+		hit_taken.connect(func(_info: DamageInfo) -> void: model.play_hit())
 	died.connect(_on_died)
 	status.effect_started.connect(_on_status_started)
 	if is_elite:
@@ -103,6 +108,8 @@ func _physics_process(delta: float) -> void:
 	if _bounty_marker != null:
 		_bounty_marker.rotate_y(delta * 2.5)
 	visual.rotation.y = atan2(-facing.x, -facing.z)
+	if model != null:
+		model.update(Vector2(velocity.x, velocity.z).length(), delta)
 	_update_stun_pose(delta)
 
 
@@ -148,9 +155,13 @@ func _build_elite_marks() -> void:
 	label.position.y = data.body_height * Balance.elite.scale + 0.5
 	add_child(label)
 	# Brillo de borde: se distingue de los comunes.
-	_body_material.rim_enabled = true
-	_body_material.rim = 0.8
-	_body_material.rim_tint = 0.2
+	var rim_materials: Array[StandardMaterial3D] = [_body_material]
+	if model != null:
+		rim_materials = model.materials
+	for material: StandardMaterial3D in rim_materials:
+		material.rim_enabled = true
+		material.rim = 0.8
+		material.rim_tint = 0.2
 	if has_bounty:
 		_build_bounty_marker()
 
@@ -484,9 +495,13 @@ func _on_died(info: DamageInfo) -> void:
 	remove_from_group(&"enemies")
 	Events.enemy_died.emit(self)
 	var tween: Tween = create_tween()
-	tween.tween_property(visual, "rotation:x", -1.45, 0.35).set_trans(Tween.TRANS_QUAD) \
-			.set_ease(Tween.EASE_IN)
-	tween.tween_interval(0.35)
+	if model != null:
+		model.play_death()
+		tween.tween_interval(1.0)
+	else:
+		tween.tween_property(visual, "rotation:x", -1.45, 0.35).set_trans(Tween.TRANS_QUAD) \
+				.set_ease(Tween.EASE_IN)
+		tween.tween_interval(0.35)
 	tween.tween_property(visual, "position:y", -1.2, 0.5)
 	tween.tween_callback(queue_free)
 
@@ -516,6 +531,15 @@ func _build_body() -> void:
 	collision.position.y = data.body_height * 0.5
 	add_child(collision)
 
+	if data.model_path != "" and _build_model():
+		# Los detalles de la forma simple se arman igual (algunos ataques los usan), pero los
+		# que van pegados al cuerpo se esconden si el modelo ya los tiene.
+		_build_extras()
+		if not data.model_keep_extras:
+			for child: Node in visual.get_children():
+				if child != model and child is Node3D:
+					(child as Node3D).visible = false
+		return
 	var body := MeshInstance3D.new()
 	var mesh := CapsuleMesh.new()
 	mesh.height = data.body_height
@@ -526,6 +550,24 @@ func _build_body() -> void:
 	body.material_override = _body_material
 	visual.add_child(body)
 	_build_extras()
+
+
+func has_model() -> bool:
+	return model != null
+
+
+func _build_model() -> bool:
+	model = EnemyModel.new()
+	visual.add_child(model)
+	if not model.setup(data) or model.materials.is_empty():
+		model.queue_free()
+		model = null
+		return false
+	_body_material = model.materials[0]
+	for material: StandardMaterial3D in model.materials:
+		if material != _body_material:
+			register_flash_material(material)
+	return true
 
 
 ## Cada enemigo agrega acá sus detalles (armas, vendas...).

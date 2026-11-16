@@ -215,3 +215,4 @@ func test_stats_panel_shows_item_icons_with_tooltips() -> void:
 	assert_eq(stone.count, 2)
 	assert_string_contains(stone.tooltip_text, "+8% de daño")
 	PlayerManager.reset()
+	RunState.start_run(4)

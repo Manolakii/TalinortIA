@@ -153,6 +153,7 @@ func build_room(type: int) -> void:
 		_cracked_rock.broken.connect(_on_secret_found)
 	if not in_challenge:
 		_spawn_vases(rng, spots, type == RoomKind.Type.TREASURE)
+	_decorate(type, spots)
 	match type:
 		RoomKind.Type.COMBAT:
 			_start_director(config.combat_waves[rng.randi_range(0, config.combat_waves.size() - 1)])
@@ -267,6 +268,23 @@ func _spawn_vases(rng: RandomNumberGenerator, spots: Array[Vector3], all_spots: 
 		var vase := Vase.new()
 		vase.position = spots.pop_at(rng.randi_range(0, spots.size() - 1))
 		_room_root.add_child(vase)
+
+
+## Decoración del escenario (pedido del grupo: escenarios más vivos). No en el laberinto ni en la
+## estampida, que necesitan la sala despejada; en el boss, solo afuera de las paredes.
+func _decorate(type: int, free_spots: Array[Vector3]) -> void:
+	if type in [RoomKind.Type.MAZE, RoomKind.Type.STAMPEDE]:
+		return
+	var decor := RoomDecor.new()
+	decor.name = "Decor"
+	_room_root.add_child(decor)
+	var avoid: Array[Vector3] = template.rock_spots()
+	avoid.append_array(template.vase_spots())
+	avoid.append_array(free_spots)
+	avoid.append(template.chest_spot())
+	avoid.append_array(template.feature_spots())
+	var scenario: int = 2 if type == RoomKind.Type.BOSS else RunState.scenario
+	decor.decorate(scenario, RunState.room_rng(&"decor"), avoid, type == RoomKind.Type.BOSS)
 
 
 ## Dificultad del escenario actual para todos los enemigos que aparezcan en esta sala.

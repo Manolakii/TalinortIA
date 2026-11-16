@@ -109,8 +109,9 @@ func _build_extras() -> void:
 	sphere.radius = 0.38
 	sphere.height = 0.7
 	bag.mesh = sphere
-	bag.position = Vector3(0.0, data.body_height * 0.85, 0.35)
-	bag.material_override = Fx.flat_material(BAG_COLOR, 1.2)
+	# Con modelo, la bolsa va colgada atrás a la altura de la cintura (no le tapa la cara).
+	bag.position = Vector3(0.25, data.body_height * 0.5, 0.45) if has_model() 			else Vector3(0.0, data.body_height * 0.85, 0.35)
+	bag.material_override = Fx.flat_material(BAG_COLOR, 0.6)
 	visual.add_child(bag)
 	var ring := MeshInstance3D.new()
 	var torus := TorusMesh.new()

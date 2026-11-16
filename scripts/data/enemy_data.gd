@@ -5,6 +5,19 @@ extends Resource
 @export var id: StringName
 @export var display_name: String = ""
 
+@export_group("Modelo")
+## Modelo 3D (.glb). Vacío = forma simple (placeholder). Pedido del grupo, 2026-11-16.
+@export_file("*.glb", "*.gltf") var model_path: String = ""
+## Piezas del modelo que se esconden (armas que no van).
+@export var model_hide: PackedStringArray = PackedStringArray()
+## Tinte (los enemigos van más apagados que los jugadores).
+@export var model_tint: Color = Color(0.8, 0.78, 0.8)
+## El modelo mide body_height × esto.
+@export var model_scale: float = 1.0
+@export var anim_attack: String = "1H_Melee_Attack_Chop"
+## Con modelo, si igual se agregan los detalles de la forma simple (bolsa, carteles...).
+@export var model_keep_extras: bool = false
+
 @export_group("Estadísticas")
 @export var max_health: float = 160.0
 @export var damage: float = 10.0

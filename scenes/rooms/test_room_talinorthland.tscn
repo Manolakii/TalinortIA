@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/talinorteano_cegado.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="9"]
 [ext_resource type="Script" path="res://scripts/rooms/occlusion_helper.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/fx/hit_effects.gd" id="11"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.36, 0.53, 0.78, 1)
@@ -249,6 +250,9 @@ script = ExtResource("3")
 
 [node name="DamageNumbers" type="Node3D" parent="."]
 script = ExtResource("6")
+
+[node name="HitEffects" type="Node3D" parent="."]
+script = ExtResource("11")
 
 [node name="EnemySpawner" type="Node3D" parent="."]
 script = ExtResource("7")

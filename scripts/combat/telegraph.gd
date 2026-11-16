@@ -3,6 +3,9 @@ extends MeshInstance3D
 ## Aviso de ataque en el piso. El relleno avanza durante `duration` y llega al borde
 ## justo cuando pega el golpe.
 
+## Arrancó un aviso (el modelo del enemigo empieza la animación de ataque).
+signal started(duration: float)
+
 const SHADER: Shader = preload("res://assets/shaders/telegraph.gdshader")
 ## Altura sobre el piso: por encima de la mayoría del pasto, debajo de los personajes.
 const HEIGHT := 0.22
@@ -83,6 +86,7 @@ func contains(point: Vector3, margin: float = 0.4) -> bool:
 
 
 func _start(duration: float) -> void:
+	started.emit(duration)
 	_duration = maxf(duration, 0.01)
 	_elapsed = 0.0
 	_material.set_shader_parameter("progress", 0.0)

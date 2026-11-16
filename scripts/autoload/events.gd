@@ -21,6 +21,8 @@ signal wave_cleared(index: int)
 signal room_cleared
 ## Se terminó la sala o el desafío (una vez por sala; el Mate de Birig Bamba cura acá).
 signal room_finished
+## Alguien esquivó (polvo en el piso).
+signal dodged(who: Node3D)
 ## Se desbloqueó un logro (el HUD muestra un cartelito).
 signal achievement_unlocked(title: String, how: String)
 

@@ -308,7 +308,13 @@ func _say(text: String, seconds: float) -> void:
 
 
 func _build_extras() -> void:
-	# Capucha y ojos violetas, y un humito de sombra en los pies (placeholder).
+	if not has_model():
+		_build_hood()
+	_build_smoke_and_labels()
+
+
+## Capucha y ojos violetas (solo con la forma simple; el modelo ya tiene capucha).
+func _build_hood() -> void:
 	var hood := MeshInstance3D.new()
 	var cone := CylinderMesh.new()
 	cone.top_radius = 0.0
@@ -327,6 +333,9 @@ func _build_extras() -> void:
 		eye.position = Vector3(side * 0.13, data.body_height * 0.86, -data.body_radius + 0.02)
 		eye.material_override = Fx.flat_material(SHADOW.lightened(0.4), 3.0)
 		visual.add_child(eye)
+
+
+func _build_smoke_and_labels() -> void:
 	var smoke := MeshInstance3D.new()
 	var disc := CylinderMesh.new()
 	disc.top_radius = 1.1
