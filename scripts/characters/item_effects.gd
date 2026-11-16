@@ -10,13 +10,13 @@ extends Node
 ##   sling        Honda del abuelo: chance de tirarle una piedra al más cercano (`amount` del golpe).
 ##   chain        Ukelele de cantina: chance de rayo que salta a `extra` enemigos (+1 por copia).
 ##   on_kill_blast Petardo de Birig Bamba: al matar, explosión de `amount` (radio `extra`).
-##   on_kill_shield Huevo de Gronk: al matar, escudo de `amount` (hasta 50% de la vida).
+##   on_kill_shield Huevo de Gronk: al matar, escudo de `amount` por `extra` s (hasta 50% de la vida).
 ##   first_hit    Mira de Pipo: +`amount` a enemigos con más del 90% de vida.
 ##   close_range  Anteojos de cerca: +`amount` a enemigos a menos de `extra` m.
 ##   block        Osito de peluche: chance de bloquear un golpe.
 ##   extra_dodge  Pluma de pájaro: +1 carga de esquiva.
 ##   medkit       Botiquín de Champaka: `extra` s después de recibir daño, cura `amount`.
-##   still_heal   Hongo quietito: quieto 1 s, cura `amount` de la vida por segundo.
+##   still_heal   Hongo quietito: quieto 1 s y con pelea, cura `amount` de la vida por segundo.
 ##   calm_speed   Energético de Fadied: +`amount` de velocidad sin pelea.
 
 const PROC_COLOR := Color(1.0, 0.92, 0.6)
@@ -54,8 +54,10 @@ func _physics_process(delta: float) -> void:
 			player.global_position.z - _last_position.z).length()
 	_last_position = player.global_position
 	_still_time = 0.0 if moved > 0.02 else _still_time + delta
+	# Solo con pelea (pedido del grupo: al terminar la sala te quedabas quieto y te curabas todo).
 	var fungus: int = stacks(&"still_heal")
-	if fungus > 0 and _still_time >= 1.0 and player.health.current < player.health.max_health:
+	var fighting: bool = not player.get_tree().get_nodes_in_group(&"enemies").is_empty()
+	if fungus > 0 and fighting and _still_time >= 1.0 and player.health.current < player.health.max_health:
 		_heal_tick -= delta
 		if _heal_tick <= 0.0:
 			_heal_tick = 0.5
@@ -175,7 +177,9 @@ func _on_kill(victim: Combatant) -> void:
 	var egg: int = stacks(&"on_kill_shield")
 	if egg > 0 and not player.health.is_dead:
 		var cap: float = player.health.max_health * 0.5
-		player.health.add_shield(minf(player.health.shield + value(&"on_kill_shield", &"amount") * egg, cap))
+		# Dura poco (pedido del grupo: estaba muy fuerte); cada muerte lo renueva.
+		player.health.add_shield(minf(player.health.shield + value(&"on_kill_shield", &"amount") * egg, cap),
+				value(&"on_kill_shield", &"extra"))
 
 
 ## Botiquín de Champaka: un rato después de recibir daño, cura un poco.

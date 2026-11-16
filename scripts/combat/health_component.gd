@@ -18,6 +18,8 @@ var is_dead: bool = false
 ## Escudo: absorbe daño antes que la vida (Bendición, Garrocha al Rescate).
 var shield: float = 0.0
 var shield_max: float = 0.0
+## Si es mayor que 0, el escudo se va solo cuando se termina este tiempo.
+var _shield_time_left: float = 0.0
 var _invulnerable_left: float = 0.0
 
 
@@ -31,6 +33,10 @@ func setup(maximum: float) -> void:
 ## Lo llama el dueño en su _physics_process (así respeta el hitstop).
 func tick(delta: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left - delta, 0.0)
+	if _shield_time_left > 0.0:
+		_shield_time_left -= delta
+		if _shield_time_left <= 0.0:
+			clear_shield()
 
 
 func make_invulnerable(seconds: float) -> void:
@@ -72,7 +78,10 @@ func heal(amount: float) -> void:
 	changed.emit(current, max_health)
 
 
-func add_shield(amount: float) -> void:
+## `duration`: si es mayor que 0, el escudo dura ese tiempo (cada vez que se suma, se renueva).
+func add_shield(amount: float, duration: float = 0.0) -> void:
+	if duration > 0.0:
+		_shield_time_left = duration
 	if amount <= shield:
 		return
 	shield = amount
@@ -84,6 +93,7 @@ func clear_shield() -> void:
 	if shield <= 0.0:
 		return
 	shield = 0.0
+	_shield_time_left = 0.0
 	shield_changed.emit(0.0, shield_max)
 
 

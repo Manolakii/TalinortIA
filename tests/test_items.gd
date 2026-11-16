@@ -136,6 +136,8 @@ func test_gronk_egg_shields_on_kill() -> void:
 	var victim := enemy_at(Vector3(0, 0, -3), 10.0)
 	_hit(victim, 50.0)
 	assert_almost_eq(_player.health.shield, 12.0, 0.01, "6 por copia")
+	_player.health.tick(3.1)
+	assert_eq(_player.health.shield, 0.0, "Dura 3 s")
 
 
 func test_feather_adds_dodge_charges() -> void:

@@ -24,6 +24,9 @@ func setup(data: EnemyData) -> bool:
 		return false
 	var model: Node3D = scene.instantiate()
 	add_child(model)
+	# Los modelos de glTF miran a +Z; el "adelante" de los enemigos es -Z (reportado por el grupo:
+	# caminaban en moonwalk y pegaban de espalda).
+	rotation.y = PI
 	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
 		if data.model_hide.has(String(mesh.name)):
 			mesh.visible = false
