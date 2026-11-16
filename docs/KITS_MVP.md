@@ -1,6 +1,6 @@
 # Kits de los personajes del MVP
 
-Tali, Mercenario Croco, Agucci, y el Maestro Uwey con Stewie. Los números son un punto de partida para testear y van en archivos de datos, no en el código. General Pipo y Capitán Champaka quedan para después de la primera versión (sus kits están en la biblia).
+Tali, Mercenario Croco, Agucci, el Maestro Uwey con Stewie, el General Pipo y el Capitán Champaka. Los números son un punto de partida para testear y van en archivos de datos, no en el código. *Actualizado al 2026-11-16.*
 
 **Orden de cada kit:** 0 · Pasiva (siempre activa), 1 · Golpe común (sin cooldown; se repite solo mientras se mantiene el botón), 2 · Habilidad fuerte (cooldown medio), 3 · Esquiva (movilidad, con cargas, 0,25 s de invulnerabilidad al inicio) y 4 · Definitiva (la barra se llena en unos 40 s de pelea, pegando y recibiendo daño).
 
@@ -8,10 +8,12 @@ Tali, Mercenario Croco, Agucci, y el Maestro Uwey con Stewie. Los números son u
 
 | Personaje | Vida | Velocidad (m/s) | Crítico | Daño por segundo del golpe común |
 | --- | --- | --- | --- | --- |
-| Agucci | 90 | 6,3 | 15%, daño 175% | ~58 (bajado de ~77 por el grupo) |
+| Agucci | 90 | 6,3 | 15%, daño 175% | ~46 (bajado de ~77 y de ~58 por el grupo) |
 | Mercenario Croco | 100 | 6,6 | 10% | ~51 a 70 según el modo |
 | Tali | 150 | 5,6 | 5% | ~22 en Normal, ~92 en Furia |
 | Maestro Uwey + Stewie | Maestro 110; Stewie 80 / 110 / 140 según su forma | Maestro 5,6; Stewie 5,8 | 5% | ~65 entre los dos |
+| General Pipo | 115 | 5,2 | 5% (20% en su cono) | ~34, más la Racha (hasta +50%) |
+| Capitán Champaka | 220 (recibe 15% menos) | 4,8 | 5% | ~36 |
 
 ---
 
@@ -29,7 +31,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 - **Furia — Zarpazos:** combo de 3 golpes (34 / 34 / 52) cada 1,3 s. El tercero pega fuerte contra el piso y levanta un poco a los enemigos.
 
 **2 · Habilidad fuerte**
-- **Normal — Llamado Salvaje (CD 12 s):** les pide ayuda a los animales y lo entienden mal. Sale algo al azar hacia donde apunta: una bandada de pájaros (daño en área y ceguera), una manada de bichos (empuje en línea) o, con poca probabilidad, un Gronk que carga atravesando todo. Lo que más sale son pájaros y bichos; el Gronk es el más fuerte y el más raro. Contra el Gronk Gigante tiene chance de aturdirlo unos segundos.
+- **Normal — Llamado Salvaje (CD 12 s):** les pide ayuda a los animales y lo entienden mal. Sale algo al azar hacia donde apunta: una bandada de pájaros (daño en área y ceguera), una manada de bichos (empuje en línea) o, con poca probabilidad, un Gronk que carga atravesando todo. Lo que más sale son pájaros y bichos; el Gronk es el más fuerte y el más raro. *2026-11-15:* al Gronk Gigante solo lo hace dudar el Gronk del Llamado (2,5 s); los pájaros, los bichos, el Tiro de Suerte y el Aplastón ya no lo aturden.
 - **Furia — Aplastón (CD 6 s):** salta y cae sobre una zona. 90 de daño en área y aturdimiento.
 
 **3 · Esquiva**
@@ -40,7 +42,11 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 - **En Normal:** se transforma al instante con un rugido que empuja y asusta a los enemigos cercanos durante 2 s. Entrando así, la Furia dura 8 s más (18 s), como premio por usar la definitiva.
 - **En Furia — Revoleo:** agarra al enemigo más grande (élites incluidos), lo tira contra los demás y extiende la Furia 4 s. *2026-11-15, pedido del grupo:* si se transformó con la definitiva, tiene un Revoleo gratis sin recargar la barra; si la Furia llegó sola, hay que cargarlo.
 
-**Mejoras de personaje (ejemplos):** el Piedrazo rebota a un segundo enemigo; en Furia corre 15% más rápido; el Tropezón da 25 de Furia en lugar de 15. Mejora en la tienda de Birig Bamba, "Ahora sí te entiendo": elegís qué animal sale del Llamado Salvaje.
+**Mejoras de personaje (ejemplos):** el Piedrazo rebota a un segundo enemigo; en Furia corre 15% más rápido; el Tropezón da 25 de Furia en lugar de 15.
+
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — "Ahora sí te entiendo"* (120): elegís qué animal sale del Llamado Salvaje.
+- *Kit de Yole — Piedra bumerán* (220): el Piedrazo sale derecho, sin desvío, y vuelve a sus manos pegando de nuevo en el camino.
 
 ---
 
@@ -68,6 +74,10 @@ Cañón de riel: un rayo continuo de 120 de daño por segundo durante 4 s, que g
 
 **Mejoras de personaje (ejemplos):** la escopeta tira 2 perdigones más; el señuelo explota al desaparecer; la recompensa también le da 10 de vida.
 
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — Contrato doble* (120): el Tiro por Contrato tiene 2 cargas.
+- *Kit de Yole — Señuelo pistolero* (220): el señuelo dura el doble y le dispara con la pistola (60% del daño, 2 por segundo) al enemigo más cercano.
+
 ---
 
 ## Agucci — El Asesino de las Sombras
@@ -93,12 +103,16 @@ Tres cortes rápidos que van subiendo (9 / 12 / 16), una patada que empuja un po
 *2026-11-15, pedido del grupo: es una habilidad para moverse, no para pegar fuerte.* Tira un kunai (12 de daño; si no le pega a nadie, queda clavado en el piso). Al reactivar, viaja por la sombra hasta el kunai y corta a todo lo que haya en el camino: 20 + 3 por metro recorrido, hasta 55 por enemigo. Al llegar, **Impulso de sombra**: +30% de velocidad por 2 s. Si mata con ese corte, recupera la mitad del cooldown. Si mata con el kunai, no suma Hambre.
 
 **3 · Esquiva — Disolverse (2 cargas, +6 de Hambre)**
-Se hunde en su sombra y reaparece unos metros más adelante, intangible durante el trayecto. Mejora en la tienda de Birig Bamba: deja atrás 3 shurikens que salen disparados hacia los enemigos cercanos.
+Se hunde en su sombra y reaparece unos metros más adelante, intangible durante el trayecto.
 
 **4 · Definitiva — Noche del Valle sin Luz (+50 de Hambre)**
 La sala se tiñe de luz violeta. Durante 8 s la sombra se separa de su cuerpo y repite cada ataque de Agucci, así que todo pega doble. Mientras no ataque, los enemigos lo pierden de vista. Como suma mucha Hambre, si no se maneja bien casi siempre termina en Posesión.
 
 **Mejoras de personaje (ejemplos):** +1 carga de esquiva; los cortes por la espalda hacen +30%; el kunai envenena.
+
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — Shurikens de la sombra* (120): Disolverse deja 3 shurikens que salen disparados hacia los enemigos cercanos.
+- *Kit de Yole — Katana de Yole Sajor* (220): adiós UZI; el combo son 3 cortes y un Tajo de sombra, un dash de 4,5 m que corta a todo lo que cruza con el daño de la ráfaga entera (25).
 
 ---
 
@@ -144,7 +158,13 @@ Un personaje que en realidad son dos. El jugador maneja a uno y el otro actúa s
 | Maestro | Combate | El Viejo Todavía Puede: golpes más rápidos, y cada uno baja los cooldowns de Stewie |
 | Maestro | Niebla | Silencio de los Valles: niebla en toda la sala que apaga escudos y tecnología enemiga |
 
-Detalle de color: Stewie está inspirada en el gato de Manuel. En Birig Bamba tira cosas de las mesas, se sienta arriba de las cajas y a veces ignora al Maestro.
+*2026-11-16:* mientras carga el Bastonazo se ve una línea de chi celeste en el piso (por dónde sale la onda) y el Maestro titila; al llegar a la carga completa hay un destello.
+
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — Vínculo eterno* (120): el Vínculo llega hasta 14 m y da +15%.
+- *Kit de Yole — Bastonazo en abanico* (220): la onda de chi sale de a tres, en abanico de ±22° (cada enemigo recibe una sola).
+
+Detalle de color: Stewie está inspirada en el gato de Manuel. En Birig Bamba anda suelta: pasea, baila, duerme la siesta y a veces ignora al Maestro.
 
 ---
 
@@ -161,11 +181,19 @@ Táctico y comandante. Controla la pelea desde atrás: encadena tiros certeros, 
 
 **1 · Golpe común — Bláster Reglamentario:** tiro preciso de 24 cada 0,7 s (bajado de 32 por el grupo), más la Racha.
 
-**2 · Habilidad fuerte — Despliegue de Chatarra (CD 12 s, máximo 2):** arma una torreta (7 por tiro, 2 tiros por segundo) que le tira primero al enemigo que viene acertando Pipo y dura 26 s o hasta que la rompan (*2026-11-15:* antes CD 14 y 12 s, no llegaba a haber 2). *Mejora en Birig Bamba — Refugio del Bosque Tuerto:* los aliados que se quedan cerca de la torreta se vuelven invisibles para los enemigos lejanos.
+**2 · Habilidad fuerte — Despliegue de Chatarra (CD 12 s, máximo 2):** arma una torreta (7 por tiro, 2 tiros por segundo) que le tira primero al enemigo que viene acertando Pipo y dura 26 s o hasta que la rompan (*2026-11-15:* antes CD 14 y 12 s, no llegaba a haber 2). Con la mejora "Otra torreta" llegan a ser 3.
 
 **3 · Esquiva — Repliegue Ordenado (1 carga, CD corto):** salto hacia atrás que deja una mina de proximidad donde estaba parado. *"No es huir, es reposicionarse."*
 
 **4 · Definitiva — Fuego de la Nave Insignia:** marca una zona grande y, después de 1,5 s, la nave la bombardea con 6 impactos de 90. Como la nave sigue medio rota, uno de los impactos cae en un lugar al azar.
+
+**Easter egg:** si alguien juega con Pipo, en la Cabaña del Bosque Tuerto lo recibe el Líder Supremo y le regala la **Corona del Líder Supremo** (una vez por partida, si caés, te levantás solo con el 40% de la vida; en el panel dice "Corona lista").
+
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — Refugio del Bosque Tuerto* (120): los aliados que se quedan cerca de una torreta se vuelven invisibles para los enemigos lejanos.
+- *Kit de Yole — Torretas con patas* (220): las torretas caminan detrás de Pipo y disparan mientras lo siguen.
+
+---
 
 ## Capitán Champaka — El Coloso del Hongo
 
@@ -185,12 +213,17 @@ Tanque y sanador. Lento y enorme: se come los golpes del equipo y los convierte 
 
 **4 · Definitiva — Floración del Hongo:** brota un hongo gigante a su alrededor durante 8 s. Dentro de la zona los aliados se curan todo el tiempo, un aliado caído revive y los enemigos quedan enredados en micelio (lentos) y confundidos por las esporas (pueden pegarse entre ellos).
 
+**Tienda de Yole (únicas, no salen como premio):**
+- *Mejora de kit — Micelio por todos lados* (120): la Floración cubre un área 40% más grande.
+- *Kit de Yole — Aplauso sísmico* (220): el Aplauso pega a todo alrededor (30% más de alcance, 80% del daño).
+
+---
+
 ## Sinergias (documento "Kits de personajes")
 
 | Personajes | Qué pasa |
 | --- | --- |
 | Champaka → Tali | Abrazo de Oso corta la Furia sin Resaca y lo cura |
 | Tali → Agucci | Cerca de Tali, el Hambre baja sola; Posesión a su lado dura la mitad |
-| Pipo + Croco | ~~Si el objetivo con Recompensa tiene Marca Táctica, el Croco cobra el doble~~ (se fue con la Marca Táctica, 2026-11-15) |
 | Maestro (Guía) + cualquiera | Bendición y Lección para Todos funcionan sobre cualquier aliado |
 | Champaka + todos | Los hongos curativos los puede agarrar cualquiera |
