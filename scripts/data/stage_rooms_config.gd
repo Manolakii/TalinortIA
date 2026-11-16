@@ -99,16 +99,16 @@ extends Resource
 @export var prisoner_defense_max_alive: int = 16
 ## Escoltá la carreta: vida, velocidad (m/s; ~45 s de viaje si la empujan siempre), y cada
 ## cuánto llegan enemigos (de a cuántos, en Normal y 1 jugador) con un máximo vivos a la vez.
-@export var cart_health: float = 800.0
+@export var cart_health: float = 1000.0
 @export var cart_speed: float = 0.65
 ## Camino de la carreta (zigzag por la sala; se espeja al azar). Pedido del grupo: más largo.
-@export var cart_path: PackedVector3Array = PackedVector3Array([Vector3(0, 0, 6.5), Vector3(-12, 0, 6.5),
-		Vector3(-12, 0, -2), Vector3(10, 0, -2), Vector3(10, 0, -11)])
-@export var cart_spawn_interval: float = 5.5
+@export var cart_path: PackedVector3Array = PackedVector3Array([Vector3(0, 0, 6.5), Vector3(-10, 0, 6.5),
+		Vector3(-10, 0, -3), Vector3(8, 0, -3), Vector3(8, 0, -10)])
+@export var cart_spawn_interval: float = 7.0
 @export var cart_spawn_group: int = 2
-@export var cart_max_enemies: int = 10
+@export var cart_max_enemies: int = 7
 ## Chance de que un enemigo vaya por la carreta (si no, va por los jugadores). Se re-decide cada 4 a 8 s.
-@export var cart_focus_chance: float = 0.4
+@export var cart_focus_chance: float = 0.3
 ## Laberinto de los Gronks: cuántos duermen, y a qué distancia los despierta el ruido (pegar o
 ## esquivar) o pasar pegado.
 @export var maze_gronks: int = 5
