@@ -470,8 +470,14 @@ func _finish_scenario() -> void:
 
 ## Terminó el stage (ganaron al boss): vuelven a Birig Bamba.
 func _finish_stage() -> void:
-	show_banner("¡%s liberado! El Gronk queda libre. Volviendo a Birig Bamba..." % config.stage_name, -1.0)
-	await get_tree().create_timer(4.0).timeout
+	show_banner("¡%s liberado! El Gronk queda libre." % config.stage_name, 3.5)
+	await get_tree().create_timer(3.5).timeout
+	# Estadísticas de la partida antes de volver (pedido del grupo).
+	var go_on: Array[bool] = [false]
+	_result_screen.show_result(true, "¡%s liberado!" % config.stage_name, "El Gronk queda libre. Así les fue:",
+			func() -> void: go_on[0] = true)
+	while not go_on[0]:
+		await get_tree().process_frame
 	_transitioning = true
 	var tween: Tween = create_tween()
 	tween.tween_property(_fade, "color:a", 1.0, 0.5)

@@ -182,3 +182,36 @@ func test_medkit_heals_after_damage() -> void:
 	var after_hit: float = _player.health.current
 	await wait_seconds(1.4)
 	assert_almost_eq(_player.health.current, after_hit + 8.0, 0.5)
+
+
+# --- Estadísticas de la partida (2026-11-16) ---
+
+func test_run_stats_track_damage_kills_and_gold() -> void:
+	var enemy := enemy_at(Vector3(0, 0, -3), 40.0)
+	var hit: DamageInfo = _player.kit.make_hit(25.0)
+	hit.is_crit = false
+	enemy.receive_hit(hit)
+	enemy.receive_hit(hit.clone())
+	assert_almost_eq(RunState.get_stat(0, &"damage"), 50.0, 1.0, "Cuenta el daño de cada golpe")
+	assert_eq(RunState.get_stat(0, &"kills"), 1.0)
+	RunState.add_gold(0, 30)
+	RunState.add_gold(0, -10)
+	assert_eq(RunState.get_stat(0, &"gold"), 30.0, "Solo lo que junta, no lo que gasta")
+
+
+func test_stats_panel_shows_item_icons_with_tooltips() -> void:
+	PlayerManager.reset()
+	PlayerManager.join(true)
+	var slot: PlayerSlot = PlayerManager.active_slots()[0]
+	slot.character = Balance.get_character(&"tali")
+	RunState.add_item(slot.index, &"piedra_de_afilar")
+	RunState.add_item(slot.index, &"piedra_de_afilar")
+	RunState.add_special(slot.index, &"statik")
+	var panel := RunStatsPanel.new()
+	add_child_autofree(panel)
+	var icons: Array[Node] = panel.find_children("*", "ItemIcon", true, false)
+	assert_eq(icons.size(), 2, "Las dos piedras van en un solo ícono, más el Statik")
+	var stone: ItemIcon = icons[0]
+	assert_eq(stone.count, 2)
+	assert_string_contains(stone.tooltip_text, "+8% de daño")
+	PlayerManager.reset()

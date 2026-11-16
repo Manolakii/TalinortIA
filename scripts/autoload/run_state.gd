@@ -63,6 +63,10 @@ var scenarios_cleared: int = 0
 var elites_killed: int = 0
 var bosses_killed: int = 0
 var mcoinia_awarded: bool = false
+## Estadísticas de la partida por jugador (pantalla del final, pedido del grupo):
+## {daño, recibido, enemigos, elites, caidas, oro}.
+var stats: Dictionary[int, Dictionary] = {}
+const STAT_KEYS: Array[StringName] = [&"damage", &"taken", &"kills", &"elites", &"downs", &"gold"]
 ## Segunda opinión (McoinIA): recompensas que cada jugador todavía puede volver a tirar.
 var rerolls_left: Dictionary[int, int] = {}
 
@@ -102,6 +106,7 @@ func start_run(new_seed: int = 0) -> void:
 	elites_killed = 0
 	bosses_killed = 0
 	mcoinia_awarded = false
+	stats.clear()
 	rerolls_left.clear()
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		gold[slot.index] = Balance.economy.starting_gold + int(MetaProgress.bonus(&"bolsillo_profundo"))
@@ -117,6 +122,8 @@ func get_gold(slot_index: int) -> int:
 
 func add_gold(slot_index: int, amount: int) -> void:
 	gold[slot_index] = maxi(get_gold(slot_index) + amount, 0)
+	if amount > 0:
+		add_stat(slot_index, &"gold", amount)
 	Events.gold_changed.emit(slot_index, gold[slot_index])
 
 
@@ -255,6 +262,56 @@ func return_to_hub() -> void:
 
 func _ready() -> void:
 	Events.enemy_died.connect(_on_enemy_died)
+	Events.hit_landed.connect(_on_hit_landed_stats)
+	Events.player_downed.connect(_on_player_downed_stats)
+
+
+# --- Estadísticas de la partida ---
+
+func get_stat(slot_index: int, key: StringName) -> float:
+	return stats.get(slot_index, {}).get(key, 0.0)
+
+
+func add_stat(slot_index: int, key: StringName, amount: float) -> void:
+	if not in_run:
+		return
+	if not stats.has(slot_index):
+		stats[slot_index] = {}
+	stats[slot_index][key] = stats[slot_index].get(key, 0.0) + amount
+
+
+## El jugador de un golpe (o de su compañero, como Stewie), o -1.
+static func _slot_of(node: Variant) -> int:
+	if not is_instance_valid(node):
+		return -1
+	if node is PlayerCharacter and (node as PlayerCharacter).slot != null:
+		return (node as PlayerCharacter).slot.index
+	if node is DuoCompanion:
+		var kit: CharacterKit = (node as DuoCompanion).kit as CharacterKit
+		if kit != null and is_instance_valid(kit.player) and kit.player.slot != null:
+			return kit.player.slot.index
+	return -1
+
+
+func _on_hit_landed_stats(info: DamageInfo, target: Node3D) -> void:
+	if not in_run or not is_instance_valid(target):
+		return
+	var hitter: int = _slot_of(info.attacker)
+	if hitter >= 0 and target is Enemy:
+		add_stat(hitter, &"damage", info.final_amount)
+		if (target as Enemy).health.is_dead:
+			add_stat(hitter, &"kills", 1)
+			if (target as Enemy).is_elite:
+				add_stat(hitter, &"elites", 1)
+	var victim: int = _slot_of(target)
+	if victim >= 0 and info.attacker_team == DamageInfo.Team.ENEMIES:
+		add_stat(victim, &"taken", info.final_amount)
+
+
+func _on_player_downed_stats(player: Node3D) -> void:
+	var index: int = _slot_of(player)
+	if index >= 0:
+		add_stat(index, &"downs", 1)
 
 
 func _on_enemy_died(enemy: Node3D) -> void:
