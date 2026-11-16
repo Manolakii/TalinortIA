@@ -1,29 +1,126 @@
 {
-	"_nota": "Charlas de los NPCs de Birig Bamba. Cada NPC tiene charlas por personaje (tali, croco, agucci, maestro) y una 'default'. Cada charla es una lista de líneas; se elige según la visita (visita 0 = la primera, 1 = la segunda...). Si no hay para ese personaje, usa 'default'.",
+	"_nota": "Charlas de los NPCs de Birig Bamba. Cada NPC tiene charlas por personaje (tali, croco, agucci, maestro, pipo, champaka) y una 'default'. Cada charla es una lista de líneas. La primera charla de la primera visita es la primera de la lista; después van rotando cada vez que le hablás. Si no hay para ese personaje, usa 'default'.",
 	"yole": {
 		"nombre": "Yole Sajor",
 		"iniciales": "YS",
 		"color": "#8f8f9a",
 		"charlas": {
 			"default": [
-				["¡Eeeh, mirá quién llegó! Pasá, pasá, que hoy tengo de todo.", "Todo original, eh. Bueno, original de alguien.", "Apretá E de nuevo y te muestro la mercadería, que no tengo todo el día. Bueno, sí tengo, pero no te lo digo."],
-				["¡Volviste vivo! Pensé que te perdía como cliente.", "Mirá que lo nuevo se cayó de un camión hace diez minutos. Todavía está calentito."]
+				[
+					"¡Eeeh, mirá quién llegó! Pasá, pasá, que hoy tengo de todo.",
+					"Todo original, eh. Bueno, original de alguien.",
+					"Apretá E de nuevo y te muestro la mercadería, que no tengo todo el día. Bueno, sí tengo, pero no te lo digo."
+				],
+				[
+					"¡Volviste vivo! Pensé que te perdía como cliente.",
+					"Mirá que lo nuevo se cayó de un camión hace diez minutos. Todavía está calentito."
+				],
+				[
+					"Pasá, pasá. Hoy tengo kits de Yole: únicos, irrepetibles, y con garantía de que nadie más los tiene. Porque los inventé ayer.",
+					"No preguntes de dónde salen. Bueno, preguntá. Se cayeron de un camión. Un camión muy específico."
+				],
+				[
+					"Me dijeron que anda un Agucci todo tenebroso cambiando vida por objetos. ¡Competencia desleal!",
+					"Yo por lo menos te cobro en oro. La vida te la dejo, que si no, no volvés a comprar."
+				]
 			],
 			"tali": [
-				["¡Tali! ¡Mi Talinorteano favorito! Bueno, el único que me paga.", "¿Viste que te tenía razón? La Furia se paga sola. Ahora pagame vos a mí."],
-				["Me contaron que revoleaste un Gronk. Eso no se hace, papá. Eso se vende."]
+				[
+					"¡Tali! ¡Mi Talinorteano favorito! Bueno, el único que me paga.",
+					"¿Viste que te tenía razón? La Furia se paga sola. Ahora pagame vos a mí."
+				],
+				[
+					"Me contaron que revoleaste un Gronk. Eso no se hace, papá. Eso se vende."
+				],
+				[
+					"Tali, te guardé una Piedra bumerán. Tirás la piedra y vuelve. Como vos cuando te echan de un lugar.",
+					"Ojo, que si la tirás en Furia capaz que la piedra no vuelve. Por miedo."
+				],
+				[
+					"¿Viste al Cobrador Agucci? Ese tipo junta impuestos para Fadied. Si lo agarrás, la bolsa es tuya.",
+					"Y si sobra algo, ya sabés dónde está el puesto."
+				]
 			],
 			"croco": [
-				["Croco, hermano. Vos y yo somos iguales: trabajamos por plata y fingimos que es por honor.", "Igual te cobro. La amistad es la amistad y el negocio es el negocio."],
-				["¿Otra vez vos? Con lo que me debés me compro un asteroide."]
+				[
+					"Croco, hermano. Vos y yo somos iguales: trabajamos por plata y fingimos que es por honor.",
+					"Igual te cobro. La amistad es la amistad y el negocio es el negocio."
+				],
+				[
+					"¿Otra vez vos? Con lo que me debés me compro un asteroide."
+				],
+				[
+					"Croco, te conseguí un Señuelo pistolero. Es igual a vos pero trabaja gratis. Un milagro.",
+					"Si lo ves cobrando, avisame que lo pongo de cajero."
+				],
+				[
+					"¿Te pagaron alguna vez, Croco? Digo, para saber si te fío o no.",
+					"...Bueno, te fío. Pero con interés. Mucho interés."
+				]
 			],
 			"agucci": [
-				["Un Agucci en mi puesto... ¿Viniste a cobrarme la deuda o a sumarte a la cola?", "Tranqui, tranqui. Acá en Birig Bamba no se pelea. Se regatea."],
-				["Che, tu sombra me miró feo. Decile que acá se respeta el Pacto del Bombo."]
+				[
+					"Un Agucci en mi puesto... ¿Viniste a cobrarme la deuda o a sumarte a la cola?",
+					"Tranqui, tranqui. Acá en Birig Bamba no se pelea. Se regatea."
+				],
+				[
+					"Che, tu sombra me miró feo. Decile que acá se respeta el Pacto del Bombo."
+				],
+				[
+					"Te tengo una Katana de Yole Sajor. Sin UZI, puro filo. Más elegante. Más Agucci de alcurnia.",
+					"La sombra tuya me dijo que la quería. La sombra no paga, así que pagá vos."
+				],
+				[
+					"Dicen que hay un primo tuyo tenebroso en Talinorthland ofreciendo trueques raros.",
+					"Si lo ves, decile que el mercado negro acá lo manejo yo. Con cariño, pero lo manejo yo."
+				]
 			],
 			"maestro": [
-				["Maestro Uwey, qué honor. Y la tortuga... ¡sacá la pata de la mercadería, Stewie!", "Para usted, precio de amigo. Que es el mismo precio, pero dicho con cariño."],
-				["Stewie se me sentó arriba de la caja de los legendarios. Si se rompe algo, lo pagan."]
+				[
+					"Maestro Uwey, qué honor. Y la tortuga... ¡sacá la pata de la mercadería, Stewie!",
+					"Para usted, precio de amigo. Que es el mismo precio, pero dicho con cariño."
+				],
+				[
+					"Stewie se me sentó arriba de la caja de los legendarios. Si se rompe algo, lo pagan."
+				],
+				[
+					"Maestro, le conseguí un Bastonazo en abanico. Tres ondas de chi por el precio de una. Bah, por el precio de tres.",
+					"Y no me mire así, que no es tecnología de Fadied. Es tecnología de Yole. Mucho más confiable. Casi."
+				],
+				[
+					"Stewie, mi amor, no muerdas el Statik que te da patada. ¡Maestro, controle a su tortuga!",
+					"Igual si lo rompe se lo cobro. Las tortugas también pagan."
+				]
+			],
+			"pipo": [
+				[
+					"Mirá vos... el General Pipo. ¿No era que estabas escondido en el Bosque Tuerto?",
+					"Tranqui, no le digo a nadie. Mi silencio cuesta 70 de oro. Es el precio del común.",
+					"Apretá E de nuevo y te muestro lo que tengo. Hay un parche para el ojo que te queda pintado."
+				],
+				[
+					"General, le conseguí Torretas con patas. Lo siguen a todos lados. Como los que lo buscan para cobrarle la invasión.",
+					"\"No es huir, es reposicionarse\", ¿no? Bueno, acá no se reposiciona nadie sin pagar."
+				],
+				[
+					"¿Cómo anda el Líder Supremo? ¿Sigue escondido en tu cabaña?",
+					"Ups. Eso no lo dije. Y vos no lo escuchaste. Descuento del cinco por ciento por la confusión."
+				]
+			],
+			"champaka": [
+				[
+					"¡Capitán Champaka! Agachate un poco que me tapás la luz del puesto.",
+					"Usted que cuida a Tali, cuídeme el bolsillo y compre algo. Le hago precio de papá.",
+					"Apretá E de nuevo y te muestro la mercadería. Los hongos no los vendo, eh, que vos traés de casa."
+				],
+				[
+					"Te tengo un Aplauso sísmico. Aplaudís y tiembla todo. Ideal para cumpleaños y peleas.",
+					"Ojo con aplaudir adentro del puesto, que se me caen los legendarios."
+				],
+				[
+					"¿Es verdad que los hongos te hablan? Preguntales si tienen ganas de comprar algo.",
+					"...¿No? Qué hongos más ratas."
+				]
 			]
 		}
 	},
@@ -33,14 +130,71 @@
 		"color": "#c28a4a",
 		"charlas": {
 			"default": [
-				["Bienvenido al Salón Beláustegui. Leé el cartel de la entrada.", "\"Se prohíben los chistes sobre familiares\". Por un chistecito de esos se armó una guerra, ¿sabés?", "El Líder Supremo se hizo el gracioso con la hermana de los Agucci. Y mirá cómo estamos."],
-				["¿Otra vuelta? La casa no invita, pero escucha.", "Dicen que en el Bosque Tuerto vive un tuerto que no quiere que lo encuentren. Yo no dije nada."]
+				[
+					"Bienvenido al Salón Beláustegui. Leé el cartel de la entrada.",
+					"\"Se prohíben los chistes sobre familiares\". Por un chistecito de esos se armó una guerra, ¿sabés?",
+					"El Líder Supremo se hizo el gracioso con la hermana de los Agucci. Y mirá cómo estamos."
+				],
+				[
+					"¿Otra vuelta? La casa no invita, pero escucha.",
+					"Dicen que en el Bosque Tuerto vive un tuerto que no quiere que lo encuentren. Yo no dije nada."
+				],
+				[
+					"Pedí algo o hacete a un lado, que el Gronk de la barra está esperando su licuado.",
+					"Sí, hay un Gronk en la barra. Viene todos los jueves. No le mires el cuerno."
+				]
 			],
 			"agucci": [
-				["Un Agucci en el Salón... Mirá que acá rige el Pacto del Bombo, eh.", "Y por favor, nada de chistes de hermanas. Ya sabemos cómo termina eso."]
+				[
+					"Un Agucci en el Salón... Mirá que acá rige el Pacto del Bombo, eh.",
+					"Y por favor, nada de chistes de hermanas. Ya sabemos cómo termina eso."
+				],
+				[
+					"Tu sombra pidió un trago. Le dije que primero se presente.",
+					"Me miró feo. Igual le serví. Uno no se hace el guapo con una sombra."
+				]
 			],
 			"tali": [
-				["¡Tali! El Croco te trajo de la Tierra, ¿no? ¿Cómo es allá? ¿Hay asado?", "Acá el asado lo hacemos con carne de... mejor no te digo."]
+				[
+					"¡Tali! El Croco te trajo de la Tierra, ¿no? ¿Cómo es allá? ¿Hay asado?",
+					"Acá el asado lo hacemos con carne de... mejor no te digo."
+				],
+				[
+					"Tali, el Champaka me dijo que no te sirva nada fuerte. Por la Furia, ¿viste?",
+					"Te sirvo un jugo de Gronkberry. Lo más tranquilo que hay. Creo."
+				]
+			],
+			"croco": [
+				[
+					"Croco, la cuenta del mes pasado sigue abierta. Y la del anterior. Y la del otro.",
+					"Ya sé, ya sé: \"algún día me van a pagar\". Yo también estoy esperando, eh."
+				],
+				[
+					"Te vi cobrando una recompensa por un élite. ¿Ese oro no era para mí?",
+					"No, claro. Nunca es para mí."
+				]
+			],
+			"maestro": [
+				[
+					"Maestro, el té de los Valles se me terminó. Tengo mate. Es como el té, pero para charlar.",
+					"Y para Stewie tengo lechuga. No, no está en la carta. Es mía. Pero se la doy."
+				]
+			],
+			"pipo": [
+				[
+					"¡Shhh! Acá adentro no grites \"¡Pipo!\" que hay Talinorteanos que todavía se acuerdan de la invasión.",
+					"Te sirvo en el rincón, al lado del Gronk. Nadie mira para ese lado."
+				],
+				[
+					"General, ¿ese parche es nuevo? Le queda bien. Muy militar.",
+					"La casa no invita, pero el cumplido es gratis."
+				]
+			],
+			"champaka": [
+				[
+					"¡Champaka! Sentate en el banco reforzado, por favor. El otro todavía no lo arreglamos.",
+					"¿Lo de siempre? Un balde de agua con esporas. Lindo pedido. Raro, pero lindo."
+				]
 			]
 		}
 	},
@@ -50,11 +204,54 @@
 		"color": "#6a8fd6",
 		"charlas": {
 			"default": [
-				["¡BOM! ¡BOM! ¿Escuchás? Es el corazón de Birig Bamba.", "El Consejo del Bombo es neutral: acá no se pelea. Afuera, rómpanse todo lo que quieran.", "Y si volvés entero del Talinorthland, la fuente te cura gratis. Una vez. No abuses."],
-				["¡Volvieron! El bombo sonó más fuerte cuando llegaron. O fue el motor. No sé, son iguales."]
+				[
+					"¡BOM! ¡BOM! ¿Escuchás? Es el corazón de Birig Bamba.",
+					"El Consejo del Bombo es neutral: acá no se pelea. Afuera, rómpanse todo lo que quieran.",
+					"Y si volvés entero del Talinorthland, la fuente te cura gratis. Una vez. No abuses."
+				],
+				[
+					"¡Volvieron! El bombo sonó más fuerte cuando llegaron. O fue el motor. No sé, son iguales."
+				]
 			],
 			"maestro": [
-				["Maestro Uwey. El Consejo recuerda cuando Uwey era solo valles y no ciudades flotantes.", "Fadied vende tecnología a crédito y los Aguccis compraron. Usted sabe cómo terminan las deudas."]
+				[
+					"Maestro Uwey. El Consejo recuerda cuando Uwey era solo valles y no ciudades flotantes.",
+					"Fadied vende tecnología a crédito y los Aguccis compraron. Usted sabe cómo terminan las deudas."
+				],
+				[
+					"El Consejo escuchó que Stewie volvió a cambiar de forma. ¡BOM! Felicitaciones.",
+					"La tortuga crece. El bombo también. Todo crece en Birig Bamba, menos la paciencia del barman."
+				]
+			],
+			"tali": [
+				[
+					"Tali, sobreviviente de Talinorthland. El Consejo te saluda. ¡BOM!",
+					"Tu pueblo está cegado por la sombra de los Agucci. Vos sos la piedra que va a romper eso. Literalmente, si tirás bien."
+				]
+			],
+			"croco": [
+				[
+					"Mercenario Croco. El Consejo te recuerda que en Birig Bamba no se cobran recompensas.",
+					"Afuera, cobrá lo que quieras. Adentro, se baila. ¡BOM!"
+				]
+			],
+			"agucci": [
+				[
+					"Un Agucci desertor. El Pacto del Bombo te protege mientras estés acá.",
+					"Pero si tu sombra rompe algo, la pagás vos. Las sombras no tienen billetera."
+				]
+			],
+			"pipo": [
+				[
+					"General Pipo. El Consejo sabe que invadiste Talinorthland y perdiste un ojo con una piedra.",
+					"El Consejo también sabe guardar secretos. ¡BOM! Ese \"bom\" fue un secreto."
+				]
+			],
+			"champaka": [
+				[
+					"Capitán Champaka. El Consejo te agradece que cuides al chico.",
+					"Y te pide que no plantes hongos en el salón. Ya crecieron dos en la barra."
+				]
 			]
 		}
 	}

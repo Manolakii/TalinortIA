@@ -8,6 +8,9 @@ signal finished
 
 const BG := Color(0.07, 0.06, 0.1, 0.94)
 
+## Cuántas veces le habló cada personaje a cada NPC (para rotar las charlas).
+static var _times_talked: Dictionary = {}
+
 var player: PlayerCharacter
 var _lines: Array = []
 var _index: int = 0
@@ -28,9 +31,14 @@ static func lines_for(npc_id: String, character_id: String, visit: int) -> Dicti
 	var options: Array = talks.get(character_id, talks.get("default", []))
 	if options.is_empty():
 		return {}
+	# La primera charla va primero; después rotan cada vez que le hablás (pedido del grupo:
+	# que haya varias y no se repita siempre la misma).
+	var key: String = "%s:%s" % [npc_id, character_id]
+	var times: int = _times_talked.get(key, 0)
+	_times_talked[key] = times + 1
 	return {"nombre": npc.get("nombre", "?"), "iniciales": npc.get("iniciales", "?"),
 			"color": Color.html(npc.get("color", "#888888")),
-			"lineas": options[mini(visit, options.size() - 1)]}
+			"lineas": options[(visit + times) % options.size()]}
 
 
 func start(talker: PlayerCharacter, talk: Dictionary) -> void:

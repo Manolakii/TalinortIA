@@ -88,3 +88,12 @@ func test_party_health_is_saved_between_scenes() -> void:
 	RunState.save_party([_player])
 	assert_almost_eq(RunState.party[0]["ratio"], 0.5, 0.01)
 	assert_false(RunState.party[0]["out"])
+
+
+func test_every_character_has_talks_with_yole() -> void:
+	for id: String in ["tali", "croco", "agucci", "maestro", "pipo", "champaka"]:
+		var talk: Dictionary = DialogueBox.lines_for("yole", id, 0)
+		assert_false((talk.get("lineas", []) as Array).is_empty(), "%s le habla a Yole" % id)
+	var first: Array = DialogueBox.lines_for("yole", "pipo", 0)["lineas"]
+	var second: Array = DialogueBox.lines_for("yole", "pipo", 0)["lineas"]
+	assert_ne(first, second, "Las charlas rotan")
