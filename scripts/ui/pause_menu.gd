@@ -2,8 +2,8 @@ extends CanvasLayer
 ## Pausa compartida: cualquier jugador pausa con Start o Esc, y la pausa es para todos.
 ## Si se desconecta un joystick en plena partida, se pausa sola hasta que vuelva.
 ##
-## En pausa: Start o Esc para seguir; B (joystick) o Retroceso (teclado) para volver
-## a la pantalla de unión.
+## En pausa: Start o Esc para seguir; X (joystick) o E (teclado) abre las Opciones;
+## B (joystick) o Retroceso (teclado) para volver a la pantalla de unión.
 
 const JOIN_SCENE := "res://scenes/ui/join_screen.tscn"
 
@@ -11,6 +11,7 @@ var _panel: Control
 var _title: Label
 var _message: Label
 var _hint: Label
+var _options: OptionsMenu
 
 
 func _ready() -> void:
@@ -23,6 +24,8 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	if _options != null and _options.visible:
+		return
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		var input: PlayerInput = slot.input
 		if input.just_pressed(PlayerInput.Action.PAUSE):
@@ -35,9 +38,18 @@ func _physics_process(_delta: float) -> void:
 			else:
 				_pause()
 			return
+		if get_tree().paused and _panel.visible and not PlayerManager.any_disconnected() \
+				and slot.input.just_pressed(PlayerInput.Action.INTERACT):
+			open_options()
+			return
 		if get_tree().paused and _wants_exit(slot):
 			_exit_to_join_screen()
 			return
+
+
+func open_options() -> void:
+	_options.open()
+	_panel.visible = false
 
 
 func _in_menu(slot: PlayerSlot) -> bool:
@@ -96,7 +108,7 @@ func _refresh_text() -> void:
 	if missing.is_empty():
 		_title.text = "Pausa"
 		_message.text = ""
-		_hint.text = "Start o Esc para seguir\nB o Retroceso para volver a la pantalla de unión"
+		_hint.text = "Start o Esc para seguir\nX o E: Opciones\nB o Retroceso para volver a la pantalla de unión"
 	else:
 		_title.text = "¡Se desconectó un joystick!"
 		_message.text = "Falta el de %s. Reconectalo para seguir." % ", ".join(missing)
@@ -127,6 +139,12 @@ func _build_ui() -> void:
 	_hint.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
 	for label: Label in [_title, _message, _hint]:
 		box.add_child(label)
+	_options = OptionsMenu.new()
+	_options.visible = false
+	add_child(_options)
+	_options.closed.connect(func() -> void:
+		_panel.visible = get_tree().paused
+		_refresh_text())
 
 
 func _make_label(font_size: int) -> Label:

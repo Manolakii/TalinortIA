@@ -331,6 +331,9 @@ func _on_blocked_by_invulnerability(info: DamageInfo) -> void:
 func _after_hit(info: DamageInfo) -> void:
 	if info.shake <= 0.0 and not info.has_tag(&"tick"):
 		Events.camera_shake_requested.emit(Balance.combat.shake_player_hurt)
+	# Vibración del joystick al recibir un golpe (se apaga en Opciones).
+	if slot != null and not slot.is_keyboard and not info.has_tag(&"tick") and info.final_amount > 0.0:
+		GameSettings.rumble(slot.input.joy_device, 0.35, 0.55 if info.final_amount > 15.0 else 0.25, 0.15)
 	kit.on_damage_taken(info)
 
 

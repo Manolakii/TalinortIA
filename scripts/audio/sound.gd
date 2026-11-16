@@ -63,6 +63,7 @@ func _init() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	for i: int in VOICES:
 		var player := AudioStreamPlayer.new()
+		player.bus = &"SFX"
 		add_child(player)
 		_players.append(player)
 	_music_a = _make_music_player()
@@ -135,6 +136,7 @@ func _music(track: String) -> void:
 func _make_music_player() -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
 	player.volume_db = -60.0
+	player.bus = &"Music"
 	add_child(player)
 	return player
 

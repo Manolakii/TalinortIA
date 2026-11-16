@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 
 
 func add_trauma(amount: float) -> void:
-	_trauma = clampf(_trauma + amount, 0.0, 1.0)
+	_trauma = clampf(_trauma + amount * GameSettings.shake_scale, 0.0, 1.0)
 
 
 func _apply_shake(delta: float) -> void:

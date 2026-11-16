@@ -74,6 +74,8 @@ func show_text(world_position: Vector3, text: String, color: Color, scale_factor
 
 
 func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
+	if not GameSettings.damage_numbers:
+		return
 	if info.has_tag(&"tick"):
 		_accumulate_tick(info, target)
 		return
