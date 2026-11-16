@@ -1,6 +1,6 @@
 # Lore de TalinortIA — Resumen para el juego
 
-Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, caos y cariño; nada solemne. Todos los textos van en español rioplatense.
+Resumen de la biblia del lore, para nombres, textos y tono. *Actualizado al 2026-11-16 con lo que ya está en el juego.* **Tono:** humor, caos y cariño; nada solemne. Todos los textos van en español rioplatense.
 
 ## El universo
 
@@ -48,17 +48,20 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 ## NPCs del MVP
 
 - **Yole Sajor:** mapache que habla, transa del mercado negro de Birig Bamba (cambio de lore del grupo, 2026-11-14). Vende los objetos especiales "que se cayeron de un camión". Berretinero, chamuyero, tira chistes bien argentinos, te descansa y te vende hasta lo que no tiene.
-- **Agucci tenebroso** *(2026-11-15)*: un Agucci que anda suelto por Talinorthland haciendo "negocios": media vida por un objeto. Si lo tocás dos veces, se pudre el queso.
-- **Consejo del Bombo:** los neutrales de Birig Bamba.
+- **Agucci tenebroso** *(2026-11-15)*: un Agucci que anda suelto por Talinorthland haciendo "negocios": media vida por un objeto. Si lo tocás dos veces, se pudre el queso. Si lo vencés, deja dos cofres y uno muerde.
+- **Consejo del Bombo:** los neutrales de Birig Bamba. Hablan con "¡BOM!" y saben guardar secretos (el de Pipo, por ejemplo).
+- **Pocho, el barman** *(2026-11-13)*: atiende la barra del Salón Beláustegui. Le fía a medio mundo y nadie le paga, sobre todo el Croco. Hay un Gronk que viene todos los jueves a tomar un licuado.
+- **Líder Supremo Talinorteano:** escondido en la cabaña de Pipo. Si llegás con Pipo, sale con su corona y te la regala: la **Corona del Líder Supremo** te levanta una vez si caés ("a mí acá nadie me pega").
 - **Birigbambenses:** el público de la cantina.
 
 ## Enemigos del Stage 1
 
-- **Talinorteanos cegados:** atacan aunque juegues con Tali. Si matás al Chamán de la Sombra, se aturden y algunos despiertan y se escapan.
+- **Talinorteanos cegados:** atacan aunque juegues con Tali. Los hay que pelean con palo y los **Honderos**, que tiran piedras con aviso. Si matás al Chamán de la Sombra, se aturden y algunos despiertan y se escapan.
 - **Aguccis invasores:** soldados, tiradores y chamanes.
 - **Cobrador Agucci** *(2026-11-15)*: junta "impuestos" en Talinorthland para pagarle a Fadied el crédito de la tecnología Uwey. Si no lo agarrás a tiempo, se va con la plata.
 - **Gronks:** bestias salvajes.
-- **Gronk Gigante:** el boss, controlado por la sombra. Al morir, la sombra sale de su cuerpo y el Gronk queda libre.
+- **Gronk Gigante:** el boss, controlado por la sombra. Al morir, la sombra sale de su cuerpo y el Gronk queda libre. En la última fase, un **cristal de sombra** lo cura hasta que lo rompen.
+- **Mimics:** cofres con dientes. En "Cofres sospechosos" uno de tres muerde, y es ENORME.
 
 
 ## Agregados de la biblia (2026-11-14)
@@ -68,3 +71,13 @@ Resumen de la biblia del lore, para nombres, textos y tono. **Tono:** humor, cao
 - **Líder Supremo Talinorteano:** el bocón que empezó la guerra. Está triste y débil por la derrota.
 - **Capitán Champaka:** humano de la Tierra que resurgió de un hongo extraño y se volvió superhumano. Padre adoptivo del grupo y tutor de Tali. [GANCHO] el hongo podría venir de restos de la nave Pipo.
 - **Agucci:** después de la guerra deserta para siempre del gobierno de Gucci.
+
+## Lo que ya está en el juego (2026-11-16)
+
+- **Recorrido de Talinorthland:** 1-1 Llanuras Gronk, 1-2 Ruinas de Ciudad Derrumbe, 1-3 Bosque Tuerto y 1-4 Gronk Gigante. Cuanto más adentro, más bravos los enemigos (más vida, más daño y algunos con escudo).
+- **Desafíos** (puertas de ida y vuelta, como grietas): Cofres sospechosos, Colonia de presos (liberar Talinorteanos enjaulados y aguantar la súper oleada), Escoltá la carreta (Talinorteanos que no paran de hablar), Laberinto de los Gronks (no despertarlos) y **La Estampida**, que homenajea la estampida pedida por error que ganó la invasión de los Pipos.
+- **Cabaña del General Pipo:** se llega resolviendo un acertijo ("¿Qué le sacó el ojo al General?": una piedra).
+- **McoinIA:** la moneda intergaláctica. Se cobra al terminar cada partida y se gasta en la Casa de cambio McoinIA de Birig Bamba.
+- **Yole Sajor** vende además los **kits de Yole**, uno por personaje, únicos e "inventados ayer" (Katana de Yole Sajor, Piedra bumerán, Señuelo pistolero, Bastonazo en abanico, Torretas con patas y Aplauso sísmico).
+- **Stewie en Birig Bamba:** anda suelta, pasea, baila al ritmo del bombo, duerme la siesta y mira a Yole con sospecha.
+- **Logros del grupo:** una cartelera en Birig Bamba con nombres como "Se pudrió el queso", "Evasión fiscal" (bajar al Cobrador) y "El más torpe".
