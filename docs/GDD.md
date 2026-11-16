@@ -256,6 +256,27 @@ Un Agucci medio tenebroso que aparece **una sola vez por stage** en Talinorthlan
 | Antes del Stage 2 | 40% | 35% | 20% | 5% |
 | Antes del Stage 3 | 25% | 35% | 28% | 12% |
 
+### Objetos con efecto (*2026-11-16, pedido del grupo, inspirados en Risk of Rain 2*)
+
+Además de los 12 que suben números, hay 12 genéricos que **hacen algo** y sirven para cualquier personaje. Salen en las mismas elecciones y cada copia los potencia. Más adelante se les va a sumar rareza.
+
+| Objeto | Efecto (1 copia) | Con más copias |
+| --- | --- | --- |
+| Cuchillo oxidado | 10% de hacer sangrar (3 golpecitos de 25% del golpe) | +10% de chance |
+| Honda del abuelo | 10% de tirarle una piedra al más cercano (150% del golpe) | +150% de daño |
+| Ukelele de cantina | 20% de un rayo que salta a 2 enemigos (60% del golpe) | +1 salto |
+| Petardo de Birig Bamba | El enemigo que matás explota (20 de daño, 3 m) | +20 de daño y +0,5 m |
+| Huevo de Gronk | Al matar, +6 de escudo (se acumula hasta la mitad de la vida) | +6 |
+| Mira de Pipo | +35% de daño a enemigos con más del 90% de vida | +35% |
+| Anteojos de cerca | +15% de daño a enemigos a menos de 4 m | +15% |
+| Osito de peluche | 10% de bloquear un golpe | Suma sin llegar al 100% |
+| Pluma de pájaro | +1 carga de esquiva | +1 |
+| Botiquín de Champaka | 1,2 s después de recibir daño, curás 8 | +8 |
+| Hongo quietito | Quieto 1 s, curás 3% de la vida por segundo | +3% |
+| Energético de Fadied | +25% de velocidad cuando no hay pelea | +25% |
+
+Los efectos que salen de un golpe (sangrado, piedra, rayo, explosión) no disparan otros efectos, así no se encadenan al infinito.
+
 ### Objetos especiales: ejemplos
 
 A diferencia de los genéricos, no suben números: agregan un efecto nuevo.

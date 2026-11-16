@@ -14,3 +14,12 @@ const STATS: Array[StringName] = [&"damage", &"attack_speed", &"max_health", &"c
 @export var stat: StringName = &"damage"
 ## Por copia. Porcentajes como fracción (0,08 = 8%); vida y curación en puntos.
 @export var amount: float = 0.08
+## Objetos con efecto (pedido del grupo, estilo Risk of Rain 2): si `effect` no está vacío, no
+## suma una estadística sino que ItemEffects hace algo (sangrado, explosión, rayo...). Cada
+## copia lo potencia. `chance` y `extra` son números propios de cada efecto (ver ItemEffects).
+@export var effect: StringName = &""
+@export var chance: float = 0.0
+@export var extra: float = 0.0
+## Ícono placeholder (hasta que haya arte): color de fondo y una o dos letras.
+@export var icon_color: Color = Color(0.5, 0.5, 0.55)
+@export var icon_text: String = ""

@@ -12,8 +12,10 @@ func _give(item_id: StringName, copies: int = 1) -> void:
 		RunState.add_item(0, item_id)
 
 
-func test_all_twelve_items_from_the_gdd() -> void:
-	assert_eq(Balance.generic_items.items.size(), 12)
+func test_all_items_from_the_gdd() -> void:
+	assert_eq(Balance.generic_items.items.size(), 24, "12 de estadísticas y 12 con efecto")
+	for item: GenericItem in Balance.generic_items.items:
+		assert_ne(item.icon_text, "", "%s tiene ícono" % item.id)
 	var piedra: GenericItem = Balance.generic_items.get_item(&"piedra_de_afilar")
 	assert_eq(piedra.display_name, "Piedra de afilar")
 	assert_almost_eq(piedra.amount, 0.08, 0.0001)
@@ -83,3 +85,100 @@ func test_battery_speeds_up_ult_charge() -> void:
 	_give(&"bateria_robada")
 	_player.kit.add_ult(10.0)
 	assert_almost_eq(_player.kit.ult_charge, 11.0, 0.0001)
+
+
+
+# --- Objetos con efecto (estilo Risk of Rain 2, 2026-11-16) ---
+
+func _hit(enemy: Enemy, amount: float = 50.0) -> void:
+	var info: DamageInfo = _player.kit.make_hit(amount)
+	info.is_crit = false
+	enemy.receive_hit(info)
+
+
+func test_effect_items_count_stacks_not_stats() -> void:
+	_give(&"cuchillo_oxidado", 2)
+	assert_eq(_player.item_stacks(&"bleed"), 2)
+	assert_eq(_player.outgoing_damage_multiplier(), 1.0, "No suma daño plano")
+
+
+func test_pipo_sight_hits_healthy_enemies_harder() -> void:
+	_give(&"mira_de_pipo")
+	var enemy := enemy_at(Vector3(0, 0, -3), 1000.0)
+	_hit(enemy, 100.0)
+	assert_almost_eq(1000.0 - enemy.health.current, 135.0, 0.5, "+35% con la vida llena")
+	var before: float = enemy.health.current
+	enemy.health.current = 500.0
+	_hit(enemy, 100.0)
+	assert_almost_eq(500.0 - enemy.health.current, 100.0, 0.5, "Herido, normal")
+
+
+func test_close_glasses_only_up_close() -> void:
+	_give(&"anteojos_de_cerca")
+	var near := enemy_at(Vector3(0, 0, -2), 1000.0)
+	var far := enemy_at(Vector3(0, 0, -8), 1000.0)
+	_hit(near, 100.0)
+	_hit(far, 100.0)
+	assert_almost_eq(1000.0 - near.health.current, 115.0, 0.5)
+	assert_almost_eq(1000.0 - far.health.current, 100.0, 0.5)
+
+
+func test_firecracker_blasts_on_kill() -> void:
+	_give(&"petardo_birig")
+	var victim := enemy_at(Vector3(0, 0, -3), 10.0)
+	var neighbor := enemy_at(Vector3(1.5, 0, -3), 1000.0)
+	_hit(victim, 50.0)
+	assert_almost_eq(1000.0 - neighbor.health.current, 20.0, 0.5, "La explosión le pega al de al lado")
+
+
+func test_gronk_egg_shields_on_kill() -> void:
+	_give(&"huevo_de_gronk", 2)
+	var victim := enemy_at(Vector3(0, 0, -3), 10.0)
+	_hit(victim, 50.0)
+	assert_almost_eq(_player.health.shield, 12.0, 0.01, "6 por copia")
+
+
+func test_feather_adds_dodge_charges() -> void:
+	var before: int = _player.kit.dodge_cooldown.max_charges
+	_give(&"pluma_de_pajaro", 2)
+	assert_eq(_player.kit.dodge_cooldown.max_charges, before + 2)
+
+
+func test_teddy_blocks_sometimes() -> void:
+	_give(&"osito_de_peluche", 3)
+	var blocked: int = 0
+	for i: int in 400:
+		if _player._try_avoid(DamageInfo.new()) != "":
+			blocked += 1
+	# 1 - 1 / (1 + 0,3) = 23%
+	assert_between(blocked, 60, 130)
+
+
+func test_ukulele_and_sling_always_proc_when_chance_is_full() -> void:
+	_give(&"ukelele_de_cantina")
+	_give(&"honda_del_abuelo")
+	var uke: GenericItem = Balance.generic_items.get_item(&"ukelele_de_cantina")
+	var sling: GenericItem = Balance.generic_items.get_item(&"honda_del_abuelo")
+	var old_uke: float = uke.chance
+	var old_sling: float = sling.chance
+	uke.chance = 1.0
+	sling.chance = 1.0
+	var first := enemy_at(Vector3(0, 0, -3), 1000.0)
+	var second := enemy_at(Vector3(2, 0, -3), 1000.0)
+	_hit(first, 50.0)
+	uke.chance = old_uke
+	sling.chance = old_sling
+	assert_lt(second.health.current, 1000.0, "El rayo saltó al de al lado")
+	assert_lt(first.health.current, 1000.0 - 50.0, "Más el hondazo")
+
+
+func test_medkit_heals_after_damage() -> void:
+	_give(&"botiquin_champaka")
+	_player.health.current = 50.0
+	var hit := DamageInfo.new()
+	hit.amount = 10.0
+	hit.attacker_team = DamageInfo.Team.ENEMIES
+	_player.receive_hit(hit)
+	var after_hit: float = _player.health.current
+	await wait_seconds(1.4)
+	assert_almost_eq(_player.health.current, after_hit + 8.0, 0.5)

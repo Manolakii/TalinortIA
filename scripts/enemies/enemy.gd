@@ -360,6 +360,8 @@ func _modify_incoming(info: DamageInfo) -> void:
 	var hitter := info.attacker as PlayerCharacter if is_instance_valid(info.attacker) else null
 	if hitter != null and hitter.slot != null and (is_elite or is_in_group(&"boss")) 			and RunState.has_special(hitter.slot.index, &"diente_gronk"):
 		info.amount *= 1.2
+	if hitter != null and hitter.item_effects != null and not info.has_tag(&"proc"):
+		info.amount *= hitter.item_effects.damage_bonus_against(self)
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15

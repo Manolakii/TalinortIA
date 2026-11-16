@@ -22,6 +22,7 @@ const TEST_MODE_REVIVE_DELAY := 1.5
 
 ## Efectos de los objetos especiales de Yole Sajor.
 var specials: SpecialItemEffects
+var item_effects: ItemEffects
 ## Eligiendo en un menú (mejora u objeto): no se mueve ni ataca.
 var menu_locked: bool = false
 ## En Birig Bamba no se pelea (LORE, Pacto del Bombo): camina, pero no ataca ni usa habilidades.
@@ -102,6 +103,10 @@ func _build() -> void:
 		specials.name = "Specials"
 		add_child(specials)
 		specials.setup(self)
+		item_effects = ItemEffects.new()
+		item_effects.name = "ItemEffects"
+		add_child(item_effects)
+		item_effects.setup(self)
 
 
 func _create_kit() -> void:
@@ -166,6 +171,10 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 	if status.has(StatusEffects.MAILMAN):
 		speed *= 1.25
 	speed *= modifiers.move_speed_multiplier()
+	# Energético de Fadied (objeto): más rápido cuando no hay pelea.
+	var energy: int = item_stacks(&"calm_speed")
+	if energy > 0 and get_tree().get_nodes_in_group(&"enemies").is_empty():
+		speed *= 1.0 + ItemEffects.value(&"calm_speed", &"amount") * energy
 	var target := Vector3(move.x, 0.0, move.y) * speed
 	var rate: float = data.acceleration if move != Vector2.ZERO else data.deceleration
 	_move_velocity = _move_velocity.move_toward(target, rate * delta)
@@ -305,6 +314,10 @@ func _try_avoid(info: DamageInfo) -> String:
 	var attacker := info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.status.has(StatusEffects.FOGGED) and Combat.roll(0.3):
 		return "¡Se perdió en la niebla!"
+	# Osito de peluche (objeto): chance de bloquear que crece con cada copia, sin llegar al 100%.
+	var teddy: int = item_stacks(&"block")
+	if teddy > 0 and Combat.roll(1.0 - 1.0 / (1.0 + ItemEffects.value(&"block", &"chance") * teddy)):
+		return "¡Lo paró el osito!"
 	# Trébol de cuatro Gronks (objeto especial): a veces el golpe no te toca.
 	if slot != null and RunState.has_special(slot.index, &"trebol_gronk") and Combat.roll(0.1):
 		return "¡Zafaste de casualidad!"
@@ -363,8 +376,10 @@ func rebuild_modifiers() -> void:
 	modifiers.clear()
 	for item_id: Variant in RunState.get_items(slot.index):
 		var item: GenericItem = Balance.generic_items.get_item(item_id)
-		if item != null:
+		if item != null and item.effect == &"":
 			modifiers.add(item.stat, item.amount)
+		elif item != null:
+			modifiers.add(item.effect, 1.0)  # copias del objeto con efecto
 	for upgrade_id: Variant in RunState.get_upgrades(slot.index):
 		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(upgrade_id)
 		if upgrade != null and upgrade.stat != &"":
@@ -378,11 +393,17 @@ func rebuild_modifiers() -> void:
 	kit.dodge_cooldown.max_charges = kit.base_dodge_charges
 	kit.apply_upgrade_stats(modifiers)
 	kit.dodge_cooldown.max_charges += int(MetaProgress.bonus(&"pierna_extra"))
+	kit.dodge_cooldown.max_charges += item_stacks(&"extra_dodge")
 	var ratio: float = health.ratio() if health.max_health > 0.0 else 1.0
 	health.max_health = kit.base_max_health() + modifiers.max_health_bonus()
 	health.current = clampf(health.max_health * ratio, 0.0, health.max_health) \
 			if not health.is_dead else 0.0
 	health.changed.emit(health.current, health.max_health)
+
+
+## Copias de un objeto con efecto (por su `effect`).
+func item_stacks(effect: StringName) -> int:
+	return int(modifiers.get_total(effect))
 
 
 func crit_chance() -> float:

@@ -10,6 +10,8 @@ display_name = "Piedra de afilar"
 description = "+8% de daño"
 stat = &"damage"
 amount = 0.08
+icon_color = Color(0.75, 0.3, 0.25, 1)
+icon_text = "Pa"
 
 [sub_resource type="Resource" id="item_1"]
 script = ExtResource("2")
@@ -18,6 +20,8 @@ display_name = "Guantes de Gronk"
 description = "+8% de velocidad de ataque"
 stat = &"attack_speed"
 amount = 0.08
+icon_color = Color(0.8, 0.55, 0.2, 1)
+icon_text = "Gu"
 
 [sub_resource type="Resource" id="item_2"]
 script = ExtResource("2")
@@ -26,6 +30,8 @@ display_name = "Corazón de Gronk"
 description = "+12 de vida máxima"
 stat = &"max_health"
 amount = 12.0
+icon_color = Color(0.75, 0.2, 0.35, 1)
+icon_text = "Co"
 
 [sub_resource type="Resource" id="item_3"]
 script = ExtResource("2")
@@ -34,6 +40,8 @@ display_name = "Ojo de vidrio"
 description = "+4% de chance de crítico"
 stat = &"crit_chance"
 amount = 0.04
+icon_color = Color(0.35, 0.55, 0.85, 1)
+icon_text = "Oj"
 
 [sub_resource type="Resource" id="item_4"]
 script = ExtResource("2")
@@ -42,6 +50,8 @@ display_name = "Colmillo filoso"
 description = "+15% de daño crítico"
 stat = &"crit_damage"
 amount = 0.15
+icon_color = Color(0.85, 0.8, 0.7, 1)
+icon_text = "Cf"
 
 [sub_resource type="Resource" id="item_5"]
 script = ExtResource("2")
@@ -50,6 +60,8 @@ display_name = "Botas gastadas"
 description = "+5% de velocidad de movimiento"
 stat = &"move_speed"
 amount = 0.05
+icon_color = Color(0.5, 0.38, 0.25, 1)
+icon_text = "Bo"
 
 [sub_resource type="Resource" id="item_6"]
 script = ExtResource("2")
@@ -58,6 +70,8 @@ display_name = "Reloj Uwey"
 description = "-6% de cooldown en habilidades"
 stat = &"cooldown_reduction"
 amount = 0.06
+icon_color = Color(0.4, 0.75, 0.85, 1)
+icon_text = "Re"
 
 [sub_resource type="Resource" id="item_7"]
 script = ExtResource("2")
@@ -66,6 +80,8 @@ display_name = "Batería robada"
 description = "+10% de velocidad de carga de la definitiva"
 stat = &"ult_charge"
 amount = 0.1
+icon_color = Color(0.85, 0.8, 0.25, 1)
+icon_text = "Ba"
 
 [sub_resource type="Resource" id="item_8"]
 script = ExtResource("2")
@@ -74,6 +90,8 @@ display_name = "Vendas del Bosque Tuerto"
 description = "Cura 3 de vida al terminar cada oleada"
 stat = &"heal_per_wave"
 amount = 3.0
+icon_color = Color(0.85, 0.85, 0.8, 1)
+icon_text = "Ve"
 
 [sub_resource type="Resource" id="item_9"]
 script = ExtResource("2")
@@ -82,6 +100,8 @@ display_name = "Escama"
 description = "-4% de daño recibido"
 stat = &"damage_reduction"
 amount = 0.04
+icon_color = Color(0.3, 0.6, 0.45, 1)
+icon_text = "Es"
 
 [sub_resource type="Resource" id="item_10"]
 script = ExtResource("2")
@@ -90,6 +110,8 @@ display_name = "Moneda con agujero"
 description = "+10% de oro recogido"
 stat = &"gold"
 amount = 0.1
+icon_color = Color(1, 0.82, 0.3, 1)
+icon_text = "Mo"
 
 [sub_resource type="Resource" id="item_11"]
 script = ExtResource("2")
@@ -98,7 +120,165 @@ display_name = "Sanguijuela"
 description = "+1,5% de robo de vida"
 stat = &"lifesteal"
 amount = 0.015
+icon_color = Color(0.55, 0.15, 0.2, 1)
+icon_text = "Sa"
+
+[sub_resource type="Resource" id="item_12"]
+script = ExtResource("2")
+id = &"cuchillo_oxidado"
+display_name = "Cuchillo oxidado"
+description = "10% de chance (+10% por copia) de hacer sangrar: 3 golpecitos de 25% del golpe"
+stat = &""
+amount = 0.25
+effect = &"bleed"
+chance = 0.1
+extra = 0.0
+icon_color = Color(0.6, 0.3, 0.25, 1)
+icon_text = "Cu"
+
+[sub_resource type="Resource" id="item_13"]
+script = ExtResource("2")
+id = &"honda_del_abuelo"
+display_name = "Honda del abuelo"
+description = "10% de chance de tirarle una piedra al enemigo más cercano: 150% del golpe (+150% por copia)"
+stat = &""
+amount = 1.5
+effect = &"sling"
+chance = 0.1
+extra = 0.0
+icon_color = Color(0.55, 0.48, 0.4, 1)
+icon_text = "Ho"
+
+[sub_resource type="Resource" id="item_14"]
+script = ExtResource("2")
+id = &"ukelele_de_cantina"
+display_name = "Ukelele de cantina"
+description = "20% de chance de un rayo que salta a 2 enemigos (+1 por copia) con 60% del golpe"
+stat = &""
+amount = 0.6
+effect = &"chain"
+chance = 0.2
+extra = 2.0
+icon_color = Color(0.6, 0.8, 1, 1)
+icon_text = "Uk"
+
+[sub_resource type="Resource" id="item_15"]
+script = ExtResource("2")
+id = &"petardo_birig"
+display_name = "Petardo de Birig Bamba"
+description = "Los enemigos que matás explotan: 20 de daño (+20 por copia) alrededor"
+stat = &""
+amount = 20.0
+effect = &"on_kill_blast"
+chance = 0.0
+extra = 3.0
+icon_color = Color(1, 0.6, 0.25, 1)
+icon_text = "Pe"
+
+[sub_resource type="Resource" id="item_16"]
+script = ExtResource("2")
+id = &"huevo_de_gronk"
+display_name = "Huevo de Gronk"
+description = "Al matar, ganás 6 de escudo (+6 por copia), hasta la mitad de tu vida"
+stat = &""
+amount = 6.0
+effect = &"on_kill_shield"
+chance = 0.0
+extra = 0.0
+icon_color = Color(0.72, 0.88, 1, 1)
+icon_text = "Hu"
+
+[sub_resource type="Resource" id="item_17"]
+script = ExtResource("2")
+id = &"mira_de_pipo"
+display_name = "Mira de Pipo"
+description = "+35% de daño (+35% por copia) a enemigos con más del 90% de vida"
+stat = &""
+amount = 0.35
+effect = &"first_hit"
+chance = 0.0
+extra = 0.0
+icon_color = Color(0.45, 0.6, 0.35, 1)
+icon_text = "Mi"
+
+[sub_resource type="Resource" id="item_18"]
+script = ExtResource("2")
+id = &"anteojos_de_cerca"
+display_name = "Anteojos de cerca"
+description = "+15% de daño (+15% por copia) a enemigos a menos de 4 m"
+stat = &""
+amount = 0.15
+effect = &"close_range"
+chance = 0.0
+extra = 4.0
+icon_color = Color(0.7, 0.55, 0.8, 1)
+icon_text = "An"
+
+[sub_resource type="Resource" id="item_19"]
+script = ExtResource("2")
+id = &"osito_de_peluche"
+display_name = "Osito de peluche"
+description = "10% de chance de bloquear un golpe (cada copia suma, sin llegar nunca al 100%)"
+stat = &""
+amount = 0.0
+effect = &"block"
+chance = 0.1
+extra = 0.0
+icon_color = Color(0.75, 0.55, 0.4, 1)
+icon_text = "Os"
+
+[sub_resource type="Resource" id="item_20"]
+script = ExtResource("2")
+id = &"pluma_de_pajaro"
+display_name = "Pluma de pájaro"
+description = "+1 carga de esquiva (por copia)"
+stat = &""
+amount = 1.0
+effect = &"extra_dodge"
+chance = 0.0
+extra = 0.0
+icon_color = Color(0.9, 0.9, 0.95, 1)
+icon_text = "Pl"
+
+[sub_resource type="Resource" id="item_21"]
+script = ExtResource("2")
+id = &"botiquin_champaka"
+display_name = "Botiquín de Champaka"
+description = "1,2 s después de recibir daño, curás 8 (+8 por copia)"
+stat = &""
+amount = 8.0
+effect = &"medkit"
+chance = 0.0
+extra = 1.2
+icon_color = Color(0.35, 0.95, 0.85, 1)
+icon_text = "Bt"
+
+[sub_resource type="Resource" id="item_22"]
+script = ExtResource("2")
+id = &"hongo_quietito"
+display_name = "Hongo quietito"
+description = "Si te quedás quieto 1 s, curás 3% de tu vida por segundo (+3% por copia)"
+stat = &""
+amount = 0.03
+effect = &"still_heal"
+chance = 0.0
+extra = 0.0
+icon_color = Color(0.45, 0.8, 0.5, 1)
+icon_text = "Hq"
+
+[sub_resource type="Resource" id="item_23"]
+script = ExtResource("2")
+id = &"energetico_fadied"
+display_name = "Energético de Fadied"
+description = "+25% de velocidad (+25% por copia) cuando no hay pelea"
+stat = &""
+amount = 0.25
+effect = &"calm_speed"
+chance = 0.0
+extra = 0.0
+icon_color = Color(0.9, 0.85, 0.3, 1)
+icon_text = "En"
 
 [resource]
 script = ExtResource("1")
-items = Array[ExtResource("2")]([SubResource("item_0"), SubResource("item_1"), SubResource("item_2"), SubResource("item_3"), SubResource("item_4"), SubResource("item_5"), SubResource("item_6"), SubResource("item_7"), SubResource("item_8"), SubResource("item_9"), SubResource("item_10"), SubResource("item_11")])
+items = Array[ExtResource("2")]([SubResource("item_0"), SubResource("item_1"), SubResource("item_2"), SubResource("item_3"), SubResource("item_4"), SubResource("item_5"), SubResource("item_6"), SubResource("item_7"), SubResource("item_8"), SubResource("item_9"), SubResource("item_10"), SubResource("item_11"), SubResource("item_12"), SubResource("item_13"), SubResource("item_14"), SubResource("item_15"), SubResource("item_16"), SubResource("item_17"), SubResource("item_18"), SubResource("item_19"), SubResource("item_20"), SubResource("item_21"), SubResource("item_22"), SubResource("item_23")])
