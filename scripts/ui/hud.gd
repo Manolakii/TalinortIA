@@ -9,6 +9,8 @@ extends CanvasLayer
 const GOLD_COLOR := Color(1.0, 0.8, 0.25)
 const PANEL_BG := Color(0.06, 0.06, 0.09, 0.82)
 const NAME_TIME := 2.5
+## Máscara redonda para los retratos de los paneles con arte.
+const CIRCLE_SHADER: Shader = preload("res://assets/shaders/circle_mask.gdshader")
 
 ## Hueco de habilidad: cooldown que baja como sombra y número encima del ícono.
 class AbilitySlot:
@@ -17,11 +19,18 @@ class AbilitySlot:
 	var ratio: float = 0.0
 	var text: String = ""
 	var accent: Color = Color.WHITE
+	## Con ícono (paneles con arte): cuadrado con la imagen y el nombre abajo.
+	var icon: Texture2D
+	var frame: Color = Color(0.3, 0.3, 0.32)
+	var glow: bool = false
 
 	func _init() -> void:
 		custom_minimum_size = Vector2(84, 40)
 
 	func _draw() -> void:
+		if icon != null:
+			_draw_icon()
+			return
 		var r := Rect2(Vector2.ZERO, size)
 		draw_rect(r, Color(0.14, 0.14, 0.18, 0.95))
 		draw_rect(Rect2(0, 0, size.x, size.y * ratio), Color(0, 0, 0, 0.55))
@@ -31,6 +40,25 @@ class AbilitySlot:
 				size.x - 8, 12, Color(0.85, 0.85, 0.9))
 		if text != "":
 			draw_string(font, Vector2(0, 19), text, HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, Color.WHITE)
+
+	func _draw_icon() -> void:
+		var side: float = size.x
+		var box := Rect2(Vector2.ZERO, Vector2(side, side))
+		if glow and ratio <= 0.0:
+			draw_rect(box.grow(3.0), Color(accent, 0.55))
+		draw_texture_rect(icon, box, false, Color.WHITE if ratio <= 0.0 else Color(0.55, 0.55, 0.58))
+		if ratio > 0.0:
+			draw_rect(Rect2(0, 0, side, side * ratio), Color(0, 0, 0, 0.6))
+		draw_rect(box, frame if ratio > 0.0 or not glow else accent, false, 3.0)
+		var font: Font = get_theme_default_font()
+		if text != "":
+			draw_string_outline(font, Vector2(0, side * 0.5 + 9), text, HORIZONTAL_ALIGNMENT_CENTER, side, 22, 6,
+					Color(0, 0, 0, 0.95))
+			draw_string(font, Vector2(0, side * 0.5 + 9), text, HORIZONTAL_ALIGNMENT_CENTER, side, 22, Color.WHITE)
+		draw_string_outline(font, Vector2(0, side + 16), slot_name, HORIZONTAL_ALIGNMENT_CENTER, side, 13, 4,
+				Color(0, 0, 0, 0.9))
+		draw_string(font, Vector2(0, side + 16), slot_name, HORIZONTAL_ALIGNMENT_CENTER, side, 13,
+				Color(0.96, 0.92, 0.84))
 
 
 ## Barra con texto (vida, Furia, Hambre...). `marks` son rayitas (por ejemplo, el fin de la Lucidez).
@@ -43,6 +71,8 @@ class Bar:
 	var marks: Array = []
 	## Escudo (0 a 1 de la barra), se dibuja celeste arriba de la vida.
 	var shield: float = 0.0
+	var trough: Color = Color(0.12, 0.12, 0.16, 0.95)
+	var border: Color = Color(0, 0, 0, 0)
 
 	func _init() -> void:
 		custom_minimum_size = Vector2(0, 18)
@@ -52,7 +82,7 @@ class Bar:
 
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		draw_rect(r, Color(0.12, 0.12, 0.16, 0.95))
+		draw_rect(r, trough)
 		var fill_color: Color = color
 		if pulse:
 			fill_color = color.lightened(0.25 * (0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)))
@@ -63,6 +93,8 @@ class Bar:
 			draw_rect(Rect2(0, 0, w, size.y), Color(0.72, 0.88, 1.0), false, 2.0)
 		for mark: float in marks:
 			draw_line(Vector2(size.x * mark, 0), Vector2(size.x * mark, size.y), Color(1, 1, 1, 0.7), 2.0)
+		if border.a > 0.0:
+			draw_rect(r, border, false, 2.0)
 		var font: Font = get_theme_default_font()
 		draw_string_outline(font, Vector2(6, 14), label, HORIZONTAL_ALIGNMENT_LEFT, size.x - 12, 13, 4,
 				Color(0, 0, 0, 0.8))
@@ -80,6 +112,11 @@ class PlayerPanel:
 	var chips: HBoxContainer
 	var slots: Array = []
 	var status_label: Label
+	## Panel con arte (HudThemes): estado actual ("tali", "tali_furia"...), retrato y estilo.
+	var theme_state: String = ""
+	var portrait: TextureRect
+	var style: StyleBoxFlat
+	var basic_slot: AbilitySlot
 
 
 var _panels: Array[PlayerPanel] = []
@@ -136,6 +173,9 @@ func _sync_panels() -> void:
 # --- Panel ---
 
 func _make_panel(player: PlayerCharacter) -> PlayerPanel:
+	var state: String = HudThemes.state_for(player)
+	if state != "":
+		return _make_themed_panel(player, state)
 	var panel := PlayerPanel.new()
 	panel.player = player
 	var color: Color = player.slot.color
@@ -242,6 +282,172 @@ func _make_panel(player: PlayerCharacter) -> PlayerPanel:
 	return panel
 
 
+## Panel con el arte del personaje (prueba con los diseños del grupo). Mismo contenido que el de
+## siempre, con retrato redondo, íconos y los colores del tema. La vida va en el color del jugador
+## (P1 azul, P2 rojo...) para que en co-op se sepa de quién es cada panel.
+func _make_themed_panel(player: PlayerCharacter, state: String) -> PlayerPanel:
+	var panel := PlayerPanel.new()
+	panel.player = player
+	var color: Color = player.slot.color
+	panel.root = PanelContainer.new()
+	panel.root.custom_minimum_size = Vector2(440, 0)
+	panel.style = StyleBoxFlat.new()
+	panel.style.set_border_width_all(4)
+	panel.style.set_corner_radius_all(6)
+	panel.style.set_content_margin_all(10)
+	panel.style.content_margin_left = 6
+	panel.style.shadow_size = 10
+	panel.root.add_theme_stylebox_override("panel", panel.style)
+	_row.add_child(panel.root)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 10)
+	panel.root.add_child(hbox)
+
+	# Retrato redondo con aro.
+	var holder := Control.new()
+	holder.custom_minimum_size = Vector2(104, 104)
+	holder.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	hbox.add_child(holder)
+	panel.portrait = TextureRect.new()
+	panel.portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.portrait.offset_left = 5.0
+	panel.portrait.offset_top = 5.0
+	panel.portrait.offset_right = -5.0
+	panel.portrait.offset_bottom = -5.0
+	panel.portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	panel.portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	var mask := ShaderMaterial.new()
+	mask.shader = CIRCLE_SHADER
+	panel.portrait.material = mask
+	holder.add_child(panel.portrait)
+	var ring := Panel.new()
+	ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ring.set_meta(&"ring", true)
+	holder.add_child(ring)
+
+	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	column.add_theme_constant_override("separation", 5)
+	hbox.add_child(column)
+
+	var top := HBoxContainer.new()
+	var tag := Label.new()
+	tag.text = "%s · " % player.slot.label
+	tag.add_theme_font_size_override("font_size", 20)
+	tag.add_theme_color_override("font_color", color.lightened(0.25))
+	_outline(tag)
+	top.add_child(tag)
+	panel.name_label = Label.new()
+	panel.name_label.text = player.data.display_name
+	panel.name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.name_label.clip_text = true
+	panel.name_label.add_theme_font_size_override("font_size", 20)
+	_outline(panel.name_label)
+	top.add_child(panel.name_label)
+	panel.crown_label = Label.new()
+	panel.crown_label.text = "Corona lista "
+	panel.crown_label.add_theme_font_size_override("font_size", 13)
+	panel.crown_label.add_theme_color_override("font_color", GOLD_COLOR)
+	panel.crown_label.visible = false
+	top.add_child(panel.crown_label)
+	panel.gold_label = Label.new()
+	panel.gold_label.add_theme_font_size_override("font_size", 20)
+	panel.gold_label.add_theme_color_override("font_color", GOLD_COLOR)
+	_outline(panel.gold_label)
+	top.add_child(panel.gold_label)
+	column.add_child(top)
+
+	panel.health = Bar.new()
+	panel.health.custom_minimum_size = Vector2(0, 22)
+	panel.health.color = color.lightened(0.1)
+	column.add_child(panel.health)
+	panel.chips = HBoxContainer.new()
+	panel.chips.add_theme_constant_override("separation", 4)
+	column.add_child(panel.chips)
+	for chip_name: String in player.kit.hud_chips():
+		var chip := Label.new()
+		chip.text = chip_name
+		chip.add_theme_font_size_override("font_size", 12)
+		var chip_style := StyleBoxFlat.new()
+		chip_style.set_corner_radius_all(6)
+		chip_style.set_content_margin_all(3)
+		chip_style.content_margin_left = 8
+		chip_style.content_margin_right = 8
+		chip.add_theme_stylebox_override("normal", chip_style)
+		panel.chips.add_child(chip)
+	panel.special = Bar.new()
+	panel.special.custom_minimum_size = Vector2(0, 20)
+	column.add_child(panel.special)
+
+	var slots_row := HBoxContainer.new()
+	slots_row.add_theme_constant_override("separation", 8)
+	column.add_child(slots_row)
+	panel.basic_slot = AbilitySlot.new()
+	panel.basic_slot.custom_minimum_size = Vector2(64, 82)
+	slots_row.add_child(panel.basic_slot)
+	for i: int in 3:
+		var slot := AbilitySlot.new()
+		slot.custom_minimum_size = Vector2(64, 82)
+		slot.glow = i == 2
+		slots_row.add_child(slot)
+		panel.slots.append(slot)
+
+	panel.status_label = Label.new()
+	panel.status_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	panel.status_label.add_theme_font_size_override("font_size", 26)
+	panel.status_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	panel.status_label.add_theme_constant_override("outline_size", 8)
+	panel.status_label.visible = false
+	panel.root.add_child(panel.status_label)
+	_apply_theme(panel, state)
+	return panel
+
+
+## Pone los colores, el retrato y los íconos del tema (también al cambiar, como Tali en Furia).
+func _apply_theme(panel: PlayerPanel, state: String) -> void:
+	panel.theme_state = state
+	var theme: Dictionary = HudThemes.THEMES[state]
+	panel.style.bg_color = Color(theme["bg"], 0.94)
+	panel.style.border_color = theme["border"]
+	panel.style.shadow_color = theme["glow"]
+	panel.name_label.add_theme_color_override("font_color", theme["title"])
+	panel.health.trough = theme["trough"]
+	panel.health.border = (theme["border"] as Color).darkened(0.2)
+	panel.special.trough = theme["trough"]
+	panel.special.border = (theme["border"] as Color).darkened(0.2)
+	panel.portrait.texture = HudThemes.portrait(state)
+	var holder: Control = panel.portrait.get_parent()
+	for child: Node in holder.get_children():
+		if child.has_meta(&"ring"):
+			var ring_style := StyleBoxFlat.new()
+			ring_style.draw_center = false
+			ring_style.border_color = (theme["border"] as Color).lightened(0.15)
+			ring_style.set_border_width_all(5)
+			ring_style.set_corner_radius_all(52)
+			ring_style.shadow_color = theme["glow"]
+			ring_style.shadow_size = 6
+			(child as Panel).add_theme_stylebox_override("panel", ring_style)
+	var frame: Color = (theme["border"] as Color).darkened(0.1)
+	var all_slots: Array = [panel.basic_slot] + panel.slots
+	for i: int in all_slots.size():
+		var slot: AbilitySlot = all_slots[i]
+		slot.icon = HudThemes.icon(state, i)
+		slot.frame = frame
+		slot.accent = (theme["glow"] as Color).lightened(0.2) if (theme["glow"] as Color).a > 0.0 \
+				else (theme["border"] as Color).lightened(0.3)
+		slot.queue_redraw()
+	panel.basic_slot.slot_name = theme["basic"]
+
+
+func _outline(label: Label) -> void:
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	label.add_theme_constant_override("outline_size", 6)
+
+
 func _update_panel(panel: PlayerPanel) -> void:
 	var player: PlayerCharacter = panel.player
 	var kit: CharacterKit = player.kit
@@ -269,7 +475,13 @@ func _update_panel(panel: PlayerPanel) -> void:
 		panel.special.label = bar.get("label", "")
 		panel.special.pulse = bar.get("pulse", false)
 		panel.special.marks = bar.get("marks", [])
+		if panel.theme_state != "" and not panel.special.pulse:
+			panel.special.color = HudThemes.THEMES[panel.theme_state]["special"]
 
+	if panel.theme_state != "":
+		var state: String = HudThemes.state_for(player)
+		if state != panel.theme_state:
+			_apply_theme(panel, state)
 	var abilities: Array[Dictionary] = kit.hud_abilities()
 	for i: int in panel.slots.size():
 		var slot: AbilitySlot = panel.slots[i]
