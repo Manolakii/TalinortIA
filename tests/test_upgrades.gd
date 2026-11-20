@@ -13,8 +13,7 @@ func before_each() -> void:
 func test_each_character_has_its_pool() -> void:
 	assert_gte(Balance.upgrades.available_for(&"tali", []).size(), 15, "Tali: 15 o más mejoras")
 	assert_gte(Balance.upgrades.available_for(&"croco", []).size(), 15, "Croco: 15 o más mejoras")
-	for id: StringName in [&"agucci"]:
-		assert_eq(Balance.upgrades.available_for(id, []).size(), 12, "%s: 12 mejoras" % id)
+	assert_gte(Balance.upgrades.available_for(&"agucci", []).size(), 15, "Agucci: 15 o más mejoras")
 	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
 	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
 			"Dúo: 18 Sendas")
@@ -61,7 +60,10 @@ func test_tali_upgrades() -> void:
 
 
 func test_no_generic_stat_upgrades_left() -> void:
-	for upgrade: CharacterUpgrade in Balance.upgrades.available_for(&"tali", []) + Balance.upgrades.available_for(&"croco", []):
+	var all: Array[CharacterUpgrade] = []
+	for id: StringName in [&"tali", &"croco", &"agucci"]:
+		all.append_array(Balance.upgrades.available_for(id, []))
+	for upgrade: CharacterUpgrade in all:
 		assert_eq(upgrade.stat, &"", "%s juega con el kit, no es un +X%% genérico" % upgrade.id)
 
 
@@ -99,9 +101,11 @@ func test_agucci_upgrades() -> void:
 	make_player(&"agucci")
 	var kit := _player.kit as AgucciKit
 	RunState.add_upgrade(0, &"agucci_uzi_cargador")
-	assert_eq(kit._uzi_bullets(), 7)
+	assert_eq(kit._uzi_bullets(), 6, "Lv 1: +1 bala")
+	RunState.add_upgrade(0, &"agucci_uzi_cargador")
+	assert_eq(kit._uzi_bullets(), 7, "Lv 2: +2")
 	RunState.add_upgrade(0, &"agucci_lucidez_amplia")
-	kit.hunger = 38.0
-	assert_true(kit.is_lucid(), "Con Mente fría, a 38 de Hambre sigue en Lucidez")
+	kit.hunger = 34.0
+	assert_true(kit.is_lucid(), "Con Mente fría Lv 1, a 34 de Hambre sigue en Lucidez")
 	RunState.add_upgrade(0, &"agucci_disolverse_extra")
 	assert_eq(kit.dodge_cooldown.max_charges, 3)

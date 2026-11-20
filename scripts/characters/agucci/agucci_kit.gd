@@ -171,7 +171,7 @@ func _hit_each(targets: Array[Hurtbox], base: float, setup: Callable = Callable(
 		info.origin = origin
 		var from_behind: bool = _is_behind(hurtbox, origin)
 		if from_behind and has_upgrade(&"agucci_espalda_letal"):
-			info.amount *= 1.3
+			info.amount *= 1.0 + upgrade_value(&"agucci_espalda_letal")
 		if is_lucid() and from_behind and not info.is_crit:
 			info.is_crit = true
 			info.amount *= player.crit_multiplier()
@@ -181,7 +181,7 @@ func _hit_each(targets: Array[Hurtbox], base: float, setup: Callable = Callable(
 		if hurtbox.take_hit(info):
 			landed += 1
 	if is_basic and landed > 0:
-		hunger = maxf(hunger - kd.hunger_drop_per_basic_hit * landed, 0.0)
+		hunger = maxf(hunger - _hunger_drop() * landed, 0.0)
 	return landed
 
 
@@ -220,10 +220,11 @@ func _combo_step() -> void:
 func _cut(index: int) -> void:
 	basic_recovery = true
 	var direction: Vector3 = player.aim_direction
-	Fx.slash(_world(), player.global_position, direction, kd.cut_range, kd.cut_angle_deg,
+	var reach: float = kd.cut_range * (1.0 + upgrade_value(&"agucci_corte_largo"))
+	Fx.slash(_world(), player.global_position, direction, reach, kd.cut_angle_deg,
 			player.slot.color, 0.1)
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(), DamageInfo.Team.ENEMIES,
-			player.global_position, direction, kd.cut_range, kd.cut_angle_deg)
+			player.global_position, direction, reach, kd.cut_angle_deg)
 	if _hit_each(targets, kd.cut_damage[index], _setup_cut) > 0:
 		player.freeze(Balance.combat.hitstop_light)
 
@@ -236,7 +237,7 @@ func _kick() -> void:
 	basic_recovery = true
 	var targets: Array[Hurtbox] = CombatQuery.in_sector(player.get_tree(), DamageInfo.Team.ENEMIES,
 			player.global_position, player.aim_direction, kd.kick_range, kd.kick_angle_deg)
-	if _hit_each(targets, kd.kick_damage, _setup_kick) > 0:
+	if _hit_each(targets, kd.kick_damage * (1.0 + upgrade_value(&"agucci_patada_fuerte")), _setup_kick) > 0:
 		player.freeze(Balance.combat.hitstop_light)
 
 
@@ -272,7 +273,7 @@ func katana_dash_damage() -> float:
 
 
 func _setup_kick(info: DamageInfo) -> void:
-	info.knockback = kd.kick_knockback
+	info.knockback = kd.kick_knockback * (1.0 + upgrade_value(&"agucci_patada_fuerte"))
 
 
 func _uzi_bullet(i: int) -> void:
@@ -286,7 +287,7 @@ func _uzi_bullet(i: int) -> void:
 
 
 func _on_uzi_hit(_target: Node3D, _info: DamageInfo) -> void:
-	hunger = maxf(hunger - kd.hunger_drop_per_basic_hit, 0.0)
+	hunger = maxf(hunger - _hunger_drop(), 0.0)
 
 
 # --- Paso de Sombra ---
@@ -302,7 +303,7 @@ func _throw_kunai() -> void:
 	info.is_melee = false
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + player.aim_direction * 0.5
 	_projectiles.fire(from, player.aim_direction, kd.kunai_speed,
-			_range_until_obstacle(from, player.aim_direction, kd.kunai_range * (1.5 if has_upgrade(&"agucci_kunai_lejano") else 1.0)), 0.25, info,
+			_range_until_obstacle(from, player.aim_direction, kd.kunai_range * (1.0 + upgrade_value(&"agucci_kunai_lejano"))), 0.25, info,
 			DamageInfo.Team.ENEMIES, _on_kunai_hit, _on_kunai_expire)
 
 
@@ -387,7 +388,7 @@ func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
 			from, to, kd.dash_width)
 	_hit_each(targets, dash_damage_for(from.distance_to(to)) * (1.0 + 0.1 * hero(&"agucci_paso")), _setup_dash,
 			false, from)
-	_dash_boost_time = kd.dash_speed_time
+	_dash_boost_time = kd.dash_speed_time + upgrade_value(&"agucci_impulso_largo")
 	if _any_dead(targets):
 		step_cooldown.reduce(kd.step_cooldown * kd.dash_kill_refund)
 	if not targets.is_empty():
@@ -487,6 +488,13 @@ func _reappear() -> void:
 	_exit_shadow(_dissolve_direction)
 	player.visual.visible = true
 	Fx.ring_burst(_world(), player.global_position, 1.2, SHADOW_COLOR, 0.25)
+	# Salida filosa (mejora): corta alrededor al reaparecer.
+	if has_upgrade(&"agucci_salida_filosa"):
+		var info: DamageInfo = make_hit(20.0)
+		info.knockback = 2.0
+		Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES,
+				player.global_position, 2.0))
+		Fx.ring_burst(_world(), player.global_position, 2.0, player.slot.color, 0.2)
 
 
 # --- Noche del Valle sin Luz ---
@@ -558,7 +566,7 @@ func _update_possession(delta: float) -> void:
 		player.move_override = Vector2.ZERO
 		var drain := DamageInfo.new()
 		drain.amount = player.health.max_health * kd.possession_self_drain * delta \
-				* (0.5 if has_upgrade(&"agucci_sombra_docil") else 1.0)
+				* upgrade_value(&"agucci_sombra_docil", 1.0)
 		drain.attacker_team = DamageInfo.Team.ENEMIES
 		player.health.apply_damage(drain)
 	else:
@@ -581,7 +589,7 @@ func _auto_attack() -> void:
 		return
 	Fx.ring_burst(_world(), player.global_position, kd.possession_auto_radius, SHADOW_COLOR, 0.2)
 	var dealt: float = _deal_and_sum(targets, kd.possession_auto_damage)
-	player.health.heal(dealt * kd.possession_lifesteal)
+	player.health.heal(dealt * (kd.possession_lifesteal + upgrade_value(&"agucci_banquete")))
 
 
 ## Paga la vida que cuestan las habilidades de la Posesión.
@@ -774,21 +782,26 @@ func hud_abilities() -> Array[Dictionary]:
 
 func _lucidity_max() -> float:
 	if has_upgrade(&"agucci_lucidez_amplia"):
-		return 40.0
+		return upgrade_value(&"agucci_lucidez_amplia")
 	return kd.lucidity_max + [0.0, 3.0, 6.0, 10.0][mini(hero(&"agucci_lucidez"), 3)]
 
 
 func _night_duration() -> float:
-	return kd.night_duration + (3.0 if has_upgrade(&"agucci_noche_larga") else 0.0)
+	return kd.night_duration + upgrade_value(&"agucci_noche_larga")
 
 
 func _uzi_bullets() -> int:
-	return kd.uzi_bullets + (2 if has_upgrade(&"agucci_uzi_cargador") else 0)
+	return kd.uzi_bullets + int(upgrade_value(&"agucci_uzi_cargador"))
+
+
+## Cuánto baja el Hambre cada golpe común (Hambre controlada la sube).
+func _hunger_drop() -> float:
+	return kd.hunger_drop_per_basic_hit * (1.0 + upgrade_value(&"agucci_hambre_util"))
 
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
 	dodge_cooldown.max_charges = kd.dissolve_charges + (1 if has_upgrade(&"agucci_disolverse_extra") else 0)
-	step_cooldown.recharge_time = kd.step_cooldown * (0.75 if has_upgrade(&"agucci_paso_apurado") else 1.0)
+	step_cooldown.recharge_time = kd.step_cooldown * (1.0 - upgrade_value(&"agucci_paso_apurado"))
 
 
 ## Kunai envenenado: 10 de daño por segundo durante 3 s.
@@ -796,7 +809,7 @@ func _poison_tick(target: Node3D) -> void:
 	var victim := target as Combatant
 	if not is_instance_valid(victim) or not victim.is_targetable():
 		return
-	var info: DamageInfo = make_hit(10.0)
+	var info: DamageInfo = make_hit(upgrade_value(&"agucci_kunai_veneno", 10.0))
 	info.hitstop = 0.0
 	info.is_melee = false
 	info.tags.append(&"tick")
