@@ -66,7 +66,7 @@ func _fire() -> void:
 	player.start_action(0.16, 0.7)
 	basic_recovery = true
 	_shots += 1
-	var base: float = kd.blaster_damage * (1.2 if has_upgrade(&"pipo_blaster_reglamentado") else 1.0)
+	var base: float = kd.blaster_damage * (1.0 + upgrade_value(&"pipo_blaster_reglamentado"))
 	var info: DamageInfo = make_hit(base * (1.0 + streak_bonus()))
 	# Precisión: en el cono angosto de la mira, más chance de crítico.
 	if not info.is_crit and _enemy_in_cone() and Combat.roll(cone_crit_chance() - player.crit_chance()):
@@ -95,10 +95,7 @@ func _on_bolt_hit(target: Node3D, _info: DamageInfo) -> void:
 func _on_bolt_missed(_at: Vector3) -> void:
 	if streak > 0 and streak_bonus() >= streak_cap() * 0.5:
 		say("Se cortó la racha", Color(0.8, 0.8, 0.85), 0.7)
-	if has_upgrade(&"pipo_racha_firme"):
-		streak = streak / 2
-	else:
-		streak = 0
+	streak = int(streak * upgrade_value(&"pipo_racha_firme"))
 
 
 ## Bonus de daño del Bláster por la racha (0,05 por tiro seguido, con tope).
@@ -107,7 +104,7 @@ func streak_bonus() -> float:
 
 
 func streak_cap() -> float:
-	return kd.streak_cap + (0.25 if has_upgrade(&"pipo_racha_alta") else 0.0) + 0.05 * hero(&"pipo_racha")
+	return upgrade_value(&"pipo_racha_alta", kd.streak_cap) + 0.05 * hero(&"pipo_racha")
 
 
 func _enemy_in_cone() -> bool:
@@ -115,7 +112,7 @@ func _enemy_in_cone() -> bool:
 	for hurtbox: Hurtbox in CombatQuery.targets(player.get_tree(), DamageInfo.Team.ENEMIES):
 		var to_enemy: Vector3 = hurtbox.flat_position() - here
 		if to_enemy.length() <= kd.blaster_range \
-				and player.aim_direction.angle_to(to_enemy) <= deg_to_rad(kd.cone_half_deg):
+				and player.aim_direction.angle_to(to_enemy) <= deg_to_rad(kd.cone_half_deg * (1.0 + upgrade_value(&"pipo_cono_ancho"))):
 			return true
 	return false
 
@@ -163,11 +160,11 @@ func apply_upgrade_stats(_mods: StatModifiers) -> void:
 
 
 func turret_health() -> float:
-	return kd.turret_health * (1.5 if has_upgrade(&"pipo_torreta_blindada") else 1.0)
+	return kd.turret_health * (1.0 + upgrade_value(&"pipo_torreta_blindada"))
 
 
 func turret_fire_rate() -> float:
-	return kd.turret_shots_per_second * (1.3 if has_upgrade(&"pipo_torreta_aceitada") else 1.0)
+	return kd.turret_shots_per_second * (1.0 + upgrade_value(&"pipo_torreta_aceitada"))
 
 
 func max_turrets() -> int:
@@ -188,7 +185,7 @@ func do_dodge() -> void:
 	var move: Vector2 = player.get_move_input()
 	if move.length() > 0.3:
 		away = Vector3(move.x, 0.0, move.y).normalized()
-	player.start_dodge(away, kd.retreat_distance, kd.retreat_duration)
+	player.start_dodge(away, kd.retreat_distance * (1.0 + upgrade_value(&"pipo_repliegue_largo")), kd.retreat_duration)
 	var mine := PipoMine.new()
 	_world().add_child(mine)
 	mine.global_position = Vector3(start.x, 0.0, start.z)
@@ -198,7 +195,21 @@ func do_dodge() -> void:
 
 
 func mine_damage() -> float:
-	return kd.mine_damage * (1.0 + 0.15 * hero(&"pipo_mina"))
+	return kd.mine_damage * (1.0 + 0.15 * hero(&"pipo_mina") + upgrade_value(&"pipo_mina_reforzada"))
+
+
+## Daño de un tiro de torreta a ese objetivo (Fuego coordinado y Racha contagiosa).
+func turret_damage_against(target: Node) -> float:
+	var damage: float = kd.turret_damage
+	if target == last_target:
+		damage *= 1.0 + upgrade_value(&"pipo_fuego_coordinado")
+	if has_upgrade(&"pipo_racha_contagiosa"):
+		damage *= 1.0 + streak_bonus()
+	return damage
+
+
+func bomb_radius() -> float:
+	return kd.bomb_radius * (1.0 + upgrade_value(&"pipo_bombardeo_zona"))
 
 
 # --- Fuego de la Nave Insignia ---
@@ -220,8 +231,8 @@ func _use_ultimate() -> bool:
 	center.y = 0.0
 	var marker := MeshInstance3D.new()
 	var disc := CylinderMesh.new()
-	disc.top_radius = kd.bomb_radius
-	disc.bottom_radius = kd.bomb_radius
+	disc.top_radius = bomb_radius()
+	disc.bottom_radius = bomb_radius()
 	disc.height = 0.04
 	marker.mesh = disc
 	var material := Fx.flat_material(Color(player.slot.color, 0.35), 0.8)
@@ -243,10 +254,10 @@ func _bombard(center: Vector3) -> void:
 	if not is_instance_valid(player):
 		return
 	var spots: Array[Vector3] = []
-	var impacts: int = kd.bomb_impacts + (2 if has_upgrade(&"pipo_bombardeo_mas") else 0)
+	var impacts: int = kd.bomb_impacts + int(upgrade_value(&"pipo_bombardeo_mas"))
 	for i: int in impacts - 1:
 		var angle: float = randf() * TAU
-		var radius: float = sqrt(randf()) * kd.bomb_radius * 0.85
+		var radius: float = sqrt(randf()) * bomb_radius() * 0.85
 		spots.append(center + Vector3(cos(angle) * radius, 0, sin(angle) * radius))
 	# La nave sigue medio rota: uno cae en cualquier lado.
 	spots.append(Vector3(randf_range(-20, 20), 0, randf_range(-13, 13)))

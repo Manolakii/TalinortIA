@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 	if _cooldown > 0.0:
 		return
 	_cooldown = 1.0 / kit.turret_fire_rate()
-	var info: DamageInfo = kit.make_hit(kit.kd.turret_damage)
+	var info: DamageInfo = kit.make_hit(kit.turret_damage_against(target.receiver))
 	info.is_melee = false
 	info.knockback = 0.5
 	info.hitstop = 0.0

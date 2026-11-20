@@ -6,187 +6,8 @@
 
 
 
+
 [sub_resource type="Resource" id="u_0"]
-script = ExtResource("2")
-id = &"pipo_torreta_extra"
-character = &"pipo"
-display_name = "Otra torreta"
-description = "Podés tener 3 torretas a la vez"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_1"]
-script = ExtResource("2")
-id = &"pipo_racha_alta"
-character = &"pipo"
-display_name = "Racha de veterano"
-description = "La Racha de Cuartel llega hasta +75% (en vez de +50%)"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_2"]
-script = ExtResource("2")
-id = &"pipo_bombardeo_mas"
-character = &"pipo"
-display_name = "Nave bien cargada"
-description = "El Fuego de la Nave Insignia tira 2 impactos más"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_3"]
-script = ExtResource("2")
-id = &"pipo_ojo_bueno"
-character = &"pipo"
-display_name = "El ojo bueno"
-description = "+6% de chance de crítico (se puede tomar 2 veces)"
-stat = &"crit_chance"
-amount = 0.06
-max_stacks = 2
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_4"]
-script = ExtResource("2")
-id = &"pipo_blaster_reglamentado"
-character = &"pipo"
-display_name = "Bláster reglamentado"
-description = "El Bláster pega 20% más"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_5"]
-script = ExtResource("2")
-id = &"pipo_repliegue_doble"
-character = &"pipo"
-display_name = "Repliegue en dos tiempos"
-description = "+1 carga de Repliegue Ordenado"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_6"]
-script = ExtResource("2")
-id = &"pipo_torreta_blindada"
-character = &"pipo"
-display_name = "Chatarra blindada"
-description = "Las torretas tienen 50% más de vida"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_7"]
-script = ExtResource("2")
-id = &"pipo_racha_firme"
-character = &"pipo"
-display_name = "Pulso firme"
-description = "Si fallás un tiro, la racha baja a la mitad en vez de volver a 0"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_8"]
-script = ExtResource("2")
-id = &"pipo_cubrime"
-character = &"pipo"
-display_name = "Cubrime la izquierda"
-description = "Ya no te pegan más fuerte por el punto ciego"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_9"]
-script = ExtResource("2")
-id = &"pipo_cadencia"
-character = &"pipo"
-display_name = "Cadencia de cuartel"
-description = "+10% de velocidad de ataque (se puede tomar 3 veces)"
-stat = &"attack_speed"
-amount = 0.1
-max_stacks = 3
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_10"]
-script = ExtResource("2")
-id = &"pipo_torreta_aceitada"
-character = &"pipo"
-display_name = "Torretas aceitadas"
-description = "Las torretas disparan 30% más rápido"
-stat = &""
-amount = 0.0
-max_stacks = 1
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_11"]
-script = ExtResource("2")
-id = &"pipo_uniforme"
-character = &"pipo"
-display_name = "Uniforme de gala"
-description = "+15 de vida máxima (se puede tomar 3 veces)"
-stat = &"max_health"
-amount = 15.0
-max_stacks = 3
-senda_body = &""
-senda_slot = &""
-senda_path = &""
-shop_only = false
-exclusive_group = &""
-
-[sub_resource type="Resource" id="u_12"]
 script = ExtResource("2")
 id = &"champaka_escudo"
 character = &"champaka"
@@ -201,7 +22,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_13"]
+[sub_resource type="Resource" id="u_1"]
 script = ExtResource("2")
 id = &"champaka_abrazo_cura"
 character = &"champaka"
@@ -216,7 +37,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_14"]
+[sub_resource type="Resource" id="u_2"]
 script = ExtResource("2")
 id = &"champaka_panzazo_hongo"
 character = &"champaka"
@@ -231,7 +52,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_15"]
+[sub_resource type="Resource" id="u_3"]
 script = ExtResource("2")
 id = &"champaka_hongos_gorditos"
 character = &"champaka"
@@ -246,7 +67,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_16"]
+[sub_resource type="Resource" id="u_4"]
 script = ExtResource("2")
 id = &"champaka_esporulacion"
 character = &"champaka"
@@ -261,7 +82,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_17"]
+[sub_resource type="Resource" id="u_5"]
 script = ExtResource("2")
 id = &"champaka_papa_presente"
 character = &"champaka"
@@ -276,7 +97,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_18"]
+[sub_resource type="Resource" id="u_6"]
 script = ExtResource("2")
 id = &"champaka_manos_oso"
 character = &"champaka"
@@ -291,7 +112,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_19"]
+[sub_resource type="Resource" id="u_7"]
 script = ExtResource("2")
 id = &"champaka_onda_fuerte"
 character = &"champaka"
@@ -306,7 +127,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_20"]
+[sub_resource type="Resource" id="u_8"]
 script = ExtResource("2")
 id = &"champaka_panzazo_doble"
 character = &"champaka"
@@ -321,7 +142,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_21"]
+[sub_resource type="Resource" id="u_9"]
 script = ExtResource("2")
 id = &"champaka_abrazador_serial"
 character = &"champaka"
@@ -336,7 +157,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_22"]
+[sub_resource type="Resource" id="u_10"]
 script = ExtResource("2")
 id = &"champaka_sombrero"
 character = &"champaka"
@@ -351,7 +172,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_23"]
+[sub_resource type="Resource" id="u_11"]
 script = ExtResource("2")
 id = &"champaka_brazo_papa"
 character = &"champaka"
@@ -366,7 +187,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_24"]
+[sub_resource type="Resource" id="u_12"]
 script = ExtResource("2")
 id = &"duo_rompe_vasijas"
 character = &"maestro"
@@ -381,7 +202,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_25"]
+[sub_resource type="Resource" id="u_13"]
 script = ExtResource("2")
 id = &"duo_te_valles"
 character = &"maestro"
@@ -396,7 +217,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_26"]
+[sub_resource type="Resource" id="u_14"]
 script = ExtResource("2")
 id = &"duo_baston_templado"
 character = &"maestro"
@@ -411,7 +232,7 @@ senda_path = &""
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_27"]
+[sub_resource type="Resource" id="u_15"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_caparazon"
 character = &"maestro"
@@ -426,7 +247,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_28"]
+[sub_resource type="Resource" id="u_16"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_embestida"
 character = &"maestro"
@@ -441,7 +262,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_29"]
+[sub_resource type="Resource" id="u_17"]
 script = ExtResource("2")
 id = &"senda_stewie_basic_espiritu"
 character = &"maestro"
@@ -456,7 +277,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_30"]
+[sub_resource type="Resource" id="u_18"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_caparazon"
 character = &"maestro"
@@ -471,7 +292,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_31"]
+[sub_resource type="Resource" id="u_19"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_embestida"
 character = &"maestro"
@@ -486,7 +307,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_32"]
+[sub_resource type="Resource" id="u_20"]
 script = ExtResource("2")
 id = &"senda_stewie_ability_espiritu"
 character = &"maestro"
@@ -501,7 +322,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_33"]
+[sub_resource type="Resource" id="u_21"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_caparazon"
 character = &"maestro"
@@ -516,7 +337,7 @@ senda_path = &"caparazon"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_34"]
+[sub_resource type="Resource" id="u_22"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_embestida"
 character = &"maestro"
@@ -531,7 +352,7 @@ senda_path = &"embestida"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_35"]
+[sub_resource type="Resource" id="u_23"]
 script = ExtResource("2")
 id = &"senda_stewie_dodge_espiritu"
 character = &"maestro"
@@ -546,7 +367,7 @@ senda_path = &"espiritu"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_36"]
+[sub_resource type="Resource" id="u_24"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_guia"
 character = &"maestro"
@@ -561,7 +382,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_37"]
+[sub_resource type="Resource" id="u_25"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_combate"
 character = &"maestro"
@@ -576,7 +397,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_38"]
+[sub_resource type="Resource" id="u_26"]
 script = ExtResource("2")
 id = &"senda_maestro_basic_niebla"
 character = &"maestro"
@@ -591,7 +412,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_39"]
+[sub_resource type="Resource" id="u_27"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_guia"
 character = &"maestro"
@@ -606,7 +427,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_40"]
+[sub_resource type="Resource" id="u_28"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_combate"
 character = &"maestro"
@@ -621,7 +442,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_41"]
+[sub_resource type="Resource" id="u_29"]
 script = ExtResource("2")
 id = &"senda_maestro_ability_niebla"
 character = &"maestro"
@@ -636,7 +457,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_42"]
+[sub_resource type="Resource" id="u_30"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_guia"
 character = &"maestro"
@@ -651,7 +472,7 @@ senda_path = &"guia"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_43"]
+[sub_resource type="Resource" id="u_31"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_combate"
 character = &"maestro"
@@ -666,7 +487,7 @@ senda_path = &"combate"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_44"]
+[sub_resource type="Resource" id="u_32"]
 script = ExtResource("2")
 id = &"senda_maestro_dodge_niebla"
 character = &"maestro"
@@ -681,7 +502,7 @@ senda_path = &"niebla"
 shop_only = false
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_45"]
+[sub_resource type="Resource" id="u_33"]
 script = ExtResource("2")
 id = &"tali_racha_suerte"
 character = &"tali"
@@ -698,7 +519,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(4.0, 3.0, 2.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_46"]
+[sub_resource type="Resource" id="u_34"]
 script = ExtResource("2")
 id = &"tali_piedrazo_rebota"
 character = &"tali"
@@ -715,7 +536,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_47"]
+[sub_resource type="Resource" id="u_35"]
 script = ExtResource("2")
 id = &"tali_suerte_encadenada"
 character = &"tali"
@@ -732,7 +553,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_48"]
+[sub_resource type="Resource" id="u_36"]
 script = ExtResource("2")
 id = &"tali_rebogronk"
 character = &"tali"
@@ -749,7 +570,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.1, 0.2, 0.35)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_49"]
+[sub_resource type="Resource" id="u_37"]
 script = ExtResource("2")
 id = &"tali_tropezon_largo"
 character = &"tali"
@@ -766,7 +587,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.2, 0.4, 0.6)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_50"]
+[sub_resource type="Resource" id="u_38"]
 script = ExtResource("2")
 id = &"tali_revoleo_escudo"
 character = &"tali"
@@ -783,7 +604,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(20.0, 30.0, 40.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_51"]
+[sub_resource type="Resource" id="u_39"]
 script = ExtResource("2")
 id = &"tali_zarpazo_largo"
 character = &"tali"
@@ -800,7 +621,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.15, 0.3, 0.45)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_52"]
+[sub_resource type="Resource" id="u_40"]
 script = ExtResource("2")
 id = &"tali_bichos_infecciosos"
 character = &"tali"
@@ -817,7 +638,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_53"]
+[sub_resource type="Resource" id="u_41"]
 script = ExtResource("2")
 id = &"tali_pajaros_regresan"
 character = &"tali"
@@ -834,7 +655,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_54"]
+[sub_resource type="Resource" id="u_42"]
 script = ExtResource("2")
 id = &"tali_furia_veloz"
 character = &"tali"
@@ -851,7 +672,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.1, 0.15, 0.2)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_55"]
+[sub_resource type="Resource" id="u_43"]
 script = ExtResource("2")
 id = &"tali_tropezon_furia"
 character = &"tali"
@@ -868,7 +689,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(20.0, 25.0, 30.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_56"]
+[sub_resource type="Resource" id="u_44"]
 script = ExtResource("2")
 id = &"tali_furia_larga"
 character = &"tali"
@@ -885,7 +706,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.5, 3.0, 4.5)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_57"]
+[sub_resource type="Resource" id="u_45"]
 script = ExtResource("2")
 id = &"tali_rugido_profundo"
 character = &"tali"
@@ -902,7 +723,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_58"]
+[sub_resource type="Resource" id="u_46"]
 script = ExtResource("2")
 id = &"tali_aplaston_sismico"
 character = &"tali"
@@ -919,7 +740,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.2, 0.4, 0.6)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_59"]
+[sub_resource type="Resource" id="u_47"]
 script = ExtResource("2")
 id = &"tali_bronca_rapida"
 character = &"tali"
@@ -936,7 +757,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.1, 0.2, 0.3)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_60"]
+[sub_resource type="Resource" id="u_48"]
 script = ExtResource("2")
 id = &"tali_resaca_leve"
 character = &"tali"
@@ -953,7 +774,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(2.5, 2.0, 1.5)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_61"]
+[sub_resource type="Resource" id="u_49"]
 script = ExtResource("2")
 id = &"tali_entiende_pajaros"
 character = &"tali"
@@ -969,7 +790,7 @@ shop_only = true
 exclusive_group = &"tali_entiende"
 price = 550
 
-[sub_resource type="Resource" id="u_62"]
+[sub_resource type="Resource" id="u_50"]
 script = ExtResource("2")
 id = &"tali_entiende_bichos"
 character = &"tali"
@@ -985,7 +806,7 @@ shop_only = true
 exclusive_group = &"tali_entiende"
 price = 550
 
-[sub_resource type="Resource" id="u_63"]
+[sub_resource type="Resource" id="u_51"]
 script = ExtResource("2")
 id = &"tali_entiende_gronk"
 character = &"tali"
@@ -1001,7 +822,7 @@ shop_only = true
 exclusive_group = &"tali_entiende"
 price = 550
 
-[sub_resource type="Resource" id="u_64"]
+[sub_resource type="Resource" id="u_52"]
 script = ExtResource("2")
 id = &"croco_escopeta_mas"
 character = &"croco"
@@ -1018,7 +839,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_65"]
+[sub_resource type="Resource" id="u_53"]
 script = ExtResource("2")
 id = &"croco_escopetazo"
 character = &"croco"
@@ -1035,7 +856,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.3, 0.6, 0.9)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_66"]
+[sub_resource type="Resource" id="u_54"]
 script = ExtResource("2")
 id = &"croco_rafaga_extra"
 character = &"croco"
@@ -1052,7 +873,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_67"]
+[sub_resource type="Resource" id="u_55"]
 script = ExtResource("2")
 id = &"croco_punteria_rifle"
 character = &"croco"
@@ -1069,7 +890,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.05, 0.1, 0.15)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_68"]
+[sub_resource type="Resource" id="u_56"]
 script = ExtResource("2")
 id = &"croco_pistola_pesada"
 character = &"croco"
@@ -1086,7 +907,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.1, 0.2, 0.3)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_69"]
+[sub_resource type="Resource" id="u_57"]
 script = ExtResource("2")
 id = &"croco_bonus_cambio"
 character = &"croco"
@@ -1103,7 +924,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.4, 0.5, 0.6)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_70"]
+[sub_resource type="Resource" id="u_58"]
 script = ExtResource("2")
 id = &"croco_contrato_rapido"
 character = &"croco"
@@ -1120,7 +941,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.3, 1.15, 1.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_71"]
+[sub_resource type="Resource" id="u_59"]
 script = ExtResource("2")
 id = &"croco_contrato_letal"
 character = &"croco"
@@ -1137,7 +958,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.15, 0.3, 0.45)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_72"]
+[sub_resource type="Resource" id="u_60"]
 script = ExtResource("2")
 id = &"croco_contrato_escape"
 character = &"croco"
@@ -1154,7 +975,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_73"]
+[sub_resource type="Resource" id="u_61"]
 script = ExtResource("2")
 id = &"croco_ruta_extra"
 character = &"croco"
@@ -1171,7 +992,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_74"]
+[sub_resource type="Resource" id="u_62"]
 script = ExtResource("2")
 id = &"croco_senuelo_explota"
 character = &"croco"
@@ -1188,7 +1009,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(30.0, 45.0, 60.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_75"]
+[sub_resource type="Resource" id="u_63"]
 script = ExtResource("2")
 id = &"croco_senuelo_largo"
 character = &"croco"
@@ -1205,7 +1026,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.5, 1.0, 1.5)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_76"]
+[sub_resource type="Resource" id="u_64"]
 script = ExtResource("2")
 id = &"croco_rastro_largo"
 character = &"croco"
@@ -1222,7 +1043,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.5, 1.0, 1.5)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_77"]
+[sub_resource type="Resource" id="u_65"]
 script = ExtResource("2")
 id = &"croco_recompensa_cura"
 character = &"croco"
@@ -1239,7 +1060,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(10.0, 18.0, 25.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_78"]
+[sub_resource type="Resource" id="u_66"]
 script = ExtResource("2")
 id = &"croco_ojo_cazador"
 character = &"croco"
@@ -1256,7 +1077,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.15, 0.25, 0.35)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_79"]
+[sub_resource type="Resource" id="u_67"]
 script = ExtResource("2")
 id = &"croco_riel_largo"
 character = &"croco"
@@ -1273,7 +1094,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.75, 1.5, 2.25)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_80"]
+[sub_resource type="Resource" id="u_68"]
 script = ExtResource("2")
 id = &"croco_riel_frio"
 character = &"croco"
@@ -1290,7 +1111,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_81"]
+[sub_resource type="Resource" id="u_69"]
 script = ExtResource("2")
 id = &"croco_contrato_doble"
 character = &"croco"
@@ -1305,7 +1126,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_82"]
+[sub_resource type="Resource" id="u_70"]
 script = ExtResource("2")
 id = &"agucci_espalda_letal"
 character = &"agucci"
@@ -1322,7 +1143,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.15, 0.3, 0.45)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_83"]
+[sub_resource type="Resource" id="u_71"]
 script = ExtResource("2")
 id = &"agucci_corte_largo"
 character = &"agucci"
@@ -1339,7 +1160,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.15, 0.3, 0.45)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_84"]
+[sub_resource type="Resource" id="u_72"]
 script = ExtResource("2")
 id = &"agucci_patada_fuerte"
 character = &"agucci"
@@ -1356,7 +1177,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.25, 0.5, 0.75)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_85"]
+[sub_resource type="Resource" id="u_73"]
 script = ExtResource("2")
 id = &"agucci_uzi_cargador"
 character = &"agucci"
@@ -1373,7 +1194,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_86"]
+[sub_resource type="Resource" id="u_74"]
 script = ExtResource("2")
 id = &"agucci_hambre_util"
 character = &"agucci"
@@ -1390,7 +1211,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.5, 1.0, 1.5)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_87"]
+[sub_resource type="Resource" id="u_75"]
 script = ExtResource("2")
 id = &"agucci_lucidez_amplia"
 character = &"agucci"
@@ -1407,7 +1228,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(35.0, 40.0, 45.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_88"]
+[sub_resource type="Resource" id="u_76"]
 script = ExtResource("2")
 id = &"agucci_kunai_lejano"
 character = &"agucci"
@@ -1424,7 +1245,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.25, 0.5, 0.75)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_89"]
+[sub_resource type="Resource" id="u_77"]
 script = ExtResource("2")
 id = &"agucci_kunai_veneno"
 character = &"agucci"
@@ -1441,7 +1262,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(6.0, 10.0, 14.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_90"]
+[sub_resource type="Resource" id="u_78"]
 script = ExtResource("2")
 id = &"agucci_paso_apurado"
 character = &"agucci"
@@ -1458,7 +1279,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.1, 0.2, 0.3)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_91"]
+[sub_resource type="Resource" id="u_79"]
 script = ExtResource("2")
 id = &"agucci_impulso_largo"
 character = &"agucci"
@@ -1475,7 +1296,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0, 2.0, 3.0)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_92"]
+[sub_resource type="Resource" id="u_80"]
 script = ExtResource("2")
 id = &"agucci_disolverse_extra"
 character = &"agucci"
@@ -1492,7 +1313,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_93"]
+[sub_resource type="Resource" id="u_81"]
 script = ExtResource("2")
 id = &"agucci_salida_filosa"
 character = &"agucci"
@@ -1509,7 +1330,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.0)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_94"]
+[sub_resource type="Resource" id="u_82"]
 script = ExtResource("2")
 id = &"agucci_noche_larga"
 character = &"agucci"
@@ -1526,7 +1347,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(1.5, 3.0, 4.5)
 value_format = "num"
 
-[sub_resource type="Resource" id="u_95"]
+[sub_resource type="Resource" id="u_83"]
 script = ExtResource("2")
 id = &"agucci_sombra_docil"
 character = &"agucci"
@@ -1543,7 +1364,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.75, 0.5, 0.25)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_96"]
+[sub_resource type="Resource" id="u_84"]
 script = ExtResource("2")
 id = &"agucci_banquete"
 character = &"agucci"
@@ -1560,7 +1381,7 @@ exclusive_group = &""
 levels = PackedFloat32Array(0.05, 0.1, 0.15)
 value_format = "pct"
 
-[sub_resource type="Resource" id="u_97"]
+[sub_resource type="Resource" id="u_85"]
 script = ExtResource("2")
 id = &"agucci_shurikens"
 character = &"agucci"
@@ -1575,7 +1396,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_98"]
+[sub_resource type="Resource" id="u_86"]
 script = ExtResource("2")
 id = &"duo_vinculo_eterno"
 character = &"maestro"
@@ -1590,7 +1411,262 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
+[sub_resource type="Resource" id="u_87"]
+script = ExtResource("2")
+id = &"pipo_blaster_reglamentado"
+character = &"pipo"
+display_name = "Bláster reglamentado"
+description = "El Bláster pega {v} más"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.08, 0.15, 0.22)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_88"]
+script = ExtResource("2")
+id = &"pipo_racha_alta"
+character = &"pipo"
+display_name = "Racha de veterano"
+description = "La Racha de Cuartel llega hasta +{v} (en vez de +50%)"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.6, 0.7, 0.8)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_89"]
+script = ExtResource("2")
+id = &"pipo_racha_firme"
+character = &"pipo"
+display_name = "Pulso firme"
+description = "Si fallás un tiro, conservás {v} de la racha"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.33, 0.5, 0.75)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_90"]
+script = ExtResource("2")
+id = &"pipo_cono_ancho"
+character = &"pipo"
+display_name = "Ojo entrenado"
+description = "El cono de precisión es {v} más ancho"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.25, 0.5, 0.75)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_91"]
+script = ExtResource("2")
+id = &"pipo_cubrime"
+character = &"pipo"
+display_name = "Cubrime la izquierda"
+description = "Ya no te pegan más fuerte por el punto ciego"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(1.0)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_92"]
+script = ExtResource("2")
+id = &"pipo_torreta_extra"
+character = &"pipo"
+display_name = "Otra torreta"
+description = "Podés tener 3 torretas a la vez"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(1.0)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_93"]
+script = ExtResource("2")
+id = &"pipo_torreta_blindada"
+character = &"pipo"
+display_name = "Chatarra blindada"
+description = "Las torretas tienen {v} más de vida"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.25, 0.5, 0.75)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_94"]
+script = ExtResource("2")
+id = &"pipo_torreta_aceitada"
+character = &"pipo"
+display_name = "Torretas aceitadas"
+description = "Las torretas disparan {v} más rápido"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.15, 0.3, 0.45)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_95"]
+script = ExtResource("2")
+id = &"pipo_fuego_coordinado"
+character = &"pipo"
+display_name = "Fuego coordinado"
+description = "Las torretas pegan {v} más al último enemigo que acertaste"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.2, 0.35, 0.5)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_96"]
+script = ExtResource("2")
+id = &"pipo_racha_contagiosa"
+character = &"pipo"
+display_name = "Racha contagiosa"
+description = "La Racha de Cuartel también potencia a las torretas"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(1.0)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_97"]
+script = ExtResource("2")
+id = &"pipo_repliegue_doble"
+character = &"pipo"
+display_name = "Repliegue en dos tiempos"
+description = "+1 carga de Repliegue Ordenado"
+stat = &""
+amount = 0.0
+max_stacks = 1
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(1.0)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_98"]
+script = ExtResource("2")
+id = &"pipo_repliegue_largo"
+character = &"pipo"
+display_name = "Retirada táctica"
+description = "El Repliegue llega {v} más lejos"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.2, 0.4, 0.6)
+value_format = "pct"
+
 [sub_resource type="Resource" id="u_99"]
+script = ExtResource("2")
+id = &"pipo_mina_reforzada"
+character = &"pipo"
+display_name = "Mina reforzada"
+description = "La mina pega {v} más"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.2, 0.4, 0.6)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_100"]
+script = ExtResource("2")
+id = &"pipo_bombardeo_mas"
+character = &"pipo"
+display_name = "Nave bien cargada"
+description = "El Fuego de la Nave Insignia tira {v} impactos más"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(1.0, 2.0, 3.0)
+value_format = "num"
+
+[sub_resource type="Resource" id="u_101"]
+script = ExtResource("2")
+id = &"pipo_bombardeo_zona"
+character = &"pipo"
+display_name = "Zona de bombardeo"
+description = "La zona del bombardeo es {v} más grande"
+stat = &""
+amount = 0.0
+max_stacks = 3
+senda_body = &""
+senda_slot = &""
+senda_path = &""
+shop_only = false
+exclusive_group = &""
+levels = PackedFloat32Array(0.15, 0.3, 0.45)
+value_format = "pct"
+
+[sub_resource type="Resource" id="u_102"]
 script = ExtResource("2")
 id = &"pipo_refugio"
 character = &"pipo"
@@ -1605,7 +1681,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_100"]
+[sub_resource type="Resource" id="u_103"]
 script = ExtResource("2")
 id = &"champaka_micelio"
 character = &"champaka"
@@ -1620,7 +1696,7 @@ senda_path = &""
 shop_only = true
 exclusive_group = &""
 
-[sub_resource type="Resource" id="u_101"]
+[sub_resource type="Resource" id="u_104"]
 script = ExtResource("2")
 id = &"agucci_katana_yole"
 character = &"agucci"
@@ -1636,7 +1712,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_102"]
+[sub_resource type="Resource" id="u_105"]
 script = ExtResource("2")
 id = &"tali_piedra_bumeran"
 character = &"tali"
@@ -1652,7 +1728,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_103"]
+[sub_resource type="Resource" id="u_106"]
 script = ExtResource("2")
 id = &"croco_senuelo_pistolero"
 character = &"croco"
@@ -1668,7 +1744,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_104"]
+[sub_resource type="Resource" id="u_107"]
 script = ExtResource("2")
 id = &"maestro_bastonazo_triple"
 character = &"maestro"
@@ -1684,7 +1760,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_105"]
+[sub_resource type="Resource" id="u_108"]
 script = ExtResource("2")
 id = &"pipo_torretas_patas"
 character = &"pipo"
@@ -1700,7 +1776,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_106"]
+[sub_resource type="Resource" id="u_109"]
 script = ExtResource("2")
 id = &"champaka_aplauso_sismico"
 character = &"champaka"
@@ -1716,7 +1792,7 @@ shop_only = true
 exclusive_group = &""
 price = 550
 
-[sub_resource type="Resource" id="u_107"]
+[sub_resource type="Resource" id="u_110"]
 script = ExtResource("2")
 id = &"tali_bolsa_piedras"
 character = &"tali"
@@ -1734,4 +1810,4 @@ price = 550
 
 [resource]
 script = ExtResource("1")
-upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56"), SubResource("u_57"), SubResource("u_58"), SubResource("u_59"), SubResource("u_60"), SubResource("u_61"), SubResource("u_62"), SubResource("u_63"), SubResource("u_64"), SubResource("u_65"), SubResource("u_66"), SubResource("u_67"), SubResource("u_68"), SubResource("u_69"), SubResource("u_70"), SubResource("u_71"), SubResource("u_72"), SubResource("u_73"), SubResource("u_74"), SubResource("u_75"), SubResource("u_76"), SubResource("u_77"), SubResource("u_78"), SubResource("u_79"), SubResource("u_80"), SubResource("u_81"), SubResource("u_82"), SubResource("u_83"), SubResource("u_84"), SubResource("u_85"), SubResource("u_86"), SubResource("u_87"), SubResource("u_88"), SubResource("u_89"), SubResource("u_90"), SubResource("u_91"), SubResource("u_92"), SubResource("u_93"), SubResource("u_94"), SubResource("u_95"), SubResource("u_96"), SubResource("u_97"), SubResource("u_98"), SubResource("u_99"), SubResource("u_100"), SubResource("u_101"), SubResource("u_102"), SubResource("u_103"), SubResource("u_104"), SubResource("u_105"), SubResource("u_106"), SubResource("u_107")])
+upgrades = Array[ExtResource("2")]([SubResource("u_0"), SubResource("u_1"), SubResource("u_2"), SubResource("u_3"), SubResource("u_4"), SubResource("u_5"), SubResource("u_6"), SubResource("u_7"), SubResource("u_8"), SubResource("u_9"), SubResource("u_10"), SubResource("u_11"), SubResource("u_12"), SubResource("u_13"), SubResource("u_14"), SubResource("u_15"), SubResource("u_16"), SubResource("u_17"), SubResource("u_18"), SubResource("u_19"), SubResource("u_20"), SubResource("u_21"), SubResource("u_22"), SubResource("u_23"), SubResource("u_24"), SubResource("u_25"), SubResource("u_26"), SubResource("u_27"), SubResource("u_28"), SubResource("u_29"), SubResource("u_30"), SubResource("u_31"), SubResource("u_32"), SubResource("u_33"), SubResource("u_34"), SubResource("u_35"), SubResource("u_36"), SubResource("u_37"), SubResource("u_38"), SubResource("u_39"), SubResource("u_40"), SubResource("u_41"), SubResource("u_42"), SubResource("u_43"), SubResource("u_44"), SubResource("u_45"), SubResource("u_46"), SubResource("u_47"), SubResource("u_48"), SubResource("u_49"), SubResource("u_50"), SubResource("u_51"), SubResource("u_52"), SubResource("u_53"), SubResource("u_54"), SubResource("u_55"), SubResource("u_56"), SubResource("u_57"), SubResource("u_58"), SubResource("u_59"), SubResource("u_60"), SubResource("u_61"), SubResource("u_62"), SubResource("u_63"), SubResource("u_64"), SubResource("u_65"), SubResource("u_66"), SubResource("u_67"), SubResource("u_68"), SubResource("u_69"), SubResource("u_70"), SubResource("u_71"), SubResource("u_72"), SubResource("u_73"), SubResource("u_74"), SubResource("u_75"), SubResource("u_76"), SubResource("u_77"), SubResource("u_78"), SubResource("u_79"), SubResource("u_80"), SubResource("u_81"), SubResource("u_82"), SubResource("u_83"), SubResource("u_84"), SubResource("u_85"), SubResource("u_86"), SubResource("u_87"), SubResource("u_88"), SubResource("u_89"), SubResource("u_90"), SubResource("u_91"), SubResource("u_92"), SubResource("u_93"), SubResource("u_94"), SubResource("u_95"), SubResource("u_96"), SubResource("u_97"), SubResource("u_98"), SubResource("u_99"), SubResource("u_100"), SubResource("u_101"), SubResource("u_102"), SubResource("u_103"), SubResource("u_104"), SubResource("u_105"), SubResource("u_106"), SubResource("u_107"), SubResource("u_108"), SubResource("u_109"), SubResource("u_110")])

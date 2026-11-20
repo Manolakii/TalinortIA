@@ -42,14 +42,18 @@ func test_streak_has_a_cap() -> void:
 	_kit.streak = 40
 	assert_almost_eq(_kit.streak_bonus(), 0.5, 0.001, "Tope: +50% del daño base")
 	RunState.add_upgrade(0, &"pipo_racha_alta")
-	assert_almost_eq(_kit.streak_bonus(), 0.75, 0.001, "Con la mejora: +75%")
+	assert_almost_eq(_kit.streak_bonus(), 0.6, 0.001, "Racha de veterano Lv 1: +60%")
+	RunState.add_upgrade(0, &"pipo_racha_alta")
+	RunState.add_upgrade(0, &"pipo_racha_alta")
+	assert_almost_eq(_kit.streak_bonus(), 0.8, 0.001, "Lv 3: +80%")
 
 
 func test_missing_with_steady_pulse_halves_the_streak() -> void:
 	RunState.add_upgrade(0, &"pipo_racha_firme")
+	RunState.add_upgrade(0, &"pipo_racha_firme")
 	_kit.streak = 8
 	_kit._on_bolt_missed(Vector3.ZERO)
-	assert_eq(_kit.streak, 4)
+	assert_eq(_kit.streak, 4, "Lv 2: conserva la mitad")
 
 
 func test_blind_spot_on_the_left() -> void:
