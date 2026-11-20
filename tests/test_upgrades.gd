@@ -12,7 +12,8 @@ func before_each() -> void:
 
 func test_each_character_has_its_pool() -> void:
 	assert_gte(Balance.upgrades.available_for(&"tali", []).size(), 15, "Tali: 15 o más mejoras")
-	for id: StringName in [&"croco", &"agucci"]:
+	assert_gte(Balance.upgrades.available_for(&"croco", []).size(), 15, "Croco: 15 o más mejoras")
+	for id: StringName in [&"agucci"]:
 		assert_eq(Balance.upgrades.available_for(id, []).size(), 12, "%s: 12 mejoras" % id)
 	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
 	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
@@ -59,8 +60,8 @@ func test_tali_upgrades() -> void:
 			"Las únicas no dicen Lv")
 
 
-func test_no_generic_stat_upgrades_left_for_tali() -> void:
-	for upgrade: CharacterUpgrade in Balance.upgrades.available_for(&"tali", []):
+func test_no_generic_stat_upgrades_left() -> void:
+	for upgrade: CharacterUpgrade in Balance.upgrades.available_for(&"tali", []) + Balance.upgrades.available_for(&"croco", []):
 		assert_eq(upgrade.stat, &"", "%s juega con el kit, no es un +X%% genérico" % upgrade.id)
 
 
@@ -89,7 +90,9 @@ func test_croco_upgrades() -> void:
 	RunState.add_upgrade(0, &"croco_ruta_extra")
 	assert_eq(kit.dodge_cooldown.max_charges, 3, "+1 carga de Ruta de Escape")
 	RunState.add_upgrade(0, &"croco_bonus_cambio")
-	assert_almost_eq(kit._switch_bonus(), 0.45, 0.0001)
+	assert_almost_eq(kit._switch_bonus(), 0.4, 0.0001, "Lv 1: +40%")
+	RunState.add_upgrade(0, &"croco_bonus_cambio")
+	assert_almost_eq(kit._switch_bonus(), 0.5, 0.0001, "Lv 2: +50%")
 
 
 func test_agucci_upgrades() -> void:

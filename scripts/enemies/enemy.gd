@@ -203,7 +203,7 @@ func _pay_bounty(info: DamageInfo) -> void:
 	var gold: int = roundi(Balance.economy.croco_bounty_gold * (1.0 + 0.15 * MetaProgress.level(&"croco_recompensa")))
 	RunState.add_gold(killer.slot.index, gold)
 	if killer.kit.has_upgrade(&"croco_recompensa_cura"):
-		killer.health.heal(10.0)
+		killer.health.heal(killer.kit.upgrade_value(&"croco_recompensa_cura"))
 	Events.floating_text_requested.emit(global_position + Vector3.UP * 3.0,
 			"+%d oro" % gold, BOUNTY_COLOR)
 
@@ -376,6 +376,9 @@ func _modify_incoming(info: DamageInfo) -> void:
 	# Espada sedienta (reliquia): las habilidades pegan un poco más (plano).
 	if hitter != null and hitter.specials != null and not info.has_tag(&"proc") and not info.has_tag(&"tick"):
 		info.amount += hitter.specials.ability_flat_bonus()
+	# Ojo de cazador (mejora del Croco): más daño al élite con Recompensa.
+	if has_bounty and hitter != null and hitter.kit is CrocoKit:
+		info.amount *= 1.0 + hitter.kit.upgrade_value(&"croco_ojo_cazador")
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15

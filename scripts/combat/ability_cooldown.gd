@@ -54,3 +54,8 @@ func reduce(seconds: float) -> void:
 func refill() -> void:
 	charges = max_charges
 	_progress = 0.0
+
+
+## Devuelve una carga (sin pasar del máximo).
+func refill_one() -> void:
+	charges = mini(charges + 1, max_charges)

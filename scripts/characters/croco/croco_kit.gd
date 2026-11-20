@@ -190,33 +190,39 @@ func _fire() -> void:
 		Mode.SHOTGUN:
 			_attack_timer = kd.shotgun_interval / attack_speed()
 			player.start_action(0.25, 0.6)
-			var pellets: int = kd.shotgun_pellets + (2 if has_upgrade(&"croco_escopeta_mas") else 0)
+			var pellets: int = kd.shotgun_pellets + int(upgrade_value(&"croco_escopeta_mas"))
 			for i: int in pellets:
 				var t: float = float(i) / maxf(pellets - 1, 1) - 0.5
 				var spread: float = deg_to_rad(t * kd.shotgun_spread_deg
 						+ Combat.rng.randf_range(-3.0, 3.0))
 				var info: DamageInfo = make_hit(kd.shotgun_damage * bonus)
-				info.knockback = kd.shotgun_knockback
+				info.knockback = kd.shotgun_knockback * (1.0 + upgrade_value(&"croco_escopetazo"))
 				_shoot(info, player.aim_direction.rotated(Vector3.UP, spread), kd.shotgun_speed,
 						kd.shotgun_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light)
 		Mode.PISTOL:
 			_attack_timer = kd.pistol_interval / attack_speed()
 			player.start_action(0.14, 0.8)
-			var shot: DamageInfo = make_hit(kd.pistol_damage * bonus)
+			var shot: DamageInfo = make_hit(kd.pistol_damage * bonus * (1.0 + upgrade_value(&"croco_pistola_pesada")))
 			shot.knockback = kd.pistol_knockback
 			_shoot(shot, player.aim_direction, kd.pistol_speed, kd.pistol_range)
 			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.6)
 		Mode.RIFLE:
 			_attack_timer = kd.rifle_interval / attack_speed()
-			var burst: int = kd.rifle_burst + (1 if has_upgrade(&"croco_rafaga_extra") else 0)
+			var burst: int = kd.rifle_burst + int(upgrade_value(&"croco_rafaga_extra"))
 			player.start_action(kd.rifle_burst_gap * burst + 0.1, 0.7)
 			for i: int in burst:
 				schedule(i * kd.rifle_burst_gap, _rifle_bullet.bind(bonus))
 
 
 func _rifle_bullet(bonus: float) -> void:
-	_shoot(make_hit(kd.rifle_damage * bonus), player.aim_direction, kd.rifle_speed, kd.rifle_range)
+	var info: DamageInfo = make_hit(kd.rifle_damage * bonus)
+	# Puntería de rifle: más chance de crítico (se vuelve a tirar con la chance nueva).
+	var extra_crit: float = upgrade_value(&"croco_punteria_rifle")
+	if extra_crit > 0.0 and not info.is_crit and Combat.roll(extra_crit):
+		info.is_crit = true
+		info.amount *= player.crit_multiplier()
+	_shoot(info, player.aim_direction, kd.rifle_speed, kd.rifle_range)
 
 
 func _shoot(info: DamageInfo, direction: Vector3, speed: float, max_range: float) -> void:
@@ -253,7 +259,7 @@ func _fire_contract() -> void:
 	var ratio: float = clampf(_charge / _full_charge(), 0.0, 1.0)
 	var stacks: int = RunState.get_bonus(player.slot.index, STACK_KEY)
 	var damage: float = lerpf(kd.contract_min_damage, kd.contract_max_damage, ratio) \
-			* (1.0 + stacks * kd.contract_stack_bonus) * (1.3 if has_upgrade(&"croco_contrato_letal") else 1.0)
+			* (1.0 + stacks * kd.contract_stack_bonus) * (1.0 + upgrade_value(&"croco_contrato_letal"))
 	var info: DamageInfo = make_hit(damage)
 	info.is_melee = false
 	info.knockback = 4.0
@@ -276,6 +282,8 @@ func _fire_contract() -> void:
 		contract_cooldown.reduce(kd.contract_cooldown * (kd.contract_kill_refund + 0.1 * hero(&"croco_contrato")))
 		RunState.add_bonus(player.slot.index, STACK_KEY, 1)
 		say("¡Contrato cumplido!", Color(0.85, 0.9, 1.0))
+		if has_upgrade(&"croco_contrato_escape"):
+			dodge_cooldown.refill_one()
 
 
 func _cancel_charge() -> void:
@@ -298,15 +306,16 @@ func do_dodge() -> void:
 	decoy.global_position = start
 	var gunslinger: bool = has_upgrade(&"croco_senuelo_pistolero")
 	decoy.setup(player.slot.color, data.placeholder_height, data.placeholder_radius,
-			kd.decoy_duration * (kd.gunslinger_duration_multiplier if gunslinger else 1.0), kd.decoy_priority)
+			(kd.decoy_duration + upgrade_value(&"croco_senuelo_largo"))
+			* (kd.gunslinger_duration_multiplier if gunslinger else 1.0), kd.decoy_priority)
 	if gunslinger:
 		decoy.shoot_with(_decoy_shot, kd.gunslinger_interval, kd.pistol_range)
 	if has_upgrade(&"croco_senuelo_explota"):
-		decoy.explode_on_expire(player, 30.0, 2.5)
+		decoy.explode_on_expire(player, upgrade_value(&"croco_senuelo_explota"), 2.5)
 	var trail := HasteTrail.new()
 	_world().add_child(trail)
 	trail.setup(player, start, start + direction * kd.dodge_distance, kd.trail_width,
-			kd.trail_duration, kd.haste_duration, player.slot.color)
+			kd.trail_duration * (1.0 + upgrade_value(&"croco_rastro_largo")), kd.haste_duration, player.slot.color)
 
 
 ## Señuelo pistolero (kit de Yole): un tiro de pistola desde el señuelo.
@@ -364,7 +373,7 @@ func _update_rail(delta: float) -> void:
 			Events.camera_shake_requested.emit(Balance.combat.shake_light * 0.5)
 	if _rail_time <= 0.0:
 		_rail_beam.visible = false
-		_overheat = kd.overheat_duration
+		_overheat = 0.0 if has_upgrade(&"croco_riel_frio") else kd.overheat_duration
 		say("¡Recalentada!", Color(0.85, 0.85, 0.9))
 
 
@@ -477,11 +486,11 @@ func hud_abilities() -> Array[Dictionary]:
 # --- Mejoras ---
 
 func _switch_bonus() -> float:
-	return 0.45 if has_upgrade(&"croco_bonus_cambio") else kd.mode_switch_bonus + 0.05 * hero(&"croco_cambio")
+	return upgrade_value(&"croco_bonus_cambio", kd.mode_switch_bonus) + 0.05 * hero(&"croco_cambio")
 
 
 func _full_charge() -> float:
-	return 1.0 if has_upgrade(&"croco_contrato_rapido") else kd.contract_full_charge
+	return upgrade_value(&"croco_contrato_rapido", kd.contract_full_charge)
 
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
@@ -490,7 +499,7 @@ func apply_upgrade_stats(_mods: StatModifiers) -> void:
 
 
 func _rail_duration() -> float:
-	return kd.rail_duration + (1.5 if has_upgrade(&"croco_riel_largo") else 0.0)
+	return kd.rail_duration + upgrade_value(&"croco_riel_largo")
 
 
 func ability_cooldowns() -> Array[AbilityCooldown]:
