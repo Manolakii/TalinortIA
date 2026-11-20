@@ -3,7 +3,9 @@ extends CanvasLayer
 ## Si se desconecta un joystick en plena partida, se pausa sola hasta que vuelva.
 ##
 ## En pausa: Start o Esc para seguir; X (joystick) o E (teclado) abre las Opciones;
-## B (joystick) o Retroceso (teclado) para volver a la pantalla de unión.
+## B (joystick) o Retroceso (teclado) para volver a la pantalla de unión, con confirmación:
+## "¿Abandonar la partida?" A / Enter sí, B / Esc no (pedido del grupo, 2026-11-20: con dos
+## botones sin querer se perdía una partida entera).
 
 const JOIN_SCENE := "res://scenes/ui/join_screen.tscn"
 
@@ -12,6 +14,9 @@ var _title: Label
 var _message: Label
 var _hint: Label
 var _options: OptionsMenu
+## Preguntando si de verdad quieren abandonar la partida.
+var _confirming: bool = false
+var _inventory: InventoryPanel
 
 
 func _ready() -> void:
@@ -26,8 +31,16 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if _options != null and _options.visible:
 		return
+	if _confirming:
+		_confirm_tick()
+		return
+	if is_instance_valid(_inventory):
+		return
 	for slot: PlayerSlot in PlayerManager.active_slots():
 		var input: PlayerInput = slot.input
+		if not get_tree().paused and input.just_pressed(PlayerInput.Action.INVENTORY) 				and not _in_menu(slot) and _player_of(slot) != null:
+			open_inventory(slot)
+			return
 		if input.just_pressed(PlayerInput.Action.PAUSE):
 			# Si ese jugador está en un menú (tienda, McoinIA, elegir mejora...), Esc / Start
 			# cierra el menú y no pausa (antes se trababa: reportado por el grupo).
@@ -42,9 +55,56 @@ func _physics_process(_delta: float) -> void:
 				and slot.input.just_pressed(PlayerInput.Action.INTERACT):
 			open_options()
 			return
-		if get_tree().paused and _wants_exit(slot):
+		if get_tree().paused and _panel.visible and _wants_exit(slot):
+			_ask_exit()
+			return
+
+
+## "¿Abandonar la partida?": A / Enter confirma; B / Esc / Start vuelve a la pausa.
+func _ask_exit() -> void:
+	_confirming = true
+	_title.text = "¿Abandonar la partida?"
+	_message.text = "Se pierde todo lo de esta partida."
+	_hint.text = "A o Enter: sí, abandonar
+B o Esc: no, volver"
+	for slot: PlayerSlot in PlayerManager.active_slots():
+		slot.input.consume_all()
+
+
+func _confirm_tick() -> void:
+	for slot: PlayerSlot in PlayerManager.active_slots():
+		var input: PlayerInput = slot.input
+		if input.just_pressed(PlayerInput.Action.CONFIRM):
+			_confirming = false
 			_exit_to_join_screen()
 			return
+		if input.just_pressed(PlayerInput.Action.BACK) or input.just_pressed(PlayerInput.Action.PAUSE):
+			_confirming = false
+			input.consume_all()
+			_refresh_text()
+			return
+
+
+## Tabla de lo que juntó ese jugador (Tab / Back). Pausa a todos mientras está abierta.
+func open_inventory(slot: PlayerSlot) -> void:
+	_inventory = InventoryPanel.new()
+	add_child(_inventory)
+	_inventory.open(slot)
+	get_tree().paused = true
+	Events.pause_changed.emit(true)
+	_inventory.closed.connect(func() -> void:
+		get_tree().paused = false
+		for other: PlayerSlot in PlayerManager.active_slots():
+			other.input.consume_all()
+		Events.pause_changed.emit(false))
+
+
+func _player_of(slot: PlayerSlot) -> PlayerCharacter:
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var player := node as PlayerCharacter
+		if player != null and player.slot == slot:
+			return player
+	return null
 
 
 func open_options() -> void:
@@ -74,6 +134,7 @@ func _pause() -> void:
 
 
 func _try_resume() -> void:
+	_confirming = false
 	if PlayerManager.any_disconnected():
 		_refresh_text()
 		return

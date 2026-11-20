@@ -6,8 +6,9 @@ extends CharacterKit
 ##   Stewie: Cabezazo, Refugio (2 s en el caparazón), Rodar.
 ##   Vínculo: a menos de 8 m, +10% de daño y de resistencia, con una línea que los une.
 ##   Caída: si cae uno, pasás al otro; el caído se levanta a los 15 s.
-##   Cambio (botón de definitiva, CD 6 s): pasás a manejar al otro.
-##   Relevo Total (Y+RB / R, con la barra llena): Cambio + 8 s de efecto según quién entra.
+##   Cambio (Y / Triángulo o R, CD 6 s): pasás a manejar al otro.
+##   Relevo Total (definitiva: RB / R1 o Q, con la barra llena): Cambio + 8 s de efecto según
+##   quién entra.
 ## Sendas: estructura lista (todo en Base). Sus efectos llegan con las mejoras (Fase 5).
 
 enum Body { MAESTRO, STEWIE }
@@ -179,23 +180,22 @@ func _handle_input() -> void:
 		_controlled_basic()
 
 
-## Botón de definitiva: siempre Cambio. Relevo Total con la combinación propia.
 func ult_active() -> bool:
 	return _relay_time > 0.0
 
 
+## Botón de definitiva (RB / R1 o Q): Relevo Total con la barra llena, como la definitiva de los
+## demás. El Cambio va en su propio botón: Y / Triángulo o R (pedido del grupo, 2026-11-20).
 func _handle_ultimate() -> void:
-	if player.has_buffered(PlayerInput.Action.RELAY) and ult_charge >= 100.0 \
+	if player.has_buffered(PlayerInput.Action.ULTIMATE) and ult_charge >= 100.0 \
 			and can_start_skill() and _companion_ready():
-		player.consume_buffered(PlayerInput.Action.RELAY)
 		player.consume_buffered(PlayerInput.Action.ULTIMATE)
 		ult_charge = 0.0
 		_switch(true)
 		return
-	if player.has_buffered(PlayerInput.Action.ULTIMATE) and switch_cooldown.is_ready() \
-			and can_start_skill() and _companion_ready() \
-			and not player.slot.input.is_held(PlayerInput.Action.RELAY):
-		player.consume_buffered(PlayerInput.Action.ULTIMATE)
+	if player.has_buffered(PlayerInput.Action.SWAP) and switch_cooldown.is_ready() \
+			and can_start_skill() and _companion_ready():
+		player.consume_buffered(PlayerInput.Action.SWAP)
 		switch_cooldown.use()
 		_switch(false)
 
@@ -1182,7 +1182,7 @@ func hud_bar() -> Dictionary:
 		return {"label": ("FORMA ANCESTRAL" if _relay_effect == &"ancestral" else "LECCIÓN") \
 				+ " %d s" % ceili(_relay_time), "value": _relay_time / kd.relay_duration,
 				"color": Color(0.75, 0.95, 0.85), "pulse": true}
-	return {"label": "Relevo Total" + (" (Y+RB / R)" if ult_charge >= 100.0 else ""),
+	return {"label": "Relevo Total" + (" (RB / Q)" if ult_charge >= 100.0 else ""),
 			"value": ult_charge / 100.0, "color": Color(0.75, 0.95, 0.85), "pulse": ult_charge >= 100.0}
 
 

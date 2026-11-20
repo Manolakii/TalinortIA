@@ -15,7 +15,7 @@ const RING_SCALE := 3.4
 ## Botones que se guardan un ratito si no se pueden usar justo (buffer de input).
 const BUFFERED_ACTIONS: Array[PlayerInput.Action] = [
 	PlayerInput.Action.DODGE, PlayerInput.Action.ABILITY,
-	PlayerInput.Action.ULTIMATE, PlayerInput.Action.RELAY,
+	PlayerInput.Action.ULTIMATE, PlayerInput.Action.SWAP,
 ]
 ## Modo prueba: tiempo hasta levantarse solo (hasta que exista revivir, Fase 4).
 const TEST_MODE_REVIVE_DELAY := 1.5
@@ -194,6 +194,7 @@ func _move_with(move_velocity: Vector3, delta: float) -> void:
 		total = velocity_limiter.call(global_position, total, delta)
 	velocity = total
 	move_and_slide()
+	stay_on_ground()
 
 
 ## Lo que pide el jugador para moverse (o lo que impone el kit).

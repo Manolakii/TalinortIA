@@ -11,7 +11,8 @@ enum Action {
 	ABILITY,    ## Habilidad fuerte: clic derecho / LT.
 	DODGE,      ## Esquiva: Espacio / A.
 	ULTIMATE,   ## Definitiva: Q / RB.
-	RELAY,      ## Relevo Total del Maestro: R / Y + RB.
+	SWAP,       ## Cambio del Dúo (Maestro y Stewie): R / Y (Triángulo).
+	INVENTORY,  ## Ver lo que juntaste en la partida: Tab / Back (Select).
 	INTERACT,   ## Interactuar y revivir: E / X.
 	PAUSE,      ## Esc / Start.
 	CONFIRM,    ## Menús: Enter / A.
@@ -96,7 +97,8 @@ func _read_keyboard(viewport: Viewport) -> void:
 	_held[Action.ABILITY] = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	_held[Action.DODGE] = Input.is_physical_key_pressed(KEY_SPACE)
 	_held[Action.ULTIMATE] = Input.is_physical_key_pressed(KEY_Q)
-	_held[Action.RELAY] = Input.is_physical_key_pressed(KEY_R)
+	_held[Action.SWAP] = Input.is_physical_key_pressed(KEY_R)
+	_held[Action.INVENTORY] = Input.is_physical_key_pressed(KEY_TAB)
 	_held[Action.INTERACT] = Input.is_physical_key_pressed(KEY_E)
 	_held[Action.PAUSE] = Input.is_physical_key_pressed(KEY_ESCAPE)
 	_held[Action.CONFIRM] = Input.is_physical_key_pressed(KEY_ENTER) \
@@ -127,7 +129,8 @@ func _read_joypad() -> void:
 	_held[Action.ABILITY] = Input.get_joy_axis(joy_device, JOY_AXIS_TRIGGER_LEFT) > TRIGGER_THRESHOLD
 	_held[Action.DODGE] = _button(JOY_BUTTON_A)
 	_held[Action.ULTIMATE] = rb
-	_held[Action.RELAY] = rb and y_button
+	_held[Action.SWAP] = y_button
+	_held[Action.INVENTORY] = _button(JOY_BUTTON_BACK)
 	_held[Action.INTERACT] = _button(JOY_BUTTON_X)
 	_held[Action.PAUSE] = _button(JOY_BUTTON_START)
 	_held[Action.CONFIRM] = _button(JOY_BUTTON_A)

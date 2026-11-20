@@ -4,9 +4,6 @@ extends HBoxContainer
 ## que juntó. Los objetos van como íconos; el detalle se ve pasando el mouse por arriba.
 ## Arriba de cada columna, los premios en joda ("El que más pegó", "El más torpe"...).
 
-const RARITY_COLORS: Array[Color] = [Color(0.75, 0.75, 0.75), Color(0.4, 0.65, 1.0),
-		Color(0.7, 0.45, 0.95), Color(1.0, 0.75, 0.25)]
-const UPGRADE_COLOR := Color(0.85, 0.65, 0.3)
 const AWARDS: Dictionary = {
 	&"damage": "El que más pegó",
 	&"kills": "Exterminador",
@@ -98,43 +95,18 @@ func _section(title: String, icons: Array[ItemIcon]) -> Control:
 	return box
 
 
-## Genéricos (agrupados con su cantidad) y especiales de Yole (con el borde de su rareza).
+## Objetos de sala (con su nivel) y reliquias del Black Market (con el borde de su rareza).
 func _item_icons(index: int) -> Array[ItemIcon]:
 	var icons: Array[ItemIcon] = []
-	var counted: Dictionary = {}
-	for id: Variant in RunState.get_items(index):
-		counted[id] = counted.get(id, 0) + 1
-	for id: Variant in counted:
-		var item: GenericItem = Balance.generic_items.get_item(id)
-		if item != null:
-			var level: int = mini(counted[id], item.max_level())
-			var icon: ItemIcon = ItemIcon.make(item.icon_color, item.icon_text if item.icon_text != ""
-					else ItemIcon.letters_of(item.display_name), "%s [%s]" % [item.title_at(level),
-					GenericItem.RARITY_NAMES[item.rarity]], item.describe(level), 1, GenericItem.RARITY_COLORS[item.rarity])
-			icon.badge = "Lv%d" % level
-			icons.append(icon)
-	for id: Variant in RunState.get_specials(index):
-		var special: SpecialItem = Balance.shop.get_item(id)
-		if special != null:
-			var rarity: Color = SpecialItem.RARITY_COLORS[special.rarity]
-			icons.append(ItemIcon.make(rarity.darkened(0.45), ItemIcon.letters_of(special.display_name),
-					"%s [%s]" % [special.display_name, SpecialItem.RARITY_NAMES[special.rarity]],
-					special.description, 1, rarity))
+	for entry: Dictionary in RunInventory.items(index) + RunInventory.relics(index):
+		icons.append(RunInventory.icon_for(entry))
 	return icons
 
 
 func _upgrade_icons(index: int) -> Array[ItemIcon]:
 	var icons: Array[ItemIcon] = []
-	var counted: Dictionary = {}
-	for id: Variant in RunState.get_upgrades(index):
-		counted[id] = counted.get(id, 0) + 1
-	for id: Variant in counted:
-		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(id)
-		if upgrade != null:
-			var shop: bool = upgrade.shop_only
-			icons.append(ItemIcon.make(UPGRADE_COLOR.darkened(0.2 if not shop else 0.5),
-					ItemIcon.letters_of(upgrade.display_name), upgrade.display_name, upgrade.description,
-					counted[id], Color(1.0, 0.82, 0.3) if shop else Color(0, 0, 0, 0.6)))
+	for entry: Dictionary in RunInventory.upgrades(index):
+		icons.append(RunInventory.icon_for(entry))
 	return icons
 
 

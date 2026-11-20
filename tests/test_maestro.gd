@@ -53,9 +53,9 @@ func test_staff_combo() -> void:
 func test_switch_swaps_control_and_places() -> void:
 	_pump(1)
 	var stewie_spot: Vector3 = _kit.companion.global_position
-	press(PlayerInput.Action.ULTIMATE)
+	press(PlayerInput.Action.SWAP)
 	_pump(1)
-	release(PlayerInput.Action.ULTIMATE)
+	release(PlayerInput.Action.SWAP)
 	assert_eq(_kit.controlled, MaestroKit.Body.STEWIE, "Ahora manejás a Stewie")
 	assert_eq(_player.health.max_health, 80.0)
 	assert_eq(_kit.companion.identity, MaestroKit.Body.MAESTRO)
@@ -69,9 +69,9 @@ func test_health_is_kept_per_body() -> void:
 	_pump(1)
 	_player.health.current = 50.0
 	_kit.switch_cooldown.refill()
-	press(PlayerInput.Action.ULTIMATE)
+	press(PlayerInput.Action.SWAP)
 	_pump(1)
-	release(PlayerInput.Action.ULTIMATE)
+	release(PlayerInput.Action.SWAP)
 	assert_almost_eq(_kit.companion.health.current, 50.0, 0.5, "El Maestro sigue con ~50 en el otro cuerpo")
 
 
@@ -90,14 +90,14 @@ func test_fall_passes_control_and_revives_in_15s() -> void:
 
 func test_relay_total_needs_full_bar() -> void:
 	_pump(1)
-	press(PlayerInput.Action.RELAY)
+	press(PlayerInput.Action.ULTIMATE)
 	_pump(1)
-	release(PlayerInput.Action.RELAY)
+	release(PlayerInput.Action.ULTIMATE)
 	assert_eq(_kit.controlled, MaestroKit.Body.MAESTRO, "Sin barra no hay Relevo Total")
 	_kit.ult_charge = 100.0
-	press(PlayerInput.Action.RELAY)
+	press(PlayerInput.Action.ULTIMATE)
 	_pump(1)
-	release(PlayerInput.Action.RELAY)
+	release(PlayerInput.Action.ULTIMATE)
 	assert_eq(_kit.controlled, MaestroKit.Body.STEWIE)
 	assert_eq(_kit._relay_effect, &"ancestral", "Entra Stewie: Forma Ancestral")
 	assert_almost_eq(_player.health.max_health, 120.0, 0.01, "+50% de vida")
@@ -177,9 +177,9 @@ func test_bastonazo_charge_shows_a_line() -> void:
 func test_maestro_ai_uses_bastonazo_on_lined_up_enemies() -> void:
 	_pump(1)
 	_kit.switch_cooldown.refill()
-	press(PlayerInput.Action.ULTIMATE)  # el Maestro pasa a la IA
+	press(PlayerInput.Action.SWAP)  # el Maestro pasa a la IA
 	_pump(1)
-	release(PlayerInput.Action.ULTIMATE)
+	release(PlayerInput.Action.SWAP)
 	var body: DuoCompanion = _kit.companion
 	assert_eq(body.identity, MaestroKit.Body.MAESTRO)
 	var first := enemy_at(body.global_position + Vector3(0, 0, -2.0), 1000.0)
@@ -232,9 +232,9 @@ func test_ai_steps_out_of_shadow_zones() -> void:
 func test_switch_entrance_hits_around() -> void:
 	_pump(1)
 	var enemy := enemy_at(Vector3(0, 0, -1.5), 1000.0)
-	press(PlayerInput.Action.ULTIMATE)
+	press(PlayerInput.Action.SWAP)
 	_pump(1)
-	release(PlayerInput.Action.ULTIMATE)
+	release(PlayerInput.Action.SWAP)
 	assert_lt(enemy.health.current, 1000.0, "La entrada pega en área")
 	assert_true(enemy.status.has(StatusEffects.STUN), "Y lo deja tambaleando un instante")
 

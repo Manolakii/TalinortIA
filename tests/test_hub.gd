@@ -45,6 +45,34 @@ func test_buying_spends_gold_and_marks_sold() -> void:
 	assert_eq(RunState.get_gold(0), 1000 - row["price"], "No se compra dos veces")
 
 
+func test_mystery_box_bag_keeps_the_odds() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	var bag: Array = []
+	var counts: Dictionary = {}
+	for i: int in 50:
+		var rarity: int = Balance.shop.draw_box(bag, rng)
+		counts[rarity] = counts.get(rarity, 0) + 1
+	assert_eq(counts.get(SpecialItem.Rarity.CURSED, 0), 10, "De cada 25: 5 malditas")
+	assert_eq(counts.get(SpecialItem.Rarity.RARE, 0), 36, "18 raras")
+	assert_eq(counts.get(SpecialItem.Rarity.LEGENDARY, 0), 4, "2 legendarias")
+
+
+func test_mystery_box_only_gives_your_own_character_relics() -> void:
+	make_player(&"champaka")  # pasa a ser _player
+	RunState.gold[0] = 100000
+	var shop := _shop()
+	for i: int in 40:
+		var prize: StringName = shop.open_box()
+		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(prize)
+		if upgrade != null:
+			assert_eq(upgrade.character, &"champaka", "Nada de reliquias de otro personaje: %s" % prize)
+	var specials: Array = RunState.get_specials(0)
+	var cursed: int = specials.filter(func(id: StringName) -> bool:
+		return Balance.shop.get_item(id).rarity == SpecialItem.Rarity.CURSED).size()
+	assert_gt(cursed, 0, "En 40 cajas sale alguna maldita")
+
+
 func test_cannot_buy_without_gold() -> void:
 	RunState.gold[0] = 10
 	var shop := _shop()
@@ -97,3 +125,19 @@ func test_every_character_has_talks_with_yole() -> void:
 	var first: Array = DialogueBox.lines_for("yole", "pipo", 0)["lineas"]
 	var second: Array = DialogueBox.lines_for("yole", "pipo", 0)["lineas"]
 	assert_ne(first, second, "Las charlas rotan")
+
+
+func test_inventory_table_shows_what_you_have() -> void:
+	RunState.add_item(0, &"cuerno_de_gronk")
+	RunState.add_item(0, &"cuerno_de_gronk")
+	RunState.add_special(0, &"piedra_suerte")
+	RunState.add_upgrade(0, &"croco_contrato_letal")
+	var panel := InventoryPanel.new()
+	add_child_autofree(panel)
+	panel.open(_slot)
+	assert_eq(panel._detail_title.text, "Cuerno de Gronk Lv 2", "Arranca en el primer objeto, con su nivel")
+	panel._move_horizontal(1)
+	assert_eq(panel._detail_title.text, "Piedra de la Suerte", "Después, las reliquias")
+	panel._move_vertical(1)
+	assert_eq(panel._detail_title.text, "Contrato letal Lv 1", "Y abajo, las mejoras")
+	assert_string_contains(panel._detail_text.text, "15%")

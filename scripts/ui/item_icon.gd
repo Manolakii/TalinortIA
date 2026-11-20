@@ -12,6 +12,11 @@ var count: int = 1
 var border: Color = Color(0, 0, 0, 0.6)
 ## Texto chiquito en la esquina (si está, reemplaza al "x3"): por ejemplo "Lv2".
 var badge: String = ""
+## Marcado con el seleccionador (tabla de objetos con joystick).
+var selected: bool = false:
+	set(value):
+		selected = value
+		queue_redraw()
 
 
 static func make(icon_color: Color, letters: String, title: String, description: String,
@@ -43,6 +48,8 @@ func _draw() -> void:
 	draw_rect(rect, color.darkened(0.15))
 	draw_rect(Rect2(2, 2, size.x - 4, size.y * 0.45), color.lightened(0.12))
 	draw_rect(rect, border, false, 2.0)
+	if selected:
+		draw_rect(rect.grow(-1.0), Color.WHITE, false, 4.0)
 	var font: Font = get_theme_default_font()
 	var ink: Color = Color.BLACK if color.get_luminance() > 0.6 else Color.WHITE
 	draw_string(font, Vector2(0, size.y * 0.66), text, HORIZONTAL_ALIGNMENT_CENTER, size.x, 15, ink)

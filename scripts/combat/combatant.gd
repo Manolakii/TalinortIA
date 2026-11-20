@@ -16,6 +16,10 @@ var status: StatusEffects
 var hurtbox: Hurtbox
 ## Empuje recibido; se suma al movimiento y se va frenando solo.
 var knockback_velocity: Vector3 = Vector3.ZERO
+## Altura del piso donde camina (se toma la primera vez que se mueve). Se mueven "flotando",
+## sin gravedad: si un choque contra una esquina lo subía, quedaba en el aire para siempre y
+## pasaba por arriba de las paredes (el Gronk Gigante, reportado por el grupo, 2026-11-20).
+var ground_height: float = NAN
 var hitstop_left: float = 0.0
 
 var _config: CombatConfig
@@ -205,6 +209,15 @@ func move_with_knockback(move_velocity: Vector3) -> void:
 	velocity = move_velocity + knockback_velocity
 	velocity.y = 0.0
 	move_and_slide()
+	stay_on_ground()
+
+
+## Vuelve a la altura del piso si un choque lo levantó o lo hundió.
+func stay_on_ground() -> void:
+	if is_nan(ground_height):
+		ground_height = global_position.y
+	elif absf(global_position.y - ground_height) > 0.01:
+		global_position.y = ground_height
 
 
 # --- Para sobreescribir ---
