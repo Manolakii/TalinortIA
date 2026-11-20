@@ -185,35 +185,48 @@ func _buy(row: Dictionary) -> void:
 	_refresh()
 
 
-## Mystery Box (documento del grupo): 20% maldita, 72% rara, 8% legendaria. La legendaria puede
-## ser general o de su personaje. Devuelve el id de lo que salió.
+## Mystery Box (documento del grupo): 20% maldita, 72% rara, 8% legendaria, sacadas de un mazo
+## por jugador. La rara y la legendaria pueden ser generales o de SU personaje (nunca de otro).
+## Devuelve el id de lo que salió.
 func open_box() -> StringName:
 	var index: int = player.slot.index
-	var rarity: int = Balance.shop.roll_box(RunState.rng)
+	if not RunState.box_bags.has(index):
+		RunState.box_bags[index] = []
+	var rarity: int = Balance.shop.draw_box(RunState.box_bags[index], RunState.rng)
 	var owned: Array = RunState.get_specials(index)
-	var options: Array = Balance.shop.pool(rarity, owned)
-	if rarity == SpecialItem.Rarity.LEGENDARY:
+	# Lista sin tipo: mezcla reliquias generales con la del personaje (antes era Array[SpecialItem]
+	# y la del personaje no entraba nunca).
+	var options: Array = []
+	options.append_array(Balance.shop.pool(rarity, owned))
+	if rarity == SpecialItem.Rarity.LEGENDARY or rarity == SpecialItem.Rarity.RARE:
 		var mine: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(player.data.id,
-				RunState.get_upgrades(index), RunState.rng, true)
-		if mine != null:
+				RunState.get_upgrades(index), RunState.rng, rarity == SpecialItem.Rarity.LEGENDARY)
+		if mine != null and mine.character == player.data.id:
 			options.append(mine)
 	if options.is_empty():
-		options = Balance.shop.pool(SpecialItem.Rarity.RARE, owned)
+		options.append_array(Balance.shop.pool(SpecialItem.Rarity.RARE, owned))
 	if options.is_empty():
 		return &""
 	var prize: Resource = options[RunState.rng.randi_range(0, options.size() - 1)]
 	var title: String
+	var shown_rarity: int
 	if prize is CharacterUpgrade:
-		RunState.add_upgrade(index, (prize as CharacterUpgrade).id)
-		title = "[Legendaria] %s" % (prize as CharacterUpgrade).display_name
+		var upgrade := prize as CharacterUpgrade
+		RunState.add_upgrade(index, upgrade.id)
+		shown_rarity = SpecialItem.Rarity.LEGENDARY if upgrade.price > 0 else SpecialItem.Rarity.RARE
+		title = "[%s de %s] %s" % [SpecialItem.RARITY_NAMES[shown_rarity], player.data.display_name,
+				upgrade.display_name]
 	else:
 		var relic := prize as SpecialItem
 		RunState.add_special(index, relic.id)
+		shown_rarity = relic.rarity
 		title = "[%s] %s" % [SpecialItem.RARITY_NAMES[relic.rarity], relic.display_name]
+	# Si justo estaba a la venta en el puesto, ya no se puede comprar de nuevo.
+	(_state()["sold"] as Array).append(prize.get("id"))
 	var cursed: bool = prize is SpecialItem and (prize as SpecialItem).rarity == SpecialItem.Rarity.CURSED
 	_say("¡Te tocó %s! %s" % [title, "Uh... devoluciones no acepto." if cursed else "¿Viste que era buena?"])
 	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.8, title,
-			SpecialItem.RARITY_COLORS[SpecialItem.Rarity.LEGENDARY if prize is CharacterUpgrade else (prize as SpecialItem).rarity])
+			SpecialItem.RARITY_COLORS[shown_rarity])
 	return prize.get("id")
 
 

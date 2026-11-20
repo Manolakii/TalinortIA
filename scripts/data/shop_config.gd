@@ -17,6 +17,10 @@ extends Resource
 @export var mystery_box_price: int = 125
 ## Chances de la Mystery Box: maldita, rara, legendaria.
 @export var mystery_box_odds: PackedFloat32Array = PackedFloat32Array([0.2, 0.72, 0.08])
+## La Mystery Box sale de un "mazo" de boletos por jugador (con las chances de arriba: de 25,
+## 5 malditas, 18 raras y 2 legendarias) que se mezcla y se vuelve a armar al vaciarse. Así las
+## chances se cumplen de verdad (2026-11-20: el grupo tiró varias y nunca salió una maldita).
+@export var mystery_box_bag_size: int = 25
 ## Volver a tirar el stock: cuesta esto, y sube esto cada vez (por jugador y por visita).
 @export var reroll_base: int = 25
 @export var reroll_step: int = 25
@@ -57,9 +61,34 @@ func roll_stock(owned: Array, visit: int, rng: RandomNumberGenerator) -> Array[S
 	return result
 
 
-## Qué sale de la Mystery Box: 0 maldita, 1 rara, 2 legendaria.
+const BOX_RARITIES: Array[int] = [SpecialItem.Rarity.CURSED, SpecialItem.Rarity.RARE, SpecialItem.Rarity.LEGENDARY]
+
+
+## Qué sale de la Mystery Box (una rareza de SpecialItem), sacando un boleto del mazo `bag`.
+## Si el mazo está vacío, lo arma de nuevo y lo mezcla.
+func draw_box(bag: Array, rng: RandomNumberGenerator) -> int:
+	if bag.is_empty():
+		bag.append_array(new_box_bag(rng))
+	return bag.pop_back()
+
+
+func new_box_bag(rng: RandomNumberGenerator) -> Array[int]:
+	var bag: Array[int] = []
+	for i: int in mystery_box_odds.size():
+		for n: int in roundi(mystery_box_odds[i] * mystery_box_bag_size):
+			bag.append(BOX_RARITIES[i])
+	# Mezcla con el generador de la partida (la misma semilla, la misma suerte).
+	for i: int in range(bag.size() - 1, 0, -1):
+		var j: int = rng.randi_range(0, i)
+		var swap: int = bag[i]
+		bag[i] = bag[j]
+		bag[j] = swap
+	return bag
+
+
+## Una tirada suelta (sin mazo), con las chances de la Mystery Box.
 func roll_box(rng: RandomNumberGenerator) -> int:
-	return [SpecialItem.Rarity.CURSED, SpecialItem.Rarity.RARE, SpecialItem.Rarity.LEGENDARY][_roll(mystery_box_odds, rng)]
+	return BOX_RARITIES[_roll(mystery_box_odds, rng)]
 
 
 static func _roll(chances: PackedFloat32Array, rng: RandomNumberGenerator) -> int:

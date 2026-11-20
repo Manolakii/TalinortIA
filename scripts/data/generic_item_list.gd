@@ -1,12 +1,13 @@
 class_name GenericItemList
 extends Resource
 ## Todos los objetos de sala y cómo se ofrecen (pedido del grupo, 2026-11-20): cada opción tira
-## la rareza (60% común, 32% raro, 8% legendario) y elige un objeto de esa rareza que el jugador
+## la rareza (60% común, 25% raro, 11% épico, 4% legendario; antes 60/32/8 sin épico, y salían
+## demasiados raros) y elige un objeto de esa rareza que el jugador
 ## pueda subir (si ya lo tiene, se ofrece el nivel siguiente; al máximo no aparece).
 
 @export var items: Array[GenericItem] = []
-## Chance de cada rareza en cada opción: común, raro, legendario.
-@export var rarity_weights: PackedFloat32Array = PackedFloat32Array([0.6, 0.32, 0.08])
+## Chance de cada rareza en cada opción: común, raro, épico, legendario.
+@export var rarity_weights: PackedFloat32Array = PackedFloat32Array([0.6, 0.25, 0.11, 0.04])
 
 
 func get_item(id: StringName) -> GenericItem:

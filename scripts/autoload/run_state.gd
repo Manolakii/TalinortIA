@@ -56,6 +56,8 @@ var visit: int = 0
 var party: Dictionary[int, Dictionary] = {}
 ## Tienda de Yole Sajor: stock de cada jugador en esta visita.
 var shop_state: Dictionary[int, Dictionary] = {}
+## Mazo de boletos de la Mystery Box de cada jugador (ver ShopConfig.draw_box).
+var box_bags: Dictionary[int, Array] = {}
 ## Fuente: quién ya se curó en esta visita.
 var fountain_used: Array[int] = []
 ## Para la McoinIA al terminar (GDD): escenarios superados, élites y bosses derrotados.
@@ -101,6 +103,7 @@ func start_run(new_seed: int = 0) -> void:
 	visit = 0
 	party.clear()
 	shop_state.clear()
+	box_bags.clear()
 	fountain_used.clear()
 	scenarios_cleared = 0
 	elites_killed = 0

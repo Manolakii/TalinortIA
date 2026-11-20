@@ -3,14 +3,17 @@ extends Resource
 ## Objeto de sala (pedido del grupo, 2026-11-20: rarezas y niveles). Se consigue en las
 ## elecciones de las salas. Cada objeto tiene una rareza y sube de nivel cuando lo volvés a
 ## elegir: el nivel nuevo REEMPLAZA al anterior (no se suman). Comunes y raros llegan a Lv 3,
-## legendarios a Lv 2. Con el nivel máximo, ya no aparece más.
+## épicos y legendarios a Lv 2. Con el nivel máximo, ya no aparece más.
+## (2026-11-20, pedido del grupo: vuelve la rareza Épico, entre Raro y Legendario.)
 ## Si `effect` está vacío suma la estadística `stat`; si no, ItemEffects hace algo.
 
-enum Rarity { COMMON, RARE, LEGENDARY }
+enum Rarity { COMMON, RARE, EPIC, LEGENDARY }
 
-const RARITY_NAMES: Array[String] = ["Común", "Raro", "Legendario"]
-## Colores del texto de cada rareza (gris, celeste y dorado), legibles sobre fondo oscuro.
-const RARITY_COLORS: Array[Color] = [Color(0.78, 0.78, 0.8), Color(0.45, 0.8, 1.0), Color(1.0, 0.8, 0.3)]
+const RARITY_NAMES: Array[String] = ["Común", "Raro", "Épico", "Legendario"]
+## Colores del texto de cada rareza (gris, celeste, lila y dorado), legibles sobre fondo oscuro.
+## El lila del Épico es solo de interfaz (el violeta en el mundo sigue siendo la sombra).
+const RARITY_COLORS: Array[Color] = [Color(0.78, 0.78, 0.8), Color(0.45, 0.8, 1.0),
+		Color(0.85, 0.55, 1.0), Color(1.0, 0.8, 0.3)]
 
 ## Estadísticas posibles (las mismas que suma StatModifiers).
 const STATS: Array[StringName] = [&"damage", &"attack_speed", &"max_health", &"crit_chance",

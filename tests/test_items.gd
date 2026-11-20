@@ -16,7 +16,7 @@ func test_items_have_rarity_and_levels() -> void:
 	assert_eq(Balance.generic_items.items.size(), 37)
 	for item: GenericItem in Balance.generic_items.items:
 		assert_ne(item.icon_text, "", "%s tiene ícono" % item.id)
-		var expected: int = 2 if item.rarity == GenericItem.Rarity.LEGENDARY else 3
+		var expected: int = 2 if item.rarity >= GenericItem.Rarity.EPIC else 3
 		assert_eq(item.max_level(), expected, "%s: comunes y raros Lv 3, legendarios Lv 2" % item.id)
 		if item.stat == &"lifesteal" and item.rarity == GenericItem.Rarity.COMMON:
 			assert_lte(item.value_at(3), 0.02, "Robo de vida común: Lv 3 no pasa del 2%")
@@ -42,15 +42,22 @@ func test_maxed_items_are_not_offered_again() -> void:
 			assert_ne(item.id, &"sable_sombrio", "El legendario al Lv 2 ya no aparece")
 
 
-func test_rarity_odds_are_roughly_60_32_8() -> void:
+func test_rarity_odds_are_roughly_60_25_11_4() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
-	var counts: Array[int] = [0, 0, 0]
-	for i: int in 2000:
+	var counts: Array[int] = [0, 0, 0, 0]
+	for i: int in 4000:
 		counts[Balance.generic_items.roll_rarity(rng)] += 1
-	assert_between(counts[0], 1080, 1320)
-	assert_between(counts[1], 520, 760)
-	assert_between(counts[2], 100, 230)
+	assert_between(counts[0], 2240, 2560, "Común ~60%")
+	assert_between(counts[1], 880, 1120, "Raro ~25%")
+	assert_between(counts[2], 340, 540, "Épico ~11%")
+	assert_between(counts[3], 100, 230, "Legendario ~4%")
+
+
+func test_every_rarity_has_items() -> void:
+	for rarity: int in GenericItem.Rarity.size():
+		var found: bool = Balance.generic_items.items.any(func(i: GenericItem) -> bool: return i.rarity == rarity)
+		assert_true(found, "Hay objetos %s" % GenericItem.RARITY_NAMES[rarity])
 
 
 func test_offer_shows_next_level_and_rarity() -> void:
@@ -134,7 +141,7 @@ func test_firecracker_blasts_on_kill() -> void:
 	var victim := enemy_at(Vector3(0, 0, -3), 10.0)
 	var neighbor := enemy_at(Vector3(1.5, 0, -3), 1000.0)
 	_hit(victim, 50.0)
-	assert_almost_eq(1000.0 - neighbor.health.current, 20.0, 0.5, "La explosión le pega al de al lado")
+	assert_almost_eq(1000.0 - neighbor.health.current, 30.0, 0.5, "La explosión le pega al de al lado (épico Lv 1: 30)")
 
 
 func test_gronk_egg_shields_on_kill() -> void:
