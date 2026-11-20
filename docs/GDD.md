@@ -170,6 +170,8 @@ Una partida es Birig Bamba → Stage 1 → Birig Bamba → Stage 2 → Birig Bam
 
 ### Mejoras de personaje: elegir 1 de 3 (decidido; *2026-11-15, pedido del grupo: ahora 1 de 2, y 1 de 3 las de lujo*)
 
+*2026-11-20, documento del grupo "Objetos, mejoras y reliquias":* las mejoras no tienen rareza y juegan con el kit (se sacaron todas las genéricas tipo "+10% de daño"). Pueden tener **niveles** (Lv 1 a Lv 3: volver a elegirla la sube y el nivel nuevo reemplaza al anterior) o ser **únicas** (sin "Lv" en el nombre). No se puede recibir un Lv 2 sin el Lv 1. Hay 15 o más por personaje (el dúo, además, tiene sus 18 Sendas). La lista completa está en KITS_MVP.
+
 Son beneficios propios de cada personaje, no objetos. *2026-11-15, pedido del grupo (cambia lo decidido: las mejoras pesaban mucho más que los objetos y salían todo el tiempo):* salen al cerrar cada escenario y al ganar un Desafío (de lujo, 1 de 3). Las salas de combate y las de élite dan objetos. Cada jugador elige la suya en su panel. Las Sendas del Maestro y Stewie funcionan como sus mejoras.
 
 | Personaje | Ejemplos de mejoras |

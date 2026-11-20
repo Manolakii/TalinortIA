@@ -93,6 +93,7 @@ func _spawn_companion() -> void:
 
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
+	switch_cooldown.recharge_time = maxf(kd.switch_cooldown - hero(&"maestro_cambio") - upgrade_value(&"duo_cambio_rapido"), 1.0)
 	# Cada Senda que se toma cuenta como mejora del dúo (3 y 6: Joven y Sabia).
 	var old_form: int = stewie_form()
 	stewie_upgrades = RunState.get_upgrades(player.slot.index).size()
@@ -345,7 +346,7 @@ func _controlled_headbutt_hit() -> void:
 
 
 func _update_charge(delta: float) -> void:
-	var was_full: bool = _charge >= kd.bastonazo_full_charge
+	var was_full: bool = _charge >= _bastonazo_full_charge()
 	_charge += delta
 	player.start_action(0.1, 0.0)
 	player.face_aim_now()
@@ -354,7 +355,7 @@ func _update_charge(delta: float) -> void:
 		_charging = false
 		_hide_chi_charge()
 		_ability_cd[Body.MAESTRO].use()
-		var ratio: float = clampf(_charge / kd.bastonazo_full_charge, 0.0, 1.0)
+		var ratio: float = clampf(_charge / _bastonazo_full_charge(), 0.0, 1.0)
 		_fire_bastonazo(player, player.aim_direction, ratio)
 		player.start_action(0.25, 0.3)
 
@@ -363,7 +364,7 @@ func _update_charge(delta: float) -> void:
 ## salir la onda y se pone más fuerte con la carga, y el Maestro titila del color del chi.
 ## Al llegar a la carga completa, un destello y un "pling".
 func _show_chi_charge(was_full: bool) -> void:
-	var ratio: float = clampf(_charge / kd.bastonazo_full_charge, 0.0, 1.0)
+	var ratio: float = clampf(_charge / _bastonazo_full_charge(), 0.0, 1.0)
 	_chi_line.visible = true
 	Fx.place_beam(_chi_line, player.global_position + Vector3.UP * 0.15, player.aim_direction,
 			kd.bastonazo_length)
@@ -411,12 +412,12 @@ func _bastonazo_targets(from: Vector3, direction: Vector3) -> Array[Hurtbox]:
 
 func _refuge() -> void:
 	_ability_cd[Body.STEWIE].use()
-	player.start_action(kd.refuge_duration, 0.0)
-	player.health.make_invulnerable(kd.refuge_duration)
+	player.start_action(_refuge_duration(), 0.0)
+	player.health.make_invulnerable(_refuge_duration())
 	say("¡Refugio!", Color(0.8, 0.95, 0.8))
 	var tween: Tween = player.create_tween()
 	tween.tween_property(player.visual, "scale", Vector3(1.2, 0.6, 1.2), 0.1)
-	tween.tween_interval(kd.refuge_duration - 0.2)
+	tween.tween_interval(_refuge_duration() - 0.2)
 	tween.tween_property(player.visual, "scale", Vector3.ONE * _controlled_scale(), 0.1)
 
 
@@ -649,9 +650,9 @@ func _companion_try_skill(body: DuoCompanion, to_target: Vector3, reach: float) 
 		if stewie_path == &"" and around >= 3:
 			ability_cd.use()
 			body.invulnerable_shell = true
-			body.busy = kd.refuge_duration
+			body.busy = _refuge_duration()
 			say("¡Caparazón!", Color(0.8, 0.95, 0.8), 0.8)
-			schedule(kd.refuge_duration, _end_companion_shell.bind(body))
+			schedule(_refuge_duration(), _end_companion_shell.bind(body))
 			return true
 	# Rodar: para llegar, o a través de los enemigos si tiene Senda de esquiva.
 	var dodge_path: StringName = senda(&"stewie", &"dodge")
@@ -670,10 +671,10 @@ func _companion_try_skill(body: DuoCompanion, to_target: Vector3, reach: float) 
 ## Fortaleza del compañero: se mete en el caparazón y atrae a los enemigos un rato.
 func _companion_fortress(body: DuoCompanion) -> void:
 	body.invulnerable_shell = true
-	body.busy = kd.refuge_duration
+	body.busy = _refuge_duration()
 	body.priority = 0.25
 	say("¡Fortaleza!", Color(0.85, 0.95, 0.85), 0.9)
-	schedule(kd.refuge_duration, func() -> void:
+	schedule(_refuge_duration(), func() -> void:
 		if is_instance_valid(body):
 			body.invulnerable_shell = false
 			body.priority = kd.companion_target_priority)
@@ -681,7 +682,7 @@ func _companion_fortress(body: DuoCompanion) -> void:
 
 func _companion_bastonazo(body: DuoCompanion, direction: Vector3) -> void:
 	if is_instance_valid(body) and not body.downed:
-		var ratio: float = clampf(kd.companion_bastonazo_charge / kd.bastonazo_full_charge, 0.0, 1.0)
+		var ratio: float = clampf(kd.companion_bastonazo_charge / _bastonazo_full_charge(), 0.0, 1.0)
 		_fire_bastonazo(body, direction, ratio)
 
 
@@ -734,8 +735,8 @@ func _companion_evade(body: DuoCompanion, threat: Node3D) -> bool:
 	if body.identity == Body.STEWIE and _ability_cd[Body.STEWIE].is_ready():
 		_ability_cd[Body.STEWIE].use()
 		body.invulnerable_shell = true
-		body.busy = kd.refuge_duration
-		schedule(kd.refuge_duration, _end_companion_shell.bind(body))
+		body.busy = _refuge_duration()
+		schedule(_refuge_duration(), _end_companion_shell.bind(body))
 		return true
 	var dodge_cd: AbilityCooldown = _dodge_cd[body.identity]
 	if dodge_cd.is_ready():
@@ -896,8 +897,8 @@ func _mirror(slot_kind: Slot, direction: Vector3 = Vector3.ZERO) -> void:
 			_companion_basic(companion, aim)
 		Slot.ABILITY:
 			companion.invulnerable_shell = true
-			companion.busy = kd.refuge_duration
-			schedule(kd.refuge_duration, func() -> void: companion.invulnerable_shell = false)
+			companion.busy = _refuge_duration()
+			schedule(_refuge_duration(), func() -> void: companion.invulnerable_shell = false)
 		Slot.DODGE:
 			companion.knockback_velocity = aim * (kd.roll_distance / kd.roll_duration)
 
@@ -1286,7 +1287,7 @@ func _stewie_senda_ability(source: Node3D) -> void:
 		&"caparazon":
 			# Fortaleza: Refugio que provoca a los cercanos y devuelve 30% del daño.
 			_refuge()
-			_fortress_until = Time.get_ticks_msec() + int(kd.refuge_duration * 1000.0)
+			_fortress_until = Time.get_ticks_msec() + int(_refuge_duration() * 1000.0)
 			say("¡Fortaleza!", Color(0.85, 0.95, 0.85))
 		&"embestida":
 			# Caparazón Bala: rebota entre hasta 5 enemigos.
@@ -1487,7 +1488,17 @@ func _bond_distance() -> float:
 
 
 func _bond_bonus() -> float:
-	return 0.15 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_bonus
+	return (0.15 if has_upgrade(&"duo_vinculo_eterno") else kd.bond_bonus) + upgrade_value(&"duo_vinculo_fuerte")
+
+
+## Chi concentrado (mejora): el Bastonazo se carga más rápido.
+func _bastonazo_full_charge() -> float:
+	return kd.bastonazo_full_charge * (1.0 - upgrade_value(&"maestro_bastonazo_veloz"))
+
+
+## Caparazón cómodo (mejora): el Refugio dura más.
+func _refuge_duration() -> float:
+	return kd.refuge_duration + upgrade_value(&"stewie_refugio_largo")
 
 
 func ability_cooldowns() -> Array[AbilityCooldown]:

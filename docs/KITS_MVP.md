@@ -42,7 +42,7 @@ Bruiser comodín con dos estados: **Normal** (débil, esquivo, vive de la suerte
 - **En Normal:** se transforma al instante con un rugido que empuja y asusta a los enemigos cercanos durante 2 s. Entrando así, la Furia dura 8 s más (18 s), como premio por usar la definitiva.
 - **En Furia — Revoleo:** agarra al enemigo más grande (élites incluidos), lo tira contra los demás y extiende la Furia 4 s. *2026-11-15, pedido del grupo:* si se transformó con la definitiva, tiene un Revoleo gratis sin recargar la barra; si la Furia llegó sola, hay que cargarlo.
 
-**Mejoras de personaje (ejemplos):** el Piedrazo rebota a un segundo enemigo; en Furia corre 15% más rápido; el Tropezón da 25 de Furia en lugar de 15.
+**Mejoras de personaje:** ver la tabla al final.
 
 **Tienda de Yole (únicas, no salen como premio):**
 - *Mejora de kit — "Ahora sí te entiendo"* (120): elegís qué animal sale del Llamado Salvaje.
@@ -72,7 +72,7 @@ Voltereta que deja un señuelo holográfico: los enemigos lo atacan durante 1,5 
 **4 · Definitiva — El Modo que Ni Fadied Conocía**
 Cañón de riel: un rayo continuo de 120 de daño por segundo durante 4 s, que gira lento y atraviesa todo. Después el arma se recalienta y queda 3 s solo en modo pistola. Frase al activarla: *"Esto lo cobro doble."*
 
-**Mejoras de personaje (ejemplos):** la escopeta tira 2 perdigones más; el señuelo explota al desaparecer; la recompensa también le da 10 de vida.
+**Mejoras de personaje:** ver la tabla al final.
 
 **Tienda de Yole (únicas, no salen como premio):**
 - *Mejora de kit — Contrato doble* (120): el Tiro por Contrato tiene 2 cargas.
@@ -108,7 +108,7 @@ Se hunde en su sombra y reaparece unos metros más adelante, intangible durante 
 **4 · Definitiva — Noche del Valle sin Luz (+50 de Hambre)**
 La sala se tiñe de luz violeta. Durante 8 s la sombra se separa de su cuerpo y repite cada ataque de Agucci, así que todo pega doble. Mientras no ataque, los enemigos lo pierden de vista. Como suma mucha Hambre, si no se maneja bien casi siempre termina en Posesión.
 
-**Mejoras de personaje (ejemplos):** +1 carga de esquiva; los cortes por la espalda hacen +30%; el kunai envenena.
+**Mejoras de personaje:** ver la tabla al final.
 
 **Tienda de Yole (únicas, no salen como premio):**
 - *Mejora de kit — Shurikens de la sombra* (120): Disolverse deja 3 shurikens que salen disparados hacia los enemigos cercanos.
@@ -218,6 +218,124 @@ Tanque y sanador. Lento y enorme: se come los golpes del equipo y los convierte 
 - *Kit de Yole — Aplauso sísmico* (220): el Aplauso pega a todo alrededor (30% más de alcance, 80% del daño).
 
 ---
+
+## Mejoras de personaje (*2026-11-20, documento del grupo*)
+
+Salen al cerrar cada escenario y en los Desafíos. Ninguna es un "+X% de daño" genérico: todas juegan con el kit. Las que tienen niveles suben al volver a elegirlas (Lv 1 → Lv 2 → Lv 3; el nivel nuevo reemplaza al anterior) y las **únicas** no dicen "Lv". No se puede recibir un Lv 2 sin tener el Lv 1. Las Sendas del dúo siguen llegando a Lv 2.
+
+### Tali (16)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Racha de suerte | Cada 4 Piedrazos seguidos que aciertan, el siguiente sale con suerte (crítico que aturde) | Cada 3 Piedrazos seguidos que aciertan, el siguiente sale con suerte (crítico que aturde) | Cada 2 Piedrazos seguidos que aciertan, el siguiente sale con suerte (crítico que aturde) |
+| Piedra que rebota | El Piedrazo rebota hasta 1 veces a otros enemigos | El Piedrazo rebota hasta 2 veces a otros enemigos | El Piedrazo rebota hasta 3 veces a otros enemigos |
+| Suerte encadenada | Después de aturdir a un enemigo, tus próximos 1 Piedrazos salen con suerte | Después de aturdir a un enemigo, tus próximos 2 Piedrazos salen con suerte | Después de aturdir a un enemigo, tus próximos 3 Piedrazos salen con suerte |
+| Rebogronk | +10% de chance de que el Llamado traiga al Gronk, que además rebota en una pared y vuelve a cargar | +20% de chance de que el Llamado traiga al Gronk, que además rebota en una pared y vuelve a cargar | +35% de chance de que el Llamado traiga al Gronk, que además rebota en una pared y vuelve a cargar |
+| Tropezón largo | El Tropezón llega 20% más lejos | El Tropezón llega 40% más lejos | El Tropezón llega 60% más lejos |
+| Revoleo blindado | Revolear te da 20 de escudo que se va gastando en 15 s | Revolear te da 30 de escudo que se va gastando en 15 s | Revolear te da 40 de escudo que se va gastando en 15 s |
+| Garras largas | Los Zarpazos de la Furia llegan 15% más lejos | Los Zarpazos de la Furia llegan 30% más lejos | Los Zarpazos de la Furia llegan 45% más lejos |
+| Bichos infecciosos (única) | Los bichos del Llamado envenenan: 25 de daño en 5 s | — | — |
+| Pájaros que regresan (única) | Si los pájaros del Llamado matan a un enemigo, el Llamado recarga a la mitad | — | — |
+| Patas de Furia | En Furia corrés 10% más rápido | En Furia corrés 15% más rápido | En Furia corrés 20% más rápido |
+| Tropezón bronco | Esquivar de casualidad con el Tropezón da 20 de Furia (en vez de 15) | Esquivar de casualidad con el Tropezón da 25 de Furia (en vez de 15) | Esquivar de casualidad con el Tropezón da 30 de Furia (en vez de 15) |
+| Bronca que dura | La Furia dura 1,5 s más | La Furia dura 3 s más | La Furia dura 4,5 s más |
+| Rugido profundo (única) | El rugido de La Bestia asusta 4 s en vez de 2 | — | — |
+| Aplastón sísmico | El Aplastón pega en un área 20% más grande | El Aplastón pega en un área 40% más grande | El Aplastón pega en un área 60% más grande |
+| Bronca acumulada | La barra de Furia se llena 10% más rápido | La barra de Furia se llena 20% más rápido | La barra de Furia se llena 30% más rápido |
+| Resaca leve | Después de la Furia quedás Agotado 2,5 s (en vez de 3) | Después de la Furia quedás Agotado 2 s (en vez de 3) | Después de la Furia quedás Agotado 1,5 s (en vez de 3) |
+
+### Mercenario Croco (17)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Más perdigones | La escopeta tira 1 perdigones más | La escopeta tira 2 perdigones más | La escopeta tira 3 perdigones más |
+| Escopetazo | La escopeta empuja 30% más fuerte | La escopeta empuja 60% más fuerte | La escopeta empuja 90% más fuerte |
+| Ráfaga extra | El rifle tira 1 balas más por ráfaga | El rifle tira 2 balas más por ráfaga | El rifle tira 3 balas más por ráfaga |
+| Puntería de rifle | Las balas del rifle tienen +5% de chance de crítico | Las balas del rifle tienen +10% de chance de crítico | Las balas del rifle tienen +15% de chance de crítico |
+| Revólver pesado | La pistola pega 10% más | La pistola pega 20% más | La pistola pega 30% más |
+| Cambio de manos | El primer tiro después de cambiar de modo pega +40% (en vez de +30%) | El primer tiro después de cambiar de modo pega +50% (en vez de +30%) | El primer tiro después de cambiar de modo pega +60% (en vez de +30%) |
+| Mira rápida | El Tiro por Contrato se carga en 1,3 s (en vez de 1,5) | El Tiro por Contrato se carga en 1,15 s (en vez de 1,5) | El Tiro por Contrato se carga en 1 s (en vez de 1,5) |
+| Contrato letal | El Tiro por Contrato pega 15% más | El Tiro por Contrato pega 30% más | El Tiro por Contrato pega 45% más |
+| Salida rápida (única) | Si el Tiro por Contrato mata, recuperás una carga de Ruta de Escape | — | — |
+| Plan B (única) | +1 carga de Ruta de Escape | — | — |
+| Señuelo con sorpresa | El señuelo explota al desaparecer: 30 de daño | El señuelo explota al desaparecer: 45 de daño | El señuelo explota al desaparecer: 60 de daño |
+| Holograma duradero | El señuelo dura 0,5 s más | El señuelo dura 1 s más | El señuelo dura 1,5 s más |
+| Rastro largo | El rastro de la Ruta de Escape dura 50% más | El rastro de la Ruta de Escape dura 100% más | El rastro de la Ruta de Escape dura 150% más |
+| Cobrar con propina | Cobrar la Recompensa te cura 10 | Cobrar la Recompensa te cura 18 | Cobrar la Recompensa te cura 25 |
+| Ojo de cazador | Hacés 15% más de daño al élite con Recompensa | Hacés 25% más de daño al élite con Recompensa | Hacés 35% más de daño al élite con Recompensa |
+| Riel recargado | El Riel dura 0,75 s más | El Riel dura 1,5 s más | El Riel dura 2,25 s más |
+| Riel refrigerado (única) | Después del Riel el arma no se recalienta | — | — |
+
+### Agucci (15)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Por la espalda | Los golpes por la espalda hacen 15% más | Los golpes por la espalda hacen 30% más | Los golpes por la espalda hacen 45% más |
+| Filo largo | Los cortes de la katana llegan 15% más lejos | Los cortes de la katana llegan 30% más lejos | Los cortes de la katana llegan 45% más lejos |
+| Patada voladora | La patada pega y empuja 25% más | La patada pega y empuja 50% más | La patada pega y empuja 75% más |
+| Cargador extendido | La UZI tira 1 balas más | La UZI tira 2 balas más | La UZI tira 3 balas más |
+| Hambre controlada | Los golpes comunes bajan el Hambre 50% más | Los golpes comunes bajan el Hambre 100% más | Los golpes comunes bajan el Hambre 150% más |
+| Mente fría | La Lucidez llega hasta 35 de Hambre (en vez de 30) | La Lucidez llega hasta 40 de Hambre (en vez de 30) | La Lucidez llega hasta 45 de Hambre (en vez de 30) |
+| Kunai lejano | El kunai de Paso de Sombra llega 25% más lejos | El kunai de Paso de Sombra llega 50% más lejos | El kunai de Paso de Sombra llega 75% más lejos |
+| Kunai envenenado | El kunai envenena: 6 de daño por segundo durante 3 s | El kunai envenena: 10 de daño por segundo durante 3 s | El kunai envenena: 14 de daño por segundo durante 3 s |
+| Paso apurado | Paso de Sombra recarga 10% más rápido | Paso de Sombra recarga 20% más rápido | Paso de Sombra recarga 30% más rápido |
+| Sombra veloz | El Impulso de sombra dura 1 s más | El Impulso de sombra dura 2 s más | El Impulso de sombra dura 3 s más |
+| Sombra inquieta (única) | +1 carga de Disolverse | — | — |
+| Salida filosa (única) | Al reaparecer de Disolverse cortás a los enemigos de alrededor (20 de daño) | — | — |
+| Noche eterna | La Noche del Valle sin Luz dura 1,5 s más | La Noche del Valle sin Luz dura 3 s más | La Noche del Valle sin Luz dura 4,5 s más |
+| Sombra dócil | En la Posesión, la sombra te drena 75% de lo normal | En la Posesión, la sombra te drena 50% de lo normal | En la Posesión, la sombra te drena 25% de lo normal |
+| Banquete de sombra | En la Posesión, el ataque automático roba 5% más de vida | En la Posesión, el ataque automático roba 10% más de vida | En la Posesión, el ataque automático roba 15% más de vida |
+
+### General Pipo (15)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Bláster reglamentado | El Bláster pega 8% más | El Bláster pega 15% más | El Bláster pega 22% más |
+| Racha de veterano | La Racha de Cuartel llega hasta +60% (en vez de +50%) | La Racha de Cuartel llega hasta +70% (en vez de +50%) | La Racha de Cuartel llega hasta +80% (en vez de +50%) |
+| Pulso firme | Si fallás un tiro, conservás 33% de la racha | Si fallás un tiro, conservás 50% de la racha | Si fallás un tiro, conservás 75% de la racha |
+| Ojo entrenado | El cono de precisión es 25% más ancho | El cono de precisión es 50% más ancho | El cono de precisión es 75% más ancho |
+| Cubrime la izquierda (única) | Ya no te pegan más fuerte por el punto ciego | — | — |
+| Otra torreta (única) | Podés tener 3 torretas a la vez | — | — |
+| Chatarra blindada | Las torretas tienen 25% más de vida | Las torretas tienen 50% más de vida | Las torretas tienen 75% más de vida |
+| Torretas aceitadas | Las torretas disparan 15% más rápido | Las torretas disparan 30% más rápido | Las torretas disparan 45% más rápido |
+| Fuego coordinado | Las torretas pegan 20% más al último enemigo que acertaste | Las torretas pegan 35% más al último enemigo que acertaste | Las torretas pegan 50% más al último enemigo que acertaste |
+| Racha contagiosa (única) | La Racha de Cuartel también potencia a las torretas | — | — |
+| Repliegue en dos tiempos (única) | +1 carga de Repliegue Ordenado | — | — |
+| Retirada táctica | El Repliegue llega 20% más lejos | El Repliegue llega 40% más lejos | El Repliegue llega 60% más lejos |
+| Mina reforzada | La mina pega 20% más | La mina pega 40% más | La mina pega 60% más |
+| Nave bien cargada | El Fuego de la Nave Insignia tira 1 impactos más | El Fuego de la Nave Insignia tira 2 impactos más | El Fuego de la Nave Insignia tira 3 impactos más |
+| Zona de bombardeo | La zona del bombardeo es 15% más grande | La zona del bombardeo es 30% más grande | La zona del bombardeo es 45% más grande |
+
+### Capitán Champaka (15)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Aplausos seguidos | El Aplauso sale 10% más seguido | El Aplauso sale 20% más seguido | El Aplauso sale 30% más seguido |
+| Manos de oso | El Aplauso llega 10% más lejos | El Aplauso llega 20% más lejos | El Aplauso llega 30% más lejos |
+| Onda expansiva | La onda del Aplauso también hace 10 de daño | La onda del Aplauso también hace 15 de daño | La onda del Aplauso también hace 20 de daño |
+| Tres al hilo | El tercer Aplauso seguido que conecta te da 10 de escudo | El tercer Aplauso seguido que conecta te da 15 de escudo | El tercer Aplauso seguido que conecta te da 20 de escudo |
+| Abrazo de oso polar | El Abrazo de Oso pega 20% más | El Abrazo de Oso pega 40% más | El Abrazo de Oso pega 60% más |
+| Abrazo grupal | El Abrazo de Oso cura 8 a los aliados cerca | El Abrazo de Oso cura 12 a los aliados cerca | El Abrazo de Oso cura 16 a los aliados cerca |
+| Abrazador serial | El Abrazo de Oso recarga 10% más rápido | El Abrazo de Oso recarga 20% más rápido | El Abrazo de Oso recarga 30% más rápido |
+| Panzazo con carrerita | El Panzazo llega 20% más lejos | El Panzazo llega 40% más lejos | El Panzazo llega 60% más lejos |
+| Doble panza (única) | +1 carga de Panzazo | — | — |
+| Panza fértil (única) | El Panzazo deja un hongo al caer (solo si hay pelea) | — | — |
+| Piel de hongo | Recibís 3% menos de daño (además del 15% de siempre) | Recibís 6% menos de daño (además del 15% de siempre) | Recibís 9% menos de daño (además del 15% de siempre) |
+| Esporulación | Brota un hongo cada 85 de daño recibido (en vez de 100) | Brota un hongo cada 70 de daño recibido (en vez de 100) | Brota un hongo cada 55 de daño recibido (en vez de 100) |
+| Hongos gorditos | Tus hongos curan 50% más | Tus hongos curan 100% más | Tus hongos curan 150% más |
+| Papá presente | Papá del grupo llega a 5 m y quita 12% del daño (en vez de 10%) | Papá del grupo llega a 5 m y quita 14% del daño (en vez de 10%) | Papá del grupo llega a 5 m y quita 16% del daño (en vez de 10%) |
+| Floración duradera | La Floración del Hongo dura 1,5 s más | La Floración del Hongo dura 3 s más | La Floración del Hongo dura 4,5 s más |
+
+### Maestro Uwey y Stewie (5)
+
+| Mejora | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- |
+| Ojo para las vasijas (única) | Sin pelea cerca, el compañero va solo a romper las vasijas que ve | — | — |
+| Vínculo fuerte | El Vínculo da 5% más de daño y resistencia a los dos | El Vínculo da 10% más de daño y resistencia a los dos | El Vínculo da 15% más de daño y resistencia a los dos |
+| Relevo ágil | El Cambio recarga 1 s antes | El Cambio recarga 2 s antes | El Cambio recarga 3 s antes |
+| Chi concentrado | El Bastonazo se carga 15% más rápido | El Bastonazo se carga 30% más rápido | El Bastonazo se carga 45% más rápido |
+| Caparazón cómodo | El Refugio de Stewie dura 0,5 s más | El Refugio de Stewie dura 1 s más | El Refugio de Stewie dura 1,5 s más |
+| Sendas (18) | Ver la tabla de Sendas arriba: cada una llega a Lv 2 | | |
 
 ## Sinergias (documento "Kits de personajes")
 

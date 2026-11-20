@@ -18,7 +18,7 @@ func test_each_character_has_its_pool() -> void:
 	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
 	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
 			"Dúo: 18 Sendas")
-	assert_eq(duo.size(), 21, "Más Ojo para las vasijas, Té y Bastón")
+	assert_eq(duo.size(), 23, "Más Ojo para las vasijas y 4 del dúo con niveles (sin genéricas)")
 
 
 func test_offer_gives_three_distinct_and_skips_owned() -> void:
@@ -62,7 +62,7 @@ func test_tali_upgrades() -> void:
 
 func test_no_generic_stat_upgrades_left() -> void:
 	var all: Array[CharacterUpgrade] = []
-	for id: StringName in [&"tali", &"croco", &"agucci", &"pipo", &"champaka"]:
+	for id: StringName in [&"tali", &"croco", &"agucci", &"pipo", &"champaka", &"maestro"]:
 		all.append_array(Balance.upgrades.available_for(id, []))
 	for upgrade: CharacterUpgrade in all:
 		assert_eq(upgrade.stat, &"", "%s juega con el kit, no es un +X%% genérico" % upgrade.id)
