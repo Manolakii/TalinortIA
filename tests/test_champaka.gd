@@ -56,7 +56,9 @@ func test_clap_is_one_slow_strong_hit() -> void:
 func test_mushrooms_heal_five() -> void:
 	assert_eq(_kit.mushroom_heal(), 5.0)
 	RunState.add_upgrade(0, &"champaka_hongos_gorditos")
-	assert_eq(_kit.mushroom_heal(), 10.0)
+	assert_eq(_kit.mushroom_heal(), 7.5, "Hongos gorditos Lv 1: +50%")
+	RunState.add_upgrade(0, &"champaka_hongos_gorditos")
+	assert_eq(_kit.mushroom_heal(), 10.0, "Lv 2: el doble")
 
 
 func test_belly_mushroom_only_in_combat() -> void:
@@ -140,9 +142,9 @@ func test_bloom_revives_and_confuses() -> void:
 func test_upgrades_change_numbers() -> void:
 	RunState.add_upgrade(0, &"champaka_esporulacion")
 	RunState.add_upgrade(0, &"champaka_papa_presente")
-	assert_eq(_kit.spores_per_mushroom(), 70.0)
+	assert_eq(_kit.spores_per_mushroom(), 85.0, "Esporulación Lv 1")
 	assert_eq(_kit.dad_radius(), 5.0)
-	assert_eq(_kit.dad_reduction(), 0.15)
+	assert_almost_eq(_kit.dad_reduction(), 0.12, 0.0001, "Papá presente Lv 1")
 
 
 func test_yole_seismic_clap_hits_all_around() -> void:

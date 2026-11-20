@@ -13,7 +13,7 @@ func before_each() -> void:
 func test_each_character_has_its_pool() -> void:
 	assert_gte(Balance.upgrades.available_for(&"tali", []).size(), 15, "Tali: 15 o más mejoras")
 	assert_gte(Balance.upgrades.available_for(&"croco", []).size(), 15, "Croco: 15 o más mejoras")
-	for id: StringName in [&"agucci", &"pipo"]:
+	for id: StringName in [&"agucci", &"pipo", &"champaka"]:
 		assert_gte(Balance.upgrades.available_for(id, []).size(), 15, "%s: 15 o más mejoras" % id)
 	var duo: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"maestro", [])
 	assert_eq(duo.filter(func(u: CharacterUpgrade) -> bool: return u.senda_slot != &"").size(), 18,
@@ -62,7 +62,7 @@ func test_tali_upgrades() -> void:
 
 func test_no_generic_stat_upgrades_left() -> void:
 	var all: Array[CharacterUpgrade] = []
-	for id: StringName in [&"tali", &"croco", &"agucci", &"pipo"]:
+	for id: StringName in [&"tali", &"croco", &"agucci", &"pipo", &"champaka"]:
 		all.append_array(Balance.upgrades.available_for(id, []))
 	for upgrade: CharacterUpgrade in all:
 		assert_eq(upgrade.stat, &"", "%s juega con el kit, no es un +X%% genérico" % upgrade.id)

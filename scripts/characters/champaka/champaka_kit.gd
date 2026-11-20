@@ -46,7 +46,7 @@ func _handle_input() -> void:
 # --- Aplauso de Papá ---
 
 func _swipe() -> void:
-	_attack_timer = kd.clap_interval / attack_speed()
+	_attack_timer = kd.clap_interval * (1.0 - upgrade_value(&"champaka_aplauso_rapido")) / attack_speed()
 	player.face_aim_now()
 	player.start_action(0.4 / attack_speed(), 0.3)
 	basic_recovery = true
@@ -77,19 +77,19 @@ func _swipe() -> void:
 		# Mejora: el tercer aplauso seguido que conecta da un escudito.
 		if _consecutive_hits >= 3 and has_upgrade(&"champaka_escudo"):
 			_consecutive_hits = 0
-			player.health.add_shield(15.0)
+			player.health.add_shield(upgrade_value(&"champaka_escudo"))
 			say("Escudo", SPORE_COLOR, 0.8)
 	else:
 		_consecutive_hits = 0
 
 
 func swipe_range() -> float:
-	return kd.swipe_range * (1.25 if has_upgrade(&"champaka_manos_oso") else 1.0)
+	return kd.swipe_range * (1.0 + upgrade_value(&"champaka_manos_oso"))
 
 
 func _ground_wave(center: Vector3) -> void:
 	if has_upgrade(&"champaka_onda_fuerte"):
-		var info: DamageInfo = make_hit(15.0)
+		var info: DamageInfo = make_hit(upgrade_value(&"champaka_onda_fuerte"))
 		info.origin = center
 		Combat.deliver(info, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, center, kd.wave_radius))
 	for hurtbox: Hurtbox in CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, center, kd.wave_radius):
@@ -106,7 +106,7 @@ func _ground_wave(center: Vector3) -> void:
 # --- Pasiva: menos daño y esporas ---
 
 func modify_incoming(info: DamageInfo) -> void:
-	info.amount *= 1.0 - kd.damage_reduction
+	info.amount *= 1.0 - kd.damage_reduction - upgrade_value(&"champaka_piel_hongo")
 	if sliding:
 		info.amount *= 1.0 - kd.belly_damage_reduction
 		info.knockback = 0.0  # nada lo frena
@@ -121,7 +121,7 @@ func _on_damage_taken(info: DamageInfo) -> void:
 
 
 func spores_per_mushroom() -> float:
-	return 70.0 if has_upgrade(&"champaka_esporulacion") else kd.spores_per_mushroom
+	return upgrade_value(&"champaka_esporulacion", kd.spores_per_mushroom)
 
 
 func spawn_mushroom(at: Vector3) -> void:
@@ -132,7 +132,7 @@ func spawn_mushroom(at: Vector3) -> void:
 
 
 func mushroom_heal() -> float:
-	var base: float = kd.mushroom_heal * (2.0 if has_upgrade(&"champaka_hongos_gorditos") else 1.0)
+	var base: float = kd.mushroom_heal * (1.0 + upgrade_value(&"champaka_hongos_gorditos"))
 	return base * (1.0 + 0.1 * hero(&"champaka_hongos"))
 
 
@@ -142,7 +142,7 @@ func dad_radius() -> float:
 
 
 func dad_reduction() -> float:
-	return 0.15 if has_upgrade(&"champaka_papa_presente") else kd.dad_reduction
+	return upgrade_value(&"champaka_papa_presente", kd.dad_reduction)
 
 
 func bloom_radius() -> float:
@@ -151,7 +151,7 @@ func bloom_radius() -> float:
 
 func apply_upgrade_stats(_mods: StatModifiers) -> void:
 	dodge_cooldown.max_charges = 1 + (1 if has_upgrade(&"champaka_panzazo_doble") else 0)
-	hug_cooldown.recharge_time = kd.hug_cooldown * (0.75 if has_upgrade(&"champaka_abrazador_serial") else 1.0)
+	hug_cooldown.recharge_time = kd.hug_cooldown * (1.0 - upgrade_value(&"champaka_abrazador_serial"))
 
 
 # --- Abrazo de Oso ---
@@ -207,7 +207,7 @@ func _hug() -> bool:
 func _crush(enemy: Enemy) -> void:
 	if not is_instance_valid(player) or not enemy.is_targetable():
 		return
-	var info: DamageInfo = make_hit(kd.hug_damage)
+	var info: DamageInfo = make_hit(kd.hug_damage * (1.0 + upgrade_value(&"champaka_abrazo_fuerte")))
 	info.hitstop = Balance.combat.hitstop_heavy
 	info.shake = Balance.combat.shake_heavy * 0.6
 	info.knockback = 2.0
@@ -231,7 +231,7 @@ func _hug_heal_allies() -> void:
 	if not has_upgrade(&"champaka_abrazo_cura"):
 		return
 	for ally: PlayerCharacter in _allies_in(player.global_position, 4.0):
-		ally.health.heal(10.0)
+		ally.health.heal(upgrade_value(&"champaka_abrazo_cura"))
 
 
 # --- Panzazo ---
@@ -246,7 +246,7 @@ func do_dodge() -> void:
 	_slide_hit.clear()
 	sliding = true
 	player.start_action(kd.belly_duration, 0.0)
-	player.action_velocity = _slide_direction * kd.belly_distance / kd.belly_duration
+	player.action_velocity = _slide_direction * kd.belly_distance * (1.0 + upgrade_value(&"champaka_panzazo_largo")) 			/ kd.belly_duration
 	Sound.play("dodge", -6.0)
 	say("¡Panzazo!", player.slot.color.lightened(0.3), 0.8)
 
@@ -294,7 +294,7 @@ func _use_ultimate() -> bool:
 	_bloom = zone
 	_world().add_child(zone)
 	zone.global_position = Vector3(player.global_position.x, 0.0, player.global_position.z)
-	zone.setup(self, kd.bloom_duration + 1.0 * hero(&"champaka_floracion"))
+	zone.setup(self, kd.bloom_duration + 1.0 * hero(&"champaka_floracion") + upgrade_value(&"champaka_floracion_larga"))
 	say("¡Floración!", SPORE_COLOR, 1.4)
 	Events.camera_shake_requested.emit(Balance.combat.shake_light)
 	return true
