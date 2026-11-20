@@ -24,8 +24,11 @@ extends Resource
 ## Premio que muestra cada puerta, en el orden de RoomKind.Reward: (nada), Mejora, Oro, Desafío
 ## (el Desafío ya no es un premio de puerta: es su propia puerta, ver abajo).
 @export var reward_weights: Array[int] = [0, 55, 45, 0]
-## Premio de Oro: para cada jugador.
-@export var gold_reward: Vector2i = Vector2i(10, 18)
+## Premio de Oro: para cada jugador (2026-11-20, pedido del grupo: que elegir la sala de oro
+## valga la pena; antes 10 a 18). Sube un poco en cada escenario del stage.
+@export var gold_reward: Vector2i = Vector2i(30, 42)
+@export var gold_reward_scenario_growth: float = 0.15
+
 
 @export_group("Desafíos (de ida y vuelta, como una grieta)")
 ## Chance de que, al terminar una sala, aparezca la puerta de Desafío además de las otras.
@@ -145,3 +148,9 @@ extends Resource
 @export var turret_damage: float = 10.0
 @export var turret_shots_per_second: float = 2.0
 @export var turret_range: float = 12.0
+
+
+## El rango del premio de Oro en este escenario (0, 1, 2).
+func gold_reward_for(scenario: int) -> Vector2i:
+	var factor: float = 1.0 + gold_reward_scenario_growth * maxi(scenario, 0)
+	return Vector2i(roundi(gold_reward.x * factor), roundi(gold_reward.y * factor))

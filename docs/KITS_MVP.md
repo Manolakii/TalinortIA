@@ -64,7 +64,7 @@ Tirador versátil y el personaje más rápido. El arma que le robó a Fadied cam
 - **Rifle (lejos):** ráfaga de 3 balas de 22, una ráfaga por segundo.
 
 **2 · Habilidad fuerte — Tiro por Contrato (CD 10 s)**
-Modo francotirador: se planta, carga hasta 1,5 s y dispara un tiro que atraviesa todo en línea, de 60 a 180 según la carga. Si mata al objetivo, recupera el 40% del cooldown y la habilidad gana +0,2% de daño acumulable por toda la partida.
+Modo francotirador: se planta, carga hasta 1,5 s y dispara un tiro que atraviesa todo en línea, de 50 a 140 según la carga (*2026-11-20: antes 60 a 180, pegaba mucho*). Si mata al objetivo, recupera el 40% del cooldown y la habilidad gana +0,2% de daño acumulable por toda la partida.
 
 **3 · Esquiva — Ruta de Escape (2 cargas)**
 Voltereta que deja un señuelo holográfico: los enemigos lo atacan durante 1,5 s. En co-op también deja un rastro corto que acelera a los aliados que lo pisan.
@@ -144,8 +144,8 @@ Un personaje que en realidad son dos. El jugador maneja a uno y el otro actúa s
 **Qué hace el que no controlás:** se comporta según la Senda de su habilidad fuerte. Caparazón se pone adelante y junta enemigos; Embestida va al más cercano; Espíritu se queda cerca de los aliados heridos; Guía se queda atrás apoyando; Combate pelea al lado; Niebla tira zonas donde hay grupos de enemigos.
 
 **4 · Definitiva — Relevo**
-- **Cambio (CD 6 s, sin barra):** pasás a manejar al otro. El que entra hace una entrada (el Maestro cae con la garrocha, Stewie cae rodando) y el que sale sigue solo según su Senda. El botón de definitiva **siempre** hace el Cambio, aunque la barra esté llena.
-- **Relevo Total (barra llena):** el cambio más un efecto de 8 s que depende de quién entra y de la Senda de su habilidad fuerte. Se lanza con una combinación propia: **Y/Triángulo + RB/R1** en joystick, **R** en teclado. La barra se carga con el daño que hacen los dos y con la curación y los escudos que dan.
+- **Cambio (CD 6 s, sin barra):** pasás a manejar al otro. El que entra hace una entrada (el Maestro cae con la garrocha, Stewie cae rodando) y el que sale sigue solo según su Senda. Se hace con **Y / Triángulo** (R en teclado); el botón de definitiva (RB / R1, Q) queda para el Relevo Total, como la definitiva de los demás (pedido del grupo, 2026-11-20).
+- **Relevo Total (barra llena):** el cambio más un efecto de 8 s que depende de quién entra y de la Senda de su habilidad fuerte. Se lanza con el botón de definitiva: **RB / R1** en joystick, **Q** en teclado. La barra se carga con el daño que hacen los dos y con la curación y los escudos que dan.
 
 | Entra | Senda | Relevo Total |
 | --- | --- | --- |

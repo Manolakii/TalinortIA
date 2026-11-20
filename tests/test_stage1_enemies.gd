@@ -209,6 +209,18 @@ func test_shade_warns_then_fights() -> void:
 	assert_true(shade.is_in_group(&"enemies"))
 
 
+func test_shade_is_not_provoked_by_allies_or_ai() -> void:
+	var shade: AgucciTenebroso = _spawn(&"agucci_tenebroso", Vector3(0, 0, -2)) as AgucciTenebroso
+	assert_null(CombatQuery.nearest(get_tree(), DamageInfo.Team.ENEMIES, Vector3.ZERO),
+			"La IA (compañero del Dúo, torretas) no lo toma de objetivo")
+	for i: int in 3:
+		var helper_hit: DamageInfo = Combat.make_hit(shade, DamageInfo.Team.PLAYERS, 30.0, 0.0, 1.5)
+		shade.receive_hit(helper_hit)
+		_run([shade], int(AgucciTenebroso.TOUCH_GAP / DT) + 2)
+	assert_true(shade.is_peaceful(), "Solo lo provoca un jugador con sus propias manos")
+	assert_eq(shade.touches, 0)
+
+
 func test_shade_drops_two_chests_one_mimic() -> void:
 	RunState.start_run(4)
 	var shade: AgucciTenebroso = _spawn(&"agucci_tenebroso", Vector3(0, 0, -4)) as AgucciTenebroso
@@ -234,3 +246,11 @@ func test_elite_with_model_gets_rim_and_animations() -> void:
 	add_child_autofree(enemy)
 	assert_true(enemy.has_model(), "El soldado tiene modelo")
 	assert_true(enemy.model.materials[0].rim_enabled, "El élite brilla en el borde")
+
+
+func test_enemy_stays_on_the_ground() -> void:
+	var enemy: Enemy = _spawn(&"gronk", Vector3(0, 0, -6))
+	enemy.move_with_knockback(Vector3.ZERO)
+	enemy.global_position.y = 1.5  # como si un choque lo hubiera subido
+	enemy.move_with_knockback(Vector3(1, 0, 0))
+	assert_almost_eq(enemy.global_position.y, 0.0, 0.001, "Vuelve al piso (antes quedaba flotando)")

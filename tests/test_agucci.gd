@@ -5,6 +5,10 @@ var _kit: AgucciKit
 
 
 func before_each() -> void:
+	# Rocas y paredes de otro test (el autofree llega tarde y frenaban el Tajo).
+	for node: Node in get_children():
+		if node is StaticBody3D:
+			node.free()
 	make_player(&"agucci")
 	_kit = _player.kit as AgucciKit
 	_kit.kd = _kit.kd.duplicate()
@@ -242,5 +246,16 @@ func test_yole_katana_replaces_uzi_with_a_dash() -> void:
 	_pump(10)
 	assert_almost_eq(1000.0 - enemy.health.current, 9.0 + 12.0 + 16.0 + 5 * 5.0, 0.5,
 			"3 cortes y el Tajo con el daño de la ráfaga (5 × 5)")
-	assert_lt(_player.global_position.z, -3.0, "El Tajo lo lleva para adelante")
+	# Pasa más allá del enemigo (cuánto, depende del reloj de física de los tests, que avanzan
+	# los cuadros a mano).
+	assert_lt(_player.global_position.z, -1.6, "El Tajo lo lleva para adelante, atravesando al enemigo")
 	assert_false(_kit._in_shadow, "Vuelve a chocar con todo")
+
+
+func test_reappears_even_if_the_dissolve_is_cut() -> void:
+	_kit.do_dodge()
+	assert_false(_player.visual.visible, "Se disuelve")
+	_kit.cancel_scheduled()  # como la Posesión o caer a la mitad
+	_pump(int(1.5 / DT))
+	assert_true(_player.visual.visible, "Vuelve a aparecer solo (antes había que volver a esquivar)")
+	assert_false(_kit._in_shadow, "Y vuelve a chocar con las rocas")

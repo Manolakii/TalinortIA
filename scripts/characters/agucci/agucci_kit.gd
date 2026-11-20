@@ -44,6 +44,10 @@ var _kunai_target: Node3D
 var _kunai_marker: MeshInstance3D
 var _saved_collision_mask: int = 515
 var _in_shadow: bool = false
+## Seguro para no quedar invisible o metido en la sombra (reportado por el grupo, 2026-11-20):
+## si algo cancela el Tajo de sombra o el Disolverse a la mitad (Posesión, caer, la Corona...),
+## al pasar este tiempo vuelve a aparecer solo.
+var _hidden_time: float = 0.0
 var _dissolve_direction: Vector3 = Vector3.FORWARD
 var _projectiles: ProjectilePool
 var _shadow_material: ShaderMaterial
@@ -67,6 +71,7 @@ func _tick(delta: float) -> void:
 	bite_cooldown.tick(cd_delta(delta))
 	embrace_cooldown.tick(cd_delta(delta))
 	_since_attack += delta
+	_check_hidden(delta)
 	_dash_boost_time = maxf(_dash_boost_time - delta, 0.0)
 	if not player.is_in_action():
 		_combo_idle += delta
@@ -251,6 +256,7 @@ func _katana_dash() -> void:
 	player.start_action(kd.katana_dash_time + 0.12, 0.0)
 	player.action_velocity = (to - from) / kd.katana_dash_time
 	_enter_shadow()
+	_hidden_time = kd.katana_dash_time + 0.15  # se ve, pero atraviesa rocas hasta que termina
 	Fx.ring_burst(_world(), from, 1.0, SHADOW_COLOR, 0.15)
 	schedule(kd.katana_dash_time, _katana_dash_end.bind(from, to))
 
@@ -372,7 +378,7 @@ func _shadow_dash() -> void:
 	player.health.make_invulnerable(kd.dash_time + 0.05)
 	player.start_action(kd.dash_time, 0.0)
 	player.action_velocity = offset / kd.dash_time
-	player.visual.visible = false
+	_hide(kd.dash_time)
 	# Viaja por la sombra: atraviesa obstáculos y siempre llega al kunai (antes una roca lo
 	# frenaba y el corte pegaba igual, sin moverse).
 	_enter_shadow()
@@ -382,7 +388,7 @@ func _shadow_dash() -> void:
 func _shadow_dash_end(from: Vector3, to: Vector3) -> void:
 	player.global_position = Vector3(to.x, player.global_position.y, to.z)
 	_exit_shadow(to - from)
-	player.visual.visible = true
+	_show()
 	Fx.ring_burst(_world(), to, 1.4, SHADOW_COLOR)
 	var targets: Array[Hurtbox] = CombatQuery.in_line(player.get_tree(), DamageInfo.Team.ENEMIES,
 			from, to, kd.dash_width)
@@ -414,6 +420,26 @@ func _any_dead(targets: Array[Hurtbox]) -> bool:
 
 
 # --- Moverse por la sombra: atraviesa rocas, no las paredes de la sala ---
+
+func _hide(seconds: float) -> void:
+	player.visual.visible = false
+	_hidden_time = seconds + 0.15
+
+
+func _show() -> void:
+	player.visual.visible = true
+	_hidden_time = 0.0
+
+
+func _check_hidden(delta: float) -> void:
+	if player.visual.visible and not _in_shadow:
+		return
+	_hidden_time -= delta
+	if _hidden_time > 0.0:
+		return
+	_exit_shadow(_dissolve_direction)
+	_show()
+
 
 func _enter_shadow() -> void:
 	if not _in_shadow:
@@ -478,7 +504,7 @@ func do_dodge() -> void:
 		_throw_shurikens(start)
 	player.start_dodge(direction, kd.dissolve_distance * (1.0 + 0.15 * hero(&"agucci_disolverse")), kd.dissolve_duration)
 	player.health.make_invulnerable(kd.dissolve_duration)
-	player.visual.visible = false
+	_hide(kd.dissolve_duration)
 	Fx.ring_burst(_world(), start, 1.2, SHADOW_COLOR, 0.25)
 	schedule(kd.dissolve_duration, _reappear)
 	add_hunger(kd.dissolve_hunger)
@@ -486,7 +512,7 @@ func do_dodge() -> void:
 
 func _reappear() -> void:
 	_exit_shadow(_dissolve_direction)
-	player.visual.visible = true
+	_show()
 	Fx.ring_burst(_world(), player.global_position, 1.2, SHADOW_COLOR, 0.25)
 	# Salida filosa (mejora): corta alrededor al reaparecer.
 	if has_upgrade(&"agucci_salida_filosa"):

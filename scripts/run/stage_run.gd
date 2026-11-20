@@ -437,7 +437,7 @@ func _show_boss_door() -> void:
 func _give_gold_reward() -> void:
 	var center: Vector3 = _players_center()
 	Events.floating_text_requested.emit(center + Vector3.UP * 4.0, "¡Bolsa de oro!", Color(1.0, 0.82, 0.3))
-	Loot.drop_for_all(_room_root, center + Vector3(0, 0, -2.0), [config.gold_reward])
+	Loot.drop_for_all(_room_root, center + Vector3(0, 0, -2.0), [config.gold_reward_for(RunState.scenario)])
 	await get_tree().create_timer(0.6).timeout
 	Events.room_cleared.emit()  # que vuelen solas
 	await get_tree().create_timer(0.8).timeout

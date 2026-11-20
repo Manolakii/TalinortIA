@@ -69,7 +69,7 @@ func test_contract_full_charge_pierces_and_refunds_on_kill() -> void:
 	_pump(95)  # más de 1,5 s
 	release(PlayerInput.Action.ABILITY)
 	_pump(1)
-	assert_almost_eq(1000.0 - first.health.current, 180.0, 0.01, "Carga completa: 180")
+	assert_almost_eq(1000.0 - first.health.current, 140.0, 0.01, "Carga completa: 140")
 	assert_true(second.health.is_dead, "Atraviesa a todos en la línea")
 	assert_almost_eq(_kit.contract_cooldown.time_until_ready(), 10.0 * 0.6, 0.05,
 			"Mató: recupera 40% del cooldown")
@@ -83,7 +83,7 @@ func test_quick_contract_does_minimum() -> void:
 	_pump(1)
 	release(PlayerInput.Action.ABILITY)
 	_pump(1)
-	assert_almost_eq(1000.0 - enemy.health.current, 60.0, 2.0, "Sin cargar: ~60")
+	assert_almost_eq(1000.0 - enemy.health.current, 50.0, 2.0, "Sin cargar: ~50")
 
 
 func test_dodge_leaves_decoy_that_enemies_prefer() -> void:

@@ -115,6 +115,10 @@ func receive_hit(info: DamageInfo) -> bool:
 	if info.attacker_team != DamageInfo.Team.PLAYERS:
 		return false
 	flash()
+	# Solo cuenta si le pegó un jugador con sus propias manos: la IA del compañero del Dúo, las
+	# torretas o los bichos no lo provocan (reportado por el grupo, 2026-11-20).
+	if not info.attacker is PlayerCharacter:
+		return true
 	var now: float = _time
 	if now - _last_touch < TOUCH_GAP:
 		return true

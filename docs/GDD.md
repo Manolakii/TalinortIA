@@ -25,8 +25,9 @@ Se juega con teclado y mouse o con joystick, y se apunta con el mouse. La esquiv
 | Golpe común (mantener = continuo) | Clic izquierdo | RT / R2 |
 | Habilidad fuerte | Clic derecho | LT / L2 |
 | Esquiva | Espacio | A / Cruz |
-| Definitiva | Q | RB / R1 |
-| Relevo Total (solo Maestro y Stewie) | R | Y / Triángulo + RB / R1 |
+| Definitiva (en Maestro y Stewie, el Relevo Total) | Q | RB / R1 |
+| Cambio (solo Maestro y Stewie) | R | Y / Triángulo |
+| Ver objetos, reliquias y mejoras de la partida | Tab | Back / Select |
 | Interactuar y revivir (mantener) | E | X / Cuadrado |
 | Pausa | Esc | Start |
 
@@ -221,7 +222,7 @@ El oro es individual. Para que nadie se pelee por las monedas, **cada jugador ve
 
 **Oro inicial:** 150, suficiente para un objeto raro o dos comunes antes del Stage 1.
 
-**Chequeo de los precios:** como ahora hay varias salas por escenario, el oro por fuente es más bajo. Una sala de combate del Stage 1 deja unos 22, y todo el Stage 1 unos 400. Al volver a Birig Bamba después del Gronk, cada jugador debería tener entre 350 y 400: alcanza para un épico, o un raro y un común, pero no para un legendario sin ahorrar desde el principio. Los precios que propusieron (70, 150, 250 y 470) siguen funcionando. *2026-11-16, pedido del grupo (en el playtest sobraba oro, ~690 por jugador):* todo el oro del Stage 1 baja ~30%: enemigos 1-3, élites 14, vasijas 1-4, cofre del tesoro 35-55, bolsa de oro 10-18, fin de escenario 20, boss 45 y Cobrador 20.
+**Chequeo de los precios:** como ahora hay varias salas por escenario, el oro por fuente es más bajo. Una sala de combate del Stage 1 deja unos 22, y todo el Stage 1 unos 400. Al volver a Birig Bamba después del Gronk, cada jugador debería tener entre 350 y 400: alcanza para un épico, o un raro y un común, pero no para un legendario sin ahorrar desde el principio. Los precios que propusieron (70, 150, 250 y 470) siguen funcionando. *2026-11-16, pedido del grupo (en el playtest sobraba oro, ~690 por jugador):* todo el oro del Stage 1 baja ~30%: enemigos 1-3, élites 14, vasijas 1-4, cofre del tesoro 35-55, bolsa de oro 10-18, fin de escenario 20, boss 45 y Cobrador 20. *2026-11-20, pedido del grupo (elegir la puerta de Oro no rendía frente a un objeto):* la bolsa de oro de la sala de Oro pasa a 30-42 para cada uno, y sube 15% en cada escenario (35-48 en el X-2, 39-55 en el X-3).
 
 ### El Agucci tenebroso (*2026-11-15, pedido del grupo*)
 
@@ -262,8 +263,8 @@ Un Agucci medio tenebroso que aparece **una sola vez por stage** en Talinorthlan
 
 Los objetos que salen en las salas tienen **rareza** y **nivel**:
 
-- **Rareza:** cada opción tira la suya. 60% común (texto gris), 32% raro (celeste) y 8% legendario (dorado).
-- **Niveles:** comunes y raros llegan a Lv 3; los legendarios, a Lv 2. Si te vuelve a salir un objeto que ya tenés, se ofrece el nivel siguiente, y el nivel nuevo **reemplaza** al anterior (no se suman). Al nivel máximo ya no aparece más. No se puede recibir un Lv 2 sin tener el Lv 1.
+- **Rareza:** cada opción tira la suya. 60% común (texto gris), 25% raro (celeste), 11% épico (lila) y 4% legendario (dorado). *2026-11-20, pedido del grupo: con 60/32/8 salían demasiados raros; vuelve el Épico, entre Raro y Legendario.*
+- **Niveles:** comunes y raros llegan a Lv 3; épicos y legendarios, a Lv 2. Si te vuelve a salir un objeto que ya tenés, se ofrece el nivel siguiente, y el nivel nuevo **reemplaza** al anterior (no se suman). Al nivel máximo ya no aparece más. No se puede recibir un Lv 2 sin tener el Lv 1.
 - Un legendario Lv 1 es siempre peor que una Reliquia general del Black Market.
 - Topes: daño recibido -30%, cooldowns -40%, robo de vida 10% y evasión 25%. El robo de vida común no pasa del 2% en Lv 3.
 - Los efectos que salen de un golpe (sangrado, piedra, rayo, explosión) no disparan otros efectos.
@@ -296,17 +297,17 @@ Los objetos que salen en las salas tienen **rareza** y **nivel**:
 | Sangre de chamán | Raro | +1,5% de robo de vida | +3% de robo de vida | +4,5% de robo de vida |
 | Caparazón de Stewie | Raro | -6% de daño recibido | -10% de daño recibido | -14% de daño recibido |
 | Engranaje de Fadied | Raro | -8% de cooldown en habilidades | -13% de cooldown en habilidades | -18% de cooldown en habilidades |
-| Ukelele de cantina | Raro | 20% de chance de un rayo que salta a 2 enemigos con 50% del golpe | 20% de chance de un rayo que salta a 3 enemigos con 60% del golpe | 20% de chance de un rayo que salta a 4 enemigos con 70% del golpe |
-| Petardo de Birig Bamba | Raro | Los enemigos que matás explotan: 20 de daño en 3 m | Los enemigos que matás explotan: 35 de daño en 3,5 m | Los enemigos que matás explotan: 50 de daño en 4 m |
 | Huevo de Gronk | Raro | Al matar, ganás 6 de escudo por 3 s (cada muerte lo renueva) | Al matar, ganás 10 de escudo por 3 s (cada muerte lo renueva) | Al matar, ganás 15 de escudo por 3 s (cada muerte lo renueva) |
 | Hongo quietito | Raro | En plena pelea, si te quedás quieto 1 s, curás 2% de tu vida por segundo | En plena pelea, si te quedás quieto 1 s, curás 3% de tu vida por segundo | En plena pelea, si te quedás quieto 1 s, curás 4% de tu vida por segundo |
+| Ukelele de cantina | Épico | 20% de chance de un rayo que salta a 3 enemigos con 60% del golpe | 20% de chance de un rayo que salta a 4 enemigos con 80% del golpe | — |
+| Petardo de Birig Bamba | Épico | Los enemigos que matás explotan: 30 de daño en 3,5 m | Los enemigos que matás explotan: 50 de daño en 4 m | — |
+| Reloj de arena de los Valles | Épico | -15% de cooldown en habilidades | -25% de cooldown en habilidades | — |
+| Tótem de Talinorte Centro | Épico | +60 de vida máxima | +130 de vida máxima | — |
+| Energía del Bombo | Épico | La definitiva se carga 40% más rápido | La definitiva se carga 80% más rápido | — |
 | Sable Ceremonial Sombrío | Legendario | +15% de daño | +35% de daño | — |
 | Puño del Líder Supremo | Legendario | +15% de velocidad de ataque | +30% de velocidad de ataque | — |
 | Ojo de Fadied | Legendario | +15% de chance de crítico | +30% de chance de crítico | — |
-| Reloj de arena de los Valles | Legendario | -15% de cooldown en habilidades | -25% de cooldown en habilidades | — |
 | Pluma de pájaro | Legendario | +1 carga(s) de esquiva | +2 carga(s) de esquiva | — |
-| Tótem de Talinorte Centro | Legendario | +60 de vida máxima | +130 de vida máxima | — |
-| Energía del Bombo | Legendario | La definitiva se carga 40% más rápido | La definitiva se carga 80% más rápido | — |
 
 ### Reliquias del Black Market (*2026-11-20, documento del grupo "Objetos, mejoras y reliquias"*)
 
@@ -316,7 +317,7 @@ La tienda de Yole Sajor es el **Black Market**: vende **reliquias**, que no son 
 - **Raras (150):** juegan con habilidades, o dan una mejora grande a cambio de una desmejora.
 - **Legendarias (550):** cambian mucho la forma de jugar. Hay **generales** y **de personaje** (solo le salen a ese personaje).
 - **Malditas:** solo salen de la Mystery Box y bajan una estadística como un objeto común Lv 2.
-- **Stock de cada jugador:** 4 reliquias generales, la reliquia legendaria y la rara de su personaje, la **Mystery Box** (125, lo mismo que el oro inicial: 20% maldita, 72% rara, 8% legendaria), volver a tirar el stock e irse.
+- **Stock de cada jugador:** 4 reliquias generales, la reliquia legendaria y la rara de su personaje, la **Mystery Box** (125, lo mismo que el oro inicial: 20% maldita, 72% rara, 8% legendaria), volver a tirar el stock e irse. *2026-11-20:* la Mystery Box sale de un mazo de 25 boletos por jugador (5 malditas, 18 raras, 2 legendarias) que se mezcla y se rearma al vaciarse, para que las chances se cumplan; la rara o la legendaria pueden ser generales o de **tu** personaje, nunca de otro.
 - **Oro inicial: 125** (antes 150), así una rara no se puede comprar al arrancar, salvo con la mejora de McoinIA.
 - **Reliquias de personaje:** legendarias = los kits de Yole (Katana de Yole Sajor, Piedra bumerán, Señuelo pistolero, Bastonazo en abanico, Torretas con patas, Aplauso sísmico), "Ahora sí te entiendo" y la **Bolsa de Piedras** de Tali (3 piedras en cono, 15% más débiles). Raras = las mejoras de tienda de siempre (Contrato doble, Shurikens de la sombra, Vínculo eterno, Refugio del Bosque Tuerto, Micelio por todos lados).
 
