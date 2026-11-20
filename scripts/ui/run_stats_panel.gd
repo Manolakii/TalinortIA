@@ -107,8 +107,12 @@ func _item_icons(index: int) -> Array[ItemIcon]:
 	for id: Variant in counted:
 		var item: GenericItem = Balance.generic_items.get_item(id)
 		if item != null:
-			icons.append(ItemIcon.make(item.icon_color, item.icon_text if item.icon_text != ""
-					else ItemIcon.letters_of(item.display_name), item.display_name, item.description, counted[id]))
+			var level: int = mini(counted[id], item.max_level())
+			var icon: ItemIcon = ItemIcon.make(item.icon_color, item.icon_text if item.icon_text != ""
+					else ItemIcon.letters_of(item.display_name), "%s [%s]" % [item.title_at(level),
+					GenericItem.RARITY_NAMES[item.rarity]], item.describe(level), 1, GenericItem.RARITY_COLORS[item.rarity])
+			icon.badge = "Lv%d" % level
+			icons.append(icon)
 	for id: Variant in RunState.get_specials(index):
 		var special: SpecialItem = Balance.shop.get_item(id)
 		if special != null:

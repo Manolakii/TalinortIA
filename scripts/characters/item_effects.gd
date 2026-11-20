@@ -1,8 +1,8 @@
 class_name ItemEffects
 extends Node
-## Objetos genéricos CON EFECTO (pedido del grupo, 2026-11-16, inspirados en Risk of Rain 2):
-## sirven para cualquier personaje y cada copia los potencia. Los números están en
-## data/items/generic_items.tres (`chance`, `amount`, `extra` de cada objeto).
+## Objetos de sala CON EFECTO (pedido del grupo, 2026-11-16, inspirados en Risk of Rain 2):
+## sirven para cualquier personaje. Desde el 2026-11-20 tienen niveles (el nivel nuevo reemplaza
+## al anterior). Los números de cada nivel están en data/items/generic_items.tres.
 ## Algunos efectos viven en otros lados: Osito de peluche y Energético de Fadied →
 ## PlayerCharacter; Mira de Pipo y Anteojos de cerca → Enemy (damage_bonus_against).
 ##
@@ -35,11 +35,28 @@ func setup(owner_player: PlayerCharacter) -> void:
 
 
 ## Número de un objeto con efecto (`field`: chance, amount o extra).
-static func value(effect: StringName, field: StringName) -> float:
+static func item_for(effect: StringName) -> GenericItem:
 	for item: GenericItem in Balance.generic_items.items:
 		if item.effect == effect:
-			return item.get(field)
-	return 0.0
+			return item
+	return null
+
+
+## Valor, chance y extra del objeto con ese efecto, al nivel que lo tiene el jugador
+## (pedido del grupo, 2026-11-20: los niveles reemplazan, no se suman).
+func _v(effect: StringName) -> float:
+	var item: GenericItem = item_for(effect)
+	return item.value_at(stacks(effect)) if item != null else 0.0
+
+
+func _c(effect: StringName) -> float:
+	var item: GenericItem = item_for(effect)
+	return item.chance_at(stacks(effect)) if item != null else 0.0
+
+
+func _x(effect: StringName) -> float:
+	var item: GenericItem = item_for(effect)
+	return item.extra_at(stacks(effect)) if item != null else 0.0
 
 
 func stacks(effect: StringName) -> int:
@@ -61,7 +78,7 @@ func _physics_process(delta: float) -> void:
 		_heal_tick -= delta
 		if _heal_tick <= 0.0:
 			_heal_tick = 0.5
-			player.health.heal(player.health.max_health * value(&"still_heal", &"amount") * fungus * 0.5)
+			player.health.heal(player.health.max_health * _v(&"still_heal") * 0.5)
 
 
 ## Daño extra contra este enemigo (lo pide Enemy al recibir un golpe del jugador).
@@ -69,11 +86,11 @@ func damage_bonus_against(enemy: Combatant) -> float:
 	var bonus: float = 1.0
 	var sight: int = stacks(&"first_hit")
 	if sight > 0 and enemy.health.ratio() > 0.9:
-		bonus += value(&"first_hit", &"amount") * sight
+		bonus += _v(&"first_hit")
 	var glasses: int = stacks(&"close_range")
 	if glasses > 0 and Vector2(enemy.global_position.x - player.global_position.x,
-			enemy.global_position.z - player.global_position.z).length() <= value(&"close_range", &"extra"):
-		bonus += value(&"close_range", &"amount") * glasses
+			enemy.global_position.z - player.global_position.z).length() <= _x(&"close_range"):
+		bonus += _v(&"close_range")
 	return bonus
 
 
@@ -90,14 +107,14 @@ func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
 		return
 	var base: float = maxf(info.final_amount, info.amount)
 	var knife: int = stacks(&"bleed")
-	if knife > 0 and Combat.roll(minf(value(&"bleed", &"chance") * knife, 1.0)):
-		_bleed(victim, base * value(&"bleed", &"amount"))
+	if knife > 0 and Combat.roll(_c(&"bleed")):
+		_bleed(victim, base * _v(&"bleed"))
 	var sling: int = stacks(&"sling")
-	if sling > 0 and Combat.roll(value(&"sling", &"chance")):
-		_sling(victim, base * value(&"sling", &"amount") * sling)
+	if sling > 0 and Combat.roll(_c(&"sling")):
+		_sling(victim, base * _v(&"sling"))
 	var uke: int = stacks(&"chain")
-	if uke > 0 and Combat.roll(value(&"chain", &"chance")):
-		_chain(victim, base * value(&"chain", &"amount"), int(value(&"chain", &"extra")) + uke - 1)
+	if uke > 0 and Combat.roll(_c(&"chain")):
+		_chain(victim, base * _v(&"chain"), int(_x(&"chain")))
 
 
 func _proc_hit(amount: float, origin: Vector3) -> DamageInfo:
@@ -168,8 +185,8 @@ func _on_kill(victim: Combatant) -> void:
 	# Petardo de Birig Bamba: explota el que matás.
 	var firecracker: int = stacks(&"on_kill_blast")
 	if firecracker > 0:
-		var radius: float = value(&"on_kill_blast", &"extra") + 0.5 * (firecracker - 1)
-		var blast: DamageInfo = _proc_hit(value(&"on_kill_blast", &"amount") * firecracker, at)
+		var radius: float = _x(&"on_kill_blast")
+		var blast: DamageInfo = _proc_hit(_v(&"on_kill_blast"), at)
 		blast.knockback = 4.0
 		Combat.deliver(blast, CombatQuery.in_circle(player.get_tree(), DamageInfo.Team.ENEMIES, at, radius))
 		Fx.ring_burst(victim.get_parent(), at, radius, Color(1.0, 0.75, 0.35), 0.25)
@@ -178,8 +195,7 @@ func _on_kill(victim: Combatant) -> void:
 	if egg > 0 and not player.health.is_dead:
 		var cap: float = player.health.max_health * 0.5
 		# Dura poco (pedido del grupo: estaba muy fuerte); cada muerte lo renueva.
-		player.health.add_shield(minf(player.health.shield + value(&"on_kill_shield", &"amount") * egg, cap),
-				value(&"on_kill_shield", &"extra"))
+		player.health.add_shield(minf(player.health.shield + _v(&"on_kill_shield"), cap), _x(&"on_kill_shield"))
 
 
 ## Botiquín de Champaka: un rato después de recibir daño, cura un poco.
@@ -188,7 +204,8 @@ func _on_hit_taken(info: DamageInfo) -> void:
 	var kits: int = stacks(&"medkit")
 	if kits <= 0 or info.final_amount <= 0.0:
 		return
-	var timer: SceneTreeTimer = player.get_tree().create_timer(value(&"medkit", &"extra"), false)
+	var heal: float = _v(&"medkit")
+	var timer: SceneTreeTimer = player.get_tree().create_timer(_x(&"medkit"), false)
 	timer.timeout.connect(func() -> void:
 		if is_instance_valid(player) and not player.health.is_dead:
-			player.health.heal(value(&"medkit", &"amount") * kits))
+			player.health.heal(heal))

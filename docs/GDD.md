@@ -256,26 +256,55 @@ Un Agucci medio tenebroso que aparece **una sola vez por stage** en Talinorthlan
 | Antes del Stage 2 | 40% | 35% | 20% | 5% |
 | Antes del Stage 3 | 25% | 35% | 28% | 12% |
 
-### Objetos con efecto (*2026-11-16, pedido del grupo, inspirados en Risk of Rain 2*)
+### Objetos de sala: rarezas y niveles (*2026-11-20, pedido del grupo*)
 
-Además de los 12 que suben números, hay 12 genéricos que **hacen algo** y sirven para cualquier personaje. Salen en las mismas elecciones y cada copia los potencia. Más adelante se les va a sumar rareza.
+Los objetos que salen en las salas tienen **rareza** y **nivel**:
 
-| Objeto | Efecto (1 copia) | Con más copias |
-| --- | --- | --- |
-| Cuchillo oxidado | 10% de hacer sangrar (3 golpecitos de 25% del golpe) | +10% de chance |
-| Honda del abuelo | 10% de tirarle una piedra al más cercano (150% del golpe) | +150% de daño |
-| Ukelele de cantina | 20% de un rayo que salta a 2 enemigos (60% del golpe) | +1 salto |
-| Petardo de Birig Bamba | El enemigo que matás explota (20 de daño, 3 m) | +20 de daño y +0,5 m |
-| Huevo de Gronk | Al matar, +6 de escudo (se acumula hasta la mitad de la vida) | +6 |
-| Mira de Pipo | +35% de daño a enemigos con más del 90% de vida | +35% |
-| Anteojos de cerca | +15% de daño a enemigos a menos de 4 m | +15% |
-| Osito de peluche | 10% de bloquear un golpe | Suma sin llegar al 100% |
-| Pluma de pájaro | +1 carga de esquiva | +1 |
-| Botiquín de Champaka | 1,2 s después de recibir daño, curás 8 | +8 |
-| Hongo quietito | Quieto 1 s, curás 3% de la vida por segundo | +3% |
-| Energético de Fadied | +25% de velocidad cuando no hay pelea | +25% |
+- **Rareza:** cada opción tira la suya. 60% común (texto gris), 32% raro (celeste) y 8% legendario (dorado).
+- **Niveles:** comunes y raros llegan a Lv 3; los legendarios, a Lv 2. Si te vuelve a salir un objeto que ya tenés, se ofrece el nivel siguiente, y el nivel nuevo **reemplaza** al anterior (no se suman). Al nivel máximo ya no aparece más. No se puede recibir un Lv 2 sin tener el Lv 1.
+- Un legendario Lv 1 es siempre peor que una Reliquia general del Black Market.
+- Topes: daño recibido -30%, cooldowns -40%, robo de vida 10% y evasión 25%. El robo de vida común no pasa del 2% en Lv 3.
+- Los efectos que salen de un golpe (sangrado, piedra, rayo, explosión) no disparan otros efectos.
 
-Los efectos que salen de un golpe (sangrado, piedra, rayo, explosión) no disparan otros efectos, así no se encadenan al infinito.
+| Objeto | Rareza | Lv 1 | Lv 2 | Lv 3 |
+| --- | --- | --- | --- | --- |
+| Cuerno de Gronk | Común | +3,5% de daño | +7,5% de daño | +12% de daño |
+| Ojo del Tuerto | Común | +5% de chance de crítico | +11% de chance de crítico | +17% de chance de crítico |
+| Guantes de Gronk | Común | +4% de velocidad de ataque | +8% de velocidad de ataque | +13% de velocidad de ataque |
+| Botas gastadas | Común | +4% de velocidad de movimiento | +8% de velocidad de movimiento | +12% de velocidad de movimiento |
+| Corazón de Gronk | Común | +10 de vida máxima | +22 de vida máxima | +35 de vida máxima |
+| Escama | Común | -3% de daño recibido | -6% de daño recibido | -9% de daño recibido |
+| Reloj Uwey | Común | -4% de cooldown en habilidades | -8% de cooldown en habilidades | -12% de cooldown en habilidades |
+| Moneda con agujero | Común | +8% de oro recogido | +16% de oro recogido | +25% de oro recogido |
+| Vendas del Bosque Tuerto | Común | Cura 3 de vida al terminar cada oleada | Cura 6 de vida al terminar cada oleada | Cura 10 de vida al terminar cada oleada |
+| Sanguijuela | Común | +0,5% de robo de vida | +1,2% de robo de vida | +2% de robo de vida |
+| Colmillo filoso | Común | +10% de daño crítico | +20% de daño crítico | +30% de daño crítico |
+| Piedra de afilar | Común | +5% de daño de habilidades (no del golpe común) | +10% de daño de habilidades (no del golpe común) | +16% de daño de habilidades (no del golpe común) |
+| Cuchillo oxidado | Común | 10% de chance de hacer sangrar: 3 golpecitos de 25% del golpe | 15% de chance de hacer sangrar: 3 golpecitos de 30% del golpe | 20% de chance de hacer sangrar: 3 golpecitos de 35% del golpe |
+| Honda del abuelo | Común | 10% de chance de tirarle una piedra al enemigo más cercano: 120% del golpe | 10% de chance de tirarle una piedra al enemigo más cercano: 170% del golpe | 10% de chance de tirarle una piedra al enemigo más cercano: 220% del golpe |
+| Mira de Pipo | Común | +20% de daño a enemigos con más del 90% de vida | +35% de daño a enemigos con más del 90% de vida | +50% de daño a enemigos con más del 90% de vida |
+| Anteojos de cerca | Común | +10% de daño a enemigos a menos de 4 m | +17% de daño a enemigos a menos de 4 m | +25% de daño a enemigos a menos de 4 m |
+| Botiquín de Champaka | Común | 1,2 s después de recibir daño, curás 6 | 1,2 s después de recibir daño, curás 10 | 1,2 s después de recibir daño, curás 15 |
+| Energético de Fadied | Común | +15% de velocidad cuando no hay pelea | +25% de velocidad cuando no hay pelea | +35% de velocidad cuando no hay pelea |
+| Fragmento de cristal corrupto | Raro | +5% de daño | +12% de daño | +19% de daño |
+| Lente de francotirador | Raro | +8% de chance de crítico | +15% de chance de crítico | +22% de chance de crítico |
+| Batería robada | Raro | La definitiva se carga 10% más rápido | La definitiva se carga 20% más rápido | La definitiva se carga 30% más rápido |
+| Osito de peluche | Raro | 4% de chance de que un golpe enemigo no te toque | 8% de chance de que un golpe enemigo no te toque | 12% de chance de que un golpe enemigo no te toque |
+| Colmillo del Gronk Gigante | Raro | +20% de daño crítico | +35% de daño crítico | +50% de daño crítico |
+| Sangre de chamán | Raro | +1,5% de robo de vida | +3% de robo de vida | +4,5% de robo de vida |
+| Caparazón de Stewie | Raro | -6% de daño recibido | -10% de daño recibido | -14% de daño recibido |
+| Engranaje de Fadied | Raro | -8% de cooldown en habilidades | -13% de cooldown en habilidades | -18% de cooldown en habilidades |
+| Ukelele de cantina | Raro | 20% de chance de un rayo que salta a 2 enemigos con 50% del golpe | 20% de chance de un rayo que salta a 3 enemigos con 60% del golpe | 20% de chance de un rayo que salta a 4 enemigos con 70% del golpe |
+| Petardo de Birig Bamba | Raro | Los enemigos que matás explotan: 20 de daño en 3 m | Los enemigos que matás explotan: 35 de daño en 3,5 m | Los enemigos que matás explotan: 50 de daño en 4 m |
+| Huevo de Gronk | Raro | Al matar, ganás 6 de escudo por 3 s (cada muerte lo renueva) | Al matar, ganás 10 de escudo por 3 s (cada muerte lo renueva) | Al matar, ganás 15 de escudo por 3 s (cada muerte lo renueva) |
+| Hongo quietito | Raro | En plena pelea, si te quedás quieto 1 s, curás 2% de tu vida por segundo | En plena pelea, si te quedás quieto 1 s, curás 3% de tu vida por segundo | En plena pelea, si te quedás quieto 1 s, curás 4% de tu vida por segundo |
+| Sable Ceremonial Sombrío | Legendario | +15% de daño | +35% de daño | — |
+| Puño del Líder Supremo | Legendario | +15% de velocidad de ataque | +30% de velocidad de ataque | — |
+| Ojo de Fadied | Legendario | +15% de chance de crítico | +30% de chance de crítico | — |
+| Reloj de arena de los Valles | Legendario | -15% de cooldown en habilidades | -25% de cooldown en habilidades | — |
+| Pluma de pájaro | Legendario | +1 carga(s) de esquiva | +2 carga(s) de esquiva | — |
+| Tótem de Talinorte Centro | Legendario | +60 de vida máxima | +130 de vida máxima | — |
+| Energía del Bombo | Legendario | La definitiva se carga 40% más rápido | La definitiva se carga 80% más rápido | — |
 
 ### Objetos especiales: ejemplos
 

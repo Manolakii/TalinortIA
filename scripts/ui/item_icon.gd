@@ -10,6 +10,8 @@ var color: Color = Color(0.5, 0.5, 0.55)
 var text: String = ""
 var count: int = 1
 var border: Color = Color(0, 0, 0, 0.6)
+## Texto chiquito en la esquina (si está, reemplaza al "x3"): por ejemplo "Lv2".
+var badge: String = ""
 
 
 static func make(icon_color: Color, letters: String, title: String, description: String,
@@ -44,8 +46,8 @@ func _draw() -> void:
 	var font: Font = get_theme_default_font()
 	var ink: Color = Color.BLACK if color.get_luminance() > 0.6 else Color.WHITE
 	draw_string(font, Vector2(0, size.y * 0.66), text, HORIZONTAL_ALIGNMENT_CENTER, size.x, 15, ink)
-	if count > 1:
-		var badge: String = "x%d" % count
-		draw_string_outline(font, Vector2(0, size.y - 2), badge, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 2, 11, 3,
+	if count > 1 or badge != "":
+		var badge_text: String = badge if badge != "" else "x%d" % count
+		draw_string_outline(font, Vector2(0, size.y - 2), badge_text, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 2, 11, 3,
 				Color.BLACK)
-		draw_string(font, Vector2(0, size.y - 2), badge, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 2, 11, Color.WHITE)
+		draw_string(font, Vector2(0, size.y - 2), badge_text, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 2, 11, Color.WHITE)

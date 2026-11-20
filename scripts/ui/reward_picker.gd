@@ -92,12 +92,15 @@ func _options_for(player: PlayerCharacter) -> Array:
 				name += " (nivel 2)" if upgrade.senda_slot != &"" else " (x%d)" % (level + 1)
 			result.append({"id": upgrade.id, "name": name, "description": upgrade.description})
 	else:
-		var pool: Array[GenericItem] = Balance.generic_items.items.duplicate()
-		while not pool.is_empty() and result.size() < _option_count:
-			var item: GenericItem = pool.pop_at(rng.randi_range(0, pool.size() - 1))
-			var owned_items: int = RunState.get_items(player.slot.index).count(item.id)
-			var item_name: String = item.display_name + (" (tenés %d)" % owned_items if owned_items > 0 else "")
-			result.append({"id": item.id, "name": item_name, "description": item.description})
+		# Rareza y nivel (pedido del grupo, 2026-11-20): si ya lo tenés, se ofrece el nivel siguiente.
+		var owned_items: Array = RunState.get_items(player.slot.index)
+		for item: GenericItem in Balance.generic_items.offer(owned_items, rng, _option_count):
+			var next_level: int = owned_items.count(item.id) + 1
+			var upgrade_note: String = " (reemplaza al Lv %d)" % (next_level - 1) if next_level > 1 else ""
+			result.append({"id": item.id, "name": item.title_at(next_level),
+					"description": item.describe(next_level) + upgrade_note,
+					"tag": "OBJETO %s" % GenericItem.RARITY_NAMES[item.rarity].to_upper(),
+					"color": GenericItem.RARITY_COLORS[item.rarity]})
 	return result
 
 
@@ -228,14 +231,14 @@ func _build_cards(choice: Choice) -> void:
 		var inner := VBoxContainer.new()
 		card.add_child(inner)
 		var tag := Label.new()
-		tag.text = "MEJORA" if kind == Kind.UPGRADE else "OBJETO"
+		tag.text = option.get("tag", "MEJORA" if kind == Kind.UPGRADE else "OBJETO")
 		tag.add_theme_font_size_override("font_size", 12)
-		tag.add_theme_color_override("font_color", _accent().darkened(0.15))
+		tag.add_theme_color_override("font_color", option.get("color", _accent()).darkened(0.15))
 		inner.add_child(tag)
 		var name_label := Label.new()
 		name_label.text = option["name"]
 		name_label.add_theme_font_size_override("font_size", 19)
-		name_label.add_theme_color_override("font_color", _accent())
+		name_label.add_theme_color_override("font_color", option.get("color", _accent()))
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		inner.add_child(name_label)
 		var description := Label.new()

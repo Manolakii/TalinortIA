@@ -7,6 +7,8 @@ extends RefCounted
 const COOLDOWN_CAP := 0.4
 const DAMAGE_REDUCTION_CAP := 0.3
 const LIFESTEAL_CAP := 0.1
+## Evasión con tope (pedido del grupo: cuidado con los porcentajes).
+const EVASION_CAP := 0.25
 
 var totals: Dictionary[StringName, float] = {}
 
@@ -67,6 +69,14 @@ func damage_taken_multiplier() -> float:
 
 func gold_multiplier() -> float:
 	return 1.0 + get_total(&"gold")
+
+
+func ability_damage() -> float:
+	return get_total(&"ability_damage")
+
+
+func evasion() -> float:
+	return clampf(get_total(&"evasion"), 0.0, EVASION_CAP)
 
 
 func lifesteal() -> float:

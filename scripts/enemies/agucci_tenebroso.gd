@@ -96,8 +96,11 @@ func make_offer(player: PlayerCharacter) -> void:
 	player.health.current = maxf(player.health.current * 0.5, 1.0)
 	player.health.changed.emit(player.health.current, player.health.max_health)
 	player.flash()
-	var items: Array[GenericItem] = Balance.generic_items.items
-	var item: GenericItem = items[RunState.rng.randi_range(0, items.size() - 1)]
+	var offered: Array[GenericItem] = Balance.generic_items.offer(RunState.get_items(player.slot.index),
+			RunState.rng, 1)
+	if offered.is_empty():
+		return
+	var item: GenericItem = offered[0]
 	RunState.add_item(player.slot.index, item.id)
 	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.8,
 			"Media vida por: %s" % item.display_name, Color(0.8, 0.65, 1.0))
