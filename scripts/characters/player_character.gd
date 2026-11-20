@@ -169,7 +169,7 @@ func apply_movement(move: Vector2, delta: float, speed_multiplier: float = 1.0) 
 	if status.has(StatusEffects.BOMBITO):
 		speed *= 1.15
 	if status.has(StatusEffects.MAILMAN):
-		speed *= 1.25
+		speed *= 1.4
 	speed *= modifiers.move_speed_multiplier()
 	# Energético de Fadied (objeto): más rápido cuando no hay pelea.
 	var energy: int = item_stacks(&"calm_speed")
@@ -394,6 +394,15 @@ func rebuild_modifiers() -> void:
 			modifiers.add(item.stat, item.value_at(level))
 		else:
 			modifiers.add(item.effect, float(level))
+	# Reliquias del Black Market que suman (o restan) estadísticas.
+	for relic_id: Variant in RunState.get_specials(slot.index):
+		var relic: SpecialItem = Balance.shop.get_item(relic_id)
+		if relic == null:
+			continue
+		if relic.stat != &"":
+			modifiers.add(relic.stat, relic.amount)
+		if relic.stat2 != &"":
+			modifiers.add(relic.stat2, relic.amount2)
 	for upgrade_id: Variant in RunState.get_upgrades(slot.index):
 		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(upgrade_id)
 		if upgrade != null and upgrade.stat != &"":
@@ -433,10 +442,10 @@ func crit_multiplier() -> float:
 ## Lo usa Combatant al pegar: daño extra de objetos y mejoras.
 func outgoing_damage_multiplier() -> float:
 	# Daño de habilidades: todo lo que no es el golpe común.
-	var ability: float = modifiers.ability_damage()
-	if ability > 0.0 and specials != null and not specials.is_basic_hit():
-		return modifiers.damage_multiplier() * (1.0 + ability)
-	return modifiers.damage_multiplier()
+	var basic: bool = specials == null or specials.is_basic_hit()
+	if basic:
+		return modifiers.damage_multiplier() * (1.0 + modifiers.get_total(&"basic_damage"))
+	return modifiers.damage_multiplier() * (1.0 + modifiers.ability_damage())
 
 
 ## Daño recibido con objetos (Escama), con tope.

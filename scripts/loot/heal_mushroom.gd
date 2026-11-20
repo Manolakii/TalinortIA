@@ -8,6 +8,8 @@ const STEM_COLOR := Color(0.92, 0.9, 0.82)
 const PICK_RADIUS := 1.0
 
 var heal_amount: float = 20.0
+## Hongo para compartir (reliquia): este lo dejó alguien y él no lo puede agarrar; no hace otro.
+var excluded: PlayerCharacter
 var _visual: Node3D
 var _age: float = 0.0
 var _taken: bool = false
@@ -60,7 +62,7 @@ func _physics_process(delta: float) -> void:
 		return
 	for node: Node in get_tree().get_nodes_in_group(&"players"):
 		var player := node as PlayerCharacter
-		if player == null or player.health.is_dead or player.health.current >= player.health.max_health:
+		if player == null or player.health.is_dead or player.health.current >= player.health.max_health 				or player == excluded:
 			continue
 		var offset: Vector3 = player.global_position - global_position
 		if Vector2(offset.x, offset.z).length() <= PICK_RADIUS:
@@ -75,4 +77,12 @@ func take(player: PlayerCharacter) -> void:
 	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.2,
 			"+%d" % roundi(heal_amount), CAP_COLOR)
 	Fx.ring_burst(get_parent(), global_position, 0.9, CAP_COLOR, 0.25)
+	# Hongo para compartir (reliquia): brota otro que cura la mitad para un compañero.
+	# El que brota no hace otro (si no, dos con la reliquia harían hongos infinitos).
+	if excluded == null and RunState.has_special(player.slot.index, &"hongo_compartido") 			and player.get_tree().get_nodes_in_group(&"players").size() > 1:
+		var shared := HealMushroom.new()
+		shared.heal_amount = heal_amount * 0.5
+		shared.excluded = player
+		shared.position = position + Vector3(1.2, 0.0, 0.6)
+		get_parent().add_child(shared)
 	queue_free()

@@ -28,20 +28,22 @@ func test_stock_has_four_items_not_owned() -> void:
 	assert_eq(stock.size(), 4)
 	for item: SpecialItem in stock:
 		assert_ne(item.id, &"statik", "No ofrece lo que ya tenés")
-		assert_ne(item.rarity, SpecialItem.Rarity.LEGENDARY, "Antes del Stage 1 no hay legendarios")
+		assert_ne(item.rarity, SpecialItem.Rarity.CURSED, "Las malditas no se venden")
 
 
 func test_prices_follow_rarity() -> void:
-	assert_eq(Balance.shop.price_of(Balance.shop.get_item(&"piedra_suerte")), 70)
-	assert_eq(Balance.shop.price_of(Balance.shop.get_item(&"corona_lider")), 470)
+	assert_eq(Balance.shop.price_of(Balance.shop.get_item(&"piedra_suerte")), 75, "Común 75")
+	assert_eq(Balance.shop.price_of(Balance.shop.get_item(&"statik")), 150, "Rara 150")
+	assert_eq(Balance.shop.price_of(Balance.shop.get_item(&"corona_lider")), 550, "Legendaria 550")
+	assert_lt(Balance.economy.starting_gold, 150, "Al arrancar no alcanza para una rara")
 
 
 func test_kit_shop_upgrade_variants_are_exclusive() -> void:
 	var rng := RandomNumberGenerator.new()
-	var offered: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(&"tali", [], rng)
-	assert_true(String(offered.id).begins_with("tali_entiende_"))
-	assert_null(Balance.upgrades.shop_upgrade_for(&"tali", [&"tali_entiende_gronk"], rng),
-			"Con una variante comprada, ya no hay más")
+	for i: int in 20:
+		rng.seed = i
+		var offered: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(&"tali", [&"tali_entiende_gronk"], rng, true)
+		assert_false(String(offered.id).begins_with("tali_entiende_"), "Con una variante comprada, ya no hay más")
 	var normal: Array[CharacterUpgrade] = Balance.upgrades.available_for(&"tali", [])
 	for upgrade: CharacterUpgrade in normal:
 		assert_false(upgrade.shop_only, "Las de tienda no salen en el 1 de 3")
@@ -195,3 +197,51 @@ func test_yole_cape_shields_once_per_room() -> void:
 	small.attacker_team = DamageInfo.Team.ENEMIES
 	_player.receive_hit(small)
 	assert_eq(_player.health.shield, 0.0, "Una sola vez por sala")
+
+
+
+# --- Black Market (documento del grupo, 2026-11-20) ---
+
+func test_mystery_box_odds() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var counts: Array[int] = [0, 0, 0, 0]
+	for i: int in 2000:
+		counts[Balance.shop.roll_box(rng)] += 1
+	assert_between(counts[SpecialItem.Rarity.CURSED], 320, 480, "~20% maldita")
+	assert_between(counts[SpecialItem.Rarity.RARE], 1340, 1540, "~72% rara")
+	assert_between(counts[SpecialItem.Rarity.LEGENDARY], 100, 230, "~8% legendaria")
+	assert_eq(Balance.shop.mystery_box_price, Balance.economy.starting_gold, "Vale lo que el oro inicial")
+
+
+func test_cursed_relic_lowers_a_stat() -> void:
+	var before: float = _player.outgoing_damage_multiplier()
+	_give(&"cuerno_roto")
+	assert_almost_eq(_player.outgoing_damage_multiplier(), before - 0.075, 0.0001)
+
+
+func test_trade_off_relic() -> void:
+	var base_health: float = _player.health.max_health
+	_give(&"dieta_talinorteana")
+	assert_eq(_player.health.max_health, base_health - 15.0)
+	assert_almost_eq(_player.kit.attack_speed(), 1.2, 0.0001)
+
+
+func test_executioner_finishes_low_enemies() -> void:
+	_give(&"ejecutor")
+	var enemy := enemy_at(Vector3(0, 0, -3), 1000.0)
+	enemy.health.current = 160.0
+	var hit: DamageInfo = _player.kit.make_hit(20.0)
+	hit.is_crit = false
+	enemy.receive_hit(hit)
+	assert_true(enemy.health.is_dead, "Por debajo del 15%, muere")
+
+
+func test_poison_stacks_up_to_three() -> void:
+	_give(&"venenoso")
+	var enemy := enemy_at(Vector3(0, 0, -3), 1000.0)
+	for i: int in 5:
+		_player.specials._add_poison(enemy)
+	assert_eq(_player.specials.poison_stacks(enemy), 3)
+	_player.specials._tick_poison(0.6)
+	assert_almost_eq(1000.0 - enemy.health.current, 9.0, 0.5, "3 cargas: 9 cada medio segundo")

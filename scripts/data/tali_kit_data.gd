@@ -26,6 +26,9 @@ extends Resource
 @export var fury_lockout: float = 6.0
 
 @export_group("Normal: Piedrazo")
+## Bolsa de Piedras (reliquia legendaria): ángulo de las piedras de los costados y daño que pierden.
+@export var bag_cone_deg: float = 15.0
+@export var bag_damage_penalty: float = 0.15
 @export var rock_damage: float = 18.0
 @export var rock_interval: float = 0.8
 @export var rock_spread_deg: float = 8.0

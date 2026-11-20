@@ -27,7 +27,7 @@ func test_shop_has_four_specials_kit_upgrade_reroll_and_leave() -> void:
 	assert_eq(kinds.count(&"kit"), 2, "Croco: Contrato doble y el kit de Yole (Señuelo pistolero)")
 	var yole: Dictionary = shop.rows()[kinds.find(&"kit")]
 	assert_eq(yole["id"], &"croco_senuelo_pistolero")
-	assert_eq(yole["price"], 220, "Los kits de Yole cuestan más")
+	assert_eq(yole["price"], 550, "Las reliquias legendarias de personaje cuestan 550")
 	assert_true(kinds.has(&"reroll"))
 	assert_true(kinds.has(&"leave"))
 	assert_true(_player.menu_locked, "Mientras compra no se mueve")

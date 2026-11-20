@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1")
-starting_gold = 150
+starting_gold = 125
 croco_bounty_gold = 30
 common_drop_chance = 0.4
 common_gold = Array[Vector2i]([Vector2i(1, 3), Vector2i(3, 5), Vector2i(5, 8)])

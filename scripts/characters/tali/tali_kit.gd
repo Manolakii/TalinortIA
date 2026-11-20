@@ -275,6 +275,18 @@ func _throw_rock() -> void:
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + direction * 0.5
 	_rocks.fire(from, direction, kd.rock_speed, kd.rock_range, kd.rock_radius, info,
 			DamageInfo.Team.ENEMIES, _on_rock_hit, _on_rock_expire.bind(info))
+	# Bolsa de Piedras (reliquia legendaria de Tali): 3 piedras en cono, cada una 15% más débil.
+	# La del medio es la "principal" (la única que cuenta para las rachas de aciertos).
+	if has_upgrade(&"tali_bolsa_piedras"):
+		info.amount *= 1.0 - kd.bag_damage_penalty
+		info.tags.append(&"main_rock")
+		for side: float in [-1.0, 1.0]:
+			var extra: DamageInfo = info.clone()
+			extra.tags.erase(&"main_rock")
+			extra.tags.append(&"side_rock")
+			var side_dir: Vector3 = direction.rotated(Vector3.UP, deg_to_rad(kd.bag_cone_deg) * side)
+			_rocks.fire(player.global_position + Vector3.UP * 1.1 + side_dir * 0.5, side_dir, kd.rock_speed,
+					kd.rock_range, kd.rock_radius, extra, DamageInfo.Team.ENEMIES, _on_rock_hit)
 
 
 ## Piedra bumerán (kit de Yole): al llegar al final, vuelve a las manos de Tali pegando de nuevo.

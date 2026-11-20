@@ -373,6 +373,9 @@ func _modify_incoming(info: DamageInfo) -> void:
 		info.amount *= 1.2
 	if hitter != null and hitter.item_effects != null and not info.has_tag(&"proc"):
 		info.amount *= hitter.item_effects.damage_bonus_against(self)
+	# Espada sedienta (reliquia): las habilidades pegan un poco más (plano).
+	if hitter != null and hitter.specials != null and not info.has_tag(&"proc") and not info.has_tag(&"tick"):
+		info.amount += hitter.specials.ability_flat_bonus()
 	if status.has(StatusEffects.MARKED) and info.attacker_team == DamageInfo.Team.PLAYERS \
 			and not info.has_tag(&"guide"):
 		info.amount *= 1.15

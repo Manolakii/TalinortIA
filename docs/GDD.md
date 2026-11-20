@@ -234,7 +234,7 @@ Un Agucci medio tenebroso que aparece **una sola vez por stage** en Talinorthlan
 
 **Yole Sajor** es un mapache que habla y es el transa del mercado negro de Birig Bamba, con su puesto en el Salón Beláustegui (cambio de lore del grupo, 2026-11-14): berretinero, chamuyero, te tira chistes, te descansa y te vende todo "que se cayó de un camión". Hay que hablarle para ver su mercadería.
 
-- **Stock:** cada jugador ve sus propios 4 objetos especiales, sacados al azar, más 1 mejora de kit de su personaje (las "Mejora en Birig Bamba" de los kits), a 120.
+- **Stock:** ver "Reliquias del Black Market" (2026-11-20).
 - **Kits de Yole** (*2026-11-15, pedido del grupo: mejoras únicas, más especiales, que no salen como premio*): además, cada jugador ve el kit transformador de su personaje, a 220. Cambian cómo se juega una habilidad:
 
 | Personaje | Kit de Yole | Qué hace |
@@ -306,27 +306,55 @@ Los objetos que salen en las salas tienen **rareza** y **nivel**:
 | Tótem de Talinorte Centro | Legendario | +60 de vida máxima | +130 de vida máxima | — |
 | Energía del Bombo | Legendario | La definitiva se carga 40% más rápido | La definitiva se carga 80% más rápido | — |
 
-### Objetos especiales: ejemplos
+### Reliquias del Black Market (*2026-11-20, documento del grupo "Objetos, mejoras y reliquias"*)
 
-A diferencia de los genéricos, no suben números: agregan un efecto nuevo.
+La tienda de Yole Sajor es el **Black Market**: vende **reliquias**, que no son objetos de sala (no tienen niveles y se compran una vez). Una reliquia legendaria general siempre es mejor que un objeto legendario Lv 1.
 
-| Objeto | Rareza | Efecto |
+- **Comunes (75):** estadísticas o chances de cosas.
+- **Raras (150):** juegan con habilidades, o dan una mejora grande a cambio de una desmejora.
+- **Legendarias (550):** cambian mucho la forma de jugar. Hay **generales** y **de personaje** (solo le salen a ese personaje).
+- **Malditas:** solo salen de la Mystery Box y bajan una estadística como un objeto común Lv 2.
+- **Stock de cada jugador:** 4 reliquias generales, la reliquia legendaria y la rara de su personaje, la **Mystery Box** (125, lo mismo que el oro inicial: 20% maldita, 72% rara, 8% legendaria), volver a tirar el stock e irse.
+- **Oro inicial: 125** (antes 150), así una rara no se puede comprar al arrancar, salvo con la mejora de McoinIA.
+- **Reliquias de personaje:** legendarias = los kits de Yole (Katana de Yole Sajor, Piedra bumerán, Señuelo pistolero, Bastonazo en abanico, Torretas con patas, Aplauso sísmico), "Ahora sí te entiendo" y la **Bolsa de Piedras** de Tali (3 piedras en cono, 15% más débiles). Raras = las mejoras de tienda de siempre (Contrato doble, Shurikens de la sombra, Vínculo eterno, Refugio del Bosque Tuerto, Micelio por todos lados).
+
+| Reliquia | Rareza | Efecto |
 | --- | --- | --- |
-| Piedra de la Suerte | Común | El golpe común tiene 8% de chance de aturdir 0,5 s |
-| Bombito de Birig Bamba | Común | Al usar la definitiva, los aliados cercanos ganan 15% de velocidad por 4 s |
-| Vasija sin fondo | Común | Las vasijas sueltan el doble de oro |
-| Statik | Raro | Al moverte se carga una barra. Al llegar a 100, el próximo golpe común sale energizado: daño extra en cadena a 3 enemigos |
-| Escama de Gronk | Raro | Al recibir un golpe cuerpo a cuerpo, devuelve 20 de daño |
-| Kunai de repuesto | Raro | La esquiva deja un kunai que explota a los 0,5 s |
-| Núcleo Uwey | Épico | Cada tercera habilidad no gasta cooldown |
-| Espora errante | Épico | Los enemigos que matás tienen 10% de chance de dejar un hongo que cura |
-| Fragmento del Crepúsculo | Legendario | Los críticos dejan un eco de sombra que repite el golpe al 50% |
-| Corona del Líder Supremo | Legendario | Una vez por partida, si caés, te levantás solo con el 40% de la vida |
-| Botas de Cartero *(2026-11-15)* | Común | Después de esquivar, vas 25% más rápido por 1,5 s |
-| Trébol de cuatro Gronks *(2026-11-15)* | Raro | 10% de chance de que un golpe enemigo no te toque |
-| Mate de Birig Bamba *(2026-11-15)* | Raro | Al terminar cada sala te curás 15% de la vida |
-| Diente del Gronk Gigante *(2026-11-15)* | Épico | +20% de daño a los élites y a los bosses |
-| Capa de Yole *(2026-11-15)* | Legendario | Si bajás del 30% de vida, escudo de 30% de tu vida (una vez por sala) |
+| Piedra de la Suerte | Común (75) | El golpe común tiene 8% de chance de aturdir 0,5 s |
+| Bombito de Birig Bamba | Común (75) | Al usar la definitiva, los aliados cercanos van 15% más rápido por 4 s |
+| Vasija sin fondo | Común (75) | Las vasijas que rompés sueltan el doble de oro |
+| Imán de Cobrador | Común (75) | +10% de chance de que aparezca un Cobrador Agucci en cada sala |
+| Barro en las botas | Común (75) | Al esquivar dejás un barro 5 s que deja lentos a los enemigos |
+| Guantes livianos | Común (75) | +10% de velocidad de ataque |
+| Mano firme | Común (75) | +10% de daño del golpe común |
+| Ojo para las vasijas | Común (75) | Aparecen 2 vasijas más en cada sala |
+| Hongos de la suerte | Común (75) | +15% de chance de que una vasija suelte un hongo |
+| Hongo para compartir | Común (75) | Al comer un hongo, brota otro que cura la mitad y solo lo puede agarrar un compañero |
+| Botas de Cartero | Rara (150) | Después de esquivar, vas 40% más rápido por 2 s |
+| Statik | Rara (150) | Al moverte se carga una barra; al llenarse, el próximo golpe común encadena un rayo a 3 enemigos |
+| Escama de Gronk | Rara (150) | Al recibir un golpe cuerpo a cuerpo, le devolvés 20 de daño |
+| Kunai de repuesto | Rara (150) | La esquiva deja un kunai que explota a los 0,5 s |
+| Trébol de cuatro Gronks | Rara (150) | 10% de chance de que un golpe enemigo no te toque |
+| Mate de Birig Bamba | Rara (150) | Al terminar cada sala te curás 15% de la vida |
+| Espora errante | Rara (150) | Los enemigos que matás tienen 10% de chance de dejar un hongo que cura |
+| Diente del Gronk Gigante | Rara (150) | Hacés 20% más de daño a los élites y a los bosses |
+| Aplausos del público | Rara (150) | Cada enemigo que matás con la definitiva te cura 5 |
+| Mira temblorosa | Rara (150) | +16% de chance de crítico, pero -10% de velocidad de ataque |
+| Dieta talinorteana | Rara (150) | +20% de velocidad de ataque, pero -15 de vida máxima |
+| Espada sedienta | Rara (150) | Tus habilidades pegan 10 más. Después de matar 50 enemigos, 30 más |
+| Dado cargado de Yole | Rara (150) | En cada elección de premio podés volver a tirar las opciones una vez (Q / RB) |
+| Núcleo Uwey | Legendaria (550) | Cada tercera habilidad no gasta cooldown |
+| Fragmento del Crepúsculo | Legendaria (550) | Los críticos dejan un eco de sombra que repite el golpe al 50% |
+| Corona del Líder Supremo | Legendaria (550) | Una vez por partida, si caés, te levantás solo con el 40% de la vida |
+| Capa de Yole | Legendaria (550) | Si bajás del 30% de vida, te da un escudo de 30% de tu vida (una vez por sala) |
+| Ejecutor | Legendaria (550) | Los enemigos por debajo del 15% de vida mueren al pegarles (los bosses, por debajo del 3%) |
+| Venenoso | Legendaria (550) | El golpe común envenena: hasta 3 cargas que duran 3 s; cada carga pega más |
+| Cuerno roto | Maldita (solo Mystery Box) | -7,5% de daño |
+| Guantes pesados | Maldita (solo Mystery Box) | -8% de velocidad de ataque |
+| Corazón flojo | Maldita (solo Mystery Box) | -22 de vida máxima |
+| Botas agujereadas | Maldita (solo Mystery Box) | -8% de velocidad de movimiento |
+| Escama rota | Maldita (solo Mystery Box) | +6% de daño recibido |
+| Reloj atrasado | Maldita (solo Mystery Box) | +8% de cooldown en habilidades |
 
 ## Progresión entre partidas
 

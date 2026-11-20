@@ -116,9 +116,9 @@ func _item_icons(index: int) -> Array[ItemIcon]:
 	for id: Variant in RunState.get_specials(index):
 		var special: SpecialItem = Balance.shop.get_item(id)
 		if special != null:
-			var rarity: Color = RARITY_COLORS[special.rarity]
+			var rarity: Color = SpecialItem.RARITY_COLORS[special.rarity]
 			icons.append(ItemIcon.make(rarity.darkened(0.45), ItemIcon.letters_of(special.display_name),
-					"%s [%s]" % [special.display_name, Balance.shop.rarity_names[special.rarity]],
+					"%s [%s]" % [special.display_name, SpecialItem.RARITY_NAMES[special.rarity]],
 					special.description, 1, rarity))
 	return icons
 

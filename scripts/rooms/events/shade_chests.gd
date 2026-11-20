@@ -57,7 +57,7 @@ func give_shop_items(at: Vector3) -> void:
 		var owned: Array = RunState.get_specials(player.slot.index)
 		var pool: Array[SpecialItem] = []
 		for item: SpecialItem in Balance.shop.items:
-			if not owned.has(item.id):
+			if not owned.has(item.id) and item.rarity != SpecialItem.Rarity.CURSED:
 				pool.append(item)
 		if pool.is_empty():
 			continue

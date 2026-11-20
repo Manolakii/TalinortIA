@@ -9,6 +9,10 @@ id = &"piedra_suerte"
 display_name = "Piedra de la Suerte"
 description = "El golpe común tiene 8% de chance de aturdir 0,5 s"
 rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_1"]
 script = ExtResource("2")
@@ -16,6 +20,10 @@ id = &"bombito"
 display_name = "Bombito de Birig Bamba"
 description = "Al usar la definitiva, los aliados cercanos van 15% más rápido por 4 s"
 rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_2"]
 script = ExtResource("2")
@@ -23,98 +31,372 @@ id = &"vasija_sin_fondo"
 display_name = "Vasija sin fondo"
 description = "Las vasijas que rompés sueltan el doble de oro"
 rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_3"]
 script = ExtResource("2")
-id = &"statik"
-display_name = "Statik"
-description = "Al moverte se carga una barra; al llenarse, el próximo golpe común encadena un rayo a 3 enemigos"
-rarity = 1
+id = &"iman_cobrador"
+display_name = "Imán de Cobrador"
+description = "+10% de chance de que aparezca un Cobrador Agucci en cada sala"
+rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_4"]
 script = ExtResource("2")
-id = &"escama_gronk"
-display_name = "Escama de Gronk"
-description = "Al recibir un golpe cuerpo a cuerpo, le devolvés 20 de daño"
-rarity = 1
+id = &"barro_botas"
+display_name = "Barro en las botas"
+description = "Al esquivar dejás un barro 5 s que deja lentos a los enemigos"
+rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_5"]
 script = ExtResource("2")
-id = &"kunai_repuesto"
-display_name = "Kunai de repuesto"
-description = "La esquiva deja un kunai que explota a los 0,5 s"
-rarity = 1
+id = &"guantes_livianos"
+display_name = "Guantes livianos"
+description = "+10% de velocidad de ataque"
+rarity = 0
+stat = &"attack_speed"
+amount = 0.1
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_6"]
 script = ExtResource("2")
-id = &"nucleo_uwey"
-display_name = "Núcleo Uwey"
-description = "Cada tercera habilidad no gasta cooldown"
-rarity = 2
+id = &"mano_firme"
+display_name = "Mano firme"
+description = "+10% de daño del golpe común"
+rarity = 0
+stat = &"basic_damage"
+amount = 0.1
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_7"]
 script = ExtResource("2")
-id = &"espora_errante"
-display_name = "Espora errante"
-description = "Los enemigos que matás tienen 10% de chance de dejar un honguito que cura"
-rarity = 2
+id = &"ojo_vasijas"
+display_name = "Ojo para las vasijas"
+description = "Aparecen 2 vasijas más en cada sala"
+rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_8"]
 script = ExtResource("2")
-id = &"fragmento_crepusculo"
-display_name = "Fragmento del Crepúsculo"
-description = "Los críticos dejan un eco de sombra que repite el golpe al 50%"
-rarity = 3
+id = &"hongos_suerte"
+display_name = "Hongos de la suerte"
+description = "+15% de chance de que una vasija suelte un hongo"
+rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_9"]
 script = ExtResource("2")
-id = &"corona_lider"
-display_name = "Corona del Líder Supremo"
-description = "Una vez por partida, si caés, te levantás solo con el 40% de la vida"
-rarity = 3
+id = &"hongo_compartido"
+display_name = "Hongo para compartir"
+description = "Al comer un hongo, brota otro que cura la mitad y solo lo puede agarrar un compañero"
+rarity = 0
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_10"]
 script = ExtResource("2")
 id = &"botas_cartero"
 display_name = "Botas de Cartero"
-description = "Después de esquivar, vas 25% más rápido por 1,5 s"
-rarity = 0
+description = "Después de esquivar, vas 40% más rápido por 2 s"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
 [sub_resource type="Resource" id="s_11"]
+script = ExtResource("2")
+id = &"statik"
+display_name = "Statik"
+description = "Al moverte se carga una barra; al llenarse, el próximo golpe común encadena un rayo a 3 enemigos"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_12"]
+script = ExtResource("2")
+id = &"escama_gronk"
+display_name = "Escama de Gronk"
+description = "Al recibir un golpe cuerpo a cuerpo, le devolvés 20 de daño"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_13"]
+script = ExtResource("2")
+id = &"kunai_repuesto"
+display_name = "Kunai de repuesto"
+description = "La esquiva deja un kunai que explota a los 0,5 s"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_14"]
 script = ExtResource("2")
 id = &"trebol_gronk"
 display_name = "Trébol de cuatro Gronks"
 description = "10% de chance de que un golpe enemigo no te toque"
 rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
-[sub_resource type="Resource" id="s_12"]
+[sub_resource type="Resource" id="s_15"]
 script = ExtResource("2")
 id = &"mate_birig"
 display_name = "Mate de Birig Bamba"
 description = "Al terminar cada sala te curás 15% de la vida"
 rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
-[sub_resource type="Resource" id="s_13"]
+[sub_resource type="Resource" id="s_16"]
+script = ExtResource("2")
+id = &"espora_errante"
+display_name = "Espora errante"
+description = "Los enemigos que matás tienen 10% de chance de dejar un hongo que cura"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_17"]
 script = ExtResource("2")
 id = &"diente_gronk"
 display_name = "Diente del Gronk Gigante"
 description = "Hacés 20% más de daño a los élites y a los bosses"
-rarity = 2
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
 
-[sub_resource type="Resource" id="s_14"]
+[sub_resource type="Resource" id="s_18"]
+script = ExtResource("2")
+id = &"aplausos_publico"
+display_name = "Aplausos del público"
+description = "Cada enemigo que matás con la definitiva te cura 5"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_19"]
+script = ExtResource("2")
+id = &"mira_temblorosa"
+display_name = "Mira temblorosa"
+description = "+16% de chance de crítico, pero -10% de velocidad de ataque"
+rarity = 1
+stat = &"crit_chance"
+amount = 0.16
+stat2 = &"attack_speed"
+amount2 = -0.1
+
+[sub_resource type="Resource" id="s_20"]
+script = ExtResource("2")
+id = &"dieta_talinorteana"
+display_name = "Dieta talinorteana"
+description = "+20% de velocidad de ataque, pero -15 de vida máxima"
+rarity = 1
+stat = &"attack_speed"
+amount = 0.2
+stat2 = &"max_health"
+amount2 = -15.0
+
+[sub_resource type="Resource" id="s_21"]
+script = ExtResource("2")
+id = &"espada_sedienta"
+display_name = "Espada sedienta"
+description = "Tus habilidades pegan 10 más. Después de matar 50 enemigos, 30 más"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_22"]
+script = ExtResource("2")
+id = &"dado_yole"
+display_name = "Dado cargado de Yole"
+description = "En cada elección de premio podés volver a tirar las opciones una vez (Q / RB)"
+rarity = 1
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_23"]
+script = ExtResource("2")
+id = &"nucleo_uwey"
+display_name = "Núcleo Uwey"
+description = "Cada tercera habilidad no gasta cooldown"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_24"]
+script = ExtResource("2")
+id = &"fragmento_crepusculo"
+display_name = "Fragmento del Crepúsculo"
+description = "Los críticos dejan un eco de sombra que repite el golpe al 50%"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_25"]
+script = ExtResource("2")
+id = &"corona_lider"
+display_name = "Corona del Líder Supremo"
+description = "Una vez por partida, si caés, te levantás solo con el 40% de la vida"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_26"]
 script = ExtResource("2")
 id = &"capa_yole"
 display_name = "Capa de Yole"
 description = "Si bajás del 30% de vida, te da un escudo de 30% de tu vida (una vez por sala)"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_27"]
+script = ExtResource("2")
+id = &"ejecutor"
+display_name = "Ejecutor"
+description = "Los enemigos por debajo del 15% de vida mueren al pegarles (los bosses, por debajo del 3%)"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_28"]
+script = ExtResource("2")
+id = &"venenoso"
+display_name = "Venenoso"
+description = "El golpe común envenena: hasta 3 cargas que duran 3 s; cada carga pega más"
+rarity = 2
+stat = &""
+amount = 0.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_29"]
+script = ExtResource("2")
+id = &"cuerno_roto"
+display_name = "Cuerno roto"
+description = "-7,5% de daño"
 rarity = 3
+stat = &"damage"
+amount = -0.075
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_30"]
+script = ExtResource("2")
+id = &"guantes_pesados"
+display_name = "Guantes pesados"
+description = "-8% de velocidad de ataque"
+rarity = 3
+stat = &"attack_speed"
+amount = -0.08
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_31"]
+script = ExtResource("2")
+id = &"corazon_flojo"
+display_name = "Corazón flojo"
+description = "-22 de vida máxima"
+rarity = 3
+stat = &"max_health"
+amount = -22.0
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_32"]
+script = ExtResource("2")
+id = &"botas_agujereadas"
+display_name = "Botas agujereadas"
+description = "-8% de velocidad de movimiento"
+rarity = 3
+stat = &"move_speed"
+amount = -0.08
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_33"]
+script = ExtResource("2")
+id = &"escama_rota"
+display_name = "Escama rota"
+description = "+6% de daño recibido"
+rarity = 3
+stat = &"damage_reduction"
+amount = -0.06
+stat2 = &""
+amount2 = 0.0
+
+[sub_resource type="Resource" id="s_34"]
+script = ExtResource("2")
+id = &"reloj_atrasado"
+display_name = "Reloj atrasado"
+description = "+8% de cooldown en habilidades"
+rarity = 3
+stat = &"cooldown_reduction"
+amount = -0.08
+stat2 = &""
+amount2 = 0.0
 
 [resource]
 script = ExtResource("1")
-items = Array[ExtResource("2")]([SubResource("s_0"), SubResource("s_1"), SubResource("s_2"), SubResource("s_3"), SubResource("s_4"), SubResource("s_5"), SubResource("s_6"), SubResource("s_7"), SubResource("s_8"), SubResource("s_9"), SubResource("s_10"), SubResource("s_11"), SubResource("s_12"), SubResource("s_13"), SubResource("s_14")])
-rarity_prices = Array[int]([70, 150, 250, 470])
-rarity_names = Array[String](["Común", "Raro", "Épico", "Legendario"])
-visit_chances = Array[PackedFloat32Array]([PackedFloat32Array(0.6, 0.35, 0.05, 0), PackedFloat32Array(0.4, 0.35, 0.2, 0.05), PackedFloat32Array(0.25, 0.35, 0.28, 0.12)])
+items = Array[ExtResource("2")]([SubResource("s_0"), SubResource("s_1"), SubResource("s_2"), SubResource("s_3"), SubResource("s_4"), SubResource("s_5"), SubResource("s_6"), SubResource("s_7"), SubResource("s_8"), SubResource("s_9"), SubResource("s_10"), SubResource("s_11"), SubResource("s_12"), SubResource("s_13"), SubResource("s_14"), SubResource("s_15"), SubResource("s_16"), SubResource("s_17"), SubResource("s_18"), SubResource("s_19"), SubResource("s_20"), SubResource("s_21"), SubResource("s_22"), SubResource("s_23"), SubResource("s_24"), SubResource("s_25"), SubResource("s_26"), SubResource("s_27"), SubResource("s_28"), SubResource("s_29"), SubResource("s_30"), SubResource("s_31"), SubResource("s_32"), SubResource("s_33"), SubResource("s_34")])
+rarity_prices = Array[int]([75, 150, 550])
+visit_chances = Array[PackedFloat32Array]([PackedFloat32Array(0.65, 0.3, 0.05), PackedFloat32Array(0.5, 0.4, 0.1), PackedFloat32Array(0.4, 0.45, 0.15)])
 stock_size = 4
-kit_upgrade_price = 120
+kit_upgrade_price = 150
+character_legendary_price = 550
+mystery_box_price = 125
+mystery_box_odds = PackedFloat32Array(0.2, 0.72, 0.08)
 reroll_base = 25
 reroll_step = 25

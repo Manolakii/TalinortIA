@@ -1,7 +1,8 @@
 class_name ShopPanel
 extends CanvasLayer
-## La tienda de Yole Sajor para UN jugador (GDD: cada jugador ve su propio stock): 4 objetos
-## especiales más 1 mejora de kit, volver a tirar el stock (25, y sube 25 cada vez) e irse.
+## El Black Market de Yole Sajor para UN jugador (GDD: cada jugador ve su propio stock):
+## 4 reliquias generales, la reliquia legendaria y la rara de su personaje, la Mystery Box,
+## volver a tirar el stock (25, y sube 25 cada vez) e irse.
 ## Aparece arriba del panel de ese jugador en el HUD. W/S o cruceta para moverse,
 ## Enter/E o A/X para comprar, Esc/B para irse.
 
@@ -10,9 +11,7 @@ signal closed
 const PANEL_WIDTH := 390.0
 const BG := Color(0.08, 0.07, 0.1, 0.95)
 const GOLD := Color(1.0, 0.82, 0.3)
-const RARITY_COLORS: Array[Color] = [Color(0.85, 0.85, 0.85), Color(0.4, 0.85, 1.0),
-		Color(1.0, 0.45, 0.75), Color(1.0, 0.82, 0.3)]
-const KIT_COLOR := Color(1.0, 0.65, 0.35)
+const BOX_COLOR := Color(0.85, 0.6, 1.0)
 
 var player: PlayerCharacter
 var _rows: Array[Dictionary] = []  # {kind, id, price, label, desc, color}
@@ -133,18 +132,24 @@ func _build_rows() -> void:
 		if item == null:
 			continue
 		_rows.append({"kind": &"special", "id": item.id, "price": Balance.shop.price_of(item),
-				"label": "[%s] %s" % [Balance.shop.rarity_names[item.rarity], item.display_name],
-				"desc": item.description, "color": RARITY_COLORS[item.rarity], "sold": sold.has(item.id)})
+				"label": "[%s] %s" % [SpecialItem.RARITY_NAMES[item.rarity], item.display_name],
+				"desc": item.description, "color": SpecialItem.RARITY_COLORS[item.rarity], "sold": sold.has(item.id)})
 	for key: String in ["yole", "kit"]:
 		if state.get(key, &"") == &"":
 			continue
 		var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(state[key])
-		var kit_price: int = upgrade.price if upgrade.price > 0 else Balance.shop.kit_upgrade_price
-		# Pedido del grupo: que se note que son únicas y que no salen como premio.
+		var legendary: bool = key == "yole"
+		var kit_price: int = Balance.shop.character_legendary_price if legendary else Balance.shop.kit_upgrade_price
+		# Reliquias de personaje: solo le salen a ese personaje y nunca como premio.
 		_rows.append({"kind": &"kit", "id": upgrade.id, "price": kit_price,
-				"label": ("[Kit de Yole · único] %s" if key == "yole" else "[Mejora de kit · única] %s") % upgrade.display_name,
+				"label": "[%s de %s] %s" % ["Legendaria" if legendary else "Rara", player.data.display_name,
+						upgrade.display_name],
 				"desc": upgrade.description + " (solo se consigue acá)",
-				"color": KIT_COLOR, "sold": sold.has(upgrade.id)})
+				"color": SpecialItem.RARITY_COLORS[SpecialItem.Rarity.LEGENDARY if legendary else SpecialItem.Rarity.RARE],
+				"sold": sold.has(upgrade.id)})
+	_rows.append({"kind": &"box", "id": &"mystery_box", "price": Balance.shop.mystery_box_price,
+			"label": "Mystery Box", "desc": "Una reliquia al azar: casi siempre rara, a veces legendaria... y a veces maldita",
+			"color": BOX_COLOR, "sold": false})
 	_rows.append({"kind": &"reroll", "id": &"", "price": reroll_price(), "label": "Volver a tirar el stock",
 			"desc": "Yole busca otra cosa en el fondo del puesto", "color": Color(0.8, 0.8, 0.85), "sold": false})
 	_rows.append({"kind": &"leave", "id": &"", "price": 0, "label": "Irse",
@@ -162,6 +167,11 @@ func _buy(row: Dictionary) -> void:
 		return
 	Sound.play("ui_confirm", 0.0, 0.0)
 	RunState.add_gold(index, -row["price"])
+	if row["kind"] == &"box":
+		open_box()
+		_build_rows()
+		_refresh()
+		return
 	if row["kind"] == &"special":
 		RunState.add_special(index, row["id"])
 	else:
@@ -173,6 +183,38 @@ func _buy(row: Dictionary) -> void:
 	_say(Dialogue.line("yole_compra"))
 	_build_rows()
 	_refresh()
+
+
+## Mystery Box (documento del grupo): 20% maldita, 72% rara, 8% legendaria. La legendaria puede
+## ser general o de su personaje. Devuelve el id de lo que salió.
+func open_box() -> StringName:
+	var index: int = player.slot.index
+	var rarity: int = Balance.shop.roll_box(RunState.rng)
+	var owned: Array = RunState.get_specials(index)
+	var options: Array = Balance.shop.pool(rarity, owned)
+	if rarity == SpecialItem.Rarity.LEGENDARY:
+		var mine: CharacterUpgrade = Balance.upgrades.shop_upgrade_for(player.data.id,
+				RunState.get_upgrades(index), RunState.rng, true)
+		if mine != null:
+			options.append(mine)
+	if options.is_empty():
+		options = Balance.shop.pool(SpecialItem.Rarity.RARE, owned)
+	if options.is_empty():
+		return &""
+	var prize: Resource = options[RunState.rng.randi_range(0, options.size() - 1)]
+	var title: String
+	if prize is CharacterUpgrade:
+		RunState.add_upgrade(index, (prize as CharacterUpgrade).id)
+		title = "[Legendaria] %s" % (prize as CharacterUpgrade).display_name
+	else:
+		var relic := prize as SpecialItem
+		RunState.add_special(index, relic.id)
+		title = "[%s] %s" % [SpecialItem.RARITY_NAMES[relic.rarity], relic.display_name]
+	var cursed: bool = prize is SpecialItem and (prize as SpecialItem).rarity == SpecialItem.Rarity.CURSED
+	_say("¡Te tocó %s! %s" % [title, "Uh... devoluciones no acepto." if cursed else "¿Viste que era buena?"])
+	Events.floating_text_requested.emit(player.global_position + Vector3.UP * 2.8, title,
+			SpecialItem.RARITY_COLORS[SpecialItem.Rarity.LEGENDARY if prize is CharacterUpgrade else (prize as SpecialItem).rarity])
+	return prize.get("id")
 
 
 func _reroll() -> void:

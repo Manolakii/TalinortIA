@@ -79,7 +79,10 @@ func smash(breaker: PlayerCharacter = null) -> void:
 		if RunState.has_special(breaker.slot.index, &"vasija_sin_fondo"):
 			amount *= 2
 		Loot.drop(get_parent(), global_position, breaker, amount)
-	if RunState.rng.randf() < economy.vase_mushroom_chance:
+	var mushroom_chance: float = economy.vase_mushroom_chance
+	if breaker != null and RunState.has_special(breaker.slot.index, &"hongos_suerte"):
+		mushroom_chance += 0.15  # Hongos de la suerte (reliquia)
+	if RunState.rng.randf() < mushroom_chance:
 		var mushroom := HealMushroom.new()
 		mushroom.heal_amount = economy.mushroom_heal
 		mushroom.position = position + Vector3(0.6, 0.0, 0.5)

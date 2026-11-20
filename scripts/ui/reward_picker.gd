@@ -29,6 +29,8 @@ class Choice:
 	var title: Label
 	var box: VBoxContainer
 	var reroll_hint: Label
+	## Dado cargado de Yole (reliquia): un tiro gratis en esta elección.
+	var free_reroll: bool = false
 
 var kind: Kind = Kind.UPGRADE
 var _choices: Array[Choice] = []
@@ -67,6 +69,7 @@ func start(which: Kind, players: Array[PlayerCharacter], heading: String = "", o
 		var choice := Choice.new()
 		choice.player = player
 		choice.options = _options_for(player)
+		choice.free_reroll = RunState.has_special(player.slot.index, &"dado_yole")
 		_choices.append(choice)
 		row.add_child(_build_panel(choice))
 		if choice.options.is_empty():
@@ -129,9 +132,14 @@ func _physics_process(delta: float) -> void:
 ## Segunda opinión (McoinIA): vuelve a tirar las opciones de este jugador.
 func reroll(choice: Choice) -> void:
 	var index: int = choice.player.slot.index
-	if choice.done or RunState.rerolls_left.get(index, 0) <= 0:
+	if choice.done:
 		return
-	RunState.rerolls_left[index] -= 1
+	if choice.free_reroll:
+		choice.free_reroll = false
+	elif RunState.rerolls_left.get(index, 0) > 0:
+		RunState.rerolls_left[index] -= 1
+	else:
+		return
 	choice.options = _options_for(choice.player)
 	choice.selected = 0
 	Sound.play("ui_confirm", -4.0, 0.0)
@@ -224,8 +232,8 @@ func _build_cards(choice: Choice) -> void:
 		card.queue_free()
 	choice.cards.clear()
 	var left: int = RunState.rerolls_left.get(choice.player.slot.index, 0)
-	choice.reroll_hint.text = "Q / RB: volver a tirar (Segunda opinión: quedan %d)" % left
-	choice.reroll_hint.visible = left > 0 and not choice.done
+	choice.reroll_hint.text = "Q / RB: volver a tirar (Dado cargado: gratis)" if choice.free_reroll 			else "Q / RB: volver a tirar (Segunda opinión: quedan %d)" % left
+	choice.reroll_hint.visible = (left > 0 or choice.free_reroll) and not choice.done
 	for option: Dictionary in choice.options:
 		var card := PanelContainer.new()
 		var inner := VBoxContainer.new()

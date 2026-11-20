@@ -4,7 +4,7 @@ extends Resource
 ## (Stage 1, 2 y 3); los rangos son Vector2i(mínimo, máximo).
 
 ## Oro con el que arranca cada jugador.
-@export var starting_gold: int = 150
+@export var starting_gold: int = 125
 ## Oro extra si el Croco mata al élite con la Recompensa (DECISIONES 2026-11-13).
 @export var croco_bounty_gold: int = 30
 

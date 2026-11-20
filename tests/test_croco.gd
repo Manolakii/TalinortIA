@@ -87,7 +87,8 @@ func test_quick_contract_does_minimum() -> void:
 
 
 func test_dodge_leaves_decoy_that_enemies_prefer() -> void:
-	var enemy := enemy_at(Vector3(0, 0, -3))
+	# El enemigo atrás: el Croco esquiva hacia adelante y el señuelo queda entre los dos.
+	var enemy := enemy_at(Vector3(0, 0, 3))
 	press(PlayerInput.Action.DODGE)
 	_pump(1)
 	var decoys: Array[Node] = get_tree().get_nodes_in_group(&"enemy_targets").filter(

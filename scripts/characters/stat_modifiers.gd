@@ -51,7 +51,8 @@ func crit_damage_bonus() -> float:
 
 ## Reducción de cooldowns de habilidades, con tope.
 func cooldown_reduction() -> float:
-	return clampf(get_total(&"cooldown_reduction"), 0.0, COOLDOWN_CAP)
+	# Puede ser negativa (reliquias malditas): cooldowns más largos.
+	return clampf(get_total(&"cooldown_reduction"), -0.5, COOLDOWN_CAP)
 
 
 func ult_charge_multiplier() -> float:
@@ -64,7 +65,7 @@ func heal_per_wave() -> float:
 
 ## Daño recibido: 0,96 con una Escama. Con tope.
 func damage_taken_multiplier() -> float:
-	return 1.0 - clampf(get_total(&"damage_reduction"), 0.0, DAMAGE_REDUCTION_CAP)
+	return 1.0 - clampf(get_total(&"damage_reduction"), -0.5, DAMAGE_REDUCTION_CAP)
 
 
 func gold_multiplier() -> float:

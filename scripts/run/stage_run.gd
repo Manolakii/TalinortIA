@@ -264,6 +264,7 @@ func _place_players() -> void:
 
 func _spawn_vases(rng: RandomNumberGenerator, spots: Array[Vector3], all_spots: bool) -> void:
 	var count: int = spots.size() if all_spots else rng.randi_range(config.vases_min, config.vases_max)
+	count += 2 * _relic_holders(&"ojo_vasijas")  # Ojo para las vasijas (reliquia)
 	for i: int in mini(count, spots.size()):
 		var vase := Vase.new()
 		vase.position = spots.pop_at(rng.randi_range(0, spots.size() - 1))
@@ -319,7 +320,16 @@ func _start_director(waves: RoomWaves) -> void:
 func _thief_here() -> bool:
 	if in_challenge or not room_type in [RoomKind.Type.COMBAT, RoomKind.Type.ELITE, RoomKind.Type.SURVIVAL]:
 		return false
-	return RunState.room_rng(&"thief").randf() < config.thief_chance
+	# Imán de Cobrador (reliquia): +10% por cada jugador que lo tenga.
+	return RunState.room_rng(&"thief").randf() < config.thief_chance + 0.1 * _relic_holders(&"iman_cobrador")
+
+
+func _relic_holders(relic: StringName) -> int:
+	var count: int = 0
+	for player: PlayerCharacter in players:
+		if is_instance_valid(player) and RunState.has_special(player.slot.index, relic):
+			count += 1
+	return count
 
 
 func _schedule_thief() -> void:

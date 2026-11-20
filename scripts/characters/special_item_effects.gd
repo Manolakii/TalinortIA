@@ -22,6 +22,10 @@ var _ability_charges: Dictionary = {}  # AbilityCooldown -> cargas del frame ant
 var _abilities_used: int = 0
 ## Capa de Yole: en qué sala se usó por última vez (una vez por sala).
 var _cape_room: int = -1
+## Venenoso: cargas por enemigo {id: {"node", "stacks", "until", "tick"}}.
+var _poison: Dictionary = {}
+const POISON_PER_STACK := 3.0  # por cada medio segundo
+const SWORD_KILLS := 50
 
 
 func setup(owner_player: PlayerCharacter) -> void:
@@ -60,11 +64,18 @@ func _physics_process(delta: float) -> void:
 		_drop_kunai(player.global_position)
 	# Botas de Cartero: después de esquivar, más rápido un rato.
 	if dodging and not _was_dodging and has(&"botas_cartero"):
-		player.status.apply(StatusEffects.MAILMAN, 1.5)
+		player.status.apply(StatusEffects.MAILMAN, 2.0)
+	# Barro en las botas: al esquivar deja un barro que frena a los enemigos.
+	if dodging and not _was_dodging and has(&"barro_botas"):
+		var mud := MudPatch.new()
+		player.get_parent().add_child(mud)
+		mud.global_position = Vector3(player.global_position.x, 0.0, player.global_position.z)
 	_was_dodging = dodging
 	# Núcleo Uwey: cuenta las habilidades usadas (una carga que se gastó).
 	if has(&"nucleo_uwey"):
 		_watch_abilities()
+	if not _poison.is_empty():
+		_tick_poison(delta)
 
 
 ## ¿Este golpe es del golpe común? (atacando hace poco y sin habilidades recientes)
@@ -79,7 +90,20 @@ func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
 	var victim := target as Combatant
 	if victim == null or victim.team == DamageInfo.Team.PLAYERS:
 		return
-	var basic: bool = is_basic_hit() and not info.has_tag(&"tick") and not info.has_tag(&"echo")
+	var basic: bool = is_basic_hit() and not info.has_tag(&"tick") and not info.has_tag(&"echo") \
+			and not info.has_tag(&"proc")
+	if victim.health.is_dead:
+		_on_kill(victim)
+		return
+	# Ejecutor: por debajo del 15% (bosses 3%), muere al pegarle.
+	if has(&"ejecutor") and not info.has_tag(&"execute"):
+		var threshold: float = 0.03 if victim.is_in_group(&"boss") else 0.15
+		if victim.health.ratio() < threshold:
+			_execute(victim)
+			return
+	# Venenoso: el golpe común suma cargas de veneno.
+	if basic and has(&"venenoso"):
+		_add_poison(victim)
 	if basic and has(&"piedra_suerte") and randf() < 0.08:
 		victim.status.apply(StatusEffects.STUN, 0.5)
 		Events.floating_text_requested.emit(victim.global_position + Vector3.UP * 2.4, "¡Piedrazo de suerte!",
@@ -89,6 +113,76 @@ func _on_hit_landed(info: DamageInfo, target: Node3D) -> void:
 		_chain_lightning(victim)
 	if info.is_crit and has(&"fragmento_crepusculo") and not info.has_tag(&"echo"):
 		_shadow_echo(victim, info.final_amount * 0.5)
+
+
+func _on_kill(_victim: Combatant) -> void:
+	# Aplausos del público: matar con la definitiva cura.
+	if has(&"aplausos_publico") and player.kit.ult_active() and not player.health.is_dead:
+		player.health.heal(5.0)
+	# Espada sedienta: a los 50 enemigos se sacia y pega más.
+	if has(&"espada_sedienta"):
+		RunState.add_bonus(player.slot.index, &"espada_kills", 1)
+		if RunState.get_bonus(player.slot.index, &"espada_kills") == SWORD_KILLS:
+			Events.floating_text_requested.emit(player.global_position + Vector3.UP * 3.0,
+					"¡Espada sedienta saciada! Las habilidades pegan +30", Color(1.0, 0.82, 0.3))
+			Sound.play("chest", -4.0, 0.0)
+
+
+## Espada sedienta: daño extra (plano) de las habilidades. Lo pide Enemy al recibir el golpe.
+func ability_flat_bonus() -> float:
+	if not has(&"espada_sedienta") or is_basic_hit():
+		return 0.0
+	return 30.0 if RunState.get_bonus(player.slot.index, &"espada_kills") >= SWORD_KILLS else 10.0
+
+
+func _execute(victim: Combatant) -> void:
+	var info := DamageInfo.new()
+	info.amount = victim.health.current + victim.health.shield + 1.0
+	info.attacker = player
+	info.attacker_team = DamageInfo.Team.PLAYERS
+	info.origin = victim.global_position
+	info.tags.append(&"execute")
+	info.tags.append(&"proc")
+	info.hitstop = 0.0
+	victim.receive_hit(info)
+	Events.floating_text_requested.emit(victim.global_position + Vector3.UP * 2.6, "¡Ejecutado!",
+			Color(1.0, 0.82, 0.3))
+
+
+func _add_poison(victim: Combatant) -> void:
+	var key: int = victim.get_instance_id()
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var entry: Dictionary = _poison.get(key, {"node": victim, "stacks": 0, "tick": 0.5})
+	entry["stacks"] = mini(int(entry["stacks"]) + 1, 3)
+	entry["until"] = now + 3.0
+	_poison[key] = entry
+
+
+func _tick_poison(delta: float) -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	for key: Variant in _poison.keys():
+		var entry: Dictionary = _poison[key]
+		var victim := entry["node"] as Combatant
+		if not is_instance_valid(victim) or victim.health.is_dead or now > float(entry["until"]):
+			_poison.erase(key)
+			continue
+		entry["tick"] = float(entry["tick"]) - delta
+		if float(entry["tick"]) > 0.0:
+			continue
+		entry["tick"] = 0.5
+		var info := DamageInfo.new()
+		info.amount = POISON_PER_STACK * int(entry["stacks"])
+		info.attacker = player
+		info.attacker_team = DamageInfo.Team.PLAYERS
+		info.origin = victim.global_position
+		info.hitstop = 0.0
+		info.tags.append(&"tick")
+		info.tags.append(&"proc")
+		victim.receive_hit(info)
+
+
+func poison_stacks(victim: Node) -> int:
+	return int(_poison.get(victim.get_instance_id(), {}).get("stacks", 0))
 
 
 ## Bombito: al usar la definitiva, los aliados cercanos van 15% más rápido por 4 s.
