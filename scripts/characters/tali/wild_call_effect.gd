@@ -25,6 +25,15 @@ var _already_hit: Array[Node] = []
 var _pieces: Array[Node3D] = []
 var _offsets: Array[Vector3] = []
 var _birds_struck: bool = false
+var _refunded: bool = false
+## Rebogronk: este Gronk ya rebotó en una pared.
+var bounced: bool = false
+
+
+## Lanza desde un punto (el rebote del Rebogronk).
+func launch_from(owner_kit: CharacterKit, kit_data: TaliKitData, which: Kind, from: Vector3, aim: Vector3) -> void:
+	launch(owner_kit, kit_data, which, aim)
+	start_point = Vector3(from.x, 0.0, from.z)
 
 
 func launch(owner_kit: CharacterKit, kit_data: TaliKitData, which: Kind, aim: Vector3) -> void:
@@ -83,6 +92,11 @@ func _update_birds() -> void:
 				var enemy := hurtbox.receiver as Combatant
 				if enemy != null:
 					enemy.status.apply(StatusEffects.BLIND, data.birds_blind)
+					# Pájaros que regresan (mejora): si matan, el Llamado recarga a la mitad.
+					if enemy.health.is_dead and not _refunded and kit.has_upgrade(&"tali_pajaros_regresan"):
+						_refunded = true
+						var tali := kit as TaliKit
+						tali.call_cooldown.reduce(tali.call_cooldown.recharge_time * 0.5)
 	if _time >= BIRDS_LIFETIME:
 		queue_free()
 
@@ -101,6 +115,13 @@ func _update_line(speed: float, length: float, width: float, lifetime: float) ->
 		_hit_in_line(hurtbox)
 	_place_line_pieces(front_point)
 	if _time >= lifetime:
+		# Rebogronk (mejora): el Gronk rebota en la pared y vuelve a cargar para el otro lado.
+		if kind == Kind.GRONK and not bounced and kit.has_upgrade(&"tali_rebogronk"):
+			var again := WildCallEffect.new()
+			again.bounced = true
+			get_parent().add_child(again)
+			var back: Vector3 = (-direction).rotated(Vector3.UP, randf_range(-0.5, 0.5))
+			again.launch_from(kit, data, Kind.GRONK, front_point, back)
 		queue_free()
 
 
@@ -118,6 +139,24 @@ func _hit_in_line(hurtbox: Hurtbox) -> void:
 	# Empuja en la dirección en que avanza la manada.
 	info.origin = hurtbox.global_position - direction
 	hurtbox.take_hit(info)
+	# Bichos infecciosos (mejora): veneno de 25 en 5 s.
+	if kind == Kind.BUGS and kit.has_upgrade(&"tali_bichos_infecciosos"):
+		_poison(hurtbox.receiver as Combatant)
+
+
+func _poison(enemy: Combatant) -> void:
+	if enemy == null:
+		return
+	for i: int in 5:
+		var timer: SceneTreeTimer = get_tree().create_timer(1.0 + i, false)
+		timer.timeout.connect(func() -> void:
+			if not is_instance_valid(enemy) or not enemy.is_targetable() or not is_instance_valid(kit):
+				return
+			var tick: DamageInfo = Combat.make_hit(kit.player, DamageInfo.Team.PLAYERS, 5.0, 0.0, 1.0)
+			tick.hitstop = 0.0
+			tick.tags.append(&"tick")
+			tick.origin = enemy.global_position
+			enemy.receive_hit(tick))
 
 
 func _place_line_pieces(front_point: Vector3) -> void:

@@ -19,7 +19,7 @@ func available_for(character: StringName, owned: Array) -> Array[CharacterUpgrad
 	for upgrade: CharacterUpgrade in upgrades:
 		if upgrade.character != character or upgrade.shop_only:
 			continue
-		if owned.count(upgrade.id) >= upgrade.max_stacks:
+		if owned.count(upgrade.id) >= upgrade.max_level():
 			continue
 		if upgrade.senda_slot != &"" and _slot_taken_by_other(upgrade, owned):
 			continue

@@ -114,6 +114,20 @@ func has_upgrade(upgrade_id: StringName) -> bool:
 	return RunState.has_upgrade(player.slot.index, upgrade_id)
 
 
+## Nivel de una mejora (0 = no la tiene).
+func upgrade_level(upgrade_id: StringName) -> int:
+	return RunState.get_upgrades(player.slot.index).count(upgrade_id)
+
+
+## Valor de la mejora a su nivel (o `fallback` si no la tiene).
+func upgrade_value(upgrade_id: StringName, fallback: float = 0.0) -> float:
+	var level: int = upgrade_level(upgrade_id)
+	if level <= 0:
+		return fallback
+	var upgrade: CharacterUpgrade = Balance.upgrades.get_upgrade(upgrade_id)
+	return upgrade.value_at(level) if upgrade != null and not upgrade.levels.is_empty() else fallback
+
+
 ## Llamado cuando un golpe de este jugador conectó.
 func on_damage_dealt(info: DamageInfo, _target: Node3D) -> void:
 	add_ult(info.final_amount * data.ult_per_damage_dealt)

@@ -89,11 +89,10 @@ func _options_for(player: PlayerCharacter) -> Array:
 	if kind == Kind.UPGRADE:
 		var owned: Array = RunState.get_upgrades(player.slot.index)
 		for upgrade: CharacterUpgrade in Balance.upgrades.offer(player.data.id, owned, rng, _option_count):
-			var level: int = owned.count(upgrade.id)
-			var name: String = upgrade.display_name
-			if level >= 1:
-				name += " (nivel 2)" if upgrade.senda_slot != &"" else " (x%d)" % (level + 1)
-			result.append({"id": upgrade.id, "name": name, "description": upgrade.description})
+			var next_level: int = owned.count(upgrade.id) + 1
+			var note: String = " (reemplaza al Lv %d)" % (next_level - 1) if next_level > 1 else ""
+			result.append({"id": upgrade.id, "name": upgrade.title_at(next_level),
+					"description": upgrade.describe(next_level) + note})
 	else:
 		# Rareza y nivel (pedido del grupo, 2026-11-20): si ya lo tenés, se ofrece el nivel siguiente.
 		var owned_items: Array = RunState.get_items(player.slot.index)

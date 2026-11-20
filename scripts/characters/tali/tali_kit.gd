@@ -25,6 +25,9 @@ var _fury_time: float = 0.0
 ## Pedido del grupo: si se transformó con la definitiva, tiene un Revoleo gratis (sin recargar
 ## la barra). Si la Furia llegó sola (por pegar o recibir), el Revoleo hay que cargarlo.
 var _ult_fury: bool = false
+## Racha de suerte: Piedrazos seguidos que acertaron. Suerte encadenada: Piedrazos con suerte que quedan.
+var rock_streak: int = 0
+var lucky_charges: int = 0
 var free_toss: bool = false
 var _lockout: float = 0.0
 var _attack_timer: float = 0.0
@@ -116,7 +119,8 @@ func do_dodge() -> void:
 	else:
 		_stumbling = true
 		_lucky_this_dodge = false
-		player.start_dodge(dodge_direction(), kd.stumble_distance, kd.stumble_duration)
+		player.start_dodge(dodge_direction(), kd.stumble_distance * (1.0 + upgrade_value(&"tali_tropezon_largo")),
+				kd.stumble_duration)
 
 
 ## Tropezón: si un ataque lo iba a impactar, lo esquiva de casualidad.
@@ -124,7 +128,7 @@ func on_blocked_by_invulnerability(info: DamageInfo) -> void:
 	if not _stumbling or _lucky_this_dodge or info.attacker_team != DamageInfo.Team.ENEMIES:
 		return
 	_lucky_this_dodge = true
-	add_fury(25.0 if has_upgrade(&"tali_tropezon_furia") else kd.lucky_dodge_fury)
+	add_fury(upgrade_value(&"tali_tropezon_furia", kd.lucky_dodge_fury))
 	var attacker: Combatant = info.attacker as Combatant if is_instance_valid(info.attacker) else null
 	if attacker != null and attacker.is_targetable():
 		attacker.status.apply(StatusEffects.STUN, kd.lucky_dodge_unbalance)
@@ -194,7 +198,7 @@ func move_speed_multiplier() -> float:
 	if is_exhausted():
 		return kd.exhausted_speed_multiplier
 	if in_fury and has_upgrade(&"tali_furia_veloz"):
-		return 1.15
+		return 1.0 + upgrade_value(&"tali_furia_veloz")
 	return 1.0
 
 
@@ -227,7 +231,7 @@ func _exit_fury() -> void:
 	_cancel_slam()
 	player.end_action()
 	player.health.damage_taken_multiplier = 1.0
-	player.status.apply(StatusEffects.EXHAUSTED, maxf(kd.exhausted_duration * (0.5 if has_upgrade(&"tali_resaca_leve") else 1.0)
+	player.status.apply(StatusEffects.EXHAUSTED, maxf(upgrade_value(&"tali_resaca_leve", kd.exhausted_duration)
 			- 0.5 * hero(&"tali_resaca"), 0.3))
 	_lockout = kd.fury_lockout
 	_tween_scale(1.0)
@@ -261,6 +265,15 @@ func _throw_rock() -> void:
 		spread = 0.0  # Kit de Yole: sale derecha
 	var direction: Vector3 = player.aim_direction.rotated(Vector3.UP, spread)
 	var lucky: bool = Combat.roll(kd.lucky_shot_chance)
+	# Racha de suerte: después de N aciertos seguidos, el siguiente sale con suerte.
+	var streak_goal: int = int(upgrade_value(&"tali_racha_suerte"))
+	if streak_goal > 0 and rock_streak >= streak_goal:
+		lucky = true
+		rock_streak = 0
+	# Suerte encadenada: después de aturdir, los próximos salen con suerte.
+	if lucky_charges > 0:
+		lucky = true
+		lucky_charges -= 1
 	var info: DamageInfo = Combat.make_hit(player, DamageInfo.Team.PLAYERS, kd.rock_damage,
 			1.0 if lucky else player.crit_chance(), player.crit_multiplier())
 	info.is_melee = false
@@ -273,13 +286,13 @@ func _throw_rock() -> void:
 		info.shake = Balance.combat.shake_light
 		info.tags.append(&"lucky_shot")
 	var from: Vector3 = player.global_position + Vector3.UP * 1.1 + direction * 0.5
+	info.tags.append(&"main_rock")
 	_rocks.fire(from, direction, kd.rock_speed, kd.rock_range, kd.rock_radius, info,
 			DamageInfo.Team.ENEMIES, _on_rock_hit, _on_rock_expire.bind(info))
 	# Bolsa de Piedras (reliquia legendaria de Tali): 3 piedras en cono, cada una 15% más débil.
 	# La del medio es la "principal" (la única que cuenta para las rachas de aciertos).
 	if has_upgrade(&"tali_bolsa_piedras"):
 		info.amount *= 1.0 - kd.bag_damage_penalty
-		info.tags.append(&"main_rock")
 		for side: float in [-1.0, 1.0]:
 			var extra: DamageInfo = info.clone()
 			extra.tags.erase(&"main_rock")
@@ -291,6 +304,9 @@ func _throw_rock() -> void:
 
 ## Piedra bumerán (kit de Yole): al llegar al final, vuelve a las manos de Tali pegando de nuevo.
 func _on_rock_expire(at: Vector3, info: DamageInfo) -> void:
+	# Piedra que no le pegó a nadie: se corta la racha.
+	if info.has_tag(&"main_rock") and not info.has_tag(&"boomerang"):
+		rock_streak = 0
 	_boomerang_back(at, info)
 
 
@@ -316,11 +332,18 @@ func _on_rock_hit(target: Node3D, info: DamageInfo) -> void:
 	# Bumerán: si le pegó a alguien a la ida, vuelve desde ahí.
 	if not info.has_tag(&"bounced"):
 		_boomerang_back(target.global_position, info)
-	# Piedra que rebota: sigue hacia otro enemigo cercano (una sola vez).
-	if has_upgrade(&"tali_piedrazo_rebota") and not info.has_tag(&"bounced"):
+	if info.has_tag(&"main_rock") and not info.has_tag(&"bounced") and not info.has_tag(&"boomerang"):
+		rock_streak += 1
+	# Suerte encadenada: el tiro de suerte aturde, así que los próximos salen con suerte.
+	if info.has_tag(&"lucky_shot") and has_upgrade(&"tali_suerte_encadenada"):
+		lucky_charges = int(upgrade_value(&"tali_suerte_encadenada"))
+	# Piedra que rebota: sigue hacia otro enemigo cercano (hasta N veces según el nivel).
+	var bounces: int = info.tags.count(&"bounced")
+	if has_upgrade(&"tali_piedrazo_rebota") and bounces < int(upgrade_value(&"tali_piedrazo_rebota")):
 		var next: Hurtbox = _nearest_other_enemy(target, 7.0)
 		if next != null:
 			var bounce: DamageInfo = info.clone()
+			bounce.tags.erase(&"main_rock")
 			bounce.tags.append(&"bounced")
 			var from: Vector3 = target.global_position + Vector3.UP * 1.0
 			var direction: Vector3 = next.global_position - target.global_position
@@ -338,8 +361,10 @@ func _wild_call() -> void:
 	call_cooldown.use()
 	player.face_aim_now()
 	player.start_action(0.3, 0.2)
-	var gronk_weight: float = kd.call_weight_gronk * (3.0 if has_upgrade(&"tali_suerte_norteana") else 1.0)
-	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs, gronk_weight])
+	var kind: int = Combat.weighted_pick([kd.call_weight_birds, kd.call_weight_bugs, kd.call_weight_gronk])
+	# Rebogronk: +X% de chance (absoluta) de que venga el Gronk.
+	if Combat.roll(upgrade_value(&"tali_rebogronk")):
+		kind = WildCallEffect.Kind.GRONK
 	# Mejora de la tienda "Ahora sí te entiendo": elegís el animal.
 	for i: int in 3:
 		if has_upgrade(StringName("tali_entiende_" + ["pajaros", "bichos", "gronk"][i])):
@@ -422,6 +447,8 @@ func _slam_land() -> void:
 			center, _slam_radius())
 	if Combat.deliver(info, targets) > 0:
 		player.freeze(Balance.combat.hitstop_heavy)
+		if has_upgrade(&"tali_suerte_encadenada"):
+			lucky_charges = int(upgrade_value(&"tali_suerte_encadenada"))
 	Events.camera_shake_requested.emit(Balance.combat.shake_heavy)
 	Fx.ring_burst(_world(), center, _slam_radius(), player.slot.color, 0.4)
 
@@ -554,6 +581,9 @@ func _toss_land(victim: Enemy, landing: Vector3) -> void:
 	Combat.deliver(splash, targets)
 	Events.camera_shake_requested.emit(combat.shake_heavy)
 	Fx.ring_burst(_world(), landing, kd.toss_splash_radius, player.slot.color, 0.4)
+	# Revoleo blindado: escudo que se va gastando en 15 s.
+	if has_upgrade(&"tali_revoleo_escudo"):
+		player.health.add_decaying_shield(upgrade_value(&"tali_revoleo_escudo"), 15.0)
 
 
 # --- Visual ---
@@ -659,11 +689,11 @@ func hud_abilities() -> Array[Dictionary]:
 # --- Mejoras ---
 
 func _fury_duration() -> float:
-	return kd.fury_duration + (2.0 if has_upgrade(&"tali_furia_larga") else 0.0) + hero(&"tali_furia")
+	return kd.fury_duration + upgrade_value(&"tali_furia_larga") + hero(&"tali_furia")
 
 
 func _claw_range() -> float:
-	return kd.claw_range * (1.25 if has_upgrade(&"tali_zarpazo_largo") else 1.0)
+	return kd.claw_range * (1.0 + upgrade_value(&"tali_zarpazo_largo"))
 
 
 func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
@@ -680,11 +710,11 @@ func _nearest_other_enemy(exclude: Node3D, max_distance: float) -> Hurtbox:
 
 
 func _slam_radius() -> float:
-	return kd.slam_radius * (1.4 if has_upgrade(&"tali_aplaston_sismico") else 1.0)
+	return kd.slam_radius * (1.0 + upgrade_value(&"tali_aplaston_sismico"))
 
 
 func _fury_gain() -> float:
-	return 1.25 if has_upgrade(&"tali_bronca_rapida") else 1.0
+	return 1.0 + upgrade_value(&"tali_bronca_rapida")
 
 
 func ability_cooldowns() -> Array[AbilityCooldown]:

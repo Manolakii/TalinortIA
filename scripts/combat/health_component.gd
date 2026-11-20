@@ -20,6 +20,8 @@ var shield: float = 0.0
 var shield_max: float = 0.0
 ## Si es mayor que 0, el escudo se va solo cuando se termina este tiempo.
 var _shield_time_left: float = 0.0
+## Cuánto escudo se pierde por segundo (0 = no se gasta solo).
+var _shield_decay: float = 0.0
 var _invulnerable_left: float = 0.0
 
 
@@ -33,6 +35,11 @@ func setup(maximum: float) -> void:
 ## Lo llama el dueño en su _physics_process (así respeta el hitstop).
 func tick(delta: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left - delta, 0.0)
+	if _shield_decay > 0.0 and shield > 0.0:
+		shield = maxf(shield - _shield_decay * delta, 0.0)
+		shield_changed.emit(shield, shield_max)
+		if shield <= 0.0:
+			_shield_decay = 0.0
 	if _shield_time_left > 0.0:
 		_shield_time_left -= delta
 		if _shield_time_left <= 0.0:
@@ -87,6 +94,12 @@ func add_shield(amount: float, duration: float = 0.0) -> void:
 	shield = amount
 	shield_max = amount
 	shield_changed.emit(shield, shield_max)
+
+
+## Escudo que se va gastando solo a lo largo de `seconds` (Revoleo blindado de Tali).
+func add_decaying_shield(amount: float, seconds: float) -> void:
+	add_shield(amount)
+	_shield_decay = amount / maxf(seconds, 0.1)
 
 
 func clear_shield() -> void:
