@@ -200,3 +200,14 @@ func test_yole_gunslinger_decoy_shoots() -> void:
 	step(int(1.5 / DT), [_kit._bullets, decoy])
 	assert_lt(enemy.health.current, 1000.0, "El señuelo le disparó")
 	autofree(decoy)
+
+
+func test_ultimate_does_not_charge_itself() -> void:
+	_kit.ult_charge = 100.0
+	_kit._use_ultimate()
+	_kit.ult_charge = 0.0
+	_kit.add_ult(50.0)
+	assert_eq(_kit.ult_charge, 0.0, "Con el rayo prendido no se carga la próxima")
+	_kit._rail_time = 0.0
+	_kit.add_ult(50.0)
+	assert_gt(_kit.ult_charge, 0.0)

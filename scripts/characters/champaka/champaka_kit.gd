@@ -282,8 +282,16 @@ func _land() -> void:
 
 # --- Floración del Hongo ---
 
+var _bloom: Node3D
+
+
+func ult_active() -> bool:
+	return is_instance_valid(_bloom) and not _bloom.is_queued_for_deletion()
+
+
 func _use_ultimate() -> bool:
 	var zone := FloracionZone.new()
+	_bloom = zone
 	_world().add_child(zone)
 	zone.global_position = Vector3(player.global_position.x, 0.0, player.global_position.z)
 	zone.setup(self, kd.bloom_duration + 1.0 * hero(&"champaka_floracion"))

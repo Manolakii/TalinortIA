@@ -325,6 +325,10 @@ func _decoy_shot(decoy: Node3D, target: Hurtbox) -> void:
 
 # --- Riel ---
 
+func ult_active() -> bool:
+	return _rail_time > 0.0
+
+
 func _use_ultimate() -> bool:
 	_cancel_charge()
 	_rail_time = _rail_duration()

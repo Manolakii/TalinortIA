@@ -35,7 +35,8 @@ func _physics_process(delta: float) -> void:
 		var ally := node as PlayerCharacter
 		if ally == null or _flat_distance(ally.global_position) > radius:
 			continue
-		if ally.is_downed():
+		# Solo levanta caídos si Champaka está en pie (pedido del grupo: un caído no levanta a otro).
+		if ally.is_downed() and is_instance_valid(kit) and not kit.player.health.is_dead:
 			ally.complete_revive()
 			Fx.ring_burst(get_parent(), ally.global_position, 1.5, COLOR, 0.5)
 		elif not ally.health.is_dead:

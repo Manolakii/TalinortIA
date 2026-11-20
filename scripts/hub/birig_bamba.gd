@@ -196,7 +196,8 @@ func _build_market() -> void:
 	_box(Vector3(5.5, 2.6, 0.08), center + Vector3(0, 1.6, -1.7), cloth)
 	for x: float in [-2.6, 2.6]:
 		_box(Vector3(0.15, 2.6, 0.15), center + Vector3(x, 1.3, -1.6), Fx.flat_material(WOOD))
-	for offset: Vector3 in [Vector3(-1.8, 0, -1), Vector3(1.6, 0, -1.2), Vector3(-1.2, 0, 1.2), Vector3(2.0, 0, 0.9)]:
+	# Las de adelante van a los costados: en el medio Champaka (el más grande) se trababa.
+	for offset: Vector3 in [Vector3(-1.8, 0, -1), Vector3(1.6, 0, -1.2), Vector3(-3.6, 0, 0.6), Vector3(3.6, 0, 0.4)]:
 		var crate := _box(Vector3(1.0, 0.8, 1.0), center + offset + Vector3(0, 0.4, 0), Fx.flat_material(WOOD.lightened(0.15)))
 		_solid(crate, Vector3(1.0, 0.8, 1.0))
 	var sign := _label("Mercado (negro)", 64, NEON_CYAN)

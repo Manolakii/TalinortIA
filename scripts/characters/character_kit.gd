@@ -77,7 +77,16 @@ func dodge_direction() -> Vector3:
 	return player.aim_direction
 
 
+## ¿La definitiva está en uso? Cada kit lo dice (el rayo del Croco, la Noche del Agucci...).
+func ult_active() -> bool:
+	return false
+
+
 func add_ult(points: float) -> void:
+	# Mientras la definitiva está en uso no se carga la próxima (reportado por el grupo: el
+	# rayo del Croco cargaba su propia definitiva).
+	if ult_active():
+		return
 	ult_charge = clampf(ult_charge + points * player.modifiers.ult_charge_multiplier(), 0.0, 100.0)
 
 

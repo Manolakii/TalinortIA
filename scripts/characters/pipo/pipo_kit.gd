@@ -203,7 +203,15 @@ func mine_damage() -> float:
 
 # --- Fuego de la Nave Insignia ---
 
+var _bomb_until: int = 0
+
+
+func ult_active() -> bool:
+	return Time.get_ticks_msec() < _bomb_until
+
+
 func _use_ultimate() -> bool:
+	_bomb_until = Time.get_ticks_msec() + int((kd.bomb_delay + 0.8) * 1000.0)
 	var to_point: Vector3 = player.aim_point - player.global_position
 	to_point.y = 0.0
 	if to_point.length() > kd.bomb_range:

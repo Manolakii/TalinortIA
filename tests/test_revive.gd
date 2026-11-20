@@ -110,3 +110,15 @@ func test_reviver_is_not_pushed_away() -> void:
 	_player.knockback_velocity = Vector3(10, 0, 0)
 	_both(1)
 	assert_eq(_player.knockback_velocity, Vector3.ZERO, "Mientras levanta, no lo empujan")
+
+
+func test_downed_player_cannot_revive_others() -> void:
+	var other: PlayerCharacter = make_player(&"croco", 1)
+	other.global_position = _player.global_position + Vector3(0.8, 0, 0)
+	_player.revive.go_down()
+	_player.health.is_dead = true
+	other.revive.go_down()
+	other.health.is_dead = true
+	_slot.input._held[PlayerInput.Action.INTERACT] = true
+	assert_false(_player.revive.reviver_tick(1.0), "Un caído no levanta a otro")
+	assert_eq(other.revive.progress, 0.0)

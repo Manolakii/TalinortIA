@@ -24,6 +24,7 @@ var slam_cooldown: AbilityCooldown
 var _fury_time: float = 0.0
 ## Pedido del grupo: si se transformó con la definitiva, tiene un Revoleo gratis (sin recargar
 ## la barra). Si la Furia llegó sola (por pegar o recibir), el Revoleo hay que cargarlo.
+var _ult_fury: bool = false
 var free_toss: bool = false
 var _lockout: float = 0.0
 var _attack_timer: float = 0.0
@@ -219,6 +220,7 @@ func _enter_fury(bonus: float = 0.0) -> void:
 func _exit_fury() -> void:
 	in_fury = false
 	free_toss = false
+	_ult_fury = false
 	fury = 0.0
 	_charging = false
 	cancel_scheduled()
@@ -426,7 +428,13 @@ func _use_ultimate() -> bool:
 	_roar()
 	_enter_fury(kd.ult_fury_bonus)
 	free_toss = true
+	_ult_fury = true
 	return true
+
+
+## La Furia de la definitiva es la definitiva en uso: no carga la barra del Revoleo (tiene uno gratis).
+func ult_active() -> bool:
+	return _ult_fury and in_fury
 
 
 ## El Revoleo gratis (después de transformarse con la definitiva) no pide la barra llena.

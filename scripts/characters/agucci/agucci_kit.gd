@@ -491,6 +491,10 @@ func _reappear() -> void:
 
 # --- Noche del Valle sin Luz ---
 
+func ult_active() -> bool:
+	return _night_time > 0.0
+
+
 func _use_ultimate() -> bool:
 	_night_time = _night_duration()
 	_since_attack = 0.0

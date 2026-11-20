@@ -179,6 +179,10 @@ func _handle_input() -> void:
 
 
 ## Botón de definitiva: siempre Cambio. Relevo Total con la combinación propia.
+func ult_active() -> bool:
+	return _relay_time > 0.0
+
+
 func _handle_ultimate() -> void:
 	if player.has_buffered(PlayerInput.Action.RELAY) and ult_charge >= 100.0 \
 			and can_start_skill() and _companion_ready():

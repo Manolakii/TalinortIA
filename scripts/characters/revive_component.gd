@@ -108,6 +108,9 @@ func _go_out() -> void:
 ## caído, lo levanta y devuelve true (ese frame no puede moverse ni atacar).
 func reviver_tick(delta: float) -> bool:
 	reviving = null
+	# Solo levanta el que está en pie (un caído no levanta a otro caído).
+	if player.health.is_dead or downed or out:
+		return false
 	if not player.slot.input.is_held(PlayerInput.Action.INTERACT):
 		return false
 	var target: PlayerCharacter = _downed_ally_nearby()
